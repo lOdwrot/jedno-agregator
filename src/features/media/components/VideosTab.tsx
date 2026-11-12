@@ -66,7 +66,12 @@ export function VideosTab() {
 
   const videos = videosQ.data;
   const seriesOptions = useMemo(
-    () => deriveSeries(videos ?? []).map((s) => ({ value: s.name, label: `${s.name} (${s.count})`, ariaLabel: `${s.name}, ${s.count} filmów` })),
+    () =>
+      deriveSeries(videos ?? []).map((s) => ({
+        value: s.name,
+        label: `${s.name} (${s.count})`,
+        ariaLabel: `${s.name}, ${s.count} filmów`,
+      })),
     [videos],
   );
   const filtered = useMemo(() => filterVideos(videos ?? [], q, series), [videos, q, series]);
@@ -86,9 +91,18 @@ export function VideosTab() {
   const go = useCallback((v: Video) => update({ film: v.id }), [update]);
 
   if (videosQ.isPending) return <VideosSkeleton />;
-  if (videosQ.isError) return <ErrorState message="Nie udało się wczytać filmów." onRetry={() => void videosQ.refetch()} />;
+  if (videosQ.isError)
+    return (
+      <ErrorState message="Nie udało się wczytać filmów." onRetry={() => void videosQ.refetch()} />
+    );
   if (!videos || videos.length === 0)
-    return <EmptyState icon="youtube" title="Brak filmów" description="Filmy pojawią się tu po następnej aktualizacji." />;
+    return (
+      <EmptyState
+        icon="youtube"
+        title="Brak filmów"
+        description="Filmy pojawią się tu po następnej aktualizacji."
+      />
+    );
 
   return (
     <Stack gap={8}>
@@ -101,7 +115,11 @@ export function VideosTab() {
               Szukaj filmów
             </label>
             <div className="relative">
-              <Icon name="search" size={20} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted" />
+              <Icon
+                name="search"
+                size={20}
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-muted"
+              />
               <input
                 id="video-search"
                 type="search"
@@ -109,15 +127,23 @@ export function VideosTab() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="np. Ojciec Pio, 100NA100…"
                 autoComplete="off"
-                className="h-12 w-full rounded-pill border border-line bg-surface-muted pl-11 pr-4 text-ink placeholder:text-ink-muted focus:border-accent-ink focus:bg-surface"
+                className="h-12 w-full rounded-pill border border-line bg-surface-muted pr-4 pl-11 text-ink placeholder:text-ink-muted focus:border-accent-ink focus:bg-surface"
               />
             </div>
           </div>
           {seriesOptions.length > 0 && (
-            <ChipGroup label="Serie" options={seriesOptions} value={series} onChange={(v) => update({ seria: v })} allowClear />
+            <ChipGroup
+              label="Serie"
+              options={seriesOptions}
+              value={series}
+              onChange={(v) => update({ seria: v })}
+              allowClear
+            />
           )}
           <p className="text-sm text-ink-muted" role="status" aria-live="polite">
-            {filtering ? `Znaleziono filmów: ${filtered.length}` : `Wszystkie filmy: ${videos.length}`}
+            {filtering
+              ? `Znaleziono filmów: ${filtered.length}`
+              : `Wszystkie filmy: ${videos.length}`}
           </p>
         </div>
       </Reveal>

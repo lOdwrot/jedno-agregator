@@ -67,7 +67,10 @@ export function CommunitiesPage() {
           </div>
         </LoadingState>
       ) : all.isError ? (
-        <ErrorState message="Nie udało się pobrać listy społeczności." onRetry={() => void all.refetch()} />
+        <ErrorState
+          message="Nie udało się pobrać listy społeczności."
+          onRetry={() => void all.refetch()}
+        />
       ) : (
         <>
           {(cats.data?.length ?? 0) > 0 && (
@@ -90,7 +93,13 @@ export function CommunitiesPage() {
               title="Brak społeczności"
               description="W tej kategorii nic jeszcze nie ma."
               icon="users"
-              action={category ? <Button variant="soft" onClick={() => setCategory(null)}>Pokaż wszystkie</Button> : undefined}
+              action={
+                category ? (
+                  <Button variant="soft" onClick={() => setCategory(null)}>
+                    Pokaż wszystkie
+                  </Button>
+                ) : undefined
+              }
             />
           ) : (
             <ul className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">

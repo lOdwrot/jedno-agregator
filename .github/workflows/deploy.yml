@@ -42,6 +42,13 @@ jobs:
 
       - run: npm run build
 
+      # Smoke + axe accessibility tests against the built site (pushes only).
+      - name: E2E (Playwright + axe)
+        if: github.event_name != 'schedule'
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

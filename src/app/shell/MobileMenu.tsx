@@ -24,7 +24,10 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                   to={item.to}
                   onClick={onClose}
                   aria-current={active ? "page" : undefined}
-                  className={cn(linkClass, active ? "bg-accent-soft text-accent-ink" : "text-navy hover:bg-surface-muted")}
+                  className={cn(
+                    linkClass,
+                    active ? "bg-accent-soft text-accent-ink" : "text-navy hover:bg-surface-muted",
+                  )}
                 >
                   <Icon name={item.icon} size={22} />
                   {item.label}
@@ -35,7 +38,9 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
         </ul>
         {infos.data && infos.data.length > 0 && (
           <>
-            <p className="mb-1 mt-5 px-3 text-xs font-bold uppercase tracking-wider text-ink-muted">Informacje</p>
+            <p className="mt-5 mb-1 px-3 text-xs font-bold tracking-wider text-ink-muted uppercase">
+              Informacje
+            </p>
             <ul className="flex flex-col gap-1">
               {infos.data.map((info) => (
                 <li key={info.id}>

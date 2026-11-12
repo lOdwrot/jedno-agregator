@@ -21,7 +21,14 @@ export interface RevealProps {
 }
 
 /** Fades & slides content up when it scrolls into view. Static under reduced motion. */
-export function Reveal({ children, className, delay = 0, y = 24, once = true, as = "div" }: RevealProps) {
+export function Reveal({
+  children,
+  className,
+  delay = 0,
+  y = 24,
+  once = true,
+  as = "div",
+}: RevealProps) {
   const reduce = usePrefersReducedMotion();
   const Tag = motion[as] as ElementType;
   if (reduce) return <Tag className={className}>{children}</Tag>;
@@ -65,7 +72,15 @@ export function RevealGroup({ children, className, stagger = 0.08, as = "div" }:
 }
 
 /** Child of `RevealGroup`; inherits the stagger. Outside a group it simply renders its content. */
-export function RevealItem({ children, className, as = "div" }: { children: ReactNode; className?: string; as?: "div" | "li" | "article" }) {
+export function RevealItem({
+  children,
+  className,
+  as = "div",
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: "div" | "li" | "article";
+}) {
   const reduce = usePrefersReducedMotion();
   const Tag = motion[as] as ElementType;
   if (reduce) return <Tag className={className}>{children}</Tag>;

@@ -14,7 +14,10 @@ export function extractLinks(html: string): ExtractedLink[] {
     if (!/^(https?:\/\/|mailto:|tel:)/i.test(href) || seen.has(href)) return;
     seen.add(href);
     const text = (a.textContent ?? "").replace(/\s+/g, " ").trim();
-    out.push({ href, label: text || href.replace(/^(https?:\/\/|mailto:|tel:)/i, "").replace(/\/$/, "") });
+    out.push({
+      href,
+      label: text || href.replace(/^(https?:\/\/|mailto:|tel:)/i, "").replace(/\/$/, ""),
+    });
   });
   return out;
 }

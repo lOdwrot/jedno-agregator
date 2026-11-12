@@ -23,7 +23,11 @@ describe("buildMonthMatrix", () => {
     expect(weeks.flat().filter((c) => c.inMonth)).toHaveLength(30);
   });
   it("handles February of a leap year", () => {
-    expect(buildMonthMatrix(2028, 1).flat().filter((c) => c.inMonth)).toHaveLength(29);
+    expect(
+      buildMonthMatrix(2028, 1)
+        .flat()
+        .filter((c) => c.inMonth),
+    ).toHaveLength(29);
   });
 });
 
@@ -62,7 +66,9 @@ describe("countdown & status", () => {
   it("detects status", () => {
     expect(eventStatus(ev("2026-11-13T19:30:00+01:00"), now)).toBe("upcoming");
     expect(eventStatus(ev("2026-11-12T11:00:00+01:00"), now)).toBe("live");
-    expect(eventStatus(ev("2026-11-12T08:00:00+01:00", "2026-11-12T10:00:00+01:00"), now)).toBe("ended");
+    expect(eventStatus(ev("2026-11-12T08:00:00+01:00", "2026-11-12T10:00:00+01:00"), now)).toBe(
+      "ended",
+    );
     expect(statusText(ev("2026-11-12T11:00:00+01:00"), now)).toBe("Trwa teraz");
     expect(statusText(ev("2026-11-13T12:00:00+01:00"), now)).toBe("Zaczyna się za 1 dzień");
   });

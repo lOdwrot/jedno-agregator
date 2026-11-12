@@ -5,7 +5,8 @@ import { SnapshotFiles, type SnapshotData, type SnapshotName } from "../../src/d
 import { fetchWithRetry } from "./http.ts";
 
 export const DATA_DIR = join(process.cwd(), "public", "data");
-export const REMOTE_BASE = process.env.SNAPSHOT_REMOTE_BASE ?? "https://lodwrot.github.io/jedno-agregator/data";
+export const REMOTE_BASE =
+  process.env.SNAPSHOT_REMOTE_BASE ?? "https://lodwrot.github.io/jedno-agregator/data";
 
 function validate<N extends SnapshotName>(name: N, json: unknown): SnapshotData<N> | null {
   const parsed = SnapshotFiles[name].safeParse(json);
@@ -28,7 +29,10 @@ export async function readPrevious<N extends SnapshotName>(
   }
   if (opts.offline) return null;
   try {
-    const res = await fetchWithRetry(`${REMOTE_BASE}/${name}.json`, { retries: 1, timeoutMs: 15_000 });
+    const res = await fetchWithRetry(`${REMOTE_BASE}/${name}.json`, {
+      retries: 1,
+      timeoutMs: 15_000,
+    });
     const data = validate(name, await res.json());
     return data !== null ? { data, origin: "remote" } : null;
   } catch {
@@ -36,7 +40,11 @@ export async function readPrevious<N extends SnapshotName>(
   }
 }
 
-export async function writeSnapshot<N extends SnapshotName>(name: N, data: SnapshotData<N>, dir = DATA_DIR): Promise<void> {
+export async function writeSnapshot<N extends SnapshotName>(
+  name: N,
+  data: SnapshotData<N>,
+  dir = DATA_DIR,
+): Promise<void> {
   const checked = SnapshotFiles[name].parse(data);
   await mkdir(dir, { recursive: true });
   await writeFile(join(dir, `${name}.json`), JSON.stringify(checked, null, 2) + "\n", "utf8");

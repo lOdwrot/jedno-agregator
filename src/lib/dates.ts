@@ -1,10 +1,5 @@
-import {
-  differenceInCalendarDays,
-  format,
-  formatDistance,
-  parseISO,
-} from "date-fns";
-import { pl } from "date-fns/locale";
+import { differenceInCalendarDays, format, formatDistance, parseISO } from "date-fns";
+import { pl } from "date-fns/locale/pl";
 
 export { parseISO };
 
@@ -63,7 +58,11 @@ export const formatEventDateTime = (date: DateInput): string =>
   format(warsaw(date), "d MMMM, HH:mm", { locale: pl });
 
 /** "Dziś, 18:00" / "Jutro, 19:30" / "29 maj, 18:00", optional " – HH:mm" */
-export function formatEventChip(start: DateInput, end?: DateInput | null, now: Date = new Date()): string {
+export function formatEventChip(
+  start: DateInput,
+  end?: DateInput | null,
+  now: Date = new Date(),
+): string {
   const diff = dayDiff(start, now);
   const dayPart =
     diff === 0 ? "Dziś" : diff === 1 ? "Jutro" : format(warsaw(start), "d MMM", { locale: pl });
@@ -139,7 +138,11 @@ export function groupByDay<T>(
 }
 
 /** Event is upcoming when it has not ended yet (end, or start + 2h when no end). */
-export function isUpcoming(start: DateInput, end?: DateInput | null, now: Date = new Date()): boolean {
+export function isUpcoming(
+  start: DateInput,
+  end?: DateInput | null,
+  now: Date = new Date(),
+): boolean {
   const s = toDate(start).getTime();
   const e = end ? toDate(end).getTime() : s + 2 * 3600_000;
   return e >= now.getTime();

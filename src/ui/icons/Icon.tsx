@@ -13,7 +13,14 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
 }
 
 /** Inline SVG icon. Colour follows `currentColor`. */
-export function Icon({ name, size = 24, title, strokeWidth = 1.75, className, ...rest }: IconProps) {
+export function Icon({
+  name,
+  size = 24,
+  title,
+  strokeWidth = 1.75,
+  className,
+  ...rest
+}: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"

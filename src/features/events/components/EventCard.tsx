@@ -26,7 +26,11 @@ export function EventCard({ event, now, layout = "stacked", className }: EventCa
           alt=""
           aspect="16/9"
           srcSetWidths={[320, 640, 960]}
-          sizes={wide ? "(min-width: 768px) 320px, 100vw" : "(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"}
+          sizes={
+            wide
+              ? "(min-width: 768px) 320px, 100vw"
+              : "(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+          }
           zoomOnHover
           className={cn("w-full shrink-0", wide && "md:w-[42%] md:self-stretch")}
           style={{ viewTransitionName: `event-${event.id}` }}
@@ -37,7 +41,7 @@ export function EventCard({ event, now, layout = "stacked", className }: EventCa
             {event.tag && <Badge tone="accent">{event.tag}</Badge>}
             {status === "live" && <Badge tone="success">Trwa teraz</Badge>}
           </div>
-          <h3 className="font-display text-xl font-extrabold leading-snug text-navy">
+          <h3 className="font-display text-xl leading-snug font-extrabold text-navy">
             <RouterLink
               to={paths.eventDetail(event.id)}
               viewTransition

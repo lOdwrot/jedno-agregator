@@ -6,7 +6,11 @@ import { isUpcoming } from "@/lib/dates";
 export type EventFilters = { tag?: string | null; author?: string | null };
 
 /** Upcoming (not yet finished) events matching filters, ascending by start. */
-export function filterEvents(items: Event[], { tag, author }: EventFilters, now = new Date()): Event[] {
+export function filterEvents(
+  items: Event[],
+  { tag, author }: EventFilters,
+  now = new Date(),
+): Event[] {
   return items.filter(
     (e) =>
       isUpcoming(e.start, e.end, now) &&

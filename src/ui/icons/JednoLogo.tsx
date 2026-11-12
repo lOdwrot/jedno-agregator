@@ -35,12 +35,29 @@ export interface JednoLogoProps {
   title?: string;
 }
 
-export function JednoLogo({ variant = "full", animated = false, size = 40, className, title = "Jedno" }: JednoLogoProps) {
+export function JednoLogo({
+  variant = "full",
+  animated = false,
+  size = 40,
+  className,
+  title = "Jedno",
+}: JednoLogoProps) {
   const reduce = usePrefersReducedMotion();
   const animate = animated && !reduce;
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)} role="img" aria-label={title}>
-      <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden="true" focusable="false" className="shrink-0 overflow-visible">
+    <span
+      className={cn("inline-flex items-center gap-2.5", className)}
+      role="img"
+      aria-label={title}
+    >
+      <svg
+        viewBox="0 0 100 100"
+        width={size}
+        height={size}
+        aria-hidden="true"
+        focusable="false"
+        className="shrink-0 overflow-visible"
+      >
         {FIGURES.map((f, i) => {
           const deg = -90 + i * 72;
           const [hx, hy] = pt(deg, 37);
@@ -53,13 +70,23 @@ export function JednoLogo({ variant = "full", animated = false, size = 40, class
               transition={{ type: "spring", stiffness: 160, damping: 14, delay: i * 0.12 }}
             >
               <circle cx={hx} cy={hy} r="7" fill={f.color} />
-              <path d={arms(deg)} fill="none" stroke={f.color} strokeWidth="6.5" strokeLinecap="round" />
+              <path
+                d={arms(deg)}
+                fill="none"
+                stroke={f.color}
+                strokeWidth="6.5"
+                strokeLinecap="round"
+              />
             </motion.g>
           );
         })}
       </svg>
       {variant === "full" && (
-        <span aria-hidden="true" className="font-display font-extrabold tracking-tight text-navy" style={{ fontSize: size * 0.7, lineHeight: 1 }}>
+        <span
+          aria-hidden="true"
+          className="font-display font-extrabold tracking-tight text-navy"
+          style={{ fontSize: size * 0.7, lineHeight: 1 }}
+        >
           Jedno
         </span>
       )}

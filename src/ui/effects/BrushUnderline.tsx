@@ -12,7 +12,12 @@ export interface BrushUnderlineProps {
 }
 
 /** Wraps a word and draws a hand-painted SVG stroke beneath it when it enters the viewport. */
-export function BrushUnderline({ children, className, strokeClassName = "text-accent", delay = 0.2 }: BrushUnderlineProps) {
+export function BrushUnderline({
+  children,
+  className,
+  strokeClassName = "text-accent",
+  delay = 0.2,
+}: BrushUnderlineProps) {
   const reduce = usePrefersReducedMotion();
   return (
     <span className={cn("relative inline-block", className)}>
@@ -21,7 +26,10 @@ export function BrushUnderline({ children, className, strokeClassName = "text-ac
         aria-hidden="true"
         viewBox="0 0 200 12"
         preserveAspectRatio="none"
-        className={cn("pointer-events-none absolute -bottom-[0.18em] left-0 h-[0.28em] w-full overflow-visible", strokeClassName)}
+        className={cn(
+          "pointer-events-none absolute -bottom-[0.18em] left-0 h-[0.28em] w-full overflow-visible",
+          strokeClassName,
+        )}
       >
         <motion.path
           d="M3 8c30-6 62-7 95-4s64 3 98-1"

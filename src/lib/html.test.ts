@@ -24,10 +24,14 @@ describe("sanitizeHtml", () => {
     expect(out).toBe("<p>a</p>");
   });
   it("keeps youtube iframes", () => {
-    expect(sanitizeHtml(`<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>`)).toContain("<iframe");
+    expect(
+      sanitizeHtml(`<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>`),
+    ).toContain("<iframe");
   });
   it("keeps only text-align in style", () => {
-    const out = sanitizeHtml(`<p style="color:red; text-align: center">x</p><p style="color:red">y</p>`);
+    const out = sanitizeHtml(
+      `<p style="color:red; text-align: center">x</p><p style="color:red">y</p>`,
+    );
     expect(out).toContain(`style="text-align:center"`);
     expect(out).not.toContain("color");
   });
@@ -50,14 +54,23 @@ describe("splitRichContent", () => {
       `<p>Text with <a href="https://youtu.be/ccccccccccc">link</a> inline</p>`,
     ].join("");
     const segs = splitRichContent(html);
-    expect(segs.map((s) => s.type)).toEqual(["html", "youtube", "html", "youtube", "youtube", "html"]);
+    expect(segs.map((s) => s.type)).toEqual([
+      "html",
+      "youtube",
+      "html",
+      "youtube",
+      "youtube",
+      "html",
+    ]);
     expect(segs[1]).toMatchObject({ videoId: "dQw4w9WgXcQ" });
     expect(segs[3]).toMatchObject({ videoId: "aaaaaaaaaaa", title: "Foo" });
     expect(segs[4]).toMatchObject({ videoId: "bbbbbbbbbbb" });
   });
   it("handles the real Umbraco holder that wraps an iframe", () => {
     const html = `<div class="umb-embed-holder" data-embed-url="https://www.youtube.com/watch?v=rKaWjbg6Zvw" data-embed-width="360"><iframe width="360" height="203" src="https://www.youtube.com/embed/rKaWjbg6Zvw?feature=oembed" title="Diakonia" allowfullscreen></iframe></div>`;
-    expect(splitRichContent(html)).toEqual([{ type: "youtube", videoId: "rKaWjbg6Zvw", title: "Diakonia" }]);
+    expect(splitRichContent(html)).toEqual([
+      { type: "youtube", videoId: "rKaWjbg6Zvw", title: "Diakonia" },
+    ]);
   });
   it("handles empty", () => {
     expect(splitRichContent("")).toEqual([]);

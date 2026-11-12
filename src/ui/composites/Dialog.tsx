@@ -1,7 +1,12 @@
 import { cn } from "@/lib/cn";
 import { Modal, type ModalBaseProps } from "./Modal";
 
-const SIZES = { sm: "sm:max-w-md", md: "sm:max-w-xl", lg: "sm:max-w-3xl", xl: "sm:max-w-5xl" } as const;
+const SIZES = {
+  sm: "sm:max-w-md",
+  md: "sm:max-w-xl",
+  lg: "sm:max-w-3xl",
+  xl: "sm:max-w-5xl",
+} as const;
 
 export interface DialogProps extends ModalBaseProps {
   size?: keyof typeof SIZES;

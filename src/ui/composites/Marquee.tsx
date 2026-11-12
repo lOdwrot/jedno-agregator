@@ -29,8 +29,11 @@ export function Marquee({ children, duration = 40, label, className }: MarqueePr
     <div role="region" aria-label={label} className={cn("group/marquee relative", className)}>
       <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]">
         <div
-          className="flex w-max animate-[ui-marquee_linear_infinite] hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]"
-          style={{ animationDuration: `${duration}s`, animationPlayState: paused ? "paused" : undefined }}
+          className="flex w-max animate-[ui-marquee_linear_infinite] focus-within:[animation-play-state:paused] hover:[animation-play-state:paused]"
+          style={{
+            animationDuration: `${duration}s`,
+            animationPlayState: paused ? "paused" : undefined,
+          }}
         >
           <div className={track}>{children}</div>
           <div className={track} aria-hidden="true" inert>

@@ -8,7 +8,10 @@ export function LinkedEventCta({ eventId }: { eventId: number }) {
   const { data: event } = useEvent(eventId);
   return (
     <Card className="relative overflow-hidden bg-navy p-6 text-white sm:p-8">
-      <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-accent/30 blur-2xl" />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full bg-accent/30 blur-2xl"
+      />
       <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <Eyebrow className="text-white/70">Wydarzenie</Eyebrow>
@@ -22,7 +25,12 @@ export function LinkedEventCta({ eventId }: { eventId: number }) {
             </Text>
           )}
         </div>
-        <Button to={paths.eventDetail(eventId)} variant="solid" size="lg" rightIcon={<Icon name="arrowRight" size={20} />}>
+        <Button
+          to={paths.eventDetail(eventId)}
+          variant="solid"
+          size="lg"
+          rightIcon={<Icon name="arrowRight" size={20} />}
+        >
           Przejdź do wydarzenia
         </Button>
       </div>

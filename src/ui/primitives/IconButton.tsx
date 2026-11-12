@@ -30,13 +30,26 @@ export type IconButtonProps = VariantProps<typeof iconButtonStyles> &
     ref?: Ref<HTMLButtonElement>;
   };
 
-export function IconButton({ label, badge, variant, size, className, children, to, type, ...rest }: IconButtonProps) {
+export function IconButton({
+  label,
+  badge,
+  variant,
+  size,
+  className,
+  children,
+  to,
+  type,
+  ...rest
+}: IconButtonProps) {
   const cls = cn(iconButtonStyles({ variant, size }), className);
   const inner = (
     <>
       {children}
       {badge && (
-        <span aria-hidden="true" className="absolute right-2 top-2 size-2.5 rounded-full bg-accent ring-2 ring-surface" />
+        <span
+          aria-hidden="true"
+          className="absolute top-2 right-2 size-2.5 rounded-full bg-accent ring-2 ring-surface"
+        />
       )}
     </>
   );

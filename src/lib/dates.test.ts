@@ -19,17 +19,21 @@ describe("dates", () => {
   it("formatEventChip", () => {
     expect(formatEventChip("2026-11-13T18:00:00+01:00", null, now)).toBe("Dziś, 18:00");
     expect(formatEventChip("2026-11-14T19:30:00+01:00", null, now)).toBe("Jutro, 19:30");
-    expect(formatEventChip("2026-05-29T18:00:00+02:00", null, new Date("2026-05-01T10:00:00+02:00"))).toBe(
-      "29 maj, 18:00",
-    );
+    expect(
+      formatEventChip("2026-05-29T18:00:00+02:00", null, new Date("2026-05-01T10:00:00+02:00")),
+    ).toBe("29 maj, 18:00");
     expect(formatEventChip("2026-11-14T19:30:00+01:00", "2026-11-14T21:00:00+01:00", now)).toBe(
       "Jutro, 19:30 – 21:00",
     );
   });
 
   it("formatEventDayHeader", () => {
-    expect(formatEventDayHeader("2026-11-13T10:00:00+01:00", now)).toBe("Dzisiaj – piątek, 13 listopada");
-    expect(formatEventDayHeader("2026-11-14T10:00:00+01:00", now)).toBe("Jutro – sobota, 14 listopada");
+    expect(formatEventDayHeader("2026-11-13T10:00:00+01:00", now)).toBe(
+      "Dzisiaj – piątek, 13 listopada",
+    );
+    expect(formatEventDayHeader("2026-11-14T10:00:00+01:00", now)).toBe(
+      "Jutro – sobota, 14 listopada",
+    );
     expect(formatEventDayHeader("2026-11-15T10:00:00+01:00", now)).toBe("Niedziela, 15 listopada");
   });
 
@@ -58,7 +62,11 @@ describe("dates", () => {
 
   it("groupByDay", () => {
     const g = groupByDay(
-      [{ d: "2026-11-13T10:00:00+01:00" }, { d: "2026-11-13T12:00:00+01:00" }, { d: "2026-11-14T10:00:00+01:00" }],
+      [
+        { d: "2026-11-13T10:00:00+01:00" },
+        { d: "2026-11-13T12:00:00+01:00" },
+        { d: "2026-11-14T10:00:00+01:00" },
+      ],
       (x) => x.d,
     );
     expect(g.map((x) => [x.key, x.items.length])).toEqual([

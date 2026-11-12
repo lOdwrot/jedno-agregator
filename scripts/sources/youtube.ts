@@ -15,7 +15,8 @@ const parser = new XMLParser({
 });
 
 type Rec = Record<string, unknown>;
-const str = (v: unknown): string => (typeof v === "string" ? v : typeof v === "number" ? String(v) : "");
+const str = (v: unknown): string =>
+  typeof v === "string" ? v : typeof v === "number" ? String(v) : "";
 
 /** Parses the channel RSS feed into Video objects (newest first). */
 export function parseYoutubeFeed(xml: string): Video[] {
@@ -26,7 +27,8 @@ export function parseYoutubeFeed(xml: string): Video[] {
     const id = str(e["yt:videoId"]).trim();
     if (!id) continue;
     const group = (e["media:group"] ?? {}) as Rec;
-    const stats = ((group["media:community"] as Rec | undefined)?.["media:statistics"] ?? {}) as Rec;
+    const stats = ((group["media:community"] as Rec | undefined)?.["media:statistics"] ??
+      {}) as Rec;
     const viewsRaw = str(stats["@_views"]);
     const views = viewsRaw !== "" && Number.isFinite(Number(viewsRaw)) ? Number(viewsRaw) : null;
     videos.push({
@@ -42,10 +44,17 @@ export function parseYoutubeFeed(xml: string): Video[] {
   return sortVideos(videos);
 }
 
-const sortVideos = (v: Video[]) => [...v].sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : a.publishedAt > b.publishedAt ? -1 : 0));
+const sortVideos = (v: Video[]) =>
+  [...v].sort((a, b) =>
+    a.publishedAt < b.publishedAt ? 1 : a.publishedAt > b.publishedAt ? -1 : 0,
+  );
 
 /** Merges the fresh feed into the previous archive: dedupe by id (fresh wins), newest first, capped. */
-export function mergeVideos(previous: readonly Video[], fresh: readonly Video[], cap = MAX_VIDEOS): Video[] {
+export function mergeVideos(
+  previous: readonly Video[],
+  fresh: readonly Video[],
+  cap = MAX_VIDEOS,
+): Video[] {
   const map = new Map<string, Video>();
   for (const v of previous) map.set(v.id, v);
   for (const v of fresh) {

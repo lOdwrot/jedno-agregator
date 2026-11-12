@@ -5,7 +5,15 @@ import { extractLinks } from "../links";
 import { CommunityLogo } from "./CommunityLogo";
 
 /** `partner` stays set while the dialog animates out; `open` controls visibility. */
-export function CommunityDialog({ partner, open, onClose }: { partner: Partner | null; open: boolean; onClose: () => void }) {
+export function CommunityDialog({
+  partner,
+  open,
+  onClose,
+}: {
+  partner: Partner | null;
+  open: boolean;
+  onClose: () => void;
+}) {
   const links = useMemo(() => (partner ? extractLinks(partner.html) : []), [partner]);
   return (
     <Dialog open={open} onClose={onClose} title={partner?.name ?? "Społeczność"} size="lg">
@@ -18,7 +26,9 @@ export function CommunityDialog({ partner, open, onClose }: { partner: Partner |
           <RichText html={partner.html} />
           {links.length > 0 && (
             <div>
-              <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-ink-muted">Linki</h3>
+              <h3 className="mb-2 text-xs font-bold tracking-widest text-ink-muted uppercase">
+                Linki
+              </h3>
               <ul className="flex flex-wrap gap-2">
                 {links.map((l) => (
                   <li key={l.href}>

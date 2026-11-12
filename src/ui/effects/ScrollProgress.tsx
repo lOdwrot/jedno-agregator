@@ -9,7 +9,10 @@ export function ScrollProgress({ className }: { className?: string }) {
     <motion.div
       aria-hidden="true"
       style={{ scaleX }}
-      className={cn("fixed inset-x-0 top-0 z-50 h-1 origin-left bg-linear-to-r from-logo-orange via-logo-yellow to-logo-red", className)}
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 h-1 origin-left bg-linear-to-r from-logo-orange via-logo-yellow to-logo-red",
+        className,
+      )}
     />
   );
 }

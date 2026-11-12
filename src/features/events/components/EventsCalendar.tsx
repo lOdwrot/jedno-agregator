@@ -66,7 +66,12 @@ export function EventsCalendar({ events, tags, now }: Props) {
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>, key: string) => {
-    const step: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+    const step: Record<string, number> = {
+      ArrowLeft: -1,
+      ArrowRight: 1,
+      ArrowUp: -7,
+      ArrowDown: 7,
+    };
     if (e.key in step) {
       e.preventDefault();
       goTo(shiftDayKey(key, step[e.key]!));
@@ -80,7 +85,9 @@ export function EventsCalendar({ events, tags, now }: Props) {
       const p = parseKey(key);
       const t = shiftMonth(p.year, p.month, delta);
       const max = new Date(Date.UTC(t.year, t.month + 1, 0)).getUTCDate();
-      goTo(`${t.year}-${String(t.month + 1).padStart(2, "0")}-${String(Math.min(p.day, max)).padStart(2, "0")}`);
+      goTo(
+        `${t.year}-${String(t.month + 1).padStart(2, "0")}-${String(Math.min(p.day, max)).padStart(2, "0")}`,
+      );
     }
   };
 
@@ -95,7 +102,11 @@ export function EventsCalendar({ events, tags, now }: Props) {
             <Icon name="chevronLeft" />
           </IconButton>
           <div className="flex items-center gap-3">
-            <h2 id={headingId} aria-live="polite" className="font-display text-xl font-extrabold capitalize text-navy sm:text-2xl">
+            <h2
+              id={headingId}
+              aria-live="polite"
+              className="font-display text-xl font-extrabold text-navy capitalize sm:text-2xl"
+            >
               {MONTHS[month]} {year}
             </h2>
             <Button
@@ -115,11 +126,22 @@ export function EventsCalendar({ events, tags, now }: Props) {
             <Icon name="chevronRight" />
           </IconButton>
         </div>
-        <table ref={gridRef} role="grid" aria-labelledby={headingId} className="w-full table-fixed border-separate border-spacing-0.5 sm:border-spacing-1">
+        <table
+          ref={gridRef}
+          role="grid"
+          aria-labelledby={headingId}
+          className="w-full table-fixed border-separate border-spacing-0.5 sm:border-spacing-1"
+        >
           <thead>
             <tr role="row">
               {WEEKDAYS_SHORT.map((d, i) => (
-                <th key={d} role="columnheader" scope="col" abbr={WEEKDAYS_LONG[i]} className="pb-1 text-xs font-bold uppercase tracking-wide text-ink-muted">
+                <th
+                  key={d}
+                  role="columnheader"
+                  scope="col"
+                  abbr={WEEKDAYS_LONG[i]}
+                  className="pb-1 text-xs font-bold tracking-wide text-ink-muted uppercase"
+                >
                   <span aria-hidden>{d}</span>
                   <span className="sr-only">{WEEKDAYS_LONG[i]}</span>
                 </th>
@@ -147,8 +169,8 @@ export function EventsCalendar({ events, tags, now }: Props) {
                         }}
                         onKeyDown={(e) => onKeyDown(e, c.key)}
                         className={cn(
-                          "relative flex h-12 w-full flex-col sm:h-14 items-center justify-center gap-0.5 rounded-xl text-sm font-semibold transition-colors sm:text-base",
-                          c.inMonth ? "text-ink" : "text-ink-muted/70",
+                          "relative flex h-12 w-full flex-col items-center justify-center gap-0.5 rounded-xl text-sm font-semibold transition-colors sm:h-14 sm:text-base",
+                          c.inMonth ? "text-ink" : "font-normal text-ink-muted",
                           list.length > 0 && "font-extrabold",
                           isSel ? "bg-navy text-white" : "hover:bg-surface-muted",
                           isToday && !isSel && "ring-2 ring-accent-ink",
@@ -159,7 +181,12 @@ export function EventsCalendar({ events, tags, now }: Props) {
                           {list.slice(0, 3).map((e) => (
                             <span
                               key={e.id}
-                              className={cn("size-1.5 rounded-full", DOT_COLORS[Math.max(0, tags.indexOf(e.tag ?? "")) % DOT_COLORS.length])}
+                              className={cn(
+                                "size-1.5 rounded-full",
+                                DOT_COLORS[
+                                  Math.max(0, tags.indexOf(e.tag ?? "")) % DOT_COLORS.length
+                                ],
+                              )}
                             />
                           ))}
                         </span>
@@ -171,14 +198,25 @@ export function EventsCalendar({ events, tags, now }: Props) {
             ))}
           </tbody>
         </table>
-        <p className="mt-3 text-xs text-ink-muted">Strzałki przesuwają dzień, PageUp/PageDown zmieniają miesiąc.</p>
+        <p className="mt-3 text-xs text-ink-muted">
+          Strzałki przesuwają dzień, PageUp/PageDown zmieniają miesiąc.
+        </p>
       </div>
 
       <section aria-live="polite" aria-labelledby="selected-day-heading">
-        <h3 id="selected-day-heading" className="mb-3 font-display text-lg font-extrabold text-navy">
-          {selected ? `${formatEventDayHeader(selected + "T12:00:00+01:00", now)} · ${eventsCountLabel(selectedEvents.length)}` : "Wybierz dzień"}
+        <h3
+          id="selected-day-heading"
+          className="mb-3 font-display text-lg font-extrabold text-navy"
+        >
+          {selected
+            ? `${formatEventDayHeader(selected + "T12:00:00+01:00", now)} · ${eventsCountLabel(selectedEvents.length)}`
+            : "Wybierz dzień"}
         </h3>
-        {selected && selectedEvents.length === 0 && <p className="rounded-card bg-surface p-5 text-ink-muted shadow-card">Brak wydarzeń w tym dniu.</p>}
+        {selected && selectedEvents.length === 0 && (
+          <p className="rounded-card bg-surface p-5 text-ink-muted shadow-card">
+            Brak wydarzeń w tym dniu.
+          </p>
+        )}
         <ul className="grid gap-4 md:grid-cols-2">
           {selectedEvents.map((e) => (
             <Reveal as="li" key={`${selected}-${e.id}`}>
@@ -191,7 +229,8 @@ export function EventsCalendar({ events, tags, now }: Props) {
   );
 }
 
-const toKeyOfFirst = (year: number, month: number) => `${year}-${String(month + 1).padStart(2, "0")}-01`;
+const toKeyOfFirst = (year: number, month: number) =>
+  `${year}-${String(month + 1).padStart(2, "0")}-01`;
 const ymd = (key: string): [number, number, number] => {
   const p = parseKey(key);
   return [p.year, p.month, p.day];

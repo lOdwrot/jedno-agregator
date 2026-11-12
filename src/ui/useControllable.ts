@@ -1,7 +1,11 @@
 import { useCallback, useState } from "react";
 
 /** Controlled/uncontrolled state helper: pass `value` to control, else `defaultValue`. */
-export function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v: T) => void) {
+export function useControllable<T>(
+  value: T | undefined,
+  defaultValue: T,
+  onChange?: (v: T) => void,
+) {
   const [inner, setInner] = useState(defaultValue);
   const controlled = value !== undefined;
   const current = controlled ? value : inner;

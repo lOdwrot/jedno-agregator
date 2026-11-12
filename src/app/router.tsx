@@ -1,15 +1,16 @@
 import { createBrowserRouter } from "react-router";
 import { Layout } from "./Layout";
 import { HomePage } from "@/features/home/pages/HomePage";
-import { NewsListPage } from "@/features/news/pages/NewsListPage";
-import { NewsDetailPage } from "@/features/news/pages/NewsDetailPage";
-import { EventsListPage } from "@/features/events/pages/EventsListPage";
-import { EventDetailPage } from "@/features/events/pages/EventDetailPage";
-import { CommunitiesPage } from "@/features/communities/pages/CommunitiesPage";
-import { MediaPage } from "@/features/media/pages/MediaPage";
-import { InfoPage } from "@/features/infos/pages/InfoPage";
-import { NotFoundPage } from "./NotFoundPage";
-import { UiCatalogPage } from "@/ui/catalog/UiCatalogPage";
+
+/**
+ * Routes. Home is bundled eagerly (first paint); every other page is code-split with
+ * react-router's `lazy` — the router fetches the chunk before navigating.
+ * To add a page: create it under src/features/<f>/pages, add a path helper in ./routes.ts,
+ * and register it here with `lazy: page(() => import(...), "ExportName")`.
+ */
+function page<M extends Record<string, unknown>>(load: () => Promise<M>, name: keyof M) {
+  return async () => ({ Component: (await load())[name] as React.ComponentType });
+}
 
 export const router = createBrowserRouter(
   [
@@ -17,16 +18,43 @@ export const router = createBrowserRouter(
       element: <Layout />,
       children: [
         { index: true, element: <HomePage /> },
-        { path: "aktualnosci", element: <NewsListPage /> },
-        { path: "aktualnosci/:id", element: <NewsDetailPage /> },
-        { path: "wydarzenia", element: <EventsListPage /> },
-        { path: "wydarzenia/:id", element: <EventDetailPage /> },
-        { path: "spolecznosci", element: <CommunitiesPage /> },
-        { path: "media", element: <MediaPage /> },
-        { path: "media/instagram", element: <MediaPage /> },
-        { path: "info/:slug", element: <InfoPage /> },
-        { path: "ui", element: <UiCatalogPage /> },
-        { path: "*", element: <NotFoundPage /> },
+        {
+          path: "aktualnosci",
+          lazy: page(() => import("@/features/news/pages/NewsListPage"), "NewsListPage"),
+        },
+        {
+          path: "aktualnosci/:id",
+          lazy: page(() => import("@/features/news/pages/NewsDetailPage"), "NewsDetailPage"),
+        },
+        {
+          path: "wydarzenia",
+          lazy: page(() => import("@/features/events/pages/EventsListPage"), "EventsListPage"),
+        },
+        {
+          path: "wydarzenia/:id",
+          lazy: page(() => import("@/features/events/pages/EventDetailPage"), "EventDetailPage"),
+        },
+        {
+          path: "spolecznosci",
+          lazy: page(
+            () => import("@/features/communities/pages/CommunitiesPage"),
+            "CommunitiesPage",
+          ),
+        },
+        {
+          path: "media",
+          lazy: page(() => import("@/features/media/pages/MediaPage"), "MediaPage"),
+        },
+        {
+          path: "media/instagram",
+          lazy: page(() => import("@/features/media/pages/MediaPage"), "MediaPage"),
+        },
+        {
+          path: "info/:slug",
+          lazy: page(() => import("@/features/infos/pages/InfoPage"), "InfoPage"),
+        },
+        { path: "ui", lazy: page(() => import("@/ui/catalog/UiCatalogPage"), "UiCatalogPage") },
+        { path: "*", lazy: page(() => import("./NotFoundPage"), "NotFoundPage") },
       ],
     },
   ],

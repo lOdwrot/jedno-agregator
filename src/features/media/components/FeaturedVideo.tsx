@@ -24,7 +24,12 @@ export function FeaturedVideo({ video }: { video: Video }) {
             aria-hidden="true"
             className="absolute -inset-1 -z-10 rotate-1 rounded-card bg-linear-to-br from-logo-orange/30 via-logo-yellow/20 to-logo-blue/30 blur-xl"
           />
-          <YouTubeEmbed key={video.id} videoId={video.id} title={video.title} className="shadow-lift" />
+          <YouTubeEmbed
+            key={video.id}
+            videoId={video.id}
+            title={video.title}
+            className="shadow-lift"
+          />
         </div>
         <div className="flex min-w-0 flex-col justify-center gap-4 pb-2 lg:pr-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -41,7 +46,10 @@ export function FeaturedVideo({ video }: { video: Video }) {
           {video.description.trim() && (
             <div>
               <div id="featured-desc" className={open ? "" : "line-clamp-4"}>
-                <Description text={open ? video.description.trim() : short} className="text-ink-muted" />
+                <Description
+                  text={open ? video.description.trim() : short}
+                  className="text-ink-muted"
+                />
               </div>
               {hasMore && (
                 <button
@@ -52,7 +60,11 @@ export function FeaturedVideo({ video }: { video: Video }) {
                   className="mt-2 inline-flex min-h-11 items-center gap-1 font-bold text-accent-ink hover:text-navy"
                 >
                   {open ? "Zwiń" : "Rozwiń"}
-                  <Icon name="chevronDown" size={18} className={open ? "rotate-180 transition-transform" : "transition-transform"} />
+                  <Icon
+                    name="chevronDown"
+                    size={18}
+                    className={open ? "rotate-180 transition-transform" : "transition-transform"}
+                  />
                 </button>
               )}
             </div>

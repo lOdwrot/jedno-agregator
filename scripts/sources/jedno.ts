@@ -84,9 +84,12 @@ export function absolutizeHtml(html: string | null | undefined, baseUrl: string)
   if (!html) return "";
   const fix = (v: string) => absoluteUrl(v, baseUrl) ?? v;
   return html
-    .replace(/\b(src|href|poster|data-embed-url)\s*=\s*(["'])(.*?)\2/gi, (_m, attr: string, q: string, v: string) => {
-      return `${attr}=${q}${fix(v)}${q}`;
-    })
+    .replace(
+      /\b(src|href|poster|data-embed-url)\s*=\s*(["'])(.*?)\2/gi,
+      (_m, attr: string, q: string, v: string) => {
+        return `${attr}=${q}${fix(v)}${q}`;
+      },
+    )
     .replace(/\bsrcset\s*=\s*(["'])(.*?)\1/gi, (_m, q: string, v: string) => {
       const out = v
         .split(",")
@@ -112,8 +115,13 @@ const warsawParts = new Intl.DateTimeFormat("en-GB", {
 });
 function warsawOffsetMinutes(utcMs: number): number {
   const p: Record<string, number> = {};
-  for (const part of warsawParts.formatToParts(new Date(utcMs))) if (part.type !== "literal") p[part.type] = Number(part.value);
-  return Math.round((Date.UTC(p.year!, p.month! - 1, p.day!, p.hour!, p.minute!, p.second!) - Math.floor(utcMs / 1000) * 1000) / 60000);
+  for (const part of warsawParts.formatToParts(new Date(utcMs)))
+    if (part.type !== "literal") p[part.type] = Number(part.value);
+  return Math.round(
+    (Date.UTC(p.year!, p.month! - 1, p.day!, p.hour!, p.minute!, p.second!) -
+      Math.floor(utcMs / 1000) * 1000) /
+      60000,
+  );
 }
 
 /** If an ISO datetime has no zone designator, assume Europe/Warsaw wall time and add the proper offset. */
@@ -276,7 +284,9 @@ export async function fetchEvents(get: GetJson, baseUrl: string): Promise<Event[
 }
 
 export async function fetchPartners(get: GetJson, baseUrl: string): Promise<Partner[]> {
-  return ((await get<PartnerDto[] | null>("/api/partners")) ?? []).map((p) => normalizePartner(p, baseUrl));
+  return ((await get<PartnerDto[] | null>("/api/partners")) ?? []).map((p) =>
+    normalizePartner(p, baseUrl),
+  );
 }
 
 export async function fetchInfos(get: GetJson, baseUrl: string): Promise<Info[]> {
@@ -285,12 +295,21 @@ export async function fetchInfos(get: GetJson, baseUrl: string): Promise<Info[]>
 
 export async function fetchNotifications(get: GetJson, now = new Date()): Promise<Notification[]> {
   const from = new Date(now.getTime() - 30 * 24 * 3600_000).toISOString();
-  const list = (await get<NotificationDto[] | null>(`/api/notifications?dateFrom=${encodeURIComponent(from)}&festivalEnabled=false`)) ?? [];
-  return list.map(normalizeNotification).sort((a, b) => (a.publishDate < b.publishDate ? 1 : a.publishDate > b.publishDate ? -1 : b.id - a.id));
+  const list =
+    (await get<NotificationDto[] | null>(
+      `/api/notifications?dateFrom=${encodeURIComponent(from)}&festivalEnabled=false`,
+    )) ?? [];
+  return list
+    .map(normalizeNotification)
+    .sort((a, b) =>
+      a.publishDate < b.publishDate ? 1 : a.publishDate > b.publishDate ? -1 : b.id - a.id,
+    );
 }
 
 const cleanList = (xs: readonly (string | null | undefined)[]): string[] =>
-  [...new Set(xs.map((x) => trimOrEmpty(x)).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pl"));
+  [...new Set(xs.map((x) => trimOrEmpty(x)).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, "pl"),
+  );
 
 export async function fetchNewsAuthors(get: GetJson): Promise<string[]> {
   return cleanList((await get<string[] | null>("/api/news/authors")) ?? []);
@@ -298,5 +317,6 @@ export async function fetchNewsAuthors(get: GetJson): Promise<string[]> {
 export async function fetchEventTags(get: GetJson): Promise<string[]> {
   return cleanList((await get<string[] | null>("/api/events/tags")) ?? []);
 }
-export const uniqueAuthors = (events: readonly Event[]): string[] => cleanList(events.map((e) => e.author));
+export const uniqueAuthors = (events: readonly Event[]): string[] =>
+  cleanList(events.map((e) => e.author));
 export { cleanList };

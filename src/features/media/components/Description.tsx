@@ -6,7 +6,7 @@ import { linkify } from "../utils";
 export function Description({ text, className }: { text: string; className?: string }) {
   const parts = useMemo(() => linkify(text), [text]);
   return (
-    <p className={cn("whitespace-pre-line break-words", className)}>
+    <p className={cn("break-words whitespace-pre-line", className)}>
       {parts.map((p, i) =>
         p.type === "link" ? (
           <a

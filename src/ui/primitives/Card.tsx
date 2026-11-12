@@ -22,7 +22,16 @@ export interface CardProps {
 }
 
 /** White rounded surface with soft shadow. */
-export function Card({ children, className, interactive, tilt, to, linkLabel, style, as = "div" }: CardProps) {
+export function Card({
+  children,
+  className,
+  interactive,
+  tilt,
+  to,
+  linkLabel,
+  style,
+  as = "div",
+}: CardProps) {
   const fine = useFinePointer();
   const reduce = usePrefersReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -55,15 +64,25 @@ export function Card({ children, className, interactive, tilt, to, linkLabel, st
       ref={ref as never}
       onPointerMove={doTilt ? onMove : undefined}
       onPointerLeave={doTilt ? reset : undefined}
-      style={{ ...(doTilt ? { rotateX: rx, rotateY: ry, transformPerspective: 900 } : {}), ...style } as never}
+      style={
+        {
+          ...(doTilt ? { rotateX: rx, rotateY: ry, transformPerspective: 900 } : {}),
+          ...style,
+        } as never
+      }
       className={cn(
         "group relative rounded-card bg-surface shadow-card has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-accent-ink",
-        lift && "transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift motion-reduce:hover:translate-y-0",
+        lift &&
+          "transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift motion-reduce:hover:translate-y-0",
         className,
       )}
     >
       {to ? (
-        <RouterLink to={to} aria-label={linkLabel} className="block h-full overflow-hidden rounded-card focus-visible:outline-none">
+        <RouterLink
+          to={to}
+          aria-label={linkLabel}
+          className="block h-full overflow-hidden rounded-card focus-visible:outline-none"
+        >
           {children}
         </RouterLink>
       ) : (

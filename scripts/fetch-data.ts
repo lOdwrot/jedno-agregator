@@ -111,8 +111,12 @@ async function main(): Promise<number> {
   let newsAuthors = prevMeta?.newsAuthors ?? null;
   let eventTags = prevMeta?.eventTags ?? null;
   if (get) {
-    newsAuthors = await fetchNewsAuthors(get).catch((e) => (console.warn(`! news authors: ${errMsg(e)}`), newsAuthors));
-    eventTags = await fetchEventTags(get).catch((e) => (console.warn(`! event tags: ${errMsg(e)}`), eventTags));
+    newsAuthors = await fetchNewsAuthors(get).catch(
+      (e) => (console.warn(`! news authors: ${errMsg(e)}`), newsAuthors),
+    );
+    eventTags = await fetchEventTags(get).catch(
+      (e) => (console.warn(`! event tags: ${errMsg(e)}`), eventTags),
+    );
   }
   const news = results.news ?? [];
   const events = results.events ?? [];
@@ -136,7 +140,15 @@ async function main(): Promise<number> {
     sources: statuses,
   };
 
-  const names: SourceName[] = ["news", "events", "partners", "infos", "notifications", "videos", "instagram"];
+  const names: SourceName[] = [
+    "news",
+    "events",
+    "partners",
+    "infos",
+    "notifications",
+    "videos",
+    "instagram",
+  ];
   for (const n of names) {
     // sources without any data (non-core) become empty arrays
     await writeSnapshot(n, (results[n] ?? []) as never);
@@ -148,7 +160,11 @@ async function main(): Promise<number> {
   return 0;
 }
 
-function printSummary(statuses: Record<string, Status>, origins: Record<string, string>, counts: Record<string, number>) {
+function printSummary(
+  statuses: Record<string, Status>,
+  origins: Record<string, string>,
+  counts: Record<string, number>,
+) {
   const rows = Object.keys(statuses).map((name) => ({
     source: name,
     status: statuses[name]!.ok ? "ok" : "FAILED",
@@ -157,8 +173,13 @@ function printSummary(statuses: Record<string, Status>, origins: Record<string, 
     error: statuses[name]!.error ?? "",
   }));
   const cols = ["source", "status", "data", "items", "error"] as const;
-  const width = (c: (typeof cols)[number]) => Math.max(c.length, ...rows.map((r) => String(r[c]).length));
-  const line = (r: Record<string, string | number>) => cols.map((c) => String(r[c]).padEnd(width(c))).join("  ").trimEnd();
+  const width = (c: (typeof cols)[number]) =>
+    Math.max(c.length, ...rows.map((r) => String(r[c]).length));
+  const line = (r: Record<string, string | number>) =>
+    cols
+      .map((c) => String(r[c]).padEnd(width(c)))
+      .join("  ")
+      .trimEnd();
   console.log("\n" + line(Object.fromEntries(cols.map((c) => [c, c]))));
   console.log(cols.map((c) => "-".repeat(width(c))).join("  "));
   rows.forEach((r) => console.log(line(r)));

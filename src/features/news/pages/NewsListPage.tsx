@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { Button, Container, EmptyState, ErrorState, Icon, PageHeader, usePrefersReducedMotion } from "@/ui";
+import {
+  Button,
+  Container,
+  EmptyState,
+  ErrorState,
+  Icon,
+  PageHeader,
+  usePrefersReducedMotion,
+} from "@/ui";
 import { usePageTitle } from "@/lib/seo";
 import { useNewsAuthors, useNewsList } from "../api";
 import { NewsCard } from "../components/NewsCard";
@@ -16,7 +24,10 @@ export function NewsListPage() {
   const reduce = usePrefersReducedMotion();
   const { data, isPending, isError, refetch } = useNewsList({ author });
   const { data: authors = [] } = useNewsAuthors();
-  const [shown, setShown] = useState<{ author: string | null; count: number }>({ author, count: PAGE_SIZE });
+  const [shown, setShown] = useState<{ author: string | null; count: number }>({
+    author,
+    count: PAGE_SIZE,
+  });
   const visible = shown.author === author ? shown.count : PAGE_SIZE;
   const focusIndex = useRef<number | null>(null);
   const grid = useRef<HTMLUListElement>(null);
@@ -59,8 +70,16 @@ export function NewsListPage() {
       {data && total === 0 && (
         <EmptyState
           title="Brak aktualności"
-          description={author ? `Nie ma jeszcze aktualności autora: ${author}.` : "Zajrzyj tu wkrótce."}
-          action={author ? <Button variant="soft" onClick={() => setAuthor(null)}>Wyczyść filtr</Button> : undefined}
+          description={
+            author ? `Nie ma jeszcze aktualności autora: ${author}.` : "Zajrzyj tu wkrótce."
+          }
+          action={
+            author ? (
+              <Button variant="soft" onClick={() => setAuthor(null)}>
+                Wyczyść filtr
+              </Button>
+            ) : undefined
+          }
         />
       )}
       {data && total > 0 && (
@@ -69,7 +88,10 @@ export function NewsListPage() {
             {author ? `${author} · ` : ""}
             {total} {total === 1 ? "aktualność" : "aktualności"}
           </p>
-          <ul ref={grid} className="grid list-none grid-flow-dense gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3">
+          <ul
+            ref={grid}
+            className="grid list-none grid-flow-dense gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3"
+          >
             <AnimatePresence mode="popLayout" initial={false}>
               {items.map((n, i) => (
                 <motion.li
@@ -78,7 +100,11 @@ export function NewsListPage() {
                   initial={reduce ? false : { opacity: 0, y: 28, scale: 0.97 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={reduce ? undefined : { opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5, delay: reduce ? 0 : (i % PAGE_SIZE) * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{
+                    duration: 0.5,
+                    delay: reduce ? 0 : (i % PAGE_SIZE) * 0.04,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                   className={i === 0 ? "sm:col-span-2 lg:col-span-2" : undefined}
                 >
                   <NewsCard item={n} index={i} featured={i === 0} priority={i < 2} />

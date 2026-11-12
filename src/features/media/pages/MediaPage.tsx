@@ -23,8 +23,18 @@ export function MediaPage() {
         value={isInstagram ? "instagram" : "filmy"}
         className="mb-6"
         items={[
-          { value: "filmy", label: "Filmy", to: paths.media, icon: <Icon name="youtube" size={20} /> },
-          { value: "instagram", label: "Instagram", to: paths.mediaInstagram, icon: <Icon name="instagram" size={20} /> },
+          {
+            value: "filmy",
+            label: "Filmy",
+            to: paths.media,
+            icon: <Icon name="youtube" size={20} />,
+          },
+          {
+            value: "instagram",
+            label: "Instagram",
+            to: paths.mediaInstagram,
+            icon: <Icon name="instagram" size={20} />,
+          },
         ]}
       />
       {isInstagram ? <InstagramTab /> : <VideosTab />}

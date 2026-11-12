@@ -5,12 +5,22 @@
   }
 }
 @keyframes ui-blob-a {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(8%, 10%, 0) scale(1.15); }
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8%, 10%, 0) scale(1.15);
+  }
 }
 @keyframes ui-blob-b {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
-  50% { transform: translate3d(-10%, 6%, 0) scale(0.9); }
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(-10%, 6%, 0) scale(0.9);
+  }
 }
 @keyframes ui-marquee {
   to {
@@ -18,31 +28,98 @@
   }
 }
 @keyframes ui-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-14px) rotate(4deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(4deg);
+  }
 }
 
 /* Modal / sheet panels (see composites/Modal.tsx) */
-@keyframes ui-pop-in { from { opacity: 0; transform: translateY(16px) scale(0.95); } }
-@keyframes ui-pop-out { to { opacity: 0; transform: translateY(8px) scale(0.97); } }
-@keyframes ui-fade-in { from { opacity: 0; } }
-@keyframes ui-fade-out { to { opacity: 0; } }
-@keyframes ui-sheet-in { from { transform: translateY(100%); } }
-@keyframes ui-sheet-out { to { transform: translateY(100%); } }
-@keyframes ui-side-in { from { transform: translateX(100%); } }
-@keyframes ui-side-out { to { transform: translateX(100%); } }
-@keyframes ui-side-in-left { from { transform: translateX(-100%); } }
-@keyframes ui-side-out-left { to { transform: translateX(-100%); } }
+@keyframes ui-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+}
+@keyframes ui-pop-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+@keyframes ui-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ui-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes ui-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes ui-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes ui-side-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes ui-side-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes ui-side-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes ui-side-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
 
-.ui-modal[data-state="open"]::backdrop { animation: ui-fade-in 0.25s ease-out; }
-.ui-modal[data-state="closed"]::backdrop { animation: ui-fade-out 0.2s ease-in forwards; }
-.ui-panel-dialog[data-state="open"] { animation: ui-pop-in 0.35s var(--ease-spring); }
-.ui-panel-dialog[data-state="closed"] { animation: ui-pop-out 0.2s ease-in forwards; }
-.ui-panel-sheet[data-state="open"] { animation: ui-sheet-in 0.4s var(--ease-out-expo); }
-.ui-panel-sheet[data-state="closed"] { animation: ui-sheet-out 0.22s ease-in forwards; }
+.ui-modal[data-state="open"]::backdrop {
+  animation: ui-fade-in 0.25s ease-out;
+}
+.ui-modal[data-state="closed"]::backdrop {
+  animation: ui-fade-out 0.2s ease-in forwards;
+}
+.ui-panel-dialog[data-state="open"] {
+  animation: ui-pop-in 0.35s var(--ease-spring);
+}
+.ui-panel-dialog[data-state="closed"] {
+  animation: ui-pop-out 0.2s ease-in forwards;
+}
+.ui-panel-sheet[data-state="open"] {
+  animation: ui-sheet-in 0.4s var(--ease-out-expo);
+}
+.ui-panel-sheet[data-state="closed"] {
+  animation: ui-sheet-out 0.22s ease-in forwards;
+}
 @media (min-width: 48rem) {
-  .ui-panel-sheet[data-side="right"][data-state="open"] { animation-name: ui-side-in; }
-  .ui-panel-sheet[data-side="right"][data-state="closed"] { animation-name: ui-side-out; }
-  .ui-panel-sheet[data-side="left"][data-state="open"] { animation-name: ui-side-in-left; }
-  .ui-panel-sheet[data-side="left"][data-state="closed"] { animation-name: ui-side-out-left; }
+  .ui-panel-sheet[data-side="right"][data-state="open"] {
+    animation-name: ui-side-in;
+  }
+  .ui-panel-sheet[data-side="right"][data-state="closed"] {
+    animation-name: ui-side-out;
+  }
+  .ui-panel-sheet[data-side="left"][data-state="open"] {
+    animation-name: ui-side-in-left;
+  }
+  .ui-panel-sheet[data-side="left"][data-state="closed"] {
+    animation-name: ui-side-out-left;
+  }
 }

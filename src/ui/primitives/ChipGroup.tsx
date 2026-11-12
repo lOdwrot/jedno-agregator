@@ -25,7 +25,15 @@ export interface ChipGroupProps {
 }
 
 /** Single-select pill group: role=radiogroup, roving tabindex, arrow keys, animated active pill. */
-export function ChipGroup({ options, value, defaultValue = null, onChange, allowClear, label, className }: ChipGroupProps) {
+export function ChipGroup({
+  options,
+  value,
+  defaultValue = null,
+  onChange,
+  allowClear,
+  label,
+  className,
+}: ChipGroupProps) {
   const [current, setCurrent] = useControllable<string | null>(value, defaultValue, onChange);
   const uid = useId();
   const reduce = usePrefersReducedMotion();
@@ -75,7 +83,9 @@ export function ChipGroup({ options, value, defaultValue = null, onChange, allow
             onKeyDown={(e) => onKeyDown(e, i)}
             className={cn(
               "relative inline-flex min-h-11 items-center rounded-pill px-4 py-1.5 text-sm font-semibold transition-colors",
-              active ? "font-bold text-white" : "bg-pill text-ink-muted hover:bg-pill/70 hover:text-navy",
+              active
+                ? "font-bold text-white"
+                : "bg-pill text-ink-muted hover:bg-pill/70 hover:text-navy",
             )}
           >
             {active && (
@@ -83,7 +93,9 @@ export function ChipGroup({ options, value, defaultValue = null, onChange, allow
                 layoutId={`chip-pill-${uid}`}
                 aria-hidden="true"
                 className="absolute inset-0 rounded-pill bg-accent"
-                transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 32 }}
+                transition={
+                  reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 32 }
+                }
               />
             )}
             <span className="relative">{o.label}</span>

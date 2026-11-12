@@ -10,7 +10,15 @@ export interface ChipProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>,
 }
 
 /** Pill toggle button (multi-select filters). For single-select use ChipGroup. */
-export function Chip({ pressed = false, onPressedChange, leftIcon, className, children, onClick, ...rest }: ChipProps) {
+export function Chip({
+  pressed = false,
+  onPressedChange,
+  leftIcon,
+  className,
+  children,
+  onClick,
+  ...rest
+}: ChipProps) {
   return (
     <button
       type="button"

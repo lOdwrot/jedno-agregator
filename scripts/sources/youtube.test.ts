@@ -44,7 +44,13 @@ describe("youtube", () => {
   });
   it("merges, dedupes, sorts and caps", () => {
     const mk = (id: string, publishedAt: string, views: number | null = 1): Video => ({
-      id, title: id, description: "", publishedAt, thumbnailUrl: "", views, url: "",
+      id,
+      title: id,
+      description: "",
+      publishedAt,
+      thumbnailUrl: "",
+      views,
+      url: "",
     });
     const prev = [mk("a", "2026-01-01"), mk("b", "2026-02-01"), mk("c", "2026-03-01")];
     const fresh = [mk("d", "2026-04-01"), mk("b", "2026-02-01", 99)];

@@ -34,7 +34,10 @@ export function EventsListPage() {
   const now = useMemo(() => new Date(), [query.dataUpdatedAt]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const all = query.data;
-  const filtered = useMemo(() => (all ? filterEvents(all, { tag, author }, now) : []), [all, tag, author, now]);
+  const filtered = useMemo(
+    () => (all ? filterEvents(all, { tag, author }, now) : []),
+    [all, tag, author, now],
+  );
   const tags = options.data?.tags ?? [];
   const authors = options.data?.authors ?? [];
 
@@ -81,12 +84,16 @@ export function EventsListPage() {
         <ErrorState message="Nie udało się pobrać wydarzeń." onRetry={() => void query.refetch()} />
       ) : (
         <div className="flex flex-col gap-6">
-          {next && !hasFilters && <NextEventHighlight next={next} weekCount={countThisWeek(all ?? [], now)} />}
+          {next && !hasFilters && (
+            <NextEventHighlight next={next} weekCount={countThisWeek(all ?? [], now)} />
+          )}
 
           <div className="flex flex-wrap items-end justify-between gap-4">
             <InlineFilters {...filterProps} />
             <p role="status" aria-live="polite" className="text-sm font-semibold text-ink-muted">
-              {filtered.length === 0 ? "Brak wydarzeń" : `Znaleziono: ${eventsCountLabel(filtered.length)}`}
+              {filtered.length === 0
+                ? "Brak wydarzeń"
+                : `Znaleziono: ${eventsCountLabel(filtered.length)}`}
               {hasFilters && " (filtry aktywne)"}
             </p>
           </div>
@@ -94,11 +101,22 @@ export function EventsListPage() {
           {filtered.length === 0 ? (
             <EmptyState
               icon="calendar"
-              title={hasFilters ? "Brak wydarzeń dla wybranych filtrów" : "Brak nadchodzących wydarzeń"}
-              description={hasFilters ? "Spróbuj wybrać inną kategorię lub autora." : "Zajrzyj tu wkrótce — nowe wydarzenia pojawiają się regularnie."}
+              title={
+                hasFilters ? "Brak wydarzeń dla wybranych filtrów" : "Brak nadchodzących wydarzeń"
+              }
+              description={
+                hasFilters
+                  ? "Spróbuj wybrać inną kategorię lub autora."
+                  : "Zajrzyj tu wkrótce — nowe wydarzenia pojawiają się regularnie."
+              }
               action={
                 hasFilters ? (
-                  <Button variant="navy" className="mt-2" onClick={() => update({ tag: "", author: "" })} leftIcon={<Icon name="close" size={18} />}>
+                  <Button
+                    variant="navy"
+                    className="mt-2"
+                    onClick={() => update({ tag: "", author: "" })}
+                    leftIcon={<Icon name="close" size={18} />}
+                  >
                     Wyczyść filtry
                   </Button>
                 ) : undefined
@@ -110,8 +128,18 @@ export function EventsListPage() {
               value={view}
               onChange={setView}
               items={[
-                { value: "os-czasu", label: "Oś czasu", icon: <Icon name="list" size={18} />, content: <EventsTimeline events={filtered} now={now} /> },
-                { value: "kalendarz", label: "Kalendarz", icon: <Icon name="calendar" size={18} />, content: <EventsCalendar events={filtered} tags={tags} now={now} /> },
+                {
+                  value: "os-czasu",
+                  label: "Oś czasu",
+                  icon: <Icon name="list" size={18} />,
+                  content: <EventsTimeline events={filtered} now={now} />,
+                },
+                {
+                  value: "kalendarz",
+                  label: "Kalendarz",
+                  icon: <Icon name="calendar" size={18} />,
+                  content: <EventsCalendar events={filtered} tags={tags} now={now} />,
+                },
               ]}
             />
           )}

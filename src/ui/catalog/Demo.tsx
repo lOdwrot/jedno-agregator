@@ -16,7 +16,9 @@ export function Group({ id, title, children }: { id: string; title: string; chil
 export function Demo({ name, children }: { name: string; children: ReactNode }) {
   return (
     <div className="rounded-card bg-surface p-5 shadow-card">
-      <p className="mb-3 font-mono text-xs font-bold uppercase tracking-wider text-ink-muted">{name}</p>
+      <p className="mb-3 font-mono text-xs font-bold tracking-wider text-ink-muted uppercase">
+        {name}
+      </p>
       <div className="space-y-4">{children}</div>
     </div>
   );

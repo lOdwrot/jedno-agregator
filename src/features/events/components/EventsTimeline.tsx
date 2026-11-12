@@ -15,10 +15,13 @@ export function EventsTimeline({ events, now }: { events: Event[]; now: Date }) 
 
   return (
     <div ref={ref} className="relative pl-9 [--rail:0.8rem] md:pl-12 md:[--rail:1.1rem]">
-      <span aria-hidden className="absolute bottom-0 left-[var(--rail)] top-0 w-0.5 -translate-x-1/2 rounded-full bg-pill" />
+      <span
+        aria-hidden
+        className="absolute top-0 bottom-0 left-[var(--rail)] w-0.5 -translate-x-1/2 rounded-full bg-pill"
+      />
       <motion.span
         aria-hidden
-        className="absolute bottom-0 left-[var(--rail)] top-0 w-0.5 origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-accent to-logo-blue"
+        className="absolute top-0 bottom-0 left-[var(--rail)] w-0.5 origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-accent to-logo-blue"
         style={{ scaleY: reduce ? 1 : scaleY }}
       />
       <div className="flex flex-col gap-8">
@@ -32,14 +35,14 @@ export function EventsTimeline({ events, now }: { events: Event[]; now: Date }) 
               >
                 <span
                   aria-hidden
-                  className="absolute left-[calc(var(--rail)-2.25rem)] top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent ring-4 ring-canvas md:left-[calc(var(--rail)-3rem)]"
+                  className="absolute top-1/2 left-[calc(var(--rail)-2.25rem)] size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent ring-4 ring-canvas md:left-[calc(var(--rail)-3rem)]"
                 />
                 {formatEventDayHeader(g.date, now)}
               </h2>
-              <ul className="grid gap-4 xl:grid-cols-2">
+              <ul className="grid gap-4">
                 {g.items.map((e, i) => (
                   <Reveal as="li" key={e.id} delay={Math.min(i, 3) * 0.08}>
-                    <EventCard event={e} now={now} />
+                    <EventCard event={e} now={now} layout="wide" />
                   </Reveal>
                 ))}
               </ul>

@@ -21,7 +21,13 @@ export function Link({ to, quiet, className, children, ...rest }: LinkProps) {
   const cls = cn(base, quiet && "no-underline hover:underline", className);
   if (isExternalHref(to)) {
     return (
-      <a href={to} target="_blank" rel="noopener noreferrer" className={cn(cls, "inline-flex items-center gap-1")} {...rest}>
+      <a
+        href={to}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(cls, "inline-flex items-center gap-1")}
+        {...rest}
+      >
         {children}
         <Icon name="arrowUpRight" size={16} />
         <VisuallyHidden>{NEW_TAB_HINT}</VisuallyHidden>

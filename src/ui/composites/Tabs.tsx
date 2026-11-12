@@ -29,13 +29,28 @@ export interface TabsProps {
 }
 
 /** Tabs with roving tabindex, arrow/Home/End keys and an animated sliding indicator. */
-export function Tabs({ items, value, defaultValue, onChange, label, className, listClassName }: TabsProps) {
-  const [current, setCurrent] = useControllable<string>(value, defaultValue ?? items[0]?.value ?? "", onChange);
+export function Tabs({
+  items,
+  value,
+  defaultValue,
+  onChange,
+  label,
+  className,
+  listClassName,
+}: TabsProps) {
+  const [current, setCurrent] = useControllable<string>(
+    value,
+    defaultValue ?? items[0]?.value ?? "",
+    onChange,
+  );
   const uid = useId();
   const reduce = usePrefersReducedMotion();
   const refs = useRef<(HTMLElement | null)[]>([]);
   const asLinks = items.some((i) => i.to);
-  const activeIdx = Math.max(0, items.findIndex((i) => i.value === current));
+  const activeIdx = Math.max(
+    0,
+    items.findIndex((i) => i.value === current),
+  );
 
   const onKeyDown = (e: KeyboardEvent, i: number) => {
     const n = items.length;
@@ -79,7 +94,11 @@ export function Tabs({ items, value, defaultValue, onChange, label, className, l
       ))}
     </nav>
   ) : (
-    <div role="tablist" aria-label={label} className={cn("flex gap-1 overflow-x-auto border-b border-line", listClassName)}>
+    <div
+      role="tablist"
+      aria-label={label}
+      className={cn("flex gap-1 overflow-x-auto border-b border-line", listClassName)}
+    >
       {items.map((it, i) => (
         <button
           key={it.value}

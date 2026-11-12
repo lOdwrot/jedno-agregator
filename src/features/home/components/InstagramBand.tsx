@@ -20,18 +20,26 @@ export function InstagramBand() {
             name="instagram"
             size={320}
             strokeWidth={1}
-            className="pointer-events-none absolute -bottom-16 -right-10 -z-10 rotate-12 text-white/15"
+            className="pointer-events-none absolute -right-10 -bottom-16 -z-10 rotate-12 text-white/15"
           />
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-white/90">Instagram</p>
+          <p className="mb-3 text-sm font-bold tracking-widest text-white/90 uppercase">
+            Instagram
+          </p>
           <Heading level={2} size="2xl" tone="light" id="home-instagram" className="max-w-2xl">
             Śledź nas na Instagramie{" "}
-            <span className="font-serif font-normal italic text-logo-yellow">@archigdansk</span>
+            <span className="font-serif font-normal text-logo-yellow italic">@archigdansk</span>
           </Heading>
           <p className="mt-4 max-w-xl text-lg text-white/90">
             Codzienne zdjęcia, relacje z wydarzeń i krótkie myśli z życia archidiecezji.
           </p>
           <div className="mt-8">
-            <Button href={url} size="lg" variant="solid" magnetic leftIcon={<Icon name="instagram" size={22} />}>
+            <Button
+              href={url}
+              size="lg"
+              variant="solid"
+              magnetic
+              leftIcon={<Icon name="instagram" size={22} />}
+            >
               Obserwuj @archigdansk
             </Button>
           </div>

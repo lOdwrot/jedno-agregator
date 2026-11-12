@@ -55,8 +55,14 @@ export function SmartImage({
           aria-label={alt || undefined}
           className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-accent-soft via-surface-muted to-pill"
         >
-          <span className="absolute -left-6 -top-6 size-28 rounded-full bg-logo-yellow/25" aria-hidden="true" />
-          <span className="absolute -bottom-8 right-4 size-32 rounded-full bg-logo-blue/20" aria-hidden="true" />
+          <span
+            className="absolute -top-6 -left-6 size-28 rounded-full bg-logo-yellow/25"
+            aria-hidden="true"
+          />
+          <span
+            className="absolute right-4 -bottom-8 size-32 rounded-full bg-logo-blue/20"
+            aria-hidden="true"
+          />
           <JednoLogo variant="mark" size={56} className="relative opacity-70" />
         </div>
       ) : (
@@ -73,8 +79,9 @@ export function SmartImage({
           onError={() => setFailedSrc(src)}
           className={cn(
             "size-full object-cover transition-[opacity,filter,transform] duration-700 ease-out",
-            loaded ? "scale-100 opacity-100 blur-0" : "scale-105 opacity-0 blur-lg",
-            zoomOnHover && "group-hover:scale-110 group-focus-within:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100",
+            loaded ? "blur-0 scale-100 opacity-100" : "scale-105 opacity-0 blur-lg",
+            zoomOnHover &&
+              "group-focus-within:scale-110 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100",
             imgClassName,
           )}
         />

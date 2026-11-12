@@ -50,10 +50,13 @@ export function YouTubeEmbed({ videoId, title, className, autoplay }: YouTubeEmb
           onError={() => setHq(true)}
           className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <span aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-navy/60 via-transparent to-transparent" />
         <span
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-accent text-white shadow-lift transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:size-20"
+          className="absolute inset-0 bg-linear-to-t from-navy/60 via-transparent to-transparent"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-accent text-white shadow-lift transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:size-20"
         >
           <span className="absolute inset-0 animate-ping rounded-full bg-accent/40 motion-reduce:hidden" />
           <Icon name="play" size={32} className="relative ml-1 fill-current" />

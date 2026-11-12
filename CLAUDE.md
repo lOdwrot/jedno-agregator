@@ -99,3 +99,14 @@ Features: `home`, `news`, `events`, `communities`, `media`, `infos`, `notificati
 - Instagram has no keyless API. Posts are listed by hand in `content/instagram/posts.json`
   (`[{ "url": "https://www.instagram.com/p/…/", "caption": null }]`) and shown with the official embed.
 - Media URLs on `admin.jedno.net/media/...` accept `?width=` / `&height=` for responsive sizes.
+
+## Testing & verification
+
+- Unit/component tests live next to the code (`*.test.ts(x)`), Vitest + Testing Library (jsdom; IntersectionObserver
+  and matchMedia are stubbed in `src/test/setup.ts`).
+- `e2e/pages.spec.ts` visits every route on mobile + desktop, asserts one `<h1>`, no console errors and **zero axe
+  WCAG 2.2 AA violations**. When adding a route, add it there. Runs in CI on push (blocks deploy if it fails).
+- In the Claude Code cloud sandbox: Node's fetch needs
+  `NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt npm run fetch-data`, and Playwright needs
+  `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run e2e`.
+- Visually check changes with screenshots at 390, 768 and 1440 px widths.

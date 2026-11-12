@@ -15,9 +15,12 @@ export function ChannelCta({ href }: { href: string }) {
             <Icon name="youtube" size={32} />
           </span>
           <Heading level={2} size="xl" tone="light" id="cta-title">
-            Subskrybuj kanał <span className="font-serif font-normal italic text-logo-yellow">@ArchiGdansk</span>
+            Subskrybuj kanał{" "}
+            <span className="font-serif font-normal text-logo-yellow italic">@ArchiGdansk</span>
           </Heading>
-          <Text className="text-white/80">Rozmowy, relacje, homilie i świadectwa — nowe filmy co tydzień.</Text>
+          <Text className="text-white/80">
+            Rozmowy, relacje, homilie i świadectwa — nowe filmy co tydzień.
+          </Text>
           <Button href={href} size="lg" magnetic rightIcon={<Icon name="externalLink" size={20} />}>
             Subskrybuj na YouTube
           </Button>

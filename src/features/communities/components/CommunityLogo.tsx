@@ -13,10 +13,14 @@ export interface CommunityLogoProps {
 
 /** Round logo on white with a thin ring; initials (logo-coloured) when there is no image. */
 export function CommunityLogo({ name, src, size, alt = "", className }: CommunityLogoProps) {
-  if (!src) return <Avatar name={name} size={size} className={cn("ring-2 ring-surface", className)} />;
+  if (!src)
+    return <Avatar name={name} size={size} className={cn("ring-2 ring-surface", className)} />;
   return (
     <span
-      className={cn("inline-block shrink-0 overflow-hidden rounded-full bg-surface shadow-card ring-1 ring-line", className)}
+      className={cn(
+        "inline-block shrink-0 overflow-hidden rounded-full bg-surface shadow-card ring-1 ring-line",
+        className,
+      )}
       style={{ width: size, height: size }}
     >
       <SmartImage

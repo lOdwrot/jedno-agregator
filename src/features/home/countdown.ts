@@ -14,7 +14,8 @@ export function formatCountdown(targetMs: number, nowMs: number): string {
   const days = Math.floor(totalMin / 1440);
   const hours = Math.floor((totalMin % 1440) / 60);
   const mins = totalMin % 60;
-  if (days > 0) return hours > 0 ? `Za ${days} ${dni(days)} ${hours} godz.` : `Za ${days} ${dni(days)}`;
+  if (days > 0)
+    return hours > 0 ? `Za ${days} ${dni(days)} ${hours} godz.` : `Za ${days} ${dni(days)}`;
   if (hours > 0) return mins > 0 ? `Za ${hours} godz. ${mins} min` : `Za ${hours} godz.`;
   return `Za ${Math.max(1, mins)} min`;
 }

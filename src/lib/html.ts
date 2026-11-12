@@ -1,8 +1,7 @@
 import DOMPurify from "dompurify";
 
 export type RichSegment =
-  | { type: "html"; html: string }
-  | { type: "youtube"; videoId: string; title: string };
+  { type: "html"; html: string } | { type: "youtube"; videoId: string; title: string };
 
 const YT_HOSTS = new Set([
   "youtube.com",
@@ -93,7 +92,9 @@ function youtubeFromElement(el: Element): RichSegment | null {
   }
   if (el.tagName === "IFRAME") {
     const id = extractYouTubeId(el.getAttribute("src"));
-    return id ? { type: "youtube", videoId: id, title: el.getAttribute("title") || DEFAULT_TITLE } : null;
+    return id
+      ? { type: "youtube", videoId: id, title: el.getAttribute("title") || DEFAULT_TITLE }
+      : null;
   }
   // wrapper (p/div/figure) containing only a youtube iframe, or only a youtube link
   const text = (el.textContent ?? "").replace(/\s+/g, " ").trim();

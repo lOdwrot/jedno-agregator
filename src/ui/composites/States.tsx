@@ -15,9 +15,20 @@ export interface EmptyStateProps {
 }
 
 /** "Nothing here" placeholder. */
-export function EmptyState({ title, description, icon = "search", action, className }: EmptyStateProps) {
+export function EmptyState({
+  title,
+  description,
+  icon = "search",
+  action,
+  className,
+}: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center gap-3 rounded-card bg-surface px-6 py-14 text-center shadow-card", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center gap-3 rounded-card bg-surface px-6 py-14 text-center shadow-card",
+        className,
+      )}
+    >
       <span className="grid size-16 place-items-center rounded-full bg-accent-soft text-accent-ink">
         <Icon name={icon} size={30} />
       </span>
@@ -39,9 +50,20 @@ export interface ErrorStateProps {
 }
 
 /** Error panel with retry (role=alert). */
-export function ErrorState({ title = "Coś poszło nie tak", message = "Nie udało się pobrać danych.", onRetry, className }: ErrorStateProps) {
+export function ErrorState({
+  title = "Coś poszło nie tak",
+  message = "Nie udało się pobrać danych.",
+  onRetry,
+  className,
+}: ErrorStateProps) {
   return (
-    <div role="alert" className={cn("flex flex-col items-center gap-3 rounded-card bg-surface px-6 py-14 text-center shadow-card", className)}>
+    <div
+      role="alert"
+      className={cn(
+        "flex flex-col items-center gap-3 rounded-card bg-surface px-6 py-14 text-center shadow-card",
+        className,
+      )}
+    >
       <span className="grid size-16 place-items-center rounded-full bg-danger/10 text-danger">
         <Icon name="info" size={30} />
       </span>
@@ -69,7 +91,14 @@ export interface LoadingStateProps {
 /** Polite live region announcing loading, with a spinner or custom skeletons. */
 export function LoadingState({ label = "Ładowanie…", className, children }: LoadingStateProps) {
   return (
-    <div role="status" aria-live="polite" className={cn(!children && "flex items-center justify-center gap-3 py-16 text-ink-muted", className)}>
+    <div
+      role="status"
+      aria-live="polite"
+      className={cn(
+        !children && "flex items-center justify-center gap-3 py-16 text-ink-muted",
+        className,
+      )}
+    >
       {children ?? <Spinner className="size-6 text-accent" />}
       <span className={children ? "sr-only" : "font-semibold"}>{label}</span>
     </div>

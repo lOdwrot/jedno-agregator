@@ -7,7 +7,8 @@ export const buttonStyles = tv({
       solid: "bg-accent-strong text-white shadow-card hover:bg-accent-ink hover:shadow-lift",
       navy: "bg-navy text-white shadow-card hover:bg-navy-800 hover:shadow-lift",
       soft: "bg-accent-soft text-accent-ink hover:bg-accent-strong hover:text-white",
-      outline: "border-2 border-navy/20 bg-transparent text-navy hover:border-navy hover:bg-navy hover:text-white",
+      outline:
+        "border-2 border-navy/20 bg-transparent text-navy hover:border-navy hover:bg-navy hover:text-white",
       ghost: "bg-transparent text-navy hover:bg-navy/8",
       link: "min-h-0 rounded-none bg-transparent p-0 text-accent-ink underline decoration-accent/40 underline-offset-4 hover:decoration-accent-ink active:scale-100",
     },

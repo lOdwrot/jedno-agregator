@@ -14,7 +14,8 @@ function Countdown({ start, title }: { start: string; title: string }) {
     <p className="mb-4 inline-flex max-w-full items-center gap-2 rounded-pill bg-navy px-4 py-2 text-sm font-semibold text-white">
       <Icon name="clock" size={18} className="shrink-0 text-logo-yellow" />
       <span className="truncate">
-        <span className="font-extrabold">{formatCountdown(parseISO(start).getTime(), now)}</span> do: {title}
+        <span className="font-extrabold">{formatCountdown(parseISO(start).getTime(), now)}</span>{" "}
+        do: {title}
       </span>
     </p>
   );
@@ -38,7 +39,11 @@ export function UpcomingEvents() {
         ) : isError ? (
           <ErrorState message="Nie udało się wczytać wydarzeń." onRetry={() => void refetch()} />
         ) : data.length === 0 ? (
-          <EmptyState icon="calendar" title="Brak nadchodzących wydarzeń" description="Zajrzyj tu wkrótce." />
+          <EmptyState
+            icon="calendar"
+            title="Brak nadchodzących wydarzeń"
+            description="Zajrzyj tu wkrótce."
+          />
         ) : (
           <>
             {data[0] && <Countdown start={data[0].start} title={data[0].title} />}

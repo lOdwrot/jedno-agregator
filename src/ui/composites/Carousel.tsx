@@ -14,7 +14,12 @@ export interface CarouselProps {
 }
 
 /** Horizontal scroll-snap carousel with prev/next buttons, edge fades and keyboard support. */
-export function Carousel({ children, label, slideClassName = "w-[80%] sm:w-[45%] lg:w-[30%]", className }: CarouselProps) {
+export function Carousel({
+  children,
+  label,
+  slideClassName = "w-[80%] sm:w-[45%] lg:w-[30%]",
+  className,
+}: CarouselProps) {
   const track = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -48,7 +53,12 @@ export function Carousel({ children, label, slideClassName = "w-[80%] sm:w-[45%]
       ? undefined
       : `linear-gradient(to right, ${atStart ? "#000" : "transparent"}, #000 48px, #000 calc(100% - 48px), ${atEnd ? "#000" : "transparent"})`;
   return (
-    <div className={cn("relative", className)} role="region" aria-roledescription="karuzela" aria-label={label}>
+    <div
+      className={cn("relative", className)}
+      role="region"
+      aria-roledescription="karuzela"
+      aria-label={label}
+    >
       {/* Scrollable region must be focusable so keyboard users can scroll it. */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
@@ -62,7 +72,7 @@ export function Carousel({ children, label, slideClassName = "w-[80%] sm:w-[45%]
           if (e.key === "ArrowLeft") scrollBy(-1);
         }}
         className={cn(
-          "flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-1 pb-4 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-reduce:scroll-auto",
+          "flex snap-x snap-mandatory [scrollbar-width:none] gap-4 overflow-x-auto scroll-smooth px-1 pt-1 pb-4 motion-reduce:scroll-auto [&::-webkit-scrollbar]:hidden",
         )}
         style={{ maskImage: mask, WebkitMaskImage: mask }}
       >
@@ -79,10 +89,22 @@ export function Carousel({ children, label, slideClassName = "w-[80%] sm:w-[45%]
         ))}
       </div>
       <div className="mt-1 hidden items-center justify-end gap-2 md:flex">
-        <IconButton label="Poprzednie" variant="soft" disabled={atStart} aria-controls={id} onClick={() => scrollBy(-1)}>
+        <IconButton
+          label="Poprzednie"
+          variant="soft"
+          disabled={atStart}
+          aria-controls={id}
+          onClick={() => scrollBy(-1)}
+        >
           <Icon name="chevronLeft" />
         </IconButton>
-        <IconButton label="Następne" variant="soft" disabled={atEnd} aria-controls={id} onClick={() => scrollBy(1)}>
+        <IconButton
+          label="Następne"
+          variant="soft"
+          disabled={atEnd}
+          aria-controls={id}
+          onClick={() => scrollBy(1)}
+        >
           <Icon name="chevronRight" />
         </IconButton>
       </div>

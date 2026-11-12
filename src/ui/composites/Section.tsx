@@ -19,7 +19,15 @@ export interface SectionProps {
 }
 
 /** Page section with heading row (eyebrow, title, optional "see all" link) and scroll reveal. */
-export function Section({ title, eyebrow, action, level = 2, children, className, reveal = true }: SectionProps) {
+export function Section({
+  title,
+  eyebrow,
+  action,
+  level = 2,
+  children,
+  className,
+  reveal = true,
+}: SectionProps) {
   const id = useId();
   const body = (
     <>
@@ -31,7 +39,10 @@ export function Section({ title, eyebrow, action, level = 2, children, className
           </Heading>
         </div>
         {action && (
-          <Link to={action.to} className="inline-flex min-h-11 shrink-0 items-center gap-1 text-sm no-underline hover:underline">
+          <Link
+            to={action.to}
+            className="inline-flex min-h-11 shrink-0 items-center gap-1 text-sm no-underline hover:underline"
+          >
             {action.label}
             <Icon name="arrowRight" size={16} />
           </Link>

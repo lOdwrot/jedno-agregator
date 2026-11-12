@@ -10,7 +10,10 @@ describe("YouTubeEmbed", () => {
     await user.click(screen.getByRole("button", { name: "Odtwórz film: Msza święta" }));
     const frame = screen.getByTitle("Msza święta");
     expect(frame.tagName).toBe("IFRAME");
-    expect(frame).toHaveAttribute("src", "https://www.youtube-nocookie.com/embed/abc123?autoplay=1&rel=0");
+    expect(frame).toHaveAttribute(
+      "src",
+      "https://www.youtube-nocookie.com/embed/abc123?autoplay=1&rel=0",
+    );
   });
 
   it("renders the iframe immediately with autoplay", () => {

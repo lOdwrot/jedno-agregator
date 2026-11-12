@@ -16,7 +16,14 @@ export interface SplitTextProps {
 }
 
 /** Staggered reveal. The wrapper carries aria-label; the animated pieces are aria-hidden. */
-export function SplitText({ text, by = "word", stagger, delay = 0, className, trigger = "mount" }: SplitTextProps) {
+export function SplitText({
+  text,
+  by = "word",
+  stagger,
+  delay = 0,
+  className,
+  trigger = "mount",
+}: SplitTextProps) {
   const reduce = usePrefersReducedMotion();
   if (reduce) return <span className={className}>{text}</span>;
   const gap = stagger ?? (by === "word" ? 0.07 : 0.025);
@@ -31,7 +38,10 @@ export function SplitText({ text, by = "word", stagger, delay = 0, className, tr
     <motion.span
       aria-label={text}
       className={cn("inline", className)}
-      variants={{ hidden: {}, show: { transition: { staggerChildren: gap, delayChildren: delay } } }}
+      variants={{
+        hidden: {},
+        show: { transition: { staggerChildren: gap, delayChildren: delay } },
+      }}
       {...anim}
     >
       {words.map((w, wi) => (
@@ -43,7 +53,12 @@ export function SplitText({ text, by = "word", stagger, delay = 0, className, tr
                 className="inline-block"
                 variants={{
                   hidden: { y: "110%", rotate: 6, opacity: 0 },
-                  show: { y: "0%", rotate: 0, opacity: 1, transition: { type: "spring", stiffness: 140, damping: 18 } },
+                  show: {
+                    y: "0%",
+                    rotate: 0,
+                    opacity: 1,
+                    transition: { type: "spring", stiffness: 140, damping: 18 },
+                  },
                 }}
               >
                 {piece}

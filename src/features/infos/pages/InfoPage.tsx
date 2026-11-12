@@ -1,5 +1,18 @@
 import { NavLink, useParams } from "react-router";
-import { Button, Card, Container, EmptyState, ErrorState, Heading, Icon, LoadingState, PageHeader, RichText, Skeleton, Text } from "@/ui";
+import {
+  Button,
+  Card,
+  Container,
+  EmptyState,
+  ErrorState,
+  Heading,
+  Icon,
+  LoadingState,
+  PageHeader,
+  RichText,
+  Skeleton,
+  Text,
+} from "@/ui";
 import { paths } from "@/app/routes";
 import { cn } from "@/lib/cn";
 import { usePageTitle } from "@/lib/seo";
@@ -50,7 +63,9 @@ function InfoNav({ current }: { current: string }) {
               aria-current={i.slug === current ? "page" : undefined}
               className={cn(
                 "flex min-h-11 items-center justify-between gap-2 rounded-card px-4 py-2 font-bold shadow-card transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink",
-                i.slug === current ? "bg-navy text-white" : "bg-surface text-navy hover:bg-accent-soft",
+                i.slug === current
+                  ? "bg-navy text-white"
+                  : "bg-surface text-navy hover:bg-accent-soft",
               )}
             >
               {i.title}
@@ -89,7 +104,11 @@ export function InfoPage() {
         <EmptyState
           title="Nie znaleziono strony"
           description="Sprawdź adres lub wróć na stronę główną."
-          action={<Button to={paths.home} variant="navy">Strona główna</Button>}
+          action={
+            <Button to={paths.home} variant="navy">
+              Strona główna
+            </Button>
+          }
         />
       </Container>
     );

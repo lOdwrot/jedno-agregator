@@ -31,16 +31,34 @@ export function NewsFilters({ authors, author, onChange }: NewsFiltersProps) {
   return (
     <>
       <div className="hidden md:block">
-        <ChipGroup label="Filtruj według autora" options={options} value={author} onChange={onChange} allowClear />
+        <ChipGroup
+          label="Filtruj według autora"
+          options={options}
+          value={author}
+          onChange={onChange}
+          allowClear
+        />
       </div>
       <div className="md:hidden">
-        <IconButton label={author ? `Filtry (aktywny: ${author})` : "Filtry"} variant="soft" badge={!!author} onClick={openSheet} aria-haspopup="dialog">
+        <IconButton
+          label={author ? `Filtry (aktywny: ${author})` : "Filtry"}
+          variant="soft"
+          badge={!!author}
+          onClick={openSheet}
+          aria-haspopup="dialog"
+        >
           <Icon name="filter" />
         </IconButton>
       </div>
       <Sheet open={open} onClose={() => setOpen(false)} title="Filtruj aktualności">
         <div className="flex flex-col gap-6">
-          <Select label="Autor" placeholder="Wszyscy autorzy" options={options} value={pending} onChange={setPending} />
+          <Select
+            label="Autor"
+            placeholder="Wszyscy autorzy"
+            options={options}
+            value={pending}
+            onChange={setPending}
+          />
           <Cluster gap={3}>
             <Button variant="solid" size="lg" onClick={apply} className="flex-1">
               Zastosuj filtry

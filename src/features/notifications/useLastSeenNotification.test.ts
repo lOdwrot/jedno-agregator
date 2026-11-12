@@ -10,7 +10,13 @@ import {
   useLastSeenNotification,
 } from "./useLastSeenNotification";
 
-const n = (id: number, publishDate: string): Notification => ({ id, title: `t${id}`, description: null, publishDate, target: null });
+const n = (id: number, publishDate: string): Notification => ({
+  id,
+  title: `t${id}`,
+  description: null,
+  publishDate,
+  target: null,
+});
 
 describe("last seen helpers", () => {
   beforeEach(() => localStorage.clear());
@@ -27,7 +33,9 @@ describe("last seen helpers", () => {
 
   it("finds the newest date", () => {
     expect(newestDate([])).toBeNull();
-    expect(newestDate([n(1, "2026-11-08T10:00:00Z"), n(2, "2026-11-10T10:00:00Z")])).toBe("2026-11-10T10:00:00Z");
+    expect(newestDate([n(1, "2026-11-08T10:00:00Z"), n(2, "2026-11-10T10:00:00Z")])).toBe(
+      "2026-11-10T10:00:00Z",
+    );
   });
 
   it("ignores garbage in storage", () => {

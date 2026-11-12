@@ -36,7 +36,13 @@ export async function fetchWithRetry(url: string, opts: HttpOptions = {}): Promi
       }
       throw err;
     } catch (e) {
-      if (e instanceof HttpError && e.status !== null && e.status < 500 && e.status !== 408 && e.status !== 429) {
+      if (
+        e instanceof HttpError &&
+        e.status !== null &&
+        e.status < 500 &&
+        e.status !== 408 &&
+        e.status !== 429
+      ) {
         throw e;
       }
       lastError = e instanceof Error ? new Error(`${e.message} (${safeUrl(url)})`) : e;
@@ -46,7 +52,10 @@ export async function fetchWithRetry(url: string, opts: HttpOptions = {}): Promi
 }
 
 export async function getJson<T = unknown>(url: string, opts?: HttpOptions): Promise<T> {
-  const res = await fetchWithRetry(url, { ...opts, headers: { accept: "application/json", ...opts?.headers } });
+  const res = await fetchWithRetry(url, {
+    ...opts,
+    headers: { accept: "application/json", ...opts?.headers },
+  });
   return (await res.json()) as T;
 }
 
@@ -55,7 +64,11 @@ export async function getText(url: string, opts?: HttpOptions): Promise<string> 
 }
 
 /** Runs `fn` over items with at most `limit` in flight; preserves order; rejects on first error. */
-export async function mapLimit<T, R>(items: readonly T[], limit: number, fn: (item: T, index: number) => Promise<R>): Promise<R[]> {
+export async function mapLimit<T, R>(
+  items: readonly T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
   const results = new Array<R>(items.length);
   let next = 0;
   const worker = async () => {

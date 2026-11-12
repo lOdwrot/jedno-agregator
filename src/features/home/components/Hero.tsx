@@ -20,12 +20,24 @@ import {
   useMediaQuery,
 } from "@/ui";
 
-function Stat({ value, label, loading }: { value: number | undefined; label: string; loading: boolean }) {
+function Stat({
+  value,
+  label,
+  loading,
+}: {
+  value: number | undefined;
+  label: string;
+  loading: boolean;
+}) {
   return (
     <div className="rounded-card bg-surface/80 px-4 py-3 shadow-card backdrop-blur">
       <dt className="order-2 text-sm font-semibold text-ink-muted">{label}</dt>
-      <dd className="font-display text-3xl font-extrabold leading-none text-navy sm:text-4xl">
-        {loading || value === undefined ? <Skeleton className="h-9 w-12" /> : <Counter value={value} />}
+      <dd className="font-display text-3xl leading-none font-extrabold text-navy sm:text-4xl">
+        {loading || value === undefined ? (
+          <Skeleton className="h-9 w-12" />
+        ) : (
+          <Counter value={value} />
+        )}
       </dd>
     </div>
   );
@@ -42,7 +54,7 @@ export function Hero() {
     <Spotlight className="relative isolate overflow-hidden bg-canvas">
       <AnimatedBlobs />
       <Grain opacity={0.05} />
-      <Container className="relative grid items-center gap-8 pb-12 pt-8 sm:pb-16 sm:pt-12 lg:grid-cols-[1.5fr_1fr] lg:gap-12 lg:pb-24 lg:pt-20">
+      <Container className="relative grid items-center gap-8 pt-8 pb-12 sm:pt-12 sm:pb-16 lg:grid-cols-[1.5fr_1fr] lg:gap-12 lg:pt-20 lg:pb-24">
         <div>
           <p className="mb-4 inline-flex items-center gap-2 rounded-pill bg-surface px-3 py-1.5 text-sm font-bold text-accent-ink shadow-card">
             <Icon name="sparkle" size={16} />
@@ -50,17 +62,22 @@ export function Hero() {
           </p>
           <Heading level={1} size="hero" className="leading-[1.02]">
             <SplitText text="Wszystko, co dzieje się w" delay={0.1} />{" "}
-            <span className="font-serif font-normal italic text-accent-ink">
+            <span className="font-serif font-normal text-accent-ink italic">
               <BrushUnderline strokeClassName="text-logo-yellow">Kościele gdańskim</BrushUnderline>
             </span>{" "}
             <SplitText text="— w jednym miejscu" delay={0.45} />
           </Heading>
           <p className="mt-5 max-w-xl text-lg text-ink-muted sm:text-xl">
-            Aktualności, wydarzenia, wspólnoty i nagrania archidiecezji w jednym, przejrzystym serwisie — tak jak w
-            aplikacji Jedno.
+            Aktualności, wydarzenia, wspólnoty i nagrania archidiecezji w jednym, przejrzystym
+            serwisie — tak jak w aplikacji Jedno.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Button to={paths.events} size="lg" magnetic rightIcon={<Icon name="arrowRight" size={20} />}>
+            <Button
+              to={paths.events}
+              size="lg"
+              magnetic
+              rightIcon={<Icon name="arrowRight" size={20} />}
+            >
               Zobacz wydarzenia
             </Button>
             <Button to={paths.news} size="lg" variant="navy">

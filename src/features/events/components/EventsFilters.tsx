@@ -36,7 +36,11 @@ export function InlineFilters({ tags, authors, value, onChange }: Props) {
         className="w-72"
       />
       {(value.tag || value.author) && (
-        <Button variant="ghost" onClick={() => onChange({ tag: "", author: "" })} leftIcon={<Icon name="close" size={18} />}>
+        <Button
+          variant="ghost"
+          onClick={() => onChange({ tag: "", author: "" })}
+          leftIcon={<Icon name="close" size={18} />}
+        >
           Wyczyść
         </Button>
       )}

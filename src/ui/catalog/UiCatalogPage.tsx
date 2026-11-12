@@ -5,7 +5,8 @@ import { CompositesDemo } from "./CompositesDemo";
 import { EffectsDemo } from "./EffectsDemo";
 import { PrimitivesDemo } from "./PrimitivesDemo";
 
-const navLink = "inline-flex min-h-11 items-center font-bold text-accent-ink underline underline-offset-4";
+const navLink =
+  "inline-flex min-h-11 items-center font-bold text-accent-ink underline underline-offset-4";
 
 /** Hidden component catalog at /ui (noindex). */
 export function UiCatalogPage() {
@@ -22,12 +23,22 @@ export function UiCatalogPage() {
     <ToastProvider>
       <ScrollProgress />
       <Container className="py-10">
-        <Heading level={1} size="2xl">Katalog komponentów</Heading>
-        <Text variant="lead" className="mt-2 text-ink-muted">Wszystkie komponenty z <code>@/ui</code> w jednym miejscu.</Text>
+        <Heading level={1} size="2xl">
+          Katalog komponentów
+        </Heading>
+        <Text variant="lead" className="mt-2 text-ink-muted">
+          Wszystkie komponenty z <code>@/ui</code> w jednym miejscu.
+        </Text>
         <nav aria-label="Sekcje katalogu" className="mt-4 flex gap-4">
-          <a href="#primitives" className={navLink}>Prymitywy</a>
-          <a href="#composites" className={navLink}>Kompozycje</a>
-          <a href="#effects" className={navLink}>Efekty</a>
+          <a href="#primitives" className={navLink}>
+            Prymitywy
+          </a>
+          <a href="#composites" className={navLink}>
+            Kompozycje
+          </a>
+          <a href="#effects" className={navLink}>
+            Efekty
+          </a>
         </nav>
         <PrimitivesDemo />
         <CompositesDemo />

@@ -28,7 +28,12 @@ export type HeadingProps = VariantProps<typeof headingStyles> &
 
 export function Heading({ level = 2, size, tone, className, ...rest }: HeadingProps) {
   const Tag = `h${level}` as ElementType;
-  return <Tag className={cn(headingStyles({ size: size ?? DEFAULT_SIZE[level], tone }), className)} {...rest} />;
+  return (
+    <Tag
+      className={cn(headingStyles({ size: size ?? DEFAULT_SIZE[level], tone }), className)}
+      {...rest}
+    />
+  );
 }
 
 const textStyles = tv({
@@ -43,7 +48,8 @@ const textStyles = tv({
   defaultVariants: { variant: "body" },
 });
 
-export type TextProps = VariantProps<typeof textStyles> & ComponentProps<"p"> & { as?: ElementType };
+export type TextProps = VariantProps<typeof textStyles> &
+  ComponentProps<"p"> & { as?: ElementType };
 
 export function Text({ variant, as, className, ...rest }: TextProps) {
   const Tag = (as ?? "p") as ElementType;
@@ -54,7 +60,10 @@ export function Text({ variant, as, className, ...rest }: TextProps) {
 export function Eyebrow({ className, ...rest }: ComponentProps<"p"> & { as?: ElementType }) {
   return (
     <p
-      className={cn("text-xs font-extrabold uppercase tracking-[0.18em] text-accent-ink", className)}
+      className={cn(
+        "text-xs font-extrabold tracking-[0.18em] text-accent-ink uppercase",
+        className,
+      )}
       {...rest}
     />
   );

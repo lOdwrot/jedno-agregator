@@ -11,7 +11,9 @@ const options = [
 
 function Harness({ allowClear }: { allowClear?: boolean }) {
   const [v, setV] = useState<string | null>("a");
-  return <ChipGroup label="Autor" options={options} value={v} onChange={setV} allowClear={allowClear} />;
+  return (
+    <ChipGroup label="Autor" options={options} value={v} onChange={setV} allowClear={allowClear} />
+  );
 }
 
 describe("ChipGroup", () => {

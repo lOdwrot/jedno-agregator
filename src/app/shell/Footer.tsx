@@ -24,7 +24,7 @@ export function Footer() {
         <Reveal>
           <p
             aria-hidden="true"
-            className="select-none bg-gradient-to-r from-white via-white to-logo-yellow bg-clip-text font-display text-[22vw] font-extrabold leading-[0.85] tracking-tighter text-transparent sm:text-[16vw] lg:text-[11rem]"
+            className="bg-gradient-to-r from-white via-white to-logo-yellow bg-clip-text font-display text-[22vw] leading-[0.85] font-extrabold tracking-tighter text-transparent select-none sm:text-[16vw] lg:text-[11rem]"
           >
             Jedno
           </p>
@@ -57,7 +57,9 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-              {infos.data?.length === 0 && <li className="text-white/70">Brak stron informacyjnych.</li>}
+              {infos.data?.length === 0 && (
+                <li className="text-white/70">Brak stron informacyjnych.</li>
+              )}
             </ul>
           </nav>
 
@@ -65,14 +67,24 @@ export function Footer() {
             <h2 className={headClass}>Obserwuj nas</h2>
             <ul>
               <li>
-                <a href={YOUTUBE_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <a
+                  href={YOUTUBE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClass}
+                >
                   <Icon name="youtube" size={20} />
                   YouTube
                   <span className="sr-only">(otwiera się w nowej karcie)</span>
                 </a>
               </li>
               <li>
-                <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClass}
+                >
                   <Icon name="instagram" size={20} />
                   Instagram
                   <span className="sr-only">(otwiera się w nowej karcie)</span>
@@ -84,8 +96,8 @@ export function Footer() {
           <div>
             <h2 className={headClass}>Aplikacja</h2>
             <p className="text-white/85">
-              Pobierz aplikację <strong className="text-white">Jedno</strong> na telefon — powiadomienia, wydarzenia
-              i aktualności zawsze pod ręką.
+              Pobierz aplikację <strong className="text-white">Jedno</strong> na telefon —
+              powiadomienia, wydarzenia i aktualności zawsze pod ręką.
             </p>
           </div>
         </div>
@@ -95,7 +107,9 @@ export function Footer() {
           {meta.data && (
             <p>
               Dane zaktualizowane:{" "}
-              <time dateTime={meta.data.generatedAt}>{formatRelativeAgo(meta.data.generatedAt)}</time>
+              <time dateTime={meta.data.generatedAt}>
+                {formatRelativeAgo(meta.data.generatedAt)}
+              </time>
             </p>
           )}
         </div>

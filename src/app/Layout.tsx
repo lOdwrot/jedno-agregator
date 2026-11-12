@@ -12,7 +12,7 @@ export function Layout() {
     <div className="flex min-h-dvh flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <a
         href="#main"
-        className="sr-only z-50 rounded-pill bg-navy px-5 py-3 font-bold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        className="sr-only z-50 rounded-pill bg-navy px-5 py-3 font-bold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
         onClick={(e) => {
           // hash links would be intercepted by the router base path; focus manually
           e.preventDefault();

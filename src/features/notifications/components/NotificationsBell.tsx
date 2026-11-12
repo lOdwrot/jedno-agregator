@@ -41,12 +41,21 @@ export function NotificationsBell() {
           aria-hidden="true"
           className="inline-flex origin-top"
           animate={newCount > 0 && !reduce ? { rotate: [0, 16, -14, 10, -6, 0] } : { rotate: 0 }}
-          transition={newCount > 0 && !reduce ? { duration: 0.9, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" } : undefined}
+          transition={
+            newCount > 0 && !reduce
+              ? { duration: 0.9, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }
+              : undefined
+          }
         >
           <Icon name="bell" size={24} />
         </motion.span>
       </IconButton>
-      <Sheet open={open} onClose={() => setOpen(false)} title="Ogłoszenia" description="Z ostatnich 30 dni">
+      <Sheet
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Ogłoszenia"
+        description="Z ostatnich 30 dni"
+      >
         {isPending ? (
           <div role="status" className="flex flex-col gap-3">
             <span className="sr-only">Ładowanie ogłoszeń…</span>
@@ -55,11 +64,21 @@ export function NotificationsBell() {
             ))}
           </div>
         ) : isError ? (
-          <ErrorState message="Nie udało się pobrać ogłoszeń." onRetry={() => void refetch()} className="shadow-none" />
+          <ErrorState
+            message="Nie udało się pobrać ogłoszeń."
+            onRetry={() => void refetch()}
+            className="shadow-none"
+          />
         ) : items.length === 0 ? (
-          <p className="py-10 text-center font-semibold text-ink-muted">Brak ogłoszeń z ostatnich 30 dni</p>
+          <p className="py-10 text-center font-semibold text-ink-muted">
+            Brak ogłoszeń z ostatnich 30 dni
+          </p>
         ) : (
-          <NotificationsList items={items} lastSeen={seenAtOpen} onNavigate={() => setOpen(false)} />
+          <NotificationsList
+            items={items}
+            lastSeen={seenAtOpen}
+            onNavigate={() => setOpen(false)}
+          />
         )}
       </Sheet>
     </>

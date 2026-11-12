@@ -39,7 +39,8 @@ export function countNew(items: readonly Notification[], lastSeen: string | null
 /** ISO timestamp of the newest notification, or null for an empty list. */
 export function newestDate(items: readonly Notification[]): string | null {
   let best: string | null = null;
-  for (const n of items) if (!best || Date.parse(n.publishDate) > Date.parse(best)) best = n.publishDate;
+  for (const n of items)
+    if (!best || Date.parse(n.publishDate) > Date.parse(best)) best = n.publishDate;
   return best;
 }
 

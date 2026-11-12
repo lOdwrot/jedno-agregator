@@ -15,7 +15,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test",
+    "e2e": "playwright test --trace off",
     "fetch-data": "tsx scripts/fetch-data.ts",
     "check": "npm run typecheck && npm run lint && npm run test"
   },

@@ -79,9 +79,7 @@ export const NotificationSchema = z.object({
   description: z.string().nullable(),
   publishDate: z.string(),
   /** Parsed from pathToContent "general/events/2035" | "general/news/12" */
-  target: z
-    .object({ kind: z.enum(["news", "event"]), id: z.number() })
-    .nullable(),
+  target: z.object({ kind: z.enum(["news", "event"]), id: z.number() }).nullable(),
 });
 export type Notification = z.infer<typeof NotificationSchema>;
 

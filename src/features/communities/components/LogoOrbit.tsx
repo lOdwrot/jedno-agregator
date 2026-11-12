@@ -14,20 +14,28 @@ export function LogoOrbit({ partners }: { partners: Partner[] }) {
   if (partners.length === 0) return null;
   let idx = 0;
   return (
-    <div aria-hidden="true" className="pointer-events-none relative hidden size-[17rem] shrink-0 md:block">
-      <div className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-soft blur-xl" />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none relative hidden size-[17rem] shrink-0 md:block"
+    >
+      <div className="absolute top-1/2 left-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-soft blur-xl" />
       {RINGS.map((ring, ri) => {
         const dir = ri % 2 === 0 ? 1 : -1;
         return (
           <motion.div
             key={ring.radius}
-            className="absolute left-1/2 top-1/2 size-0"
+            className="absolute top-1/2 left-1/2 size-0"
             animate={reduce ? undefined : { rotate: 360 * dir }}
             transition={{ duration: ring.duration, ease: "linear", repeat: Infinity }}
           >
             <span
               className="absolute rounded-full border border-dashed border-navy/15"
-              style={{ width: ring.radius * 2, height: ring.radius * 2, left: -ring.radius, top: -ring.radius }}
+              style={{
+                width: ring.radius * 2,
+                height: ring.radius * 2,
+                left: -ring.radius,
+                top: -ring.radius,
+              }}
             />
             {Array.from({ length: ring.count }, (_, i) => {
               const p = partners[idx++ % partners.length];
@@ -37,7 +45,9 @@ export function LogoOrbit({ partners }: { partners: Partner[] }) {
                 <span
                   key={`${ring.radius}-${i}`}
                   className="absolute"
-                  style={{ transform: `rotate(${angle}deg) translateX(${ring.radius}px) rotate(${-angle}deg)` }}
+                  style={{
+                    transform: `rotate(${angle}deg) translateX(${ring.radius}px) rotate(${-angle}deg)`,
+                  }}
                 >
                   <motion.span
                     className="block"

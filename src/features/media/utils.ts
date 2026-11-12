@@ -26,7 +26,10 @@ export function parseSeries(title: string): string | null {
 }
 
 /** Series that have at least `min` videos, most numerous first. */
-export function deriveSeries(videos: Pick<Video, "title">[], min = 2): { name: string; count: number }[] {
+export function deriveSeries(
+  videos: Pick<Video, "title">[],
+  min = 2,
+): { name: string; count: number }[] {
   const counts = new Map<string, number>();
   for (const v of videos) {
     const s = parseSeries(v.title);
@@ -39,21 +42,22 @@ export function deriveSeries(videos: Pick<Video, "title">[], min = 2): { name: s
 }
 
 const fold = (s: string) =>
-  s
-    .toLowerCase()
-    .replace(/ł/g, "l")
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "");
+  s.toLowerCase().replace(/ł/g, "l").normalize("NFD").replace(/\p{M}/gu, "");
 
 /** Case- and diacritics-insensitive title search plus optional series filter. */
-export function filterVideos<T extends Pick<Video, "title">>(videos: T[], query: string, series: string | null): T[] {
+export function filterVideos<T extends Pick<Video, "title">>(
+  videos: T[],
+  query: string,
+  series: string | null,
+): T[] {
   const q = fold(query.trim());
   return videos.filter(
     (v) => (!series || parseSeries(v.title) === series) && (!q || fold(v.title).includes(q)),
   );
 }
 
-export type TextPart = { type: "text"; text: string } | { type: "link"; text: string; href: string };
+export type TextPart =
+  { type: "text"; text: string } | { type: "link"; text: string; href: string };
 
 /** Splits plain text into text/link parts. Only http(s) URLs become links; trailing punctuation is excluded. */
 export function linkify(text: string): TextPart[] {

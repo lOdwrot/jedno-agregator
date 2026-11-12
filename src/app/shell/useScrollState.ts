@@ -16,7 +16,9 @@ export function useScrollState(threshold = 8, compactAt = 120): ScrollState {
       frame = 0;
       const y = window.scrollY;
       const next = { scrolled: y > threshold, compact: y > compactAt };
-      setState((prev) => (prev.scrolled === next.scrolled && prev.compact === next.compact ? prev : next));
+      setState((prev) =>
+        prev.scrolled === next.scrolled && prev.compact === next.compact ? prev : next,
+      );
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(read);

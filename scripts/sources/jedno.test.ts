@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { EventSchema, InfoSchema, NewsSchema, NotificationSchema, PartnerSchema } from "../../src/data/schemas.ts";
+import {
+  EventSchema,
+  InfoSchema,
+  NewsSchema,
+  NotificationSchema,
+  PartnerSchema,
+} from "../../src/data/schemas.ts";
 import {
   absolutizeHtml,
   fetchEvents,
@@ -62,7 +68,17 @@ describe("news", () => {
     expect(parseLinkedEventId(null)).toBeNull();
     expect(parseLinkedEventId("general/events/abc")).toBeNull();
     const n = normalizeNews(
-      { id: 1, title: " T ", subtitle: null, date: "2026-11-10T10:00:00+01:00", text: null, imageUrl: "/m/i.jpg", author: "  ", tag: " Wydarzenie ", linkedEventPath: "general/events/9" },
+      {
+        id: 1,
+        title: " T ",
+        subtitle: null,
+        date: "2026-11-10T10:00:00+01:00",
+        text: null,
+        imageUrl: "/m/i.jpg",
+        author: "  ",
+        tag: " Wydarzenie ",
+        linkedEventPath: "general/events/9",
+      },
       { id: 1, date: "2026-11-10T10:00:00+01:00", text: '<p><img src="/m/x.png"></p>' },
       BASE,
     );
@@ -84,7 +100,19 @@ describe("news", () => {
 describe("events/partners/infos/notifications", () => {
   it("normalizes event", () => {
     const e = normalizeEvent(
-      { id: 5, title: "E", start: "2026-11-13T19:30:00", end: null, location: " Kościół ", mapsLink: "", tag: " Koncert ", imageUrl: null, thumbnailUrl: null, publishDate: "2026-11-01T00:00:00Z", author: "Jan" },
+      {
+        id: 5,
+        title: "E",
+        start: "2026-11-13T19:30:00",
+        end: null,
+        location: " Kościół ",
+        mapsLink: "",
+        tag: " Koncert ",
+        imageUrl: null,
+        thumbnailUrl: null,
+        publishDate: "2026-11-01T00:00:00Z",
+        author: "Jan",
+      },
       { id: 5, start: "x", description: "<p>d</p>" },
       BASE,
     );
@@ -98,7 +126,10 @@ describe("events/partners/infos/notifications", () => {
     });
   });
   it("trims partner category", () => {
-    const p = normalizePartner({ id: 1, name: "A", category: "Wspólnoty  ", description: null }, BASE);
+    const p = normalizePartner(
+      { id: 1, name: "A", category: "Wspólnoty  ", description: null },
+      BASE,
+    );
     expect(PartnerSchema.parse(p).category).toBe("Wspólnoty");
     expect(p.html).toBe("");
   });
@@ -106,7 +137,15 @@ describe("events/partners/infos/notifications", () => {
     const infos = normalizeInfos(
       [
         { id: 1, title: "O aplikacji", text: "<p>x</p>", hasForm: false },
-        { id: 2, title: "Dołącz jako Autor", text: null, hasForm: true, formTitle: "F", formPlaceholder: null, formButtonLabel: "Wyślij" },
+        {
+          id: 2,
+          title: "Dołącz jako Autor",
+          text: null,
+          hasForm: true,
+          formTitle: "F",
+          formPlaceholder: null,
+          formButtonLabel: "Wyślij",
+        },
         { id: 3, title: "O aplikacji", text: "", hasForm: false },
       ],
       BASE,
@@ -119,7 +158,12 @@ describe("events/partners/infos/notifications", () => {
     expect(parseNotificationTarget("general/events/2035")).toEqual({ kind: "event", id: 2035 });
     expect(parseNotificationTarget("festival/agenda/1/2")).toBeNull();
     expect(parseNotificationTarget(undefined)).toBeNull();
-    const n = normalizeNotification({ id: 1, title: "t", publishDate: "2026-11-01T10:00:00Z", pathToContent: "general/news/3" });
+    const n = normalizeNotification({
+      id: 1,
+      title: "t",
+      publishDate: "2026-11-01T10:00:00Z",
+      pathToContent: "general/news/3",
+    });
     expect(NotificationSchema.parse(n).target).toEqual({ kind: "news", id: 3 });
   });
 });
@@ -131,14 +175,30 @@ describe("fetchers (fake API)", () => {
     if (path.startsWith("/api/news?")) {
       const page = Number(/pageNumber=(\d+)/.exec(path)![1]);
       const n = page === 1 ? 50 : 3;
-      return Array.from({ length: n }, (_, i) => ({ id: (page - 1) * 100 + i + 1, date: `2026-10-${String((i % 28) + 1).padStart(2, "0")}T10:00:00+02:00`, title: "n", text: null })) as T;
+      return Array.from({ length: n }, (_, i) => ({
+        id: (page - 1) * 100 + i + 1,
+        date: `2026-10-${String((i % 28) + 1).padStart(2, "0")}T10:00:00+02:00`,
+        title: "n",
+        text: null,
+      })) as T;
     }
-    if (path.startsWith("/api/news/")) return { id: Number(path.split("/").pop()), date: "2026-10-01T10:00:00+02:00", text: "<p>body</p>" } as T;
-    if (path.startsWith("/api/events?")) return [
-      { id: 2, start: "2026-12-01T10:00:00+01:00", title: "later" },
-      { id: 1, start: "2026-11-01T10:00:00+01:00", title: "sooner" },
-    ] as T;
-    if (path.startsWith("/api/events/")) return { id: Number(path.split("/").pop()), start: "2026-11-01T10:00:00+01:00", description: "<p>d</p>" } as T;
+    if (path.startsWith("/api/news/"))
+      return {
+        id: Number(path.split("/").pop()),
+        date: "2026-10-01T10:00:00+02:00",
+        text: "<p>body</p>",
+      } as T;
+    if (path.startsWith("/api/events?"))
+      return [
+        { id: 2, start: "2026-12-01T10:00:00+01:00", title: "later" },
+        { id: 1, start: "2026-11-01T10:00:00+01:00", title: "sooner" },
+      ] as T;
+    if (path.startsWith("/api/events/"))
+      return {
+        id: Number(path.split("/").pop()),
+        start: "2026-11-01T10:00:00+01:00",
+        description: "<p>d</p>",
+      } as T;
     throw new Error("unexpected " + path);
   };
   it("paginates until a short page and fetches details", async () => {

@@ -18,7 +18,10 @@ export function Skeleton({ className, ...rest }: ComponentProps<"div">) {
 /** Placeholder shaped like a news/event card. */
 export function SkeletonCard({ className }: { className?: string }) {
   return (
-    <div aria-hidden="true" className={cn("overflow-hidden rounded-card bg-surface shadow-card", className)}>
+    <div
+      aria-hidden="true"
+      className={cn("overflow-hidden rounded-card bg-surface shadow-card", className)}
+    >
       <Skeleton className="aspect-video rounded-none" />
       <div className="space-y-3 p-4">
         <Skeleton className="h-4 w-1/3" />

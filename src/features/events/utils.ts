@@ -2,7 +2,15 @@ import type { Event } from "@/data/schemas";
 import { dayKey } from "@/lib/dates";
 
 export const WEEKDAYS_SHORT = ["pon", "wt", "śr", "czw", "pt", "sob", "niedz"] as const;
-export const WEEKDAYS_LONG = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"] as const;
+export const WEEKDAYS_LONG = [
+  "poniedziałek",
+  "wtorek",
+  "środa",
+  "czwartek",
+  "piątek",
+  "sobota",
+  "niedziela",
+] as const;
 export const MONTHS = [
   "styczeń",
   "luty",
@@ -62,7 +70,11 @@ export function buildMonthMatrix(year: number, month: number): MonthCell[][] {
 }
 
 /** Adds `delta` months, normalising the year. */
-export function shiftMonth(year: number, month: number, delta: number): { year: number; month: number } {
+export function shiftMonth(
+  year: number,
+  month: number,
+  delta: number,
+): { year: number; month: number } {
   const idx = year * 12 + month + delta;
   return { year: Math.floor(idx / 12), month: ((idx % 12) + 12) % 12 };
 }
@@ -100,7 +112,8 @@ export function pluralPl(n: number, one: string, few: string, many: string): str
   return many;
 }
 
-export const eventsCountLabel = (n: number) => `${n} ${pluralPl(n, "wydarzenie", "wydarzenia", "wydarzeń")}`;
+export const eventsCountLabel = (n: number) =>
+  `${n} ${pluralPl(n, "wydarzenie", "wydarzenia", "wydarzeń")}`;
 
 /** "13 listopada, 2 wydarzenia" */
 export function dayAriaLabel(key: string, count: number): string {
@@ -139,7 +152,8 @@ export function countdownParts(ms: number): CountdownParts {
 /** "3 dni 4 godz." / "2 godz. 5 min" / "12 min" / "mniej niż minutę" */
 export function formatCountdown(ms: number): string {
   const { days, hours, minutes } = countdownParts(ms);
-  if (days > 0) return `${days} ${pluralPl(days, "dzień", "dni", "dni")}${hours ? ` ${hours} godz.` : ""}`;
+  if (days > 0)
+    return `${days} ${pluralPl(days, "dzień", "dni", "dni")}${hours ? ` ${hours} godz.` : ""}`;
   if (hours > 0) return `${hours} godz.${minutes ? ` ${minutes} min` : ""}`;
   if (minutes > 0) return `${minutes} min`;
   return "mniej niż minutę";
@@ -155,7 +169,10 @@ export function eventEnd(event: Pick<Event, "start" | "end">): number {
   return Number.isNaN(e) ? s + TWO_HOURS : e;
 }
 
-export function eventStatus(event: Pick<Event, "start" | "end">, now: Date = new Date()): EventStatus {
+export function eventStatus(
+  event: Pick<Event, "start" | "end">,
+  now: Date = new Date(),
+): EventStatus {
   const t = now.getTime();
   if (t < new Date(event.start).getTime()) return "upcoming";
   return t <= eventEnd(event) ? "live" : "ended";

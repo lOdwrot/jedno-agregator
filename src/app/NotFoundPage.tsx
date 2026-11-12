@@ -25,7 +25,10 @@ export function NotFoundPage() {
       <AnimatedBlobs />
       <Grain />
       <Container className="flex min-h-[70dvh] flex-col items-center justify-center gap-6 py-16 text-center">
-        <p aria-hidden="true" className="flex items-center font-display text-[clamp(6rem,24vw,13rem)] font-extrabold leading-none text-navy">
+        <p
+          aria-hidden="true"
+          className="flex items-center font-display text-[clamp(6rem,24vw,13rem)] leading-none font-extrabold text-navy"
+        >
           <span>4</span>
           <motion.span
             className="mx-1 inline-flex"
@@ -37,7 +40,10 @@ export function NotFoundPage() {
           <span>4</span>
         </p>
         <h1 className="font-display text-3xl font-extrabold text-navy sm:text-5xl">
-          <SplitText text="Tej strony" delay={0.3} /> <BrushUnderline><span className="font-serif font-normal italic">tu nie ma</span></BrushUnderline>
+          <SplitText text="Tej strony" delay={0.3} />{" "}
+          <BrushUnderline>
+            <span className="font-serif font-normal italic">tu nie ma</span>
+          </BrushUnderline>
         </h1>
         <Reveal delay={0.5}>
           <Text variant="lead" className="max-w-md text-ink-muted">

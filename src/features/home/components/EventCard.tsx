@@ -19,7 +19,9 @@ export function EventCard({ event }: { event: Event }) {
         />
         <div className="min-w-0 flex-1">
           <DatePill>{formatEventChip(event.start, event.end)}</DatePill>
-          <h3 className="mt-1.5 line-clamp-2 font-display text-base font-bold leading-snug text-navy">{event.title}</h3>
+          <h3 className="mt-1.5 line-clamp-2 font-display text-base leading-snug font-bold text-navy">
+            {event.title}
+          </h3>
           {event.location && (
             <p className="mt-1 flex items-center gap-1 truncate text-sm text-ink-muted">
               <Icon name="mapPin" size={14} className="shrink-0" />

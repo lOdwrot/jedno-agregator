@@ -6,11 +6,13 @@ Tokens only (no hex). All user-facing strings are Polish. Animations respect `pr
 Components that link use react-router, so render them inside the router.
 
 ## Icons / logo
+
 - `<Icon name="calendar" size={24} title? strokeWidth? className? />` — `currentColor`, aria-hidden unless `title` is given (then role=img).
   Names (`IconName`, list in `iconNames`): calendar calendarPlus mapPin bell menu close filter chevronLeft chevronRight chevronDown arrowRight arrowUpRight externalLink play search share copy check clock users newspaper video instagram youtube info mail home sparkle grid list.
 - `<JednoLogo variant="full"|"mark" animated? size={40} className? title? />` — SVG mark (5 figures) + "Jedno" wordmark; `animated` = spring assemble on mount. Raster: `${import.meta.env.BASE_URL}logo.png`.
 
 ## Primitives
+
 - `Button` — `variant: solid|navy|soft|outline|ghost|link`, `size: sm|md|lg`, `fullWidth`, `leftIcon`, `rightIcon`, `loading`, `magnetic`, `as`.
   `to="/path"` → router Link; `href="https://…"` → `<a>` (external ⇒ `target=_blank rel=noopener` + sr-only "(otwiera się w nowej karcie)"); otherwise `<button type="button">`.
   `<Button to={paths.events} variant="soft" rightIcon={<Icon name="arrowRight" size={20}/>}>Wydarzenia</Button>`
@@ -33,6 +35,7 @@ Components that link use react-router, so render them inside the router.
 - `Link` — `to` (internal path, `mailto:`/`tel:`, or absolute URL → new tab + hint + arrow icon), `quiet`.
 
 ## Composites
+
 - `Dialog` — `open`, `onClose`, `title` (required, aria-labelledby), `hideTitle`, `description`, `size: sm|md|lg|xl`, children. Native `<dialog>`; focus trap, Esc/backdrop/X closes, focus restored, body scroll locked.
   `<Dialog open={o} onClose={() => setO(false)} title="Zespół">…</Dialog>` — control it with state; render always, it mounts content only when open.
 - `Sheet` — same props + `side: right|left` (desktop). Bottom sheet on mobile with #D2D9DF drag handle look, side panel from `md`.
@@ -51,6 +54,7 @@ Components that link use react-router, so render them inside the router.
 - `RichText` — `{ html, className? }` for CMS HTML (implemented separately in composites/RichText.tsx).
 
 ## Effects
+
 - `Reveal` — `delay`, `y`, `once`, `as`, `className`: fade/slide-up in viewport. `RevealGroup` (`stagger`, `as`) + `RevealItem` (`as`) for staggered children.
 - `SplitText` — `text` (string), `by: word|letter`, `stagger`, `delay`, `trigger: mount|inView`. Accessible (aria-label on wrapper). Inline element: put inside a Heading.
 - `Spotlight` — wrapper `div` with cursor-following light (`size`), children above it.

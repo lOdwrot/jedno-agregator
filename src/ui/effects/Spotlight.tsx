@@ -40,7 +40,13 @@ export function Spotlight({ children, className, size = 360 }: SpotlightProps) {
         y.set(-1000);
       }}
     >
-      {enabled && <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0" style={{ background: bg }} />}
+      {enabled && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{ background: bg }}
+        />
+      )}
       {children}
     </div>
   );

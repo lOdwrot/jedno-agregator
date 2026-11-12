@@ -53,7 +53,7 @@ export function EventDetailPage() {
   const others = (all.data ?? []).filter((e) => e.id !== event?.id).slice(0, 3);
 
   return (
-    <Container className="pb-16 pt-4 sm:pt-8">
+    <Container className="pt-4 pb-16 sm:pt-8">
       <BackLink />
       <div className="mt-3">
         {query.isLoading ? (
@@ -64,7 +64,10 @@ export function EventDetailPage() {
         ) : query.isError ? (
           <>
             <h1 className="sr-only">Błąd ładowania wydarzenia</h1>
-            <ErrorState message="Nie udało się pobrać wydarzenia." onRetry={() => void query.refetch()} />
+            <ErrorState
+              message="Nie udało się pobrać wydarzenia."
+              onRetry={() => void query.refetch()}
+            />
           </>
         ) : !event ? (
           <>
@@ -99,12 +102,19 @@ export function EventDetailPage() {
                 {event.tag && <Badge tone="accent">{event.tag}</Badge>}
               </div>
               <Reveal>
-                <h1 className="mt-2 font-display text-3xl font-extrabold leading-tight text-navy sm:text-4xl lg:text-5xl">{event.title}</h1>
+                <h1 className="mt-2 font-display text-3xl leading-tight font-extrabold text-navy sm:text-4xl lg:text-5xl">
+                  {event.title}
+                </h1>
               </Reveal>
-              {event.subtitle && <p className="mt-3 text-xl text-ink-muted sm:text-2xl">{event.subtitle}</p>}
+              {event.subtitle && (
+                <p className="mt-3 text-xl text-ink-muted sm:text-2xl">{event.subtitle}</p>
+              )}
             </header>
 
-            <aside aria-label="Informacje o wydarzeniu" className="lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+            <aside
+              aria-label="Informacje o wydarzeniu"
+              className="lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start"
+            >
               <EventInfoPanel event={event} />
             </aside>
 
@@ -118,7 +128,11 @@ export function EventDetailPage() {
       </div>
 
       {event && others.length > 0 && (
-        <Section title="Inne nadchodzące wydarzenia" className="mt-14" action={{ label: "Wszystkie wydarzenia", to: paths.events }}>
+        <Section
+          title="Inne nadchodzące wydarzenia"
+          className="mt-14"
+          action={{ label: "Wszystkie wydarzenia", to: paths.events }}
+        >
           <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {others.map((e) => (
               <li key={e.id}>

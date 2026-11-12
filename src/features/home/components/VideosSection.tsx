@@ -46,7 +46,9 @@ function VideoCard({ video, onOpen }: { video: Video; onOpen: () => void }) {
           </span>
         </span>
         <span className="flex flex-1 flex-col gap-1 p-4">
-          <span className="line-clamp-2 font-display text-base font-bold leading-snug text-navy">{video.title}</span>
+          <span className="line-clamp-2 font-display text-base leading-snug font-bold text-navy">
+            {video.title}
+          </span>
           <span className="text-sm text-ink-muted">
             <span className="sr-only">Opublikowano: </span>
             {formatDate(video.publishedAt)}
@@ -69,7 +71,11 @@ export function VideosSection() {
         action={{ label: "Wszystkie filmy", to: paths.media }}
       >
         {isPending ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" role="status" aria-label="Ładowanie filmów">
+          <div
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            role="status"
+            aria-label="Ładowanie filmów"
+          >
             {[0, 1, 2, 3].map((i) => (
               <Skeleton key={i} className="h-60 rounded-card" />
             ))}
@@ -88,7 +94,12 @@ export function VideosSection() {
           </RevealGroup>
         )}
       </Section>
-      <Dialog open={!!active} onClose={() => setActive(null)} title={active?.title ?? "Film"} size="xl">
+      <Dialog
+        open={!!active}
+        onClose={() => setActive(null)}
+        title={active?.title ?? "Film"}
+        size="xl"
+      >
         {active && <YouTubeEmbed videoId={active.id} title={active.title} autoplay />}
       </Dialog>
     </Container>

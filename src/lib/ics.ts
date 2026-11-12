@@ -4,7 +4,10 @@ import { stripHtml } from "./html";
 const TWO_HOURS = 2 * 3600_000;
 
 function utc(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  return d
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}/, "");
 }
 
 export function escapeIcsText(s: string): string {
@@ -40,7 +43,8 @@ export function foldLine(line: string): string {
 function eventRange(event: Event): { start: Date; end: Date } {
   const start = new Date(event.start);
   const parsedEnd = event.end ? new Date(event.end) : null;
-  const end = parsedEnd && !isNaN(parsedEnd.getTime()) ? parsedEnd : new Date(start.getTime() + TWO_HOURS);
+  const end =
+    parsedEnd && !isNaN(parsedEnd.getTime()) ? parsedEnd : new Date(start.getTime() + TWO_HOURS);
   return { start, end };
 }
 
@@ -85,7 +89,10 @@ export function buildIcs(event: Event, siteUrl: string): string {
 }
 
 /** Triggers a browser download of the .ics file. */
-export function downloadIcs(event: Event, siteUrl: string = window.location.origin + import.meta.env.BASE_URL): void {
+export function downloadIcs(
+  event: Event,
+  siteUrl: string = window.location.origin + import.meta.env.BASE_URL,
+): void {
   const blob = new Blob([buildIcs(event, siteUrl)], { type: "text/calendar;charset=utf-8" });
   const href = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -99,7 +106,10 @@ export function downloadIcs(event: Event, siteUrl: string = window.location.orig
 }
 
 /** Google Calendar "template" link. */
-export function googleCalendarUrl(event: Event, siteUrl: string = window.location.origin + import.meta.env.BASE_URL): string {
+export function googleCalendarUrl(
+  event: Event,
+  siteUrl: string = window.location.origin + import.meta.env.BASE_URL,
+): string {
   const { start, end } = eventRange(event);
   const params = new URLSearchParams({
     action: "TEMPLATE",

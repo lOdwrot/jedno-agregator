@@ -13,7 +13,10 @@ export interface NotificationGroup {
 }
 
 /** Groups (already newest-first) notifications by relative day label, preserving order. */
-export function groupNotifications(items: readonly Notification[], now: Date = new Date()): NotificationGroup[] {
+export function groupNotifications(
+  items: readonly Notification[],
+  now: Date = new Date(),
+): NotificationGroup[] {
   const groups: NotificationGroup[] = [];
   for (const n of items) {
     const label = formatRelativeGroup(n.publishDate, now);

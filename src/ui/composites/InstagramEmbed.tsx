@@ -52,7 +52,13 @@ export function InstagramEmbed({ url, caption, className }: InstagramEmbedProps)
   }, [url]);
 
   return (
-    <div ref={ref} className={cn("group relative overflow-hidden rounded-card bg-surface shadow-card", className)}>
+    <div
+      ref={ref}
+      className={cn(
+        "group relative overflow-hidden rounded-card bg-surface shadow-card",
+        className,
+      )}
+    >
       <div className="flex flex-col items-center gap-3 p-6 text-center group-has-[iframe]:hidden">
         <span className="grid size-12 place-items-center rounded-full bg-linear-to-br from-logo-yellow via-logo-red to-logo-blue text-white">
           <Icon name="instagram" />

@@ -10,6 +10,8 @@ const BASE = "/jedno-agregator/";
 export default defineConfig({
   base: BASE,
   plugins: [react(), tailwindcss()],
+  // vendor chunk (react-router + motion) is ~140 kB gzip; pages are code-split
+  build: { chunkSizeWarningLimit: 700 },
   resolve: {
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },

@@ -35,7 +35,9 @@ describe("buildIcs", () => {
     expect(ics).toContain("https://lodwrot.github.io/jedno-agregator/wydarzenia/7");
   });
   it("uses explicit end", () => {
-    expect(buildIcs({ ...base, end: "2026-11-13T21:00:00+01:00" }, SITE)).toContain("DTEND:20261113T200000Z");
+    expect(buildIcs({ ...base, end: "2026-11-13T21:00:00+01:00" }, SITE)).toContain(
+      "DTEND:20261113T200000Z",
+    );
   });
   it("folds long lines at 75 octets", () => {
     const long = buildIcs({ ...base, html: `<p>${"zażółć gęślą jaźń ".repeat(30)}</p>` }, SITE);

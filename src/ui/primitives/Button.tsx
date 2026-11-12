@@ -1,4 +1,10 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ElementType, ReactNode, Ref } from "react";
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  ElementType,
+  ReactNode,
+  Ref,
+} from "react";
 import { Link as RouterLink } from "react-router";
 import type { VariantProps } from "tailwind-variants";
 import { cn } from "@/lib/cn";
@@ -25,7 +31,10 @@ type Own = VariantProps<typeof buttonStyles> & {
 };
 export type ButtonProps = Own &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof Own> &
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof Own | keyof ButtonHTMLAttributes<HTMLButtonElement>>;
+  Omit<
+    AnchorHTMLAttributes<HTMLAnchorElement>,
+    keyof Own | keyof ButtonHTMLAttributes<HTMLButtonElement>
+  >;
 
 export function Button({
   variant,
