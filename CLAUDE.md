@@ -71,7 +71,7 @@ Features: `home`, `news`, `events`, `communities`, `media`, `infos`, `notificati
   `rounded-card`, `font-display`, `shadow-card`…). No hex colors or arbitrary color values in components.
   Merge classes with `cn()` from `@/lib/cn`. Variants with `tailwind-variants` (`tv`).
 - **Colour accessibility:** `accent` (#E8672A) is for decoration, backgrounds and large/bold text only.
-  Normal-size orange text uses `text-accent-ink`.
+  Normal-size orange text uses `text-accent-ink`; solid orange backgrounds with white text use `bg-accent-strong`.
 - **Fonts:** `font-display` (Bricolage Grotesque) for headings, `font-sans` (Lato) for body,
   `font-serif` (Instrument Serif, usually italic) for decorative accents.
 - **Components:** build UI from `@/ui`. If something is missing, add it to `src/ui` (with a catalog example in

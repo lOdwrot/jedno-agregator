@@ -12,7 +12,8 @@
   --color-navy-800: #16324a;
   --color-navy-600: #2b4a66;
   --color-accent: #e8672a; /* decorative / large text / backgrounds only (3.2:1 on white) */
-  --color-accent-ink: #b9501c; /* accent for normal-size text on light bg (>= 4.5:1) */
+  --color-accent-ink: #ad4a18; /* accent for normal-size text on light bg (>= 4.9:1 on canvas/white) */
+  --color-accent-strong: #c4531d; /* solid button bg: white text 4.56:1 */
   --color-accent-soft: #fdeee6;
 
   /* Logo palette (5 figures of the Jedno logo) */
