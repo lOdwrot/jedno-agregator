@@ -1,0 +1,15 @@
+{
+  "name": "Jedno — Archidiecezja Gdańska",
+  "short_name": "Jedno",
+  "description": "Aktualności, wydarzenia, wspólnoty i media Archidiecezji Gdańskiej w jednym miejscu.",
+  "lang": "pl",
+  "start_url": "/jedno-agregator/",
+  "scope": "/jedno-agregator/",
+  "display": "standalone",
+  "theme_color": "#0E2335",
+  "background_color": "#F0F2F5",
+  "icons": [
+    { "src": "/jedno-agregator/icon-1024.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "/jedno-agregator/icon-1024.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
+  ]
+}
