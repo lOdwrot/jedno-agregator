@@ -1,4 +1,21 @@
-/** PLACEHOLDER — to be implemented by the owning feature agent. */
+import { usePageTitle } from "@/lib/seo";
+import { CommunitiesMarquee } from "../components/CommunitiesMarquee";
+import { Hero } from "../components/Hero";
+import { InstagramBand } from "../components/InstagramBand";
+import { NewsBento } from "../components/NewsBento";
+import { UpcomingEvents } from "../components/UpcomingEvents";
+import { VideosSection } from "../components/VideosSection";
+
 export function HomePage() {
-  return <h1 className="p-8 text-3xl">Start</h1>;
+  usePageTitle();
+  return (
+    <>
+      <Hero />
+      <UpcomingEvents />
+      <NewsBento />
+      <VideosSection />
+      <CommunitiesMarquee />
+      <InstagramBand />
+    </>
+  );
 }
