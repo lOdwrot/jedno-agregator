@@ -8,6 +8,8 @@ import {
   setAim,
   startDavid,
   stepDavid,
+  swingAngle,
+  tap,
   throwStone,
   type DavidState,
 } from "./engine";
@@ -34,6 +36,22 @@ describe("David engine", () => {
     expect(s.stonesLeft).toBe(STONES - 1);
     expect(s.stone).not.toBeNull();
     expect(throwStone(s).stonesLeft).toBe(STONES - 1);
+  });
+
+  it("two taps: first locks the swinging angle, second locks power and throws", () => {
+    let s = run(startDavid(), 0.5);
+    expect(s.aimStage).toBe("angle");
+    expect(s.aim.angle).toBeCloseTo(swingAngle(s.aimT), 5);
+    s = tap(s);
+    const locked = s.aim.angle;
+    expect(s.aimStage).toBe("power");
+    s = run(s, 0.4);
+    expect(s.aim.angle).toBe(locked);
+    expect(s.aim.power).toBeGreaterThan(0);
+    s = tap(s);
+    expect(s.stone).not.toBeNull();
+    expect(s.stonesLeft).toBe(STONES - 1);
+    expect(s.aimStage).toBe("angle");
   });
 
   it("does nothing before the game starts", () => {

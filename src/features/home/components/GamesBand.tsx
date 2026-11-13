@@ -12,7 +12,7 @@ export function GamesBand() {
         title="Gry dla ducha"
         action={{ label: "Wszystkie gry", to: paths.games }}
       >
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {GAMES.map((g) => (
             <GameCard key={g.slug} game={g} as="li" headingLevel={3} />
           ))}

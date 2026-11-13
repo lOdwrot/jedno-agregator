@@ -1,5 +1,6 @@
 /** Static catalog of the small Bible games (no CMS data — content lives here). */
-export type GameSlug = "dawid-i-goliat" | "morze-czerwone" | "arka-noego" | "walka-o-dusze";
+export type GameSlug =
+  "dawid-i-goliat" | "morze-czerwone" | "arka-noego" | "walka-o-dusze" | "mury-jerycha";
 
 export interface GameInfo {
   slug: GameSlug;
@@ -28,8 +29,9 @@ export const GAMES: readonly GameInfo[] = [
     gradient: "from-logo-yellow via-logo-orange to-logo-red",
     minutes: 2,
     controls: {
-      touch: "Przeciągnij palcem w lewo-w dół (jak gumkę procy) i puść, żeby rzucić.",
-      keyboard: "↑ ↓ — kąt, ← → — siła, Spacja lub Enter — rzut.",
+      touch:
+        "Jak przy karnych: stuknij ekran, żeby zatrzymać bujający się kąt, a potem drugi raz, żeby zatrzymać siłę — i kamień leci.",
+      keyboard: "Spacja lub Enter — najpierw zatrzymuje kąt, za drugim razem siłę i rzuca.",
     },
     verse: {
       text: "Ty idziesz na mnie z mieczem, dzidą i zakrzywionym nożem, ja zaś idę na ciebie w imię Pana Zastępów.",
@@ -67,7 +69,8 @@ export const GAMES: readonly GameInfo[] = [
     gradient: "from-logo-blue via-logo-orange to-logo-yellow",
     minutes: 3,
     controls: {
-      touch: "Stuknij kartę, żeby ją odkryć. Znajdź dwie takie same.",
+      touch:
+        "Wybierz poziom (łatwy, średni, trudny), stuknij kartę, żeby ją odkryć, i znajdź dwie takie same.",
       keyboard: "Tab / strzałki — wybór karty, Enter lub Spacja — odkrycie.",
     },
     verse: {
@@ -98,6 +101,29 @@ export const GAMES: readonly GameInfo[] = [
       "Zło rzadko przychodzi z hukiem. Zwykle podsuwa drobiazgi: „jeszcze chwilę”, „wszyscy tak robią”, „to nic takiego”. Kto umie nazwać pokusę po imieniu, ten już wygrywa połowę walki — a drugą połowę wygrywa Bóg, jeśli Mu na to pozwolisz.",
     prayer:
       "Święty Michale Archaniele, wspomagaj nas w walce. Panie, chroń moją duszę i dusze moich bliskich.",
+  },
+  {
+    slug: "mury-jerycha",
+    title: "Mury Jerycha",
+    accent: "w rytmie trąb",
+    emoji: "🎺",
+    tagline:
+      "Gra rytmiczna! Siedem okrążeń wokół miasta, trąby z baranich rogów i strażnicy, którzy bardzo się z was śmieją. Do czasu.",
+    gradient: "from-logo-yellow via-logo-red to-navy-600",
+    minutes: 1,
+    controls: {
+      touch:
+        "Stuknij planszę albo duży przycisk „Trąb!”, gdy nuta wpadnie w złote kółko. Na końcu — „KRZYCZ!”.",
+      keyboard: "Spacja, Enter, F lub J — w rytm, gdy nuta jest w złotym kółku.",
+    },
+    verse: {
+      text: "Przez wiarę runęły mury Jerycha, obchodzone przez siedem dni.",
+      ref: "Hbr 11,30",
+    },
+    reflection:
+      "Izraelici nie zdobyli Jerycha siłą, tylko wiernością: siedem dni chodzenia w kółko, gdy wszyscy się śmiali. Czasem wiara to po prostu wytrwałość w małych, powtarzanych krokach — codzienna modlitwa, niedzielna Msza, jedno dobre słowo.",
+    prayer:
+      "Panie, daj mi wytrwałość, gdy nie widzę jeszcze owoców. Ty burzysz mury, których ja nie ruszę.",
   },
 ];
 

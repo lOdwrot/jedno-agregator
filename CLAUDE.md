@@ -68,6 +68,8 @@ Features: `home`, `news`, `events`, `communities`, `media`, `infos`, `notificati
 `games` (`/gry`, `/gry/:slug`) are small Bible mini-games with static content in `features/games/catalog.ts`.
 Each game has a pure, unit-tested `engine.ts` (state + `step(dt)`) and an SVG view driven by `useGameLoop`.
 Every game must stay playable by touch AND keyboard, announce status via `aria-live`, and end with the verse card.
+Games: `dawid-i-goliat` (FIFA-penalty style: tap locks the swinging angle, then power), `morze-czerwone` (3-lane run),
+`arka-noego` (memory, `?poziom=latwy|sredni|trudny`), `mury-jerycha` (rhythm game, Web Audio synth in `jericho/sound.ts`).
 
 ## Conventions
 

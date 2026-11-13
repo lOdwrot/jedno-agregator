@@ -6,7 +6,7 @@ import { GameCard } from "../components/GameCard";
 export function GamesPage() {
   usePageTitle("Gry chrześcijańskie");
   useMetaDescription(
-    "Małe, zabawne gry biblijne: Dawid i Goliat, ucieczka przez Morze Czerwone, Arka Noego i karcianka Walka o duszę.",
+    "Małe, zabawne gry biblijne: Dawid i Goliat, ucieczka przez Morze Czerwone, Arka Noego, rytmiczne Mury Jerycha i karcianka Walka o duszę.",
   );
   return (
     <Container className="pb-16">
@@ -16,7 +16,7 @@ export function GamesPage() {
         accent="dla ducha"
         description="Małe, zabawne gry biblijne na przerwę, na wieczór i na wzmocnienie wiary. Działają na telefonie (dotyk) i na komputerze (klawiatura)."
       />
-      <RevealGroup as="ul" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <RevealGroup as="ul" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {GAMES.map((g) => (
           <RevealItem key={g.slug} as="li">
             <GameCard game={g} />

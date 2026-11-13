@@ -45,8 +45,8 @@ export function RedSeaGame() {
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
-      const el = e.target as HTMLElement | null;
-      const interactive = el?.closest("button, a, input, select, textarea");
+      const interactive =
+        e.target instanceof Element && e.target.closest("button, a, input, select, textarea");
       const k = e.key.toLowerCase();
       if (k === "arrowleft" || k === "a") left();
       else if (k === "arrowright" || k === "d") right();
