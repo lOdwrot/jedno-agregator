@@ -64,7 +64,7 @@ export function GamePage() {
         <h2 id="more-games" className="mb-4 font-display text-2xl font-extrabold text-navy">
           Zagraj też w…
         </h2>
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {others.map((g) => (
             <GameCard key={g.slug} game={g} as="li" headingLevel={3} />
           ))}

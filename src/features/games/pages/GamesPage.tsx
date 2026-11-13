@@ -16,7 +16,7 @@ export function GamesPage() {
         accent="dla ducha"
         description="Małe, zabawne gry biblijne na przerwę, na wieczór i na wzmocnienie wiary. Działają na telefonie (dotyk) i na komputerze (klawiatura)."
       />
-      <RevealGroup as="ul" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <RevealGroup as="ul" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {GAMES.map((g) => (
           <RevealItem key={g.slug} as="li">
             <GameCard game={g} />
