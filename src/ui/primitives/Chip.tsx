@@ -23,7 +23,7 @@ export function Chip({
     <button
       type="button"
       aria-pressed={pressed}
-      className={cn(chipClass(pressed), pressed && "bg-accent", className)}
+      className={cn(chipClass(pressed), pressed && "bg-accent-strong", className)}
       onClick={(e) => {
         onClick?.(e);
         onPressedChange?.(!pressed);

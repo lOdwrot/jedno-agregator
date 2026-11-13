@@ -92,7 +92,7 @@ export function ChipGroup({
               <motion.span
                 layoutId={`chip-pill-${uid}`}
                 aria-hidden="true"
-                className="absolute inset-0 rounded-pill bg-accent"
+                className="absolute inset-0 rounded-pill bg-accent-strong"
                 transition={
                   reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 32 }
                 }

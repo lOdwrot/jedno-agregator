@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useSearchParams } from "react-router";
 import { cn } from "@/lib/cn";
-import { Button, Heading, Icon } from "@/ui";
+import { Button, ChipGroup, Heading, Icon } from "@/ui";
 import { lowerIsBetter, useBestScore } from "../useBestScore";
 import { ArkScene } from "./ArkScene";
 import {
@@ -10,17 +11,55 @@ import {
   flip,
   hideMismatch,
   isFaceUp,
+  isLevel,
+  LEVELS,
   rank,
   type ArkState,
+  type Level,
 } from "./engine";
 
-const COLS = 4;
+const PARAM = "poziom";
+const GRID_COLS = { 4: "grid-cols-4", 6: "grid-cols-6" } as const;
 
+/** Level picker (kept in the URL) + a fresh board per level. */
 export function ArkGame() {
-  const [s, setS] = useState<ArkState>(() => createArk());
+  const [params, setParams] = useSearchParams();
+  const raw = params.get(PARAM);
+  const level: Level = isLevel(raw) ? raw : "latwy";
+  const setLevel = (v: string | null) => {
+    if (!isLevel(v)) return;
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (v === "latwy") next.delete(PARAM);
+        else next.set(PARAM, v);
+        return next;
+      },
+      { replace: true },
+    );
+  };
+  return (
+    <div className="flex flex-col gap-4">
+      <ChipGroup
+        label="Poziom trudności"
+        value={level}
+        onChange={setLevel}
+        options={(Object.keys(LEVELS) as Level[]).map((l) => ({
+          value: l,
+          label: `${LEVELS[l].label} · ${LEVELS[l].pairs} par`,
+        }))}
+      />
+      <ArkBoard key={level} level={level} />
+    </div>
+  );
+}
+
+function ArkBoard({ level }: { level: Level }) {
+  const [s, setS] = useState<ArkState>(() => createArk(level));
   const [record, setRecord] = useState(false);
   const cards = useRef<(HTMLButtonElement | null)[]>([]);
-  const best = useBestScore("arka-noego", lowerIsBetter);
+  const best = useBestScore(`arka-noego-${level}`, lowerIsBetter);
+  const cols = LEVELS[level].cols;
 
   useEffect(() => {
     if (!s.mismatch) return;
@@ -34,7 +73,7 @@ export function ArkGame() {
     setS(n);
   };
   const restart = () => {
-    setS(createArk());
+    setS(createArk(level));
     setRecord(false);
     cards.current[0]?.focus();
   };
@@ -43,8 +82,8 @@ export function ArkGame() {
     const delta: Record<string, number> = {
       ArrowLeft: -1,
       ArrowRight: 1,
-      ArrowUp: -COLS,
-      ArrowDown: COLS,
+      ArrowUp: -cols,
+      ArrowDown: cols,
     };
     const d = delta[e.key];
     if (d === undefined) return;
@@ -65,7 +104,11 @@ export function ArkGame() {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
       <div className="flex flex-col gap-4">
-        <ArkScene matched={s.matched} won={s.won} />
+        <ArkScene
+          animals={ANIMALS.slice(0, s.pairs).map((a) => a.id)}
+          matched={s.matched}
+          won={s.won}
+        />
         <div className="flex gap-3 rounded-card bg-surface p-4 shadow-card">
           <span aria-hidden="true" className="text-3xl leading-none">
             🧔🏻
@@ -83,7 +126,7 @@ export function ArkGame() {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm font-bold text-navy">
           <span>
-            Pary: {s.matched.length} / {ANIMALS.length} · Ruchy: {s.moves}
+            Pary: {s.matched.length} / {s.pairs} · Ruchy: {s.moves}
           </span>
           {best.best !== null && <span className="text-ink-muted">Rekord: {best.best} ruchów</span>}
         </div>
@@ -99,7 +142,7 @@ export function ArkGame() {
               Cała Arka w komplecie!
             </Heading>
             <p className="mt-2 text-ink">
-              {s.moves} ruchów. {rank(s.moves)}
+              {s.moves} ruchów. {rank(s.moves, s.pairs)}
             </p>
             {record && <p className="mt-2 font-bold text-success">Nowy rekord! 🎉</p>}
             <Button
@@ -115,7 +158,7 @@ export function ArkGame() {
           <div
             role="group"
             aria-label="Karty ze zwierzętami. Strzałki przenoszą między kartami, Enter odkrywa."
-            className="grid grid-cols-4 gap-2 sm:gap-3"
+            className={cn("grid gap-2", GRID_COLS[cols], cols === 4 && "sm:gap-3")}
           >
             {s.deck.map((id, i) => {
               const up = isFaceUp(s, i);
@@ -140,12 +183,18 @@ export function ArkGame() {
                       up && "rotate-y-180",
                     )}
                   >
-                    <span className="absolute inset-0 grid place-items-center rounded-card bg-navy text-2xl text-white shadow-card backface-hidden group-hover:bg-navy-800 sm:text-3xl">
+                    <span
+                      className={cn(
+                        "absolute inset-0 grid place-items-center rounded-card bg-navy text-white shadow-card backface-hidden group-hover:bg-navy-800",
+                        cols === 4 ? "text-2xl sm:text-3xl" : "text-lg sm:text-2xl",
+                      )}
+                    >
                       <span aria-hidden="true">🕊️</span>
                     </span>
                     <span
                       className={cn(
-                        "absolute inset-0 grid rotate-y-180 place-items-center rounded-card bg-surface text-3xl shadow-card backface-hidden sm:text-4xl",
+                        "absolute inset-0 grid rotate-y-180 place-items-center rounded-card bg-surface shadow-card backface-hidden",
+                        cols === 4 ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl",
                         done && "bg-accent-soft ring-2 ring-success",
                       )}
                     >

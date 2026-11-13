@@ -10,11 +10,14 @@ export const STONES = 5;
 /** Goliath reaching this x has caught David. */
 export const CATCH_X = 215;
 export const START_X = 690;
-export const MIN_ANGLE = 5;
-export const MAX_ANGLE = 80;
+export const MIN_ANGLE = 12;
+export const MAX_ANGLE = 78;
+/** Seconds for a full swing of the angle / power indicators (FIFA-penalty style). */
+export const ANGLE_PERIOD = 2.2;
+export const POWER_PERIOD = 2.4;
 const STONE_R = 7;
 
-export const speedFromPower = (power: number) => 320 + clamp(power, 0, 1) * 620;
+export const speedFromPower = (power: number) => 470 + clamp(power, 0, 1) * 400;
 
 export type Phase = "intro" | "playing" | "won" | "lost";
 export type FeedbackKind = "body" | "helmet" | "miss" | "win" | "lose";
@@ -38,6 +41,10 @@ export interface DavidState {
   stone: Stone | null;
   /** Angle in degrees above the horizon, power 0..1. */
   aim: { angle: number; power: number };
+  /** Which indicator swings now: first the angle, then the power. */
+  aimStage: "angle" | "power";
+  /** Time since the current indicator started swinging. */
+  aimT: number;
   time: number;
   throws: number;
   feedback: Feedback | null;
@@ -75,7 +82,9 @@ export function createDavid(): DavidState {
     speed: 14,
     stonesLeft: STONES,
     stone: null,
-    aim: { angle: 42, power: 0.55 },
+    aim: { angle: MIN_ANGLE, power: 0 },
+    aimStage: "angle",
+    aimT: 0,
     time: 0,
     throws: 0,
     feedback: null,
@@ -106,7 +115,33 @@ export function throwStone(s: DavidState): DavidState {
     stone: { x: SLING.x, y: SLING.y, ...launchVelocity(s.aim) },
     stonesLeft: s.stonesLeft - 1,
     throws: s.throws + 1,
+    aimStage: "angle",
+    aimT: 0,
   };
+}
+
+/** 0 → 1 → 0 ping-pong over `period` seconds (starts at 0). */
+export const swing = (t: number, period: number) =>
+  0.5 - 0.5 * Math.cos((2 * Math.PI * t) / period);
+
+export const swingAngle = (t: number) =>
+  MIN_ANGLE + (MAX_ANGLE - MIN_ANGLE) * swing(t, ANGLE_PERIOD);
+export const swingPower = (t: number) => swing(t, POWER_PERIOD);
+
+/** One tap: first locks the swinging angle, the second locks the power and throws. */
+export function tap(s: DavidState): DavidState {
+  if (s.phase !== "playing" || s.stone || s.stonesLeft <= 0) return s;
+  if (s.aimStage === "angle")
+    return { ...s, aimStage: "power", aimT: 0, aim: { ...s.aim, power: 0 } };
+  return throwStone(s);
+}
+
+function swingAim(s: DavidState, dt: number): DavidState {
+  if (s.stone) return s;
+  const aimT = s.aimT + dt;
+  return s.aimStage === "angle"
+    ? { ...s, aimT, aim: { ...s.aim, angle: swingAngle(aimT) } }
+    : { ...s, aimT, aim: { ...s.aim, power: swingPower(aimT) } };
 }
 
 /** Points of the first part of the flight, for the aiming guide. */
@@ -121,7 +156,7 @@ export function previewPath(aim: DavidState["aim"], seconds = 0.38, steps = 9) {
 /** Hit zones relative to Goliath's feet. The face (under the helmet) is the only weak spot. */
 export function goliathZones(gx: number) {
   return {
-    face: { x: gx - 6, y: GROUND - 196, r: 21 },
+    face: { x: gx - 6, y: GROUND - 192, r: 25 },
     helmet: { x1: gx - 34, x2: gx + 30, y1: GROUND - 252, y2: GROUND - 215 },
     body: { x1: gx - 46, x2: gx + 44, y1: GROUND - 176, y2: GROUND },
   };
@@ -149,7 +184,10 @@ export function stepDavid(s: DavidState, dt: number): DavidState {
   if (s.phase === "won") return { ...s, time: s.time + dt, fall: Math.min(1, s.fall + dt * 1.6) };
   if (s.phase !== "playing") return s;
 
-  let next: DavidState = { ...s, time: s.time + dt, goliathX: s.goliathX - s.speed * dt };
+  let next: DavidState = swingAim(
+    { ...s, time: s.time + dt, goliathX: s.goliathX - s.speed * dt },
+    dt,
+  );
   if (next.goliathX <= CATCH_X) {
     return {
       ...next,

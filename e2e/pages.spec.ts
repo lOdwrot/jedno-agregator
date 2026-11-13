@@ -25,6 +25,8 @@ const routes: [string, string][] = [
   ["gra: morze czerwone", "gry/morze-czerwone"],
   ["gra: arka noego", "gry/arka-noego"],
   ["gra: walka o duszę", "gry/walka-o-dusze"],
+  ["gra: arka noego (trudny)", "gry/arka-noego?poziom=trudny"],
+  ["gra: mury jerycha", "gry/mury-jerycha"],
   ["404", "nie-ma-takiej-strony"],
 ];
 if (news[0]) routes.push(["aktualność", `aktualnosci/${news[0].id}`]);
@@ -104,7 +106,9 @@ test("games are playable with the keyboard", async ({ page }) => {
   await page.goto("gry/dawid-i-goliat");
   await page.getByRole("button", { name: "Zaczynamy!" }).click();
   await expect(page.getByRole("application")).toBeFocused();
-  await page.keyboard.press("Space");
+  await page.keyboard.press("Space"); // lock the swinging angle
+  await expect(page.getByText(/Krok 2: zatrzymaj siłę/)).toBeVisible();
+  await page.keyboard.press("Space"); // lock the power -> throw
   await expect(page.getByText("4 z 5")).toBeAttached();
 
   await page.goto("gry/morze-czerwone");
@@ -120,4 +124,11 @@ test("games are playable with the keyboard", async ({ page }) => {
   await expect(first).not.toHaveAccessibleName(/zakryta/);
   await page.keyboard.press("ArrowRight");
   await expect(page.getByRole("button", { name: /^Karta 2:/ })).toBeFocused();
+  await page.getByRole("radio", { name: /Trudny/ }).click();
+  await expect(page.getByRole("button", { name: /^Karta 36:/ })).toBeVisible();
+
+  await page.goto("gry/mury-jerycha");
+  await page.getByRole("button", { name: "Zaczynamy marsz!" }).click();
+  await page.keyboard.press("Space"); // blast during count-in = false note
+  await expect(page.getByText(/Celność: \d+%/)).toBeVisible();
 });

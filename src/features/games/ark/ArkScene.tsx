@@ -1,4 +1,4 @@
-import { ANIMALS, animal, type AnimalId } from "./engine";
+import { animal, type AnimalId } from "./engine";
 
 const RAINBOW = [
   "stroke-logo-red",
@@ -9,7 +9,18 @@ const RAINBOW = [
 ];
 
 /** The Ark with matched animals in its windows; rain until the last pair, then a rainbow. */
-export function ArkScene({ matched, won }: { matched: AnimalId[]; won: boolean }) {
+export function ArkScene({
+  animals,
+  matched,
+  won,
+}: {
+  animals: AnimalId[];
+  matched: AnimalId[];
+  won: boolean;
+}) {
+  const perRow = Math.ceil(animals.length / Math.ceil(animals.length / 9));
+  const rows = Math.ceil(animals.length / perRow);
+  const cabinTop = rows > 1 ? 50 : 62;
   return (
     <div className="relative overflow-hidden rounded-card bg-logo-blue/25">
       {!won && (
@@ -39,28 +50,40 @@ export function ArkScene({ matched, won }: { matched: AnimalId[]; won: boolean }
           </text>
         )}
         <g className="stroke-navy" strokeWidth={3} strokeLinejoin="round">
-          <rect x={110} y={62} width={180} height={50} rx={6} className="fill-logo-yellow" />
-          <path d="M100 66 L200 30 L300 66 Z" className="fill-logo-red" />
+          <rect
+            x={104}
+            y={cabinTop}
+            width={192}
+            height={112 - cabinTop}
+            rx={6}
+            className="fill-logo-yellow"
+          />
+          <path
+            d={`M94 ${cabinTop + 4} L200 ${cabinTop - 34} L306 ${cabinTop + 4} Z`}
+            className="fill-logo-red"
+          />
           <path d="M50 108 H350 L318 150 H82 Z" className="fill-logo-orange" />
           <path d="M70 124 H330" className="fill-none" strokeWidth={2} />
         </g>
-        {ANIMALS.map((a, i) => {
-          const x = 122 + i * 21;
-          const has = matched.includes(a.id);
+        {animals.map((id, i) => {
+          const row = Math.floor(i / perRow);
+          const inRow = Math.min(perRow, animals.length - row * perRow);
+          const x = 200 - (inRow * 21) / 2 + (i % perRow) * 21 + 1.5;
+          const y = cabinTop + 10 + row * 27;
           return (
-            <g key={a.id}>
+            <g key={id}>
               <rect
                 x={x}
-                y={74}
+                y={y}
                 width={18}
-                height={24}
+                height={22}
                 rx={4}
                 className="fill-surface stroke-navy"
                 strokeWidth={2}
               />
-              {has && (
-                <text x={x + 9} y={92} fontSize={15} textAnchor="middle">
-                  {animal(a.id).emoji}
+              {matched.includes(id) && (
+                <text x={x + 9} y={y + 16} fontSize={14} textAnchor="middle">
+                  {animal(id).emoji}
                 </text>
               )}
             </g>

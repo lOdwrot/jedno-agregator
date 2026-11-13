@@ -6,7 +6,7 @@ import { GameCard } from "../components/GameCard";
 export function GamesPage() {
   usePageTitle("Gry chrześcijańskie");
   useMetaDescription(
-    "Małe, zabawne gry biblijne: Dawid i Goliat, ucieczka przez Morze Czerwone, Arka Noego i karcianka Walka o duszę.",
+    "Małe, zabawne gry biblijne: Dawid i Goliat, ucieczka przez Morze Czerwone, Arka Noego, rytmiczne Mury Jerycha i karcianka Walka o duszę.",
   );
   return (
     <Container className="pb-16">

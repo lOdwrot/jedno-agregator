@@ -32,7 +32,7 @@ export function RedSeaStage({ s }: { s: RedSeaState }) {
           key={x}
           transform={`translate(${x} ${y + (floating ? Math.sin(s.time * 4 + i) * 5 : 0)}) rotate(${tilt})`}
         >
-          <Chariot />
+          <Chariot t={s.time * 14 + i * 1.7} />
         </g>
       );
     });

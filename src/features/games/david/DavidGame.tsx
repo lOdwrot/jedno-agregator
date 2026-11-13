@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { cn } from "@/lib/cn";
 import { Button, Icon } from "@/ui";
 import { StageOverlay } from "../components/StageOverlay";
@@ -13,24 +13,17 @@ import {
   W,
   createDavid,
   distanceSteps,
-  previewPath,
-  setAim,
   startDavid,
   stepDavid,
-  throwStone,
+  tap,
   type DavidState,
 } from "./engine";
 import { DavidFigure, GoliathFigure, Scenery } from "./Figures";
-import { AimControls } from "./AimControls";
-
-const MAX_PULL = 170;
+import { AimGauges } from "./AimGauges";
 
 export function DavidGame() {
   const [s, setS] = useState<DavidState>(createDavid);
-  const [pull, setPull] = useState<{ x: number; y: number } | null>(null);
   const [record, setRecord] = useState(false);
-  const anchor = useRef<{ x: number; y: number } | null>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const best = useBestScore("dawid-i-goliat", higherIsBetter);
 
@@ -50,45 +43,12 @@ export function DavidGame() {
     stageRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
   };
   const canThrow = s.phase === "playing" && !s.stone && s.stonesLeft > 0;
-  const doThrow = () => setS((x) => throwStone(x));
-  const aim = (angle: number, power: number) => setS((x) => setAim(x, angle, power));
-
-  const toSvg = (e: PointerEvent) => {
-    const svg = svgRef.current;
-    const m = svg?.getScreenCTM();
-    if (!svg || !m) return { x: 0, y: 0 };
-    const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
-    return { x: p.x, y: p.y };
-  };
-  const onDown = (e: PointerEvent<SVGSVGElement>) => {
-    if (!canThrow) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    anchor.current = toSvg(e);
-  };
-  const onMove = (e: PointerEvent<SVGSVGElement>) => {
-    if (!anchor.current) return;
-    const p = toSvg(e);
-    const dx = anchor.current.x - p.x;
-    const dy = anchor.current.y - p.y;
-    const len = Math.min(MAX_PULL, Math.hypot(dx, dy));
-    if (len < 6) return;
-    aim((Math.atan2(-dy, dx) * 180) / Math.PI, len / MAX_PULL);
-    setPull({ x: (-dx / Math.hypot(dx, dy)) * len, y: (-dy / Math.hypot(dx, dy)) * len });
-  };
-  const onUp = () => {
-    if (anchor.current && pull && Math.hypot(pull.x, pull.y) > 18) doThrow();
-    anchor.current = null;
-    setPull(null);
-  };
+  const doTap = () => setS((x) => tap(x));
 
   const onKey = (e: KeyboardEvent) => {
     const map: Record<string, () => void> = {
-      ArrowUp: () => aim(s.aim.angle + 2, s.aim.power),
-      ArrowDown: () => aim(s.aim.angle - 2, s.aim.power),
-      ArrowRight: () => aim(s.aim.angle, s.aim.power + 0.03),
-      ArrowLeft: () => aim(s.aim.angle, s.aim.power - 0.03),
-      " ": () => (s.phase === "playing" ? doThrow() : start()),
-      Enter: () => (s.phase === "playing" ? doThrow() : start()),
+      " ": () => (s.phase === "playing" ? doTap() : start()),
+      Enter: () => (s.phase === "playing" ? doTap() : start()),
     };
     const fn = map[e.key];
     if (!fn || e.target !== e.currentTarget) return;
@@ -136,21 +96,21 @@ export function DavidGame() {
         tabIndex={0}
         role="application"
         aria-roledescription="gra"
-        aria-label="Plansza gry Dawid i Goliat. Strzałki góra/dół zmieniają kąt, lewo/prawo siłę, Spacja rzuca kamień."
+        aria-label="Plansza gry Dawid i Goliat. Spacja lub stuknięcie: najpierw zatrzymuje wskaźnik kąta, potem wskaźnik siły i rzuca kamień."
         onKeyDown={onKey}
         className="relative aspect-square overflow-hidden rounded-card bg-accent-soft shadow-card select-none sm:aspect-video"
       >
         {/* eslint-enable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions */}
         <svg
-          ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
           className="block size-full touch-none"
           preserveAspectRatio="xMidYMax meet"
           aria-hidden="true"
-          onPointerDown={onDown}
-          onPointerMove={onMove}
-          onPointerUp={onUp}
-          onPointerCancel={onUp}
+          onPointerDown={(e) => {
+            if (s.phase !== "playing") return;
+            e.preventDefault();
+            doTap();
+          }}
         >
           <Scenery />
           <text x={34} y={398} fontSize={38}>
@@ -159,18 +119,7 @@ export function DavidGame() {
           <g transform={`translate(${SLING.x - 22} ${GROUND})`}>
             <DavidFigure aiming={canThrow} angle={s.aim.angle} />
           </g>
-          {canThrow &&
-            previewPath(s.aim).map((p, i) => (
-              <circle key={i} cx={p.x} cy={p.y} r={4 - i * 0.3} className="fill-navy/60" />
-            ))}
-          {pull && (
-            <path
-              d={`M${SLING.x} ${SLING.y} l${pull.x * 0.35} ${pull.y * 0.35}`}
-              className="stroke-logo-dark"
-              strokeWidth={3}
-              strokeDasharray="6 5"
-            />
-          )}
+          <AimGauges s={s} />
           <g
             transform={`translate(${s.goliathX} ${GROUND}) rotate(${-s.fall * 84}) translate(0 ${
               s.phase === "playing" ? Math.abs(Math.sin(s.time * 5)) * -4 : 0
@@ -256,20 +205,25 @@ export function DavidGame() {
         {fresh?.text ?? ""}
       </p>
 
-      <AimControls
-        angle={s.aim.angle}
-        power={s.aim.power}
-        onChange={aim}
-        disabled={s.phase !== "playing"}
-      >
+      <div className="flex flex-col items-center gap-2 rounded-card bg-surface p-4 text-center shadow-card sm:flex-row sm:justify-between sm:text-left">
+        <p className="font-bold text-navy">
+          {s.phase !== "playing"
+            ? "Najpierw stuknij, by zatrzymać kąt, potem — by zatrzymać siłę."
+            : s.stone
+              ? "Kamień leci…"
+              : s.aimStage === "angle"
+                ? `Krok 1: zatrzymaj kąt (${Math.round(s.aim.angle)}°)`
+                : `Krok 2: zatrzymaj siłę (${Math.round(s.aim.power * 100)}%)`}
+        </p>
         <Button
-          onClick={doThrow}
+          size="lg"
+          onClick={doTap}
           disabled={!canThrow}
-          leftIcon={<Icon name="arrowUpRight" size={18} />}
+          leftIcon={<Icon name={s.aimStage === "angle" ? "check" : "arrowUpRight"} size={20} />}
         >
-          Rzuć kamień!
+          {s.aimStage === "angle" ? "Stop — kąt!" : "Stop — rzut!"}
         </Button>
-      </AimControls>
+      </div>
     </div>
   );
 }

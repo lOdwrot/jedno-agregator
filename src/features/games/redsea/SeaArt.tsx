@@ -95,17 +95,76 @@ export function Moses({ stretching }: { stretching: boolean }) {
   );
 }
 
-export function Chariot() {
+function Horse({ x, t }: { x: number; t: number }) {
+  const a = Math.sin(t) * 5;
+  const b = Math.sin(t + Math.PI) * 5;
   return (
-    <g className="stroke-navy" strokeWidth={2} strokeLinejoin="round">
-      <text x={-17} y={-2} fontSize={26} stroke="none">
-        🐎
-      </text>
-      <rect x={-15} y={4} width={30} height={20} rx={5} className="fill-logo-yellow" />
-      <circle cx={-15} cy={22} r={5} className="fill-logo-dark" />
-      <circle cx={15} cy={22} r={5} className="fill-logo-dark" />
-      <circle cx={0} cy={4} r={7} className="fill-accent-soft" />
-      <path d="M-9 4 Q0 -10 9 4 L11 12 L-11 12 Z" className="fill-logo-blue" />
+    <g className="stroke-navy" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+      {/* galloping legs (front pair and hind pair move in opposite phase) */}
+      <path
+        d={`M${x - 5} -34 l-3 ${-6 - a} M${x + 5} -34 l3 ${-6 - b} M${x - 5} -18 l-3 ${6 + b} M${x + 5} -18 l3 ${6 + a}`}
+        strokeWidth={2.4}
+        className="fill-none stroke-logo-dark"
+      />
+      <path d={`M${x} -13 q${a * 0.8} 6 ${-a * 0.4} 12`} className="fill-none" strokeWidth={3} />
+      <ellipse cx={x} cy={-26} rx={7} ry={13} className="fill-accent-ink" />
+      <ellipse cx={x} cy={-45} rx={4.6} ry={8} className="fill-accent-ink" />
+      <path d={`M${x} -37 V-50`} className="fill-none" strokeWidth={2.6} />
+      <path
+        d={`M${x - 3.5} -50 l-1.5 -5 l3 2 Z M${x + 3.5} -50 l1.5 -5 l-3 2 Z`}
+        className="fill-accent-ink"
+      />
+      <ellipse cx={x} cy={-52} rx={2.6} ry={1.6} className="fill-logo-dark" strokeWidth={0} />
+    </g>
+  );
+}
+
+function Wheel({ x, t }: { x: number; t: number }) {
+  return (
+    <g transform={`translate(${x} 9) rotate(${(t * 40) % 360})`} className="stroke-navy">
+      <circle r={8} className="fill-logo-yellow" strokeWidth={2.2} />
+      <path d="M-8 0 H8 M0 -8 V8 M-5.7 -5.7 L5.7 5.7 M-5.7 5.7 L5.7 -5.7" strokeWidth={1.4} />
+      <circle r={2} className="fill-navy" />
+    </g>
+  );
+}
+
+/** Top-down cartoon war chariot: two galloping horses, yoke, gold car with spoked wheels, driver with whip. */
+export function Chariot({ t = 0 }: { t?: number }) {
+  const whip = Math.sin(t * 0.7) * 6;
+  return (
+    <g>
+      <Horse x={-10} t={t} />
+      <Horse x={10} t={t + 0.9} />
+      <g className="fill-none stroke-navy" strokeLinecap="round">
+        <path d="M-17 -36 H17" strokeWidth={3} className="stroke-logo-yellow" />
+        <path d="M0 -36 V-4" strokeWidth={3} />
+        <path d="M-3 -2 L-10 -46 M3 -2 L10 -46" strokeWidth={1} />
+      </g>
+      <path d="M-20 9 H20" className="stroke-navy" strokeWidth={3} />
+      <Wheel x={-20} t={t} />
+      <Wheel x={20} t={t} />
+      <path
+        d="M-13 12 V2 Q-13 -7 0 -7 Q13 -7 13 2 V12 Z"
+        className="fill-logo-yellow stroke-navy"
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <path d="M-9 0 H9" className="stroke-logo-red" strokeWidth={2} />
+      {/* driver seen from above: nemes headdress with stripes */}
+      <path
+        d="M-7 7 Q-8 -1 0 -2 Q8 -1 7 7 L5 11 H-5 Z"
+        className="fill-logo-blue stroke-navy"
+        strokeWidth={1.5}
+      />
+      <path d="M-5 4 H5 M-6 7 H6" className="stroke-logo-yellow" strokeWidth={1.4} />
+      <circle cx={0} cy={3} r={3.4} className="fill-accent-soft stroke-navy" strokeWidth={1.2} />
+      <path
+        d={`M6 4 L15 -6 q${6 + whip} -8 ${2 + whip} -20`}
+        className="fill-none stroke-logo-dark"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+      />
     </g>
   );
 }
