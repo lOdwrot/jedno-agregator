@@ -16,12 +16,12 @@
   --color-accent-strong: #c4531d; /* solid button bg: white text 4.56:1 */
   --color-accent-soft: #fdeee6;
 
-  /* Logo palette (5 figures of the Jedno logo) */
-  --color-logo-orange: #e8672a;
-  --color-logo-blue: #5b6bc0;
-  --color-logo-yellow: #f2a93b;
+  /* Logo palette: the 4 figures of the Jedno logo (same as the mobile app) + red for decoration */
+  --color-logo-orange: #ea6b40;
+  --color-logo-blue: #5768a2;
+  --color-logo-yellow: #eaa040;
   --color-logo-red: #e2533b;
-  --color-logo-dark: #2b3a2f;
+  --color-logo-dark: #343f32;
 
   /* Neutrals */
   --color-canvas: #f0f2f5; /* page background */

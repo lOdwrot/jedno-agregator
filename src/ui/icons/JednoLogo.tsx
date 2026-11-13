@@ -2,26 +2,22 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/cn";
 import { usePrefersReducedMotion } from "../effects/useMediaQuery";
 
+/** Clockwise from the top — same order and colours as the Jedno mobile app logo. */
 const FIGURES = [
-  { color: "var(--color-logo-orange)" },
-  { color: "var(--color-logo-blue)" },
-  { color: "var(--color-logo-yellow)" },
-  { color: "var(--color-logo-red)" },
-  { color: "var(--color-logo-dark)" },
+  "var(--color-logo-blue)",
+  "var(--color-logo-yellow)",
+  "var(--color-logo-dark)",
+  "var(--color-logo-orange)",
 ];
 
-const C = 50;
-const pt = (deg: number, r: number) => {
-  const a = (deg * Math.PI) / 180;
-  return [C + r * Math.cos(a), C + r * Math.sin(a)] as const;
-};
-
-/** One figure: a head (circle) plus arms (an arc reaching toward both neighbours). */
-function arms(deg: number) {
-  const [x1, y1] = pt(deg - 30, 25);
-  const [x2, y2] = pt(deg + 30, 25);
-  return `M${x1.toFixed(1)} ${y1.toFixed(1)} A25 25 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`;
-}
+/*
+ * Geometry traced from the app icon (1024×1024 grid, centre 512/512). The top figure is a head
+ * plus one arm: a band (arc around 512/117, radii 236–324) with a rounded end at the upper right
+ * and a slanted cut near the centre. The other three figures are the same shape rotated by 90°.
+ */
+const HEAD = { cx: 512, cy: 206, r: 71 };
+const ARM =
+  "M735.4 351.6A324 324 0 0 1 467 440L430 342A236 236 0 0 0 674.8 287.9A44 44 0 0 1 735.4 351.6Z";
 
 export interface JednoLogoProps {
   /** `full` = mark + wordmark, `mark` = figures only. */
@@ -51,35 +47,27 @@ export function JednoLogo({
       aria-label={title}
     >
       <svg
-        viewBox="0 0 100 100"
+        viewBox="120 120 784 784"
         width={size}
         height={size}
         aria-hidden="true"
         focusable="false"
         className="shrink-0 overflow-visible"
       >
-        {FIGURES.map((f, i) => {
-          const deg = -90 + i * 72;
-          const [hx, hy] = pt(deg, 37);
-          return (
-            <motion.g
-              key={i}
-              style={{ transformOrigin: "50px 50px" }}
-              initial={animate ? { scale: 0, rotate: -50, opacity: 0 } : false}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 160, damping: 14, delay: i * 0.12 }}
-            >
-              <circle cx={hx} cy={hy} r="7" fill={f.color} />
-              <path
-                d={arms(deg)}
-                fill="none"
-                stroke={f.color}
-                strokeWidth="6.5"
-                strokeLinecap="round"
-              />
-            </motion.g>
-          );
-        })}
+        {FIGURES.map((color, i) => (
+          <motion.g
+            key={color}
+            style={{ transformOrigin: "512px 512px", transformBox: "view-box" }}
+            initial={animate ? { scale: 0, rotate: -50, opacity: 0 } : false}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 160, damping: 14, delay: i * 0.12 }}
+          >
+            <g transform={`rotate(${i * 90} 512 512)`} fill={color}>
+              <circle cx={HEAD.cx} cy={HEAD.cy} r={HEAD.r} />
+              <path d={ARM} />
+            </g>
+          </motion.g>
+        ))}
       </svg>
       {variant === "full" && (
         <span

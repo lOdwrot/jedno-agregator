@@ -64,10 +64,11 @@ export function Modal({
     if (typeof el.showModal === "function") {
       if (!el.open) el.showModal();
     } else el.setAttribute("open", "");
+    el.scrollTop = 0;
     if (!el.contains(document.activeElement)) {
       el.querySelector<HTMLElement>(
         '[autofocus], a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      )?.focus();
+      )?.focus({ preventScroll: true });
     }
     lockScroll();
     return () => unlockScroll();
@@ -106,11 +107,17 @@ export function Modal({
           onClose();
         }
       }}
+      onScroll={(e) => {
+        // Fallback for browsers without `overflow: clip`.
+        if (e.target === e.currentTarget) e.currentTarget.scrollTop = 0;
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget || (e.target as HTMLElement).dataset.backdrop) onClose();
       }}
       className={cn(
-        "ui-modal fixed inset-0 m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-navy/55 backdrop:backdrop-blur-sm",
+        // overflow-clip (not auto/hidden): the panel starts off-screen (translate 100%); a scrollable
+        // <dialog> gets scrolled to it by showModal()/focus and snaps back, so the slide-in jumps.
+        "ui-modal fixed inset-0 m-0 h-full max-h-none w-full max-w-none overflow-clip overscroll-contain bg-transparent p-0 backdrop:bg-navy/60",
         className,
       )}
     >
