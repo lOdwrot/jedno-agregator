@@ -130,6 +130,14 @@ export const glyphs = {
       <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8" />
     </>
   ),
+  gamepad: (
+    <>
+      <path d="M7.5 7h9a4.5 4.5 0 0 1 4.4 5.4l-.8 4a2.6 2.6 0 0 1-4.5 1.3L14 16h-4l-1.6 1.7a2.6 2.6 0 0 1-4.5-1.3l-.8-4A4.5 4.5 0 0 1 7.5 7Z" />
+      <path d="M8.5 10v4M6.5 12h4" />
+      <circle cx="15.5" cy="10.8" r=".7" fill="currentColor" />
+      <circle cx="17.3" cy="13.2" r=".7" fill="currentColor" />
+    </>
+  ),
   list: <path d="M9 6.5h11M9 12h11M9 17.5h11M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01" />,
 } satisfies Record<string, ReactNode>;
 

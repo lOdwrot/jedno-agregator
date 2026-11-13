@@ -20,6 +20,10 @@ const routes: [string, string][] = [
   ["społeczności", "spolecznosci"],
   ["media", "media"],
   ["instagram", "media/instagram"],
+  ["gry", "gry"],
+  ["gra: dawid i goliat", "gry/dawid-i-goliat"],
+  ["gra: morze czerwone", "gry/morze-czerwone"],
+  ["gra: arka noego", "gry/arka-noego"],
   ["404", "nie-ma-takiej-strony"],
 ];
 if (news[0]) routes.push(["aktualność", `aktualnosci/${news[0].id}`]);
@@ -93,4 +97,26 @@ test("skip link moves focus to main", async ({ page }) => {
   await expect(skip).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.locator("#main")).toBeFocused();
+});
+
+test("games are playable with the keyboard", async ({ page }) => {
+  await page.goto("gry/dawid-i-goliat");
+  await page.getByRole("button", { name: "Zaczynamy!" }).click();
+  await expect(page.getByRole("application")).toBeFocused();
+  await page.keyboard.press("Space");
+  await expect(page.getByText("4 z 5")).toBeAttached();
+
+  await page.goto("gry/morze-czerwone");
+  await page.getByRole("button", { name: "Uciekamy!" }).click();
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.getByRole("button", { name: "Tor w lewo" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Tor w prawo" })).toBeEnabled();
+
+  await page.goto("gry/arka-noego");
+  const first = page.getByRole("button", { name: /^Karta 1:/ });
+  await first.focus();
+  await page.keyboard.press("Enter");
+  await expect(first).not.toHaveAccessibleName(/zakryta/);
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("button", { name: /^Karta 2:/ })).toBeFocused();
 });

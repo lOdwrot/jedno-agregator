@@ -9,5 +9,7 @@ export const paths = {
   media: "/media",
   mediaInstagram: "/media/instagram",
   info: (slug: string) => `/info/${slug}`,
+  games: "/gry",
+  game: (slug: string) => `/gry/${slug}`,
   uiCatalog: "/ui",
 } as const;

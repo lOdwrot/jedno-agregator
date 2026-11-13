@@ -101,3 +101,18 @@
   animation-duration: 280ms;
   animation-timing-function: var(--ease-out-expo);
 }
+
+/* Games (src/features/games) */
+@keyframes game-rain {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(190px);
+    opacity: 0;
+  }
+}
