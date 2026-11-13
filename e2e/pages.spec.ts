@@ -24,6 +24,7 @@ const routes: [string, string][] = [
   ["gra: dawid i goliat", "gry/dawid-i-goliat"],
   ["gra: morze czerwone", "gry/morze-czerwone"],
   ["gra: arka noego", "gry/arka-noego"],
+  ["gra: walka o duszę", "gry/walka-o-dusze"],
   ["404", "nie-ma-takiej-strony"],
 ];
 if (news[0]) routes.push(["aktualność", `aktualnosci/${news[0].id}`]);
