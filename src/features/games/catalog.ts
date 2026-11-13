@@ -1,5 +1,5 @@
 /** Static catalog of the small Bible games (no CMS data — content lives here). */
-export type GameSlug = "dawid-i-goliat" | "morze-czerwone" | "arka-noego";
+export type GameSlug = "dawid-i-goliat" | "morze-czerwone" | "arka-noego" | "walka-o-dusze";
 
 export interface GameInfo {
   slug: GameSlug;
@@ -77,6 +77,27 @@ export const GAMES: readonly GameInfo[] = [
     reflection:
       "Noe budował arkę, zanim spadła pierwsza kropla — zaufał, zanim zobaczył. Bóg dotrzymuje obietnic, a tęcza przypomina, że po każdej burzy On wciąż jest z nami.",
     prayer: "Panie, naucz mnie ufać Ci, zanim zobaczę tęczę.",
+  },
+  {
+    slug: "walka-o-dusze",
+    title: "Walka",
+    accent: "o duszę",
+    emoji: "🃏",
+    tagline:
+      "Karcianka przeciw pomiotom szatana. Ministranci, babcie z różańcem, święci i papieże z różnych epok kontra Diablik Scrollowania, Biesik Plotki i Lewiatan Pychy. Zbieraj karty z boosterów i ułóż własną talię!",
+    gradient: "from-navy via-logo-blue to-logo-red",
+    minutes: 10,
+    controls: {
+      touch:
+        "Stuknij kartę w ręce albo na stole — zobaczysz jej opis i dostępne akcje. Ataki i „Zakończ turę” są pod Twoją postacią.",
+      keyboard:
+        "Tab — przejście między kartami i przyciskami, Enter lub Spacja — wybór, Esc — zamknięcie karty.",
+    },
+    verse: { text: "Nie daj się zwyciężyć złu, ale zło dobrem zwyciężaj.", ref: "Rz 12,21" },
+    reflection:
+      "Zło rzadko przychodzi z hukiem. Zwykle podsuwa drobiazgi: „jeszcze chwilę”, „wszyscy tak robią”, „to nic takiego”. Kto umie nazwać pokusę po imieniu, ten już wygrywa połowę walki — a drugą połowę wygrywa Bóg, jeśli Mu na to pozwolisz.",
+    prayer:
+      "Święty Michale Archaniele, wspomagaj nas w walce. Panie, chroń moją duszę i dusze moich bliskich.",
   },
 ];
 

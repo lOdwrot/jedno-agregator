@@ -23,7 +23,10 @@ export function HowToPlay({ game }: { game: GameInfo }) {
         </div>
       </dl>
       <p className="mt-4 flex items-center gap-2 text-sm text-ink-muted">
-        <Icon name="sparkle" size={16} /> Najlepszy wynik zapisuje się na tym urządzeniu.
+        <Icon name="sparkle" size={16} />{" "}
+        {game.slug === "walka-o-dusze"
+          ? "Kolekcja kart i talia zapisują się na tym urządzeniu."
+          : "Najlepszy wynik zapisuje się na tym urządzeniu."}
       </p>
     </section>
   );

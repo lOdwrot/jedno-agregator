@@ -17,6 +17,7 @@ const GAME_COMPONENTS: Record<GameSlug, ComponentType> = {
     import("../redsea/RedSeaGame").then((m) => ({ default: m.RedSeaGame })),
   ),
   "arka-noego": lazy(() => import("../ark/ArkGame").then((m) => ({ default: m.ArkGame }))),
+  "walka-o-dusze": lazy(() => import("../soul/SoulGame").then((m) => ({ default: m.SoulGame }))),
 };
 
 export function GamePage() {
