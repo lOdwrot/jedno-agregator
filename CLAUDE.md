@@ -63,7 +63,11 @@ content/        hand-maintained content (instagram/posts.json)
 e2e/            Playwright tests
 ```
 
-Features: `home`, `news`, `events`, `communities`, `media`, `infos`, `notifications`.
+Features: `home`, `news`, `events`, `communities`, `media`, `infos`, `notifications`, `games`.
+
+`games` (`/gry`, `/gry/:slug`) are small Bible mini-games with static content in `features/games/catalog.ts`.
+Each game has a pure, unit-tested `engine.ts` (state + `step(dt)`) and an SVG view driven by `useGameLoop`.
+Every game must stay playable by touch AND keyboard, announce status via `aria-live`, and end with the verse card.
 
 ## Conventions
 

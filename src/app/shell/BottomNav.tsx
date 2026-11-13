@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router";
 import { motion } from "motion/react";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/ui";
-import { NAV_ITEMS, isNavActive } from "./nav";
+import { BOTTOM_NAV_ITEMS, isNavActive } from "./nav";
 
 /** Mobile bottom tab bar (hidden from lg), mirrors the Jedno app. */
 export function BottomNav() {
@@ -13,7 +13,7 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 rounded-t-3xl border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] shadow-lift backdrop-blur-lg lg:hidden"
     >
       <ul className="mx-auto flex max-w-xl items-stretch justify-around px-1 pt-1.5">
-        {NAV_ITEMS.map((item) => {
+        {BOTTOM_NAV_ITEMS.map((item) => {
           const active = isNavActive(pathname, item.to);
           return (
             <li key={item.to} className="min-w-0 flex-1">

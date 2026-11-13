@@ -53,6 +53,14 @@ export const router = createBrowserRouter(
           path: "info/:slug",
           lazy: page(() => import("@/features/infos/pages/InfoPage"), "InfoPage"),
         },
+        {
+          path: "gry",
+          lazy: page(() => import("@/features/games/pages/GamesPage"), "GamesPage"),
+        },
+        {
+          path: "gry/:slug",
+          lazy: page(() => import("@/features/games/pages/GamePage"), "GamePage"),
+        },
         { path: "ui", lazy: page(() => import("@/ui/catalog/UiCatalogPage"), "UiCatalogPage") },
         { path: "*", lazy: page(() => import("./NotFoundPage"), "NotFoundPage") },
       ],
