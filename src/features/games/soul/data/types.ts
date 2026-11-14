@@ -42,6 +42,8 @@ export type AbilityEffect =
   | { k: "statusImmune" }
   | { k: "endHeal"; n: number }
   | { k: "attackBonus"; n: number }
+  /** Works from the bench too: none of the owner's characters has a weakness. */
+  | { k: "noWeakness" }
   /** While this character is active, neither player may play cards of this kind. */
   | { k: "lock"; kind: "item" | "supporter" }
   /* activated once per turn (like Pokémon TCG Abilities) */

@@ -43,4 +43,15 @@ export const ABYSS_SIG: Record<string, { sound: keyof typeof signatureSound; pla
       );
     },
   },
+  "Miecz wielki": {
+    sound: "warhorse",
+    play: async ({ r, from, to }) => {
+      await sweep(r.fx, r.tw, r.w, to.y, "🐎", 96, true, 750);
+      await both(
+        stream(r.fx, r.tw, from, to, "⚔️", 3, 50, 500),
+        impact(r.fx, r.tw, to, P()["logo-red"], 2),
+        shake(r.tw, r.stage, 16, r.reduced),
+      );
+    },
+  },
 };

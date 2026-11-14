@@ -42,3 +42,34 @@ describe("Niepokonany (Tron Bestii)", () => {
     expect(isCharacter(def) && def.hp >= 60).toBe(true);
   });
 });
+
+describe("Duch tego świata — weakness off, even from the bench", () => {
+  it("cancels the weakness of every demon while it is in play", async () => {
+    const { toInPlay } = await import("../engine/state");
+    const { applyDefense } = await import("../engine/combat");
+    const g = createGame(deckList(newProfile()), deck(), 3, o.boost);
+    const bestia = toInPlay({ uid: 9001, cardId: "bestia", finish: "plain" }, 0); // weak to modlitwa
+    const prayer = toInPlay({ uid: 9002, cardId: "scholanka", finish: "plain" }, 0); // modlitwa
+    g.players.ai.active = bestia;
+    g.players.ai.bench = [];
+    g.players.me.active = prayer;
+    expect(applyDefense(g, "ai", prayer, bestia, 40)).toBe(80);
+    g.players.ai.bench = [toInPlay({ uid: 9003, cardId: "duch-swiata", finish: "plain" }, 0)];
+    expect(applyDefense(g, "ai", prayer, bestia, 40)).toBe(40);
+    // the parish keeps its own weaknesses
+    const zlosnik = toInPlay({ uid: 9004, cardId: "zlosnik", finish: "plain" }, 0); // gniew
+    const scholanka = toInPlay({ uid: 9005, cardId: "scholanka", finish: "plain" }, 0);
+    g.players.me.active = scholanka;
+    expect(applyDefense(g, "me", zlosnik, scholanka, 40)).toBe(80);
+  });
+
+  it("the computer benches team helpers (Duch, Jeździec) before big hitters", async () => {
+    const { bestBenchBasic } = await import("../engine/state");
+    const hand = ["bestia", "duch-swiata", "lucyfer"].map((cardId, i) => ({
+      uid: 100 + i,
+      cardId,
+      finish: "plain" as const,
+    }));
+    expect(bestBenchBasic(hand)?.cardId).toBe("duch-swiata");
+  });
+});

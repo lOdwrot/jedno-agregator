@@ -21,6 +21,7 @@ import {
 } from "./combat";
 import { canPlaySupport, supportTargets } from "./support";
 import {
+  benchValue,
   bestBasic,
   charDef,
   hpLeft,
@@ -232,7 +233,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   }
   const basic = me.hand
     .filter((c) => canBench(g, pid, c))
-    .sort((x, y) => charDef(y).hp - charDef(x).hp)[0];
+    .sort((x, y) => benchValue(y) - benchValue(x))[0];
   if (basic) return { type: "playBasic", uid: basic.uid };
 
   const sup = pickSupport(g, pid);

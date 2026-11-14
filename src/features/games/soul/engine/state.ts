@@ -198,6 +198,17 @@ export function bestBasic(hand: CardInst[]): CardInst | undefined {
     .sort((a, b) => charDef(b).hp - charDef(a).hp)[0];
 }
 
+/** Abilities that help the whole team from the bench — worth benching before the big hitters. */
+const SUPPORT_ABILITIES = new Set(["noWeakness", "energyOnce", "attackBonus"]);
+export const benchValue = (c: CardInst) => {
+  const d = charDef(c);
+  return d.hp + (d.ability && SUPPORT_ABILITIES.has(d.ability.effect.k) ? 200 : 0);
+};
+
+/** Basic to put on the bench: team supporters first, then the toughest. */
+export const bestBenchBasic = (hand: CardInst[]): CardInst | undefined =>
+  hand.filter((c) => isBasic(getCard(c.cardId))).sort((a, b) => benchValue(b) - benchValue(a))[0];
+
 export function createGame(
   me: DeckList,
   ai: DeckList,
@@ -241,7 +252,7 @@ export function createGame(
   p.hand = p.hand.filter((c) => c !== act);
   p.active = toInPlay(act, 0);
   for (let i = 0; i < 2 && p.bench.length < BENCH_SIZE; i++) {
-    const b = bestBasic(p.hand);
+    const b = bestBenchBasic(p.hand);
     if (!b) break;
     p.hand = p.hand.filter((c) => c !== b);
     p.bench.push(toInPlay(b, 0));

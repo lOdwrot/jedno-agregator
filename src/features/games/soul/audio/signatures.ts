@@ -194,6 +194,11 @@ export const signatureSound: Record<string, () => void> = {
     for (let i = 0; i < 10; i++) drum(i * 0.09, 0.22);
     tone(n(-12), 0.6, { type: "square", gain: 0.03, delay: 0.95, slideTo: n(-30), cutoff: 1200 });
   },
+  warhorse: () => {
+    [0, 0.14, 0.28, 0.42, 0.56, 0.7].forEach((d) => drum(d, 0.2));
+    tone(n(-5), 0.5, { type: "sawtooth", gain: 0.05, delay: 0.1, slideTo: n(7), cutoff: 1600 });
+    noise(0.4, { cutoff: 5000, gain: 0.12, delay: 0.85, highpass: true });
+  },
   high_c: () =>
     tone(n(15) * 2, 1.0, { type: "sine", gain: 0.07, attack: 0.1, slideTo: n(15) * 2.02 }),
 };
