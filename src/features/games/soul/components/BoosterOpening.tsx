@@ -24,6 +24,8 @@ interface Props {
   fresh: boolean[];
   onClose: () => void;
   onAgain: (() => void) | null;
+  /** Prize booster after a duel: a direct way back to the main menu, always shown next to the cards. */
+  onMenu?: () => void;
 }
 
 const rank = (k: CardKey) =>
@@ -33,7 +35,7 @@ const rank = (k: CardKey) =>
  * Full-screen booster opening: the pack is squeezed, its top tears off, the cards pop out into a fan
  * and glide into the grid, where they flip one by one with rarity effects.
  */
-export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) {
+export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }: Props) {
   const reduce = usePrefersReducedMotion();
   const [phase, setPhase] = useState<Phase>("charge");
   const [shown, setShown] = useState(0);
@@ -238,6 +240,11 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
                   Gotowe
                 </Button>
               </>
+            )}
+            {onMenu && (
+              <Button variant="outline" className="border-white/40 text-white" onClick={onMenu}>
+                Wróć do menu
+              </Button>
             )}
           </div>
         </div>
