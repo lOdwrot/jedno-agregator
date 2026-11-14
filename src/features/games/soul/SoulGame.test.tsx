@@ -40,7 +40,7 @@ describe("SoulGame", () => {
   it("opens the welcome booster with the animation and saves the cards", async () => {
     setup();
     await userEvent.click(screen.getByRole("tab", { name: /Boostery/ }));
-    expect(screen.getAllByRole("button", { name: /^Otwórz paczkę/ })).toHaveLength(3);
+    expect(screen.getAllByRole("button", { name: /^Otwórz paczkę/ })).toHaveLength(4);
     await userEvent.click(screen.getByRole("button", { name: /Otwórz paczkę Wspólnota/ }));
     expect(
       screen.getByRole("dialog", { name: /Otwieranie boostera: Wspólnota/ }),

@@ -31,6 +31,20 @@ describe("booster editions", () => {
     expect(count("papieze")).toBeGreaterThan(count("wspolnota") * 1.5);
   });
 
+  it("Skarbiec Katedry guarantees a rare and a legendary card", () => {
+    const rnd = createRng(9);
+    const pack = PACKS.find((p) => p.id === "skarbiec")!;
+    expect(pack.price).toBe(1000);
+    let special = 0;
+    for (let i = 0; i < 200; i++) {
+      const cards = rollPack(pack, rnd);
+      expect(rarityOf(cards[3]!)).toBe("rare");
+      expect(rarityOf(cards[4]!)).toBe("legendary");
+      special += cards.filter((k) => !k.endsWith(":plain")).length;
+    }
+    expect(special / 1000).toBeGreaterThan(0.35);
+  });
+
   it("the saints' pack favours saints in the rare slot", () => {
     const rnd = createRng(5);
     const pack = PACKS.find((p) => p.id === "swieci")!;
