@@ -5,7 +5,7 @@ export interface Opponent {
   emoji: string;
   difficulty: "łatwy" | "średni" | "trudny";
   reward: { win: number; loss: number };
-  /** Card ids (energy included) — 24 cards. */
+  /** Card ids (energy included) — 40 cards. */
   deck: Record<string, number>;
   letter: { greeting: string; body: string[]; signature: string };
   /** What the player should take away from this duel. */
@@ -20,15 +20,17 @@ export const OPPONENTS: readonly Opponent[] = [
     difficulty: "łatwy",
     reward: { win: 100, loss: 30 },
     deck: {
-      drzemka: 2,
+      drzemka: 3,
       odkladanie: 1,
       scroll: 2,
-      zniechecenie: 1,
-      szyderca: 2,
+      zniechecenie: 2,
+      szyderca: 3,
       wybredny: 1,
-      powiadomienie: 1,
-      wymowka: 1,
-      pokusa: 13,
+      powiadomienie: 2,
+      wymowka: 2,
+      reklama: 2,
+      obietnica: 1,
+      pokusa: 21,
     },
     letter: {
       greeting: "Mój drogi Smołku,",
@@ -48,16 +50,21 @@ export const OPPONENTS: readonly Opponent[] = [
     difficulty: "średni",
     reward: { win: 140, loss: 40 },
     deck: {
-      plotka: 2,
+      plotka: 3,
       obmowa: 2,
-      zlosnik: 2,
+      zlosnik: 3,
       krytykant: 2,
-      scroll: 1,
+      scroll: 2,
       powiadomienie: 2,
       falszywy: 1,
       hejt: 1,
       galeria: 1,
-      pokusa: 10,
+      reklama: 2,
+      czat: 1,
+      reset: 1,
+      influencer: 1,
+      obietnica: 1,
+      pokusa: 17,
     },
     letter: {
       greeting: "Smołku, ty kompletny amatorze,",
@@ -77,16 +84,21 @@ export const OPPONENTS: readonly Opponent[] = [
     difficulty: "trudny",
     reward: { win: 200, loss: 50 },
     deck: {
-      pyszalek: 2,
+      pyszalek: 3,
       lewiatan: 2,
-      porownania: 2,
-      mamona: 2,
+      porownania: 3,
+      mamona: 1,
       belzebub: 1,
-      krytykant: 1,
+      krytykant: 2,
       falszywy: 2,
       powiadomienie: 2,
       galeria: 1,
-      pokusa: 9,
+      reklama: 2,
+      czat: 1,
+      reset: 1,
+      influencer: 1,
+      obietnica: 1,
+      pokusa: 17,
     },
     letter: {
       greeting: "Smołku, ostatnia szansa,",

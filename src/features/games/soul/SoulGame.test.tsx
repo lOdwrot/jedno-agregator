@@ -30,7 +30,7 @@ describe("SoulGame", () => {
     const duel = screen.getByRole("region", { name: /Pojedynek z: Chochliki z kanapy/ });
     expect(duel).toBeInTheDocument();
     expect(screen.getByText(/postać podstawową z ręki/)).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(5);
+    expect(screen.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(7);
     expect(screen.getByRole("button", { name: "Muzyka w tle" })).toHaveAttribute(
       "aria-pressed",
       "true",

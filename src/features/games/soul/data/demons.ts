@@ -75,6 +75,11 @@ export const DEMON_CARDS: CardDef[] = [
     weakness: "modlitwa",
     retreat: 1,
     souls: 1,
+    ability: {
+      name: "Powiadomienia push",
+      text: "Raz na turę: dobierz 1 kartę.",
+      effect: { k: "drawOnce" },
+    },
     attacks: [
       {
         name: "Nieskończony feed",
@@ -335,6 +340,11 @@ export const DEMON_CARDS: CardDef[] = [
     weakness: "sluzba",
     retreat: 2,
     souls: 1,
+    ability: {
+      name: "Kredyt na raty",
+      text: "Raz na turę: dołącz 1 Pokusę z talii do swojego pomiota, który jej najbardziej potrzebuje.",
+      effect: { k: "energyOnce" },
+    },
     attacks: [
       {
         name: "Promocja −70%",
@@ -364,6 +374,11 @@ export const DEMON_CARDS: CardDef[] = [
     weakness: "sluzba",
     retreat: 2,
     souls: 1,
+    ability: {
+      name: "Deser na pocieszenie",
+      text: "Raz na turę: ulecz 20 swojego najbardziej rannego pomiota.",
+      effect: { k: "healOnce", n: 20 },
+    },
     attacks: [
       {
         name: "Ja chcę tylko odrobinę",
@@ -392,6 +407,11 @@ export const DEMON_CARDS: CardDef[] = [
     weakness: "modlitwa",
     retreat: 3,
     souls: 2,
+    ability: {
+      name: "Władca much",
+      text: "Ta postać otrzymuje o 10 mniej obrażeń.",
+      effect: { k: "armor", n: 10 },
+    },
     attacks: [
       {
         name: "Bzyczenie w głowie",
@@ -506,6 +526,84 @@ export const DEMON_CARDS: CardDef[] = [
     lesson: {
       tempts: "Niedziela zamienia się w zwykły dzień zakupów i spraw do załatwienia.",
       defend: "Niedziela to dzień dla Boga i bliskich. Zakupy zrób w sobotę.",
+    },
+  },
+  {
+    id: "reset",
+    kind: "supporter",
+    side: "demons",
+    name: "Wielki reset",
+    emoji: "🔄",
+    rarity: "uncommon",
+    text: "Odrzuć wszystkie karty z ręki i dobierz 7 kart.",
+    effect: { k: "research", n: 7 },
+    flavor: "Od jutra nowe życie. Od pojutrza też.",
+    lesson: {
+      tempts:
+        "Kusi, żeby przy pierwszym potknięciu wyrzucić wszystkie dobre postanowienia i „zacząć od zera” — kiedyś.",
+      defend:
+        "Nie zaczynaj od zera — zacznij od teraz. Jedno potknięcie nie kasuje drogi, którą już przeszedłeś.",
+    },
+  },
+  {
+    id: "influencer",
+    kind: "supporter",
+    side: "demons",
+    name: "Influencer z piekła",
+    emoji: "📸",
+    rarity: "rare",
+    text: "Każdy gracz wkłada rękę pod spód talii i dobiera tyle kart, ile dusz zostało mu do zdobycia.",
+    effect: { k: "iono" },
+    flavor: "„Link w bio, kod rabatowy SMOŁA20”.",
+    lesson: {
+      tempts: "Miesza w głowie: to, co modne, wydaje się prawdziwe, a to, co ważne — nudne.",
+      defend:
+        "Sprawdzaj, kto i po co Ci coś poleca. Wybieraj autorytety, które żyją tym, co mówią.",
+    },
+  },
+  {
+    id: "czat",
+    kind: "supporter",
+    side: "demons",
+    name: "Czat grupowy",
+    emoji: "💬",
+    rarity: "common",
+    text: "Dobieraj karty, aż będziesz mieć 6 w ręce.",
+    effect: { k: "drawUntil", n: 6 },
+    flavor: "327 nieprzeczytanych wiadomości. Głównie naklejki.",
+    lesson: {
+      tempts: "Ciągły szum wiadomości nie zostawia miejsca na myślenie i modlitwę.",
+      defend: "Wycisz grupy, które Cię rozpraszają. Odpisz, kiedy masz czas — nie zawsze od razu.",
+    },
+  },
+  {
+    id: "reklama",
+    kind: "item",
+    side: "demons",
+    name: "Reklama",
+    emoji: "📢",
+    rarity: "common",
+    text: "Połóż na ławce losowego pomiota podstawowego z talii.",
+    effect: { k: "benchBasic" },
+    flavor: "Tylko dziś! (I jutro. I zawsze.)",
+    lesson: {
+      tempts: "Reklama wmawia potrzebę, której przed chwilą nie było.",
+      defend: "Zanim kupisz, odczekaj dobę. Zapytaj: czy naprawdę tego potrzebuję?",
+    },
+  },
+  {
+    id: "obietnica",
+    kind: "item",
+    side: "demons",
+    name: "Fałszywa obietnica",
+    emoji: "🎁",
+    rarity: "common",
+    text: "Weź z talii do ręki 2 Pokusy.",
+    effect: { k: "energyToHand", n: 2 },
+    flavor: "W środku jest pudełko. A w nim kolejne pudełko.",
+    lesson: {
+      tempts: "Grzech zawsze obiecuje więcej, niż daje: szczęście, wolność, akceptację.",
+      defend: "Patrz na skutki, nie na opakowanie. Prawdziwe dobro zostawia pokój, a nie pustkę.",
     },
   },
   {

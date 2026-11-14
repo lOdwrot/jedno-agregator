@@ -87,6 +87,21 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
       case "searchCharacter":
         if (!me.hand.some((x) => isBasic(getCard(x.cardId))) && me.bench.length < 3) return play();
         break;
+      case "drawUntil":
+        if (me.hand.length - 1 <= Math.min(3, e.n - 2) && me.deck.length > 4) return play();
+        break;
+      case "benchBasic":
+        if (me.bench.length < 2) return play();
+        break;
+      case "energyToHand":
+        if (!me.hand.some((x) => getCard(x.cardId).kind === "energy")) return play();
+        break;
+      case "research":
+        if (me.hand.length <= 3 && me.deck.length > 10) return play();
+        break;
+      case "iono":
+        if (foe.hand.length >= 6 || (me.hand.length <= 2 && me.prizes.length >= 3)) return play();
+        break;
       case "shield":
         if (a && bestAttack(g, pid)) return play();
         break;

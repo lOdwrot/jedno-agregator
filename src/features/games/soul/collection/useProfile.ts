@@ -1,13 +1,14 @@
 import { useCallback, useState } from "react";
-import { newProfile, type Profile } from "./profile";
+import { migrateProfile, newProfile, type Profile } from "./profile";
 
 const KEY = "jedno-walka-o-dusze:v1";
 
 function load(): Profile {
   try {
     const raw = localStorage.getItem(KEY);
-    const p = raw ? (JSON.parse(raw) as Profile) : null;
-    if (p && p.version === 1 && Array.isArray(p.deck)) return p;
+    const p = raw ? (JSON.parse(raw) as Parameters<typeof migrateProfile>[0]) : null;
+    if (p && (p.version === 1 || p.version === 2) && Array.isArray(p.deck))
+      return migrateProfile(p);
   } catch {
     /* corrupted or blocked storage — start fresh */
   }

@@ -24,7 +24,7 @@ function autoplay(g: Game, limit = 2000): Game {
 }
 
 describe("Walka o duszę — engine", () => {
-  it("opponent decks and the starter deck have exactly 24 cards", () => {
+  it("opponent decks and the starter deck have exactly 40 cards", () => {
     for (const o of OPPONENTS)
       expect(Object.values(o.deck).reduce((a, b) => a + b, 0)).toBe(DECK_SIZE);
     expect(deckList(newProfile())).toHaveLength(DECK_SIZE);
@@ -34,7 +34,7 @@ describe("Walka o duszę — engine", () => {
     const g = createGame(deckList(newProfile()), opponentDeck(0), 7);
     expect(g.phase).toBe("setup");
     for (const p of Object.values(g.players)) expect(p.prizes).toHaveLength(4);
-    expect(g.players.me.hand).toHaveLength(5);
+    expect(g.players.me.hand).toHaveLength(7);
     expect(g.players.ai.active).not.toBeNull();
   });
 

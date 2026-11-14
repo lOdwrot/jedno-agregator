@@ -12,6 +12,8 @@ import { ease, Tweener } from "./tween";
 
 export interface Highlights {
   playable: number[];
+  /** Own characters whose activated ability can be used now. */
+  abilities?: number[];
   targets: number[];
   bench: boolean;
 }
@@ -143,6 +145,7 @@ export class BoardRenderer {
     const p = palette();
     if (this.hl.targets.includes(s.key)) return p["logo-yellow"];
     if (s.zone === "hand" && s.pid === "me" && this.hl.playable.includes(s.key)) return p.accent;
+    if (s.pid === "me" && this.hl.abilities?.includes(s.key)) return p["logo-blue"];
     return null;
   }
 

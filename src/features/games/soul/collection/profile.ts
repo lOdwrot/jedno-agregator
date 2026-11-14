@@ -13,7 +13,7 @@ export function parseKey(k: CardKey): { cardId: string; finish: Finish } {
 }
 
 export interface Profile {
-  version: 1;
+  version: 2;
   talents: number;
   /** Booster openings earned by finished duels (one per duel). */
   packs: number;
@@ -30,17 +30,24 @@ export interface Profile {
 export const BOOSTER_PRICE = 100;
 export const BOOSTER_SIZE = 5;
 
+/** Base deck: 17 characters, 10 supports (with a small draw engine) and 13 grace = 40. */
 const STARTER: [string, number][] = [
-  ["ministrant", 2],
-  ["lektor", 1],
-  ["kleryk", 2],
+  ["ministrant", 3],
+  ["lektor", 2],
+  ["kleryk", 3],
   ["wikariusz", 1],
   ["scholanka", 2],
   ["babcia", 2],
   ["oazowicz", 2],
+  ["kancelaria", 2],
   ["rozaniec", 2],
   ["woda", 1],
   ["koscielny", 1],
+  ["zbiorka", 2],
+  ["zapisy", 1],
+  ["paschal", 1],
+  ["profesor", 1],
+  ["rzecznik", 1],
 ];
 
 export function newProfile(): Profile {
@@ -50,9 +57,9 @@ export function newProfile(): Profile {
     collection[keyOf(id, "plain")] = n;
     for (let i = 0; i < n; i++) deck.push(keyOf(id, "plain"));
   }
-  // starter has 16 cards + 8 grace = 24; a welcome booster is waiting
+  // a welcome booster is waiting
   return {
-    version: 1,
+    version: 2,
     talents: BOOSTER_PRICE,
     packs: 1,
     collection,
@@ -62,6 +69,26 @@ export function newProfile(): Profile {
     losses: 0,
     beaten: [],
   };
+}
+
+/**
+ * Profiles saved with the old 24-card rules (version 1): the player gets the new base cards
+ * (so the bigger deck can be built), they are added to the deck and grace fills it up to 40.
+ */
+export function migrateProfile(old: Omit<Profile, "version"> & { version: number }): Profile {
+  if (old.version === 2) return old as Profile;
+  const collection = { ...old.collection };
+  const deck = [...old.deck];
+  for (const [id, n] of STARTER) {
+    const k = keyOf(id, "plain");
+    const have = Object.entries(collection)
+      .filter(([key]) => parseKey(key as CardKey).cardId === id)
+      .reduce((s, [, c]) => s + (c ?? 0), 0);
+    if (have < n) collection[k] = (collection[k] ?? 0) + n - have;
+    const inDeck = deck.filter((x) => parseKey(x).cardId === id).length;
+    for (let i = inDeck; i < n && deck.length < DECK_SIZE - 8; i++) deck.push(k);
+  }
+  return { ...old, version: 2, collection, deck, energy: DECK_SIZE - deck.length };
 }
 
 export const owned = (p: Profile, k: CardKey) => p.collection[k] ?? 0;

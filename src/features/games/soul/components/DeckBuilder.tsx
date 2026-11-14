@@ -28,7 +28,7 @@ const ORDER: Record<CardDef["kind"], number> = {
 };
 const RANK = { common: 0, uncommon: 1, rare: 2, legendary: 3 } as const;
 
-/** Edit the 24-card deck from the owned collection (max 2 copies of a card). */
+/** Edit the 40-card deck from the owned collection (max 3 copies of a card). */
 export function DeckBuilder({
   profile,
   update,
