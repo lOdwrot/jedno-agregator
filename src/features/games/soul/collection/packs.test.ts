@@ -45,6 +45,15 @@ describe("booster editions", () => {
     expect(special / 1000).toBeGreaterThan(0.35);
   });
 
+  it("Zakrystia i sanktuaria gives only items and places", () => {
+    const rnd = createRng(17);
+    const pack = PACKS.find((p) => p.id === "zakrystia")!;
+    const kinds = new Set<string>();
+    for (let i = 0; i < 300; i++)
+      for (const k of rollPack(pack, rnd)) kinds.add(getCard(parseKey(k).cardId).kind);
+    expect([...kinds].sort()).toEqual(["item", "place"]);
+  });
+
   it("Witraże Katedry is pricey and always has at least 2 stained-glass cards", () => {
     const rnd = createRng(11);
     const pack = PACKS.find((p) => p.id === "witraze")!;

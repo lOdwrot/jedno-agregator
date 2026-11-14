@@ -122,7 +122,16 @@ export type SupportEffect =
   | { k: "research"; n: number }
   /** Both players put their hand under the deck and draw one card per soul still to win (like Iono). */
   | { k: "iono" }
-  | { k: "place"; attackBonus?: number; endHeal?: number; retreatMinus?: number };
+  | {
+      k: "place";
+      attackBonus?: number;
+      endHeal?: number;
+      retreatMinus?: number;
+      /** Damage taken by your characters is reduced by n. */
+      armor?: number;
+      /** Draw n extra cards at the start of your turn. */
+      extraDraw?: number;
+    };
 
 export interface SupportDef extends BaseDef {
   kind: "item" | "supporter" | "place";

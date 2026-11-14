@@ -13,6 +13,7 @@ import {
 import { aiSearch, searchPick } from "./aiSearch";
 import {
   applyDefense,
+  placeArmor,
   bonusDamage,
   fuelMax,
   handEnergy,
@@ -65,7 +66,12 @@ function canKO(g: Game, pid: PlayerId, target: InPlay): boolean {
   if (!a || g.turnNo === 1) return false;
   return charDef(a).attacks.some((atk) => {
     if (a.energy < atk.cost || atk.damage <= 0) return false;
-    const dmg = applyDefense(a, target, atk.damage + bonusDamage(g, pid, a));
+    const dmg = applyDefense(
+      a,
+      target,
+      atk.damage + bonusDamage(g, pid, a),
+      placeArmor(g, other(pid)),
+    );
     return dmg >= hpLeft(target);
   });
 }
