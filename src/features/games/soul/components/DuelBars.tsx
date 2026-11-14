@@ -85,6 +85,7 @@ function hint(g: Game): string {
   if (g.phase === "promote" && g.promote?.who === "me")
     return "Twoja postać zeszła z pola — stuknij postać na ławce.";
   if (g.phase === "over") return "Koniec pojedynku.";
+  if (g.peek?.pid === "me") return "Weź odkrytą kartę albo odrzuć ją i dobierz następną.";
   if (g.turn === "ai") return "Pomioty wykonują ruch…";
   if (g.turnNo === 1)
     return "Pierwsza tura: rozstaw się (bez ataku). Przeciągaj karty z ręki na stół.";

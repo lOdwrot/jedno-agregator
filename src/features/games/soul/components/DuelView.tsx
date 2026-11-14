@@ -111,6 +111,8 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
     else setSel(s);
   };
   const lessonCard = lesson ? getCard(lesson) : null;
+  const peeked =
+    live.peek?.pid === "me" ? me.deck.find((c) => c.uid === live.peek?.uid) : undefined;
 
   return (
     <section
@@ -179,6 +181,25 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
             {sel.zone !== "place" && !busy && (
               <CardActions g={live} sel={sel} onAction={(a) => (setSel(null), act(a))} />
             )}
+          </div>
+        )}
+      </Dialog>
+      <Dialog
+        open={!!peeked && !busy}
+        onClose={() => act({ type: "peek", keep: true })}
+        title="Wierzchnia karta talii"
+        description="Weź ją do ręki albo odrzuć i dobierz w ciemno kolejną kartę."
+        size="sm"
+      >
+        {peeked && (
+          <div className="flex flex-col gap-3">
+            <CardFace cardId={peeked.cardId} finish={peeked.finish} />
+            <Button fullWidth onClick={() => act({ type: "peek", keep: true })}>
+              Weź do ręki
+            </Button>
+            <Button variant="navy" fullWidth onClick={() => act({ type: "peek", keep: false })}>
+              Odrzuć i dobierz następną
+            </Button>
           </div>
         )}
       </Dialog>

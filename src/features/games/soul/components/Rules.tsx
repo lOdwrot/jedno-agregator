@@ -23,11 +23,15 @@ const RULES: [string, string][] = [
   ],
   [
     "Dobieranie kart",
-    "Talia jest duża, więc warto ją szybko przeglądać: Różaniec, Zbiórka ministrantów i Rada parafialna dobierają karty, Ksiądz profesor wymienia całą rękę na 7 nowych, a Ksiądz rzecznik zmusza obu graczy do oddania ręki — dobiera ten, komu zostało więcej dusz do zdobycia.",
+    "Talia jest duża, więc warto ją szybko przeglądać: Zbiórka ministrantów i Rada parafialna (pomocnicy) dobierają karty, Różaniec pozwala zajrzeć na wierzch talii — wziąć tę kartę albo odrzucić ją i dobrać następną, Ksiądz profesor wymienia całą rękę na 7 nowych, a Ksiądz rzecznik zmusza obu graczy do oddania ręki — dobiera ten, komu zostało więcej dusz do zdobycia.",
   ],
   [
     "Stany",
     "💤 Uśpiony — nie atakuje, budzi się po rzucie monetą. ✋ Zatrzymany — traci najbliższą turę ataku. 🌫️ Zwątpienie — 10 obrażeń po każdej turze. Wycofanie i rozwój zdejmują stany.",
+  ],
+  [
+    "Sztuczki pomiotów",
+    "Uważaj: Toksyczny szef wyciąga postać z Twojej ławki na pierwszą linię, Remont u sąsiada po rzucie monetą odbiera Łaskę dowolnej Twojej postaci, Ciche dni potrafią ją zatrzymać, a Kompleksy zabierają Ci rękę. Trzymaj na ławce postać gotową do walki i nie wkładaj wszystkich Łask w jedną kartę.",
   ],
   [
     "Kolekcja",

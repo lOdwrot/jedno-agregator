@@ -105,8 +105,21 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
       case "shield":
         if (a && bestAttack(g, pid)) return play();
         break;
-      case "discardOppEnergy":
-        return play();
+      case "discardOppEnergy": {
+        if (!e.any) return play();
+        const t = [...targets].sort((x, y) => y.energy - x.energy)[0];
+        if (t) return play(t.uid);
+        break;
+      }
+      case "peek":
+        if (me.deck.length > 3) return play();
+        break;
+      case "oppStatus":
+        if (foe.active && bestAttack(g, pid) && !bestAttack(g, pid)?.ko) return play();
+        break;
+      case "disrupt":
+        if (foe.hand.length >= 5 && me.hand.length <= 5) return play();
+        break;
       case "energyFromDeck": {
         const t = [...targets].sort((x, y) => need(y) - need(x))[0];
         if (t && need(t) > 0) return play(t.uid);
@@ -129,6 +142,19 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
   return null;
 }
 
+/** Whether the revealed top card is worth keeping (otherwise it is swapped for the next one). */
+export function keepPeek(g: Game, pid: PlayerId): boolean {
+  const me = g.players[pid];
+  const c = me.deck.find((x) => x.uid === g.peek?.uid);
+  if (!c) return true;
+  const d = getCard(c.cardId);
+  if (d.kind === "energy") return !me.hand.some((x) => getCard(x.cardId).kind === "energy");
+  if (d.kind !== "character") return true;
+  if (!d.evolvesFrom)
+    return me.bench.length < 3 || !me.hand.some((x) => isBasic(getCard(x.cardId)));
+  return inPlay(me).some((x) => x.cardId === d.evolvesFrom);
+}
+
 export function aiAction(g: Game, pid: PlayerId): Action | null {
   const me = g.players[pid];
   if (g.phase === "over") return null;
@@ -144,6 +170,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     return b ? { type: "chooseActive", uid: b.uid } : null;
   }
   if (g.turn !== pid) return null;
+  if (g.peek) return g.peek.pid === pid ? { type: "peek", keep: keepPeek(g, pid) } : null;
 
   for (const c of me.hand) {
     const t = evolveTargets(g, pid, c)[0];
