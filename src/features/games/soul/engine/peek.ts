@@ -1,6 +1,7 @@
 /** Peek cards (Różaniec, Powiadomienie — like Trekking Shoes): keep the revealed top card or swap it. */
+import { getCard, isCharacter } from "../data/cards";
 import { emit } from "./events";
-import { draw, log, nameOf, type Game, type PlayerId } from "./state";
+import { draw, log, nameOf, shuffle, type Game, type PlayerId } from "./state";
 
 /** Keep the revealed top card, or discard it and draw the next one (Trekking Shoes). */
 export function resolvePeek(g: Game, pid: PlayerId, keep: boolean): boolean {
@@ -26,5 +27,30 @@ export function resolvePeek(g: Game, pid: PlayerId, keep: boolean): boolean {
   );
   emit(g, { t: "peek", pid, uid: card!.uid, kept: false });
   draw(g, pid, 1);
+  return true;
+}
+
+/** Ultra-ball cards: discard the chosen hand cards, take the chosen character from the deck. */
+export function resolveSearch(g: Game, pid: PlayerId, discard: number[], pick: number): boolean {
+  const s = g.search;
+  const me = g.players[pid];
+  if (!s || s.pid !== pid) return false;
+  const uids = new Set(discard);
+  if (uids.size !== s.discard || discard.some((u) => !me.hand.some((c) => c.uid === u)))
+    return false;
+  const card = me.deck.find((c) => c.uid === pick);
+  if (!card || !isCharacter(getCard(card.cardId))) return false;
+  g.search = null;
+  me.discard.push(...me.hand.filter((c) => uids.has(c.uid)));
+  me.hand = me.hand.filter((c) => !uids.has(c.uid));
+  me.deck = me.deck.filter((c) => c !== card);
+  me.hand.push(card);
+  shuffle(g, me.deck);
+  emit(g, { t: "shuffle", pid });
+  emit(g, { t: "draw", pid, n: 1 });
+  log(
+    g,
+    pid === "me" ? `Do ręki trafia: ${nameOf(card)}.` : `Pomioty biorą z talii: ${nameOf(card)}.`,
+  );
   return true;
 }

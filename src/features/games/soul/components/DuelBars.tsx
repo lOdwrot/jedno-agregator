@@ -86,6 +86,7 @@ function hint(g: Game): string {
     return "Twoja postać zeszła z pola — stuknij postać na ławce.";
   if (g.phase === "over") return "Koniec pojedynku.";
   if (g.peek?.pid === "me") return "Weź odkrytą kartę albo odrzuć ją i dobierz następną.";
+  if (g.search?.pid === "me") return "Wybierz 2 karty do odrzucenia i postać z talii.";
   if (g.turn === "ai") return "Pomioty wykonują ruch…";
   if (g.turnNo === 1)
     return "Pierwsza tura: rozstaw się (bez ataku). Przeciągaj karty z ręki na stół.";

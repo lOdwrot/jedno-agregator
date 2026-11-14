@@ -3,7 +3,17 @@ import { ENERGY_ID } from "../data/cards";
 import { ACTIVE_ABILITIES } from "../data/types";
 import { healAll } from "./combat";
 import { emit } from "./events";
-import { charDef, draw, inPlay, log, nameOf, type Game, type InPlay, type PlayerId } from "./state";
+import {
+  charDef,
+  choicePending,
+  draw,
+  inPlay,
+  log,
+  nameOf,
+  type Game,
+  type InPlay,
+  type PlayerId,
+} from "./state";
 
 const energyInDeck = (g: Game, pid: PlayerId) =>
   g.players[pid].deck.findIndex((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
@@ -18,7 +28,7 @@ export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
     !e ||
     !ACTIVE_ABILITIES.has(e.k) ||
     g.phase !== "main" ||
-    g.peek ||
+    choicePending(g) ||
     g.turn !== pid ||
     c.abilityTurn === g.turnNo
   )

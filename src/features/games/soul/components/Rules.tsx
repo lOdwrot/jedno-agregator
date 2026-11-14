@@ -3,11 +3,11 @@ import { ART } from "../data/art";
 const RULES: [string, string][] = [
   [
     "Cel",
-    "Ocal 4 dusze 🕊️ — za każdego pokonanego pomiota dostajesz 1 duszę (za legendarne 2) i kartę do ręki. Wygrywasz też, gdy pomiotom nie zostanie nikt na polu.",
+    "Ocal 4 dusze 🕊️ — za każdego pokonanego pomiota dostajesz 1 duszę (za legendarne 2) i kartę do ręki. Wygrywasz też, gdy pomiotom nie zostanie nikt na polu albo gdy na początku swojej tury nie będą mogły dobrać karty.",
   ],
   [
     "Start",
-    "Talia ma 40 kart. Dobierasz 7, a 4 karty odkładasz jako dusze. Wybierasz postać podstawową do walki. Monetą losuje się, kto zaczyna — w pierwszej turze gry nie można atakować.",
+    "Talia ma 50 kart. Dobierasz 7, a 4 karty odkładasz jako dusze. Wybierasz postać podstawową do walki. Monetą losuje się, kto zaczyna — w pierwszej turze gry nie można atakować.",
   ],
   [
     "Twoja tura",
@@ -23,7 +23,11 @@ const RULES: [string, string][] = [
   ],
   [
     "Dobieranie kart",
-    "Talia jest duża, więc warto ją szybko przeglądać: Zbiórka ministrantów i Rada parafialna (pomocnicy) dobierają karty, Różaniec pozwala zajrzeć na wierzch talii — wziąć tę kartę albo odrzucić ją i dobrać następną, Ksiądz profesor wymienia całą rękę na 7 nowych, a Ksiądz rzecznik zmusza obu graczy do oddania ręki — dobiera ten, komu zostało więcej dusz do zdobycia.",
+    "Talia jest duża, więc warto ją szybko przeglądać: Zbiórka ministrantów i Rada parafialna (pomocnicy) dobierają karty, Różaniec pozwala zajrzeć na wierzch talii — wziąć tę kartę albo odrzucić ją i dobrać następną, Ksiądz profesor wymienia całą rękę na 7 nowych, a Ksiądz rzecznik zmusza obu graczy do oddania ręki — dobiera ten, komu zostało więcej dusz do zdobycia. Ogłoszenia parafialne: odrzuć 2 karty z ręki i weź z talii dowolnie wybraną postać.",
+  ],
+  [
+    "Pusta talia",
+    "Odrzucone karty same nie wracają do talii — odzyskasz je tylko kartami: Księga parafialna bierze z odrzuconych postać do ręki, a Powrót marnotrawnego syna wtasowuje 5 kart z powrotem do talii (pomioty mają swoje odpowiedniki: Rozpamiętywanie i Stare nawyki). Jeśli na początku tury musisz dobrać kartę, a talia jest pusta — przegrywasz. Uważaj z dobieraniem pod koniec długiej walki (licznik kart pokazuje talia na planszy).",
   ],
   [
     "Stany",
@@ -34,12 +38,16 @@ const RULES: [string, string][] = [
     "Uważaj: Toksyczny szef wyciąga postać z Twojej ławki na pierwszą linię, Remont u sąsiada po rzucie monetą odbiera Łaskę dowolnej Twojej postaci, Ciche dni potrafią ją zatrzymać, a Kompleksy zabierają Ci rękę. Trzymaj na ławce postać gotową do walki i nie wkładaj wszystkich Łask w jedną kartę.",
   ],
   [
+    "Poziomy trudności",
+    "Chochliki z kanapy są łatwe, Biesy plotkary średnie (ich pierwszy pomiot zaczyna z 1 Pokusą), Legion Pychy trudny, a Otchłań Upadłych ekstremalna: Lucyfer, Abaddon i Acedia, 2 Pokusy na pierwszym pomiocie od startu i dodatkowa karta co turę. Za to ich talia kończy się szybciej…",
+  ],
+  [
     "Kolekcja",
     "Za każdą walkę dostajesz talenty (więcej za wygraną i za ocalone dusze) i prawo do 1 boostera. Rzadkość: ● pospolita, ◆ niepospolita, ★ rzadka, 👑 legendarna. Ta sama karta może trafić się złocona ✦ lub witrażowa ❖ — jest wtedy silniejsza.",
   ],
   [
     "Talia",
-    "W zakładce Talia składasz 40 kart: maksymalnie 3 egzemplarze tej samej karty, Łaski bez limitu. Nadmiarowe karty możesz oddać na tacę za talenty.",
+    "W zakładce Talia składasz 50 kart: maksymalnie 3 egzemplarze tej samej karty, Łaski bez limitu. Nadmiarowe karty możesz oddać na tacę za talenty.",
   ],
 ];
 

@@ -42,7 +42,9 @@ export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props)
                         ? "neutral"
                         : o.difficulty === "średni"
                           ? "accent"
-                          : "danger"
+                          : o.difficulty === "trudny"
+                            ? "danger"
+                            : "dangerSolid"
                     }
                   >
                     {o.difficulty}

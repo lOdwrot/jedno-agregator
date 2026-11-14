@@ -195,6 +195,39 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
     sound: "swarm",
     play: ({ r, from, to }) => stream(r.fx, r.tw, from, to, "🪰", 8, 24),
   },
+  "Upadek gwiazdy zarannej": {
+    sound: "fall",
+    play: async ({ r, from, to }) => {
+      await pillar(r.fx, r.tw, from, P()["logo-dark"], 220);
+      await stream(r.fx, r.tw, from, to, "🌠", 4, 56, 900);
+      await both(
+        impact(r.fx, r.tw, to, P().danger, 2.4),
+        rain(r.fx, r.tw, to, "🌑", 8, 40),
+        shake(r.tw, r.stage, 24, r.reduced),
+      );
+    },
+  },
+  "Nienawiść bez końca": {
+    sound: "inferno",
+    play: async ({ r, from, to }) => {
+      await stream(r.fx, r.tw, from, to, "🔥", 16, 34, 1100);
+      shards(r.fx, to, P()["logo-red"], 22, 1.6);
+      await shake(r.tw, r.stage, 18, r.reduced);
+    },
+  },
+  "Spalone mosty": {
+    sound: "inferno",
+    play: ({ r, to }) =>
+      both(rain(r.fx, r.tw, to, "🔥", 10, 32), rain(r.fx, r.tw, to, "🌉", 2, 48)),
+  },
+  "Nic nie ma sensu": {
+    sound: "void",
+    play: async ({ r, from, to }) => {
+      r.fx.emojis(to.x, to.y, "🌫️", 8, true, 40);
+      await stream(r.fx, r.tw, from, to, "🕳️", 5, 44, 1000);
+      await impact(r.fx, r.tw, to, P()["logo-dark"], 1.8);
+    },
+  },
 };
 
 export function signatureFor(name: string) {

@@ -24,7 +24,7 @@ function autoplay(g: Game, limit = 2000): Game {
 }
 
 describe("Walka o duszę — engine", () => {
-  it("opponent decks and the starter deck have exactly 40 cards", () => {
+  it("opponent decks and the starter deck have exactly 50 cards", () => {
     for (const o of OPPONENTS)
       expect(Object.values(o.deck).reduce((a, b) => a + b, 0)).toBe(DECK_SIZE);
     expect(deckList(newProfile())).toHaveLength(DECK_SIZE);
@@ -53,9 +53,11 @@ describe("Walka o duszę — engine", () => {
     expect(evolveTargets(g, g.turn, kleryk)).toEqual([]);
   });
 
-  it.each([0, 1, 2])("full AI-vs-AI duel against opponent %i always finishes", (i) => {
+  it.each([0, 1, 2, 3])("full AI-vs-AI duel against opponent %i always finishes", (i) => {
     for (const seed of [1, 2, 3, 4, 5, 6]) {
-      const g = autoplay(createGame(deckList(newProfile()), opponentDeck(i), seed));
+      const g = autoplay(
+        createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.boost),
+      );
       expect(g.phase).toBe("over");
       expect(g.winner).not.toBeNull();
       const p = g.players[g.winner!];

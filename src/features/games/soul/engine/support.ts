@@ -2,8 +2,10 @@
 import { BENCH_SIZE, ENERGY_ID, getCard, isBasic, isCharacter } from "../data/cards";
 import type { SupportDef } from "../data/types";
 import { addStatus, discardEnergy, healAll } from "./combat";
+import { recoverPick } from "./aiSearch";
 import { emit } from "./events";
 import {
+  choicePending,
   coin,
   draw,
   findInPlay,
@@ -56,7 +58,7 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
   const def = getCard(card.cardId);
   if (def.kind !== "item" && def.kind !== "supporter" && def.kind !== "place") return false;
   if (def.kind === "supporter" && g.flags.supporter) return false;
-  if (g.peek) return false;
+  if (choicePending(g)) return false;
   const me = g.players[pid];
   const foe = g.players[other(pid)];
   const a = me.active;
@@ -90,6 +92,12 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
       return e.any ? true : (foe.active?.energy ?? 0) > 0;
     case "peek":
       return me.deck.length > 0;
+    case "recoverCharacter":
+      return me.discard.some((c) => isCharacter(getCard(c.cardId)));
+    case "recycle":
+      return me.discard.length > 0;
+    case "search":
+      return me.hand.length - 1 >= e.discard && me.deck.some((c) => isCharacter(getCard(c.cardId)));
     case "oppStatus":
       return !!foe.active && !foe.active.statuses.includes(e.s);
     case "disrupt":
@@ -240,6 +248,42 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       emit(g, { t: "peek", pid, uid: top.uid, kept: null });
       break;
     }
+    case "recoverCharacter": {
+      const pick = recoverPick(g, pid)!;
+      me.discard = me.discard.filter((c) => c !== pick);
+      me.hand.push(pick);
+      emit(g, { t: "draw", pid, n: 1 });
+      log(g, `Z odrzuconych wraca do ręki: ${nameOf(pick)}.`);
+      break;
+    }
+    case "recycle": {
+      const rank = (c: CardInst) => {
+        const d = getCard(c.cardId);
+        return d.kind === "character" ? 0 : d.kind === "energy" ? 1 : 2;
+      };
+      const back = me.discard
+        .filter((c) => c.uid !== card.uid)
+        .sort((a, b) => rank(a) - rank(b))
+        .slice(0, e.n);
+      me.discard = me.discard.filter((c) => !back.includes(c));
+      me.deck.push(...back);
+      shuffle(g, me.deck);
+      emit(g, { t: "shuffle", pid });
+      log(
+        g,
+        `${pid === "me" ? "Wtasowujesz" : "Pomioty wtasowują"} do talii ${back.length} ${back.length === 1 ? "kartę" : back.length < 5 ? "karty" : "kart"} z odrzuconych.`,
+      );
+      break;
+    }
+    case "search":
+      g.search = { pid, discard: e.discard };
+      log(
+        g,
+        pid === "me"
+          ? `Odrzuć ${e.discard} karty z ręki i wybierz dowolną postać z talii.`
+          : "Pomioty przeszukują swoją talię.",
+      );
+      break;
     case "oppStatus":
       if (e.coin && !flip(g)) break;
       addStatus(g, foe.active!, e.s);

@@ -1,12 +1,16 @@
+import type { AiBoost } from "../engine/state";
+
 /** Computer opponents — each comes with a letter from an old demon to his young nephew. */
 export interface Opponent {
-  id: "kanapa" | "plotkary" | "pycha";
+  id: "kanapa" | "plotkary" | "pycha" | "otchlan";
   name: string;
   emoji: string;
-  difficulty: "łatwy" | "średni" | "trudny";
+  difficulty: "łatwy" | "średni" | "trudny" | "ekstremalny";
   reward: { win: number; loss: number };
-  /** Card ids (energy included) — 40 cards. */
+  /** Card ids (energy included) — 50 cards. */
   deck: Record<string, number>;
+  /** Handicap in the computer's favour (harder opponents). */
+  boost?: AiBoost;
   letter: { greeting: string; body: string[]; signature: string };
   /** What the player should take away from this duel. */
   moral: string;
@@ -20,18 +24,20 @@ export const OPPONENTS: readonly Opponent[] = [
     difficulty: "łatwy",
     reward: { win: 100, loss: 30 },
     deck: {
-      drzemka: 3,
-      odkladanie: 1,
-      scroll: 2,
+      drzemka: 4,
+      odkladanie: 3,
+      scroll: 3,
       zniechecenie: 2,
-      szyderca: 3,
+      szyderca: 2,
       wybredny: 1,
       powiadomienie: 2,
       wymowka: 1,
       reklama: 2,
       "ciche-dni": 1,
       obietnica: 1,
-      pokusa: 21,
+      algorytm: 1,
+      czat: 1,
+      pokusa: 26,
     },
     letter: {
       greeting: "Mój drogi Smołku,",
@@ -50,23 +56,26 @@ export const OPPONENTS: readonly Opponent[] = [
     emoji: "🗣️",
     difficulty: "średni",
     reward: { win: 140, loss: 40 },
+    boost: { startEnergy: 1, extraDraw: 0 },
     deck: {
-      plotka: 3,
-      obmowa: 2,
-      zlosnik: 3,
-      krytykant: 2,
+      plotka: 4,
+      obmowa: 3,
+      zlosnik: 4,
+      krytykant: 4,
       scroll: 2,
       powiadomienie: 2,
+      algorytm: 2,
       falszywy: 1,
-      szef: 1,
-      hejt: 1,
+      szef: 2,
       remont: 2,
       "ciche-dni": 1,
       galeria: 1,
       reklama: 1,
       kompleksy: 1,
+      czat: 1,
       influencer: 1,
-      pokusa: 16,
+      rozpamietywanie: 1,
+      pokusa: 17,
     },
     letter: {
       greeting: "Smołku, ty kompletny amatorze,",
@@ -86,21 +95,26 @@ export const OPPONENTS: readonly Opponent[] = [
     difficulty: "trudny",
     reward: { win: 200, loss: 50 },
     deck: {
-      pyszalek: 3,
-      lewiatan: 2,
+      pyszalek: 4,
+      lewiatan: 3,
       porownania: 3,
-      mamona: 1,
-      belzebub: 1,
+      mamona: 2,
+      belzebub: 2,
       krytykant: 2,
       falszywy: 1,
       szef: 2,
       powiadomienie: 2,
+      algorytm: 2,
       remont: 2,
       galeria: 1,
       reklama: 1,
+      obietnica: 1,
+      czat: 1,
       kompleksy: 1,
       reset: 1,
       influencer: 1,
+      rozpamietywanie: 1,
+      nawyki: 1,
       pokusa: 16,
     },
     letter: {
@@ -113,6 +127,47 @@ export const OPPONENTS: readonly Opponent[] = [
     },
     moral:
       "Pycha przebiera się nawet za pokorę. Najlepszą obroną jest wdzięczność i patrzenie bardziej na Boga i innych niż na siebie.",
+  },
+  {
+    id: "otchlan",
+    name: "Otchłań Upadłych",
+    emoji: "🔥",
+    difficulty: "ekstremalny",
+    reward: { win: 450, loss: 80 },
+    boost: { startEnergy: 2, extraDraw: 1 },
+    deck: {
+      lucyfer: 2,
+      abaddon: 2,
+      acedia: 2,
+      belzebub: 2,
+      pyszalek: 4,
+      lewiatan: 3,
+      zlosnik: 2,
+      mamona: 2,
+      algorytm: 3,
+      szef: 2,
+      remont: 2,
+      hejt: 1,
+      "ciche-dni": 1,
+      galeria: 1,
+      obietnica: 2,
+      czat: 1,
+      kompleksy: 1,
+      reklama: 1,
+      rozpamietywanie: 1,
+      nawyki: 1,
+      pokusa: 14,
+    },
+    letter: {
+      greeting: "Smołku, odsuń się,",
+      body: [
+        "Skoro Ty i Twoje chochliki nie dajecie rady, zajmie się tym zarząd. Twój podopieczny bierze kartę po karcie, jakby miał nieskończenie wiele czasu. Nie ma. Sprawimy, że talia skończy mu się szybciej niż cierpliwość.",
+        "Zaczynamy z przewagą: pierwszy z nas wchodzi do gry z ogniem w garści i co turę dobiera więcej. Gniew, pustka i pycha naraz — tego nie wytrzyma nikt. No, prawie nikt. Ale o Tamtym nie rozmawiamy.",
+      ],
+      signature: "Rada Otchłani (wuj Siarkowąs protokołował)",
+    },
+    moral:
+      "Zło bywa głośne i przytłaczające, ale nie jest wszechmocne. Nikt nie walczy sam: modlitwa, sakramenty i wspólnota są silniejsze niż najgroźniejsza pokusa.",
   },
 ];
 

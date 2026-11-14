@@ -11,6 +11,7 @@ const badgeStyles = tv({
       navy: "bg-navy text-white",
       success: "bg-success text-white",
       danger: "bg-danger/12 text-danger",
+      dangerSolid: "bg-danger text-white",
     },
   },
   defaultVariants: { tone: "neutral" },

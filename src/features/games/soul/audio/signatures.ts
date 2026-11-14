@@ -140,6 +140,22 @@ export const signatureSound: Record<string, () => void> = {
       tone(n(s), 0.9, { type: "triangle", gain: 0.05, delay: i * 0.04 }),
     );
   },
+  fall: () => {
+    tone(1400, 1.4, { type: "sawtooth", gain: 0.05, slideTo: 60, cutoff: 2000 });
+    gong(1.1);
+    choir([-12, -9, -5, 0], 1.1, 2.2);
+  },
+  inferno: () => {
+    noise(1.4, { cutoff: 600, gain: 0.35 });
+    [0, 0.3, 0.6].forEach((d) => drum(d, 0.4));
+    tone(90, 1.2, { type: "sawtooth", gain: 0.06, slideTo: 40, cutoff: 700 });
+  },
+  void: () => {
+    [-24, -23, -17].forEach((s) =>
+      tone(n(s), 2.2, { type: "sine", gain: 0.12, attack: 0.6, slideTo: n(s) * 0.94 }),
+    );
+    noise(1.8, { cutoff: 250, gain: 0.15 });
+  },
   high_c: () =>
     tone(n(15) * 2, 1.0, { type: "sine", gain: 0.07, attack: 0.1, slideTo: n(15) * 2.02 }),
 };
