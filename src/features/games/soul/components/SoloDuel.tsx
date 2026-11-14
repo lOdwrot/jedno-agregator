@@ -67,6 +67,7 @@ export function SoloDuel({ opponent, training = false, deck, onFinish, onExit, o
             fresh={over.prize.fresh}
             onClose={() => setPrizeOpen(false)}
             onAgain={null}
+            onMenu={() => onExit(false)}
           />
         ) : (
           <DuelResult
