@@ -58,11 +58,12 @@ export function BoosterShop({
         <p className="mt-1 text-sm text-ink-muted">
           Każda paczka ma 5 kart: 3 pospolite, 1 niepospolitą i 1 rzadką lub legendarną. Karty mogą
           trafić się w wersji złoconej ✦ (+10 ♥) albo witrażowej ❖ (+20 ♥, +10 obrażeń). Po każdym
-          pojedynku możesz otworzyć jedną paczkę. Skarbiec Katedry za 1000 talentów gwarantuje kartę
+          pojedynku możesz otworzyć jedną paczkę. Witraże Katedry za 600 talentów gwarantują co
+          najmniej 2 karty witrażowe ❖. Skarbiec Katedry za 1000 talentów gwarantuje kartę
           rzadką i legendarną oraz daje dużo większą szansę na złocenia i witraże.
         </p>
       </div>
-      <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {PACKS.map((pack) => {
           const reason = why(pack);
           return (

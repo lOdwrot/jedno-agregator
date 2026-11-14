@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it } from "vitest";
 import { ToastProvider } from "@/ui";
 import { SoulGame } from "./SoulGame";
+import { PACKS } from "./collection/packs";
 
 const setup = () =>
   render(
@@ -40,7 +41,7 @@ describe("SoulGame", () => {
   it("opens the welcome booster with the animation and saves the cards", async () => {
     setup();
     await userEvent.click(screen.getByRole("tab", { name: /Boostery/ }));
-    expect(screen.getAllByRole("button", { name: /^Otwórz paczkę/ })).toHaveLength(4);
+    expect(screen.getAllByRole("button", { name: /^Otwórz paczkę/ })).toHaveLength(PACKS.length);
     await userEvent.click(screen.getByRole("button", { name: /Otwórz paczkę Wspólnota/ }));
     expect(
       screen.getByRole("dialog", { name: /Otwieranie boostera: Wspólnota/ }),
