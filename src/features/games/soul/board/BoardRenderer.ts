@@ -130,6 +130,7 @@ export class BoardRenderer {
       sp.updateInPlay(info.play, info.play ? maxHp(info.play) : 0);
       sp.zIndex = this.drag?.key === s.key ? 1000 : s.z;
       sp.setGlow(this.glowFor(s));
+      sp.active = s.zone === "active" || this.hover === s.key || this.drag?.key === s.key;
       if (this.drag?.key === s.key) continue;
       const lift =
         this.hover === s.key && s.zone === "hand" && s.pid === "me"
@@ -196,6 +197,7 @@ export class BoardRenderer {
     this.tw.kill(sp);
     this.tw.kill(sp.scale);
     sp.zIndex = 1000;
+    sp.active = true;
     sp.position.set(x, y);
     sp.rotation = 0;
     sp.scale.set(this.table.a.unit * 0.95);

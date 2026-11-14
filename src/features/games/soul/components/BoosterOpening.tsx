@@ -259,6 +259,7 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
               <CardFace
                 cardId={parseKey(cards[zoom]).cardId}
                 finish={parseKey(cards[zoom]).finish}
+                active
               />
               <Button
                 ref={zoomClose}

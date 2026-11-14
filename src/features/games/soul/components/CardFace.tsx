@@ -12,6 +12,7 @@ import {
 } from "../data/types";
 import { CardArt } from "./CardArt";
 import { ELEMENT_ART, FINISH_FRAME } from "./styles";
+import { PrestigeLayers } from "./PrestigeLayers";
 
 const KIND_LABEL: Record<CardDef["kind"], string> = {
   character: "Postać",
@@ -25,11 +26,14 @@ const KIND_LABEL: Record<CardDef["kind"], string> = {
 export function CardFace({
   cardId,
   finish = "plain",
+  active = false,
   className,
   showLesson = false,
 }: {
   cardId: string;
   finish?: Finish;
+  /** Stained prints sparkle while active (also on hover / focus). */
+  active?: boolean;
   className?: string;
   showLesson?: boolean;
 }) {
@@ -44,18 +48,20 @@ export function CardFace({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-card shadow-lift",
+        "soul-card relative overflow-hidden rounded-card shadow-lift",
         FINISH_FRAME[finish],
         className,
       )}
+      data-active={active || undefined}
     >
       <article
         className={cn(
-          "flex h-full flex-col gap-2 rounded-[0.8rem] p-3",
+          "relative isolate flex h-full flex-col gap-2 rounded-[0.8rem] p-3",
           dark ? "bg-navy text-white" : "bg-surface text-ink",
         )}
         aria-label={`Karta: ${c.name}`}
       >
+        <PrestigeLayers finish={finish} dark={dark} />
         <header className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className={cn("text-xs font-bold tracking-wide uppercase", muted)}>
