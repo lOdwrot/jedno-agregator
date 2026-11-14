@@ -73,6 +73,12 @@ Games: `dawid-i-goliat` (FIFA-penalty style: tap locks the swinging angle, then 
 Shared juice: `games/audio` (Web Audio synth + `sfx` library + global persisted mute, `SoundToggle` on the game page),
 `games/fx` (`useFx` + `<Particles>` in the SVG world, `shake`/`pop`/`wobble` via WAAPI, `<Confetti>`). Effects react to
 state transitions in `use*Reactions` hooks; everything decorative is skipped under reduced motion.
+`walka-o-dusze` (`soul/`) is a single-player trading-card game: pure engine in `soul/engine` (every move goes through
+`dispatch`; `dispatchFrames` also records one animation frame per event via `emit`), collection/boosters in
+`soul/collection` (localStorage), and a full-screen duel drawn with **PixiJS** in `soul/board` (lazy-loaded; tweens in
+`tween.ts`, one animation + sound per event in `playFrame.ts`, Web Audio sfx/music in `soul/audio`). The canvas is
+`aria-hidden`; an invisible layer of real `<button>`s (from the same pure `layout.ts`) keeps it keyboard/screen-reader
+accessible and handles drag & drop.
 
 ## Conventions
 

@@ -14,6 +14,7 @@ import {
   type Profile,
 } from "../collection/profile";
 import { CardFace } from "./CardFace";
+import { sfx } from "../audio/sfx";
 
 /** Buy and open a booster; cards flip one by one, the rarest comes last. */
 export function BoosterShop({
@@ -27,7 +28,20 @@ export function BoosterShop({
   const [shown, setShown] = useState(0);
   const [zoom, setZoom] = useState<number | null>(null);
 
+  const reveal = (n: number) => {
+    if (!pack) return;
+    for (let i = shown; i < n; i++) {
+      const r = getCard(parseKey(pack.cards[i]!).cardId).rarity;
+      setTimeout(
+        () => (r === "legendary" ? sfx.win() : r === "rare" ? sfx.soul() : sfx.draw()),
+        (i - shown) * 120,
+      );
+    }
+    setShown(n);
+  };
+
   const open = () => {
+    sfx.shuffle();
     const cards = rollBooster();
     const seen = new Set<CardKey>();
     const fresh = cards.map((k) => {
@@ -83,7 +97,7 @@ export function BoosterShop({
               Twój booster
             </h3>
             {shown < pack.cards.length && (
-              <Button variant="ghost" size="sm" onClick={() => setShown(pack.cards.length)}>
+              <Button variant="ghost" size="sm" onClick={() => reveal(pack.cards.length)}>
                 Odkryj wszystkie
               </Button>
             )}
@@ -97,7 +111,7 @@ export function BoosterShop({
                 <li key={i}>
                   <button
                     type="button"
-                    onClick={() => (up ? setZoom(i) : i === shown && setShown(shown + 1))}
+                    onClick={() => (up ? setZoom(i) : i === shown && reveal(shown + 1))}
                     aria-disabled={!up && i !== shown ? true : undefined}
                     className="group block aspect-[5/7] w-full rounded-card perspective-[800px]"
                   >

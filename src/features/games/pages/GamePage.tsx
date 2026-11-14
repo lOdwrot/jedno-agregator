@@ -26,6 +26,7 @@ const GAME_COMPONENTS: Record<GameSlug, ComponentType> = {
 
 /** Games with sound effects get the shared sound switch. */
 const SOUND_GAMES = new Set<GameSlug>([
+  "walka-o-dusze",
   "dawid-i-goliat",
   "morze-czerwone",
   "arka-noego",

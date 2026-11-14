@@ -2,6 +2,7 @@
 import { ENERGY_ID, getCard, SOULS_TO_WIN } from "../data/cards";
 import type { AbilityEffect, AttackDef, SupportDef } from "../data/types";
 import { FINISH_BONUS, STATUS_INFO } from "../data/types";
+import { emit } from "./events";
 import {
   charDef,
   coin,
@@ -65,10 +66,19 @@ export function previewDamage(g: Game, pid: PlayerId, atk: AttackDef): number {
   return applyDefense(me, foe, raw);
 }
 
-export function hurt(g: Game, target: InPlay, amount: number) {
+export function hurt(g: Game, target: InPlay, amount: number, weak = false) {
   if (amount <= 0) return;
   target.damage += amount;
   g.hit = { uid: target.uid, amount, seq: ++g.seq };
+  emit(g, { t: "damage", uid: target.uid, amount, weak });
+}
+
+/** Heals and records an animation frame (no-op frames are skipped). */
+export function healAll(g: Game, cs: InPlay[], n: number) {
+  const hurtOnes = cs.filter((c) => c.damage > 0);
+  if (n <= 0 || !hurtOnes.length) return;
+  for (const c of hurtOnes) heal(c, n);
+  emit(g, { t: "heal", uids: hurtOnes.map((c) => c.uid), amount: n });
 }
 
 export function heal(c: InPlay, n: number) {
@@ -78,11 +88,13 @@ export function heal(c: InPlay, n: number) {
 export function addStatus(g: Game, c: InPlay, s: InPlay["statuses"][number]) {
   if (own(c)?.k === "statusImmune") {
     log(g, `${nameOf(c)} jest odporna na ${STATUS_INFO[s].label.toLowerCase()}.`);
+    emit(g, { t: "cleanse", uids: [c.uid] });
     return;
   }
   if (!c.statuses.includes(s)) c.statuses.push(s);
   if (s === "paralyzed") c.paralyzedUntil = g.turnNo + 1;
   log(g, `${nameOf(c)}: ${STATUS_INFO[s].emoji} ${STATUS_INFO[s].label.toLowerCase()}.`);
+  emit(g, { t: "status", uid: c.uid, s });
 }
 
 export function discardEnergy(g: Game, pid: PlayerId, c: InPlay, n: number) {
@@ -91,18 +103,24 @@ export function discardEnergy(g: Game, pid: PlayerId, c: InPlay, n: number) {
   const p = g.players[pid];
   for (let i = 0; i < k; i++)
     p.discard.push({ uid: g.nextUid++, cardId: ENERGY_ID[p.side], finish: "plain" });
+  if (k) emit(g, { t: "discardEnergy", uid: c.uid, n: k });
 }
 
 function knockOut(g: Game, owner: PlayerId, c: InPlay) {
   const p = g.players[owner];
   const taker = g.players[other(owner)];
-  discardEnergy(g, owner, c, c.energy);
+  const energy = c.energy;
+  c.energy = 0;
+  for (let i = 0; i < energy; i++)
+    p.discard.push({ uid: g.nextUid++, cardId: ENERGY_ID[p.side], finish: "plain" });
   p.discard.push(...c.under, { uid: c.uid, cardId: c.cardId, finish: c.finish });
   if (p.active?.uid === c.uid) p.active = null;
   p.bench = p.bench.filter((b) => b.uid !== c.uid);
+  emit(g, { t: "ko", pid: owner, uid: c.uid });
   const n = Math.min(charDef(c).souls, taker.prizes.length);
   taker.souls += n;
   taker.hand.push(...taker.prizes.splice(0, n));
+  emit(g, { t: "souls", pid: other(owner), n });
   const who = owner === "me" ? "Twoja postać" : "Pomiot";
   log(
     g,
@@ -158,6 +176,7 @@ export function promoteUid(g: Game, pid: PlayerId, uid: number) {
   p.bench = p.bench.filter((b) => b !== c);
   p.active = c;
   log(g, `${pid === "me" ? "Do walki staje" : "Wychodzi"}: ${nameOf(c)}.`);
+  emit(g, { t: "toActive", pid, uid: c.uid });
 }
 
 function finish(g: Game, winner: PlayerId, reason: string): null {
@@ -165,6 +184,7 @@ function finish(g: Game, winner: PlayerId, reason: string): null {
   g.winner = winner;
   g.reason = reason;
   log(g, winner === "me" ? `Zwycięstwo! ${reason}` : `Porażka. ${reason}`);
+  emit(g, { t: "over", winner });
   return null;
 }
 
@@ -182,11 +202,13 @@ export function startTurn(g: Game, pid: PlayerId) {
   if (!p.deck.length && p.discard.length) {
     p.deck.push(...p.discard.splice(0));
     shuffle(g, p.deck);
+    emit(g, { t: "shuffle", pid });
     log(
       g,
       `${pid === "me" ? "Twoja talia" : "Talia pomiotów"} się skończyła — odrzucone karty wracają do talii.`,
     );
   }
+  emit(g, { t: "turn", pid });
   if (!draw(g, pid, 1)) {
     finish(
       g,
@@ -205,7 +227,7 @@ export function endTurn(g: Game) {
   const endHeal = placeAura(g, pid)?.endHeal ?? 0;
   for (const c of inPlay(g.players[pid])) {
     const a = own(c);
-    heal(c, endHeal + (a?.k === "endHeal" ? a.n : 0));
+    healAll(g, [c], endHeal + (a?.k === "endHeal" ? a.n : 0));
   }
   for (const who of ["me", "ai"] as const) {
     const c = g.players[who].active;
@@ -217,6 +239,7 @@ export function endTurn(g: Game) {
     if (c.statuses.includes("asleep") && coin(g)) {
       c.statuses = c.statuses.filter((s) => s !== "asleep");
       log(g, `${nameOf(c)} budzi się (orzeł).`);
+      emit(g, { t: "cleanse", uids: [c.uid] });
     }
     if (c.statuses.includes("paralyzed") && c.paralyzedUntil <= g.turnNo)
       c.statuses = c.statuses.filter((s) => s !== "paralyzed");
