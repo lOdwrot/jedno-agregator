@@ -267,6 +267,36 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
       );
     },
   },
+  "Megafon na deptaku": {
+    sound: "drums",
+    play: async ({ r, from, to }) => {
+      for (let i = 0; i < 3; i++)
+        void r.fx.ring(from.x, from.y, P()["logo-yellow"], 90 + i * 50, 5);
+      await stream(r.fx, r.tw, from, to, "📢", 4, 44);
+      await impact(r.fx, r.tw, to, P()["logo-yellow"], 1.5);
+    },
+  },
+  "Ostatnie 30 kilometrów": {
+    sound: "procession",
+    play: async ({ r, from, to }) => {
+      await stream(r.fx, r.tw, from, to, "👣", 10, 30, 1100);
+      await both(
+        pillar(r.fx, r.tw, to, P().surface, 160),
+        impact(r.fx, r.tw, to, P()["logo-yellow"], 2),
+      );
+    },
+  },
+  "Oddaję życie za brata": {
+    sound: "overcome",
+    play: async ({ r, from, to }) => {
+      await pillar(r.fx, r.tw, from, P().surface, 220);
+      await stream(r.fx, r.tw, from, to, "🤍", 10, 34, 1100);
+      await both(
+        impact(r.fx, r.tw, to, P()["logo-yellow"], 2.4),
+        shake(r.tw, r.stage, 16, r.reduced),
+      );
+    },
+  },
 };
 
 export function signatureFor(name: string) {

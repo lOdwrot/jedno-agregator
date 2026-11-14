@@ -2,7 +2,7 @@ import { Button, Icon } from "@/ui";
 import type { Opponent } from "../data/opponents";
 import type { AudioPrefs } from "../audio/context";
 import { attackBlock, type Action } from "../engine/actions";
-import { previewDamage } from "../engine/combat";
+import { fuelMax, previewDamage } from "../engine/combat";
 import { charDef, type Game } from "../engine/state";
 
 const btn =
@@ -110,25 +110,40 @@ export function DuelBars({
     <div className="border-t border-white/10 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
       <p className="truncate text-center text-xs text-white/85">{hint(busy ? view : g)}</p>
       <div className="mt-1 flex items-center gap-1.5" role="group" aria-label="Ataki i koniec tury">
-        <div className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto">
+        <div className="flex min-w-0 flex-1 flex-wrap gap-1.5">
           {a &&
-            charDef(a).attacks.map((atk, index) => {
+            charDef(a).attacks.flatMap((atk, index) => {
               const block = attackBlock(g, "me", atk);
-              return (
+              // "fuel" attacks get one extra button per energy card that can be burned from hand
+              const levels = block ? [0] : [...Array(fuelMax(g, "me", atk) + 1).keys()];
+              return levels.map((fuel) => (
                 <Button
-                  key={atk.name}
+                  key={`${atk.name}-${fuel}`}
                   size="sm"
                   disabled={!!block || !myTurn}
                   title={block ?? undefined}
-                  onClick={() => onAction({ type: "attack", index })}
+                  aria-label={
+                    fuel
+                      ? `${atk.name}: odrzuć z ręki ${fuel} ✨ — ${previewDamage(g, "me", atk, fuel)} obrażeń`
+                      : undefined
+                  }
+                  onClick={() =>
+                    onAction(fuel ? { type: "attack", index, fuel } : { type: "attack", index })
+                  }
                   className="shrink-0"
                 >
-                  <span aria-hidden="true">{"✨".repeat(atk.cost)}</span> {atk.name}
+                  {fuel ? (
+                    <span aria-hidden="true">+🔥{fuel}</span>
+                  ) : (
+                    <>
+                      <span aria-hidden="true">{"✨".repeat(atk.cost)}</span> {atk.name}
+                    </>
+                  )}
                   {atk.damage > 0 && (
-                    <span className="font-display">· {previewDamage(g, "me", atk)}</span>
+                    <span className="font-display">· {previewDamage(g, "me", atk, fuel)}</span>
                   )}
                 </Button>
-              );
+              ));
             })}
         </div>
         <Button

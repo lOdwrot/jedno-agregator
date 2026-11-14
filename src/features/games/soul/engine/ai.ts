@@ -11,7 +11,14 @@ import {
   type Action,
 } from "./actions";
 import { aiSearch, searchPick } from "./aiSearch";
-import { applyDefense, bonusDamage, previewDamage, retreatCost } from "./combat";
+import {
+  applyDefense,
+  bonusDamage,
+  fuelMax,
+  handEnergy,
+  previewDamage,
+  retreatCost,
+} from "./combat";
 import { canPlaySupport, supportTargets } from "./support";
 import {
   bestBasic,
@@ -28,18 +35,26 @@ import {
 export function bestAttack(
   g: Game,
   pid: PlayerId,
-): { index: number; dmg: number; ko: boolean } | null {
+): { index: number; dmg: number; ko: boolean; fuel: number } | null {
   const a = g.players[pid].active;
   const foe = g.players[other(pid)].active;
   if (!a || !foe) return null;
-  let best: { index: number; dmg: number; ko: boolean } | null = null;
+  let best: { index: number; dmg: number; ko: boolean; fuel: number } | null = null;
+  const spare = handEnergy(g, pid).length;
   charDef(a).attacks.forEach((atk, index) => {
     if (attackBlock(g, pid, atk)) return;
-    const dmg = previewDamage(g, pid, atk);
+    // burn hand energy only to secure a knock-out (the least needed), or when there is plenty of it
+    const max = fuelMax(g, pid, atk);
+    let fuel = 0;
+    while (fuel < max && previewDamage(g, pid, atk, fuel) < hpLeft(foe)) fuel++;
+    if (previewDamage(g, pid, atk, fuel) < hpLeft(foe)) fuel = spare >= 3 ? max : 0;
+    const dmg = previewDamage(g, pid, atk, fuel);
     const ko = dmg >= hpLeft(foe);
-    const score = (ko ? 1000 : 0) + dmg + (atk.effects?.length ?? 0) * 5;
+    // attacks that throw away the attacker's own energy are only worth it for a knock-out
+    const selfCost = atk.effects?.some((e) => e.k === "selfDiscard") && !ko ? 25 : 0;
+    const score = (ko ? 1000 : 0) + dmg + (atk.effects?.length ?? 0) * 5 - selfCost - fuel * 5;
     const bestScore = best ? (best.ko ? 1000 : 0) + best.dmg : -1;
-    if (score > bestScore) best = { index, dmg, ko };
+    if (score > bestScore) best = { index, dmg, ko, fuel };
   });
   return best;
 }
@@ -254,6 +269,6 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   }
 
   const atk = bestAttack(g, pid);
-  if (atk) return { type: "attack", index: atk.index };
+  if (atk) return { type: "attack", index: atk.index, ...(atk.fuel ? { fuel: atk.fuel } : {}) };
   return { type: "endTurn" };
 }
