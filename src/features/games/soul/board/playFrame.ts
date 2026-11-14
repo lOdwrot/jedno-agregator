@@ -34,6 +34,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
   switch (ev.t) {
     case "turn": {
       music.setDark(ev.pid === "ai");
+      music.setSouls(Math.max(state.players.me.souls, state.players.ai.souls));
       sfx.turn(ev.pid === "me");
       await r.reconcile(state);
       await fx.banner(
@@ -300,6 +301,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
         sfx.soul();
         await fx.fly(from, a.souls[taker], "🕊️", 52, 750);
       }
+      music.setSouls(Math.max(state.players.me.souls, state.players.ai.souls));
       await r.reconcile(state, 420, 80);
       return;
     }
