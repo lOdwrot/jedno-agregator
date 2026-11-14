@@ -45,6 +45,28 @@ describe("booster editions", () => {
     expect(special / 1000).toBeGreaterThan(0.35);
   });
 
+  it("Witraże Katedry is pricey and always has at least 2 stained-glass cards", () => {
+    const rnd = createRng(11);
+    const pack = PACKS.find((p) => p.id === "witraze")!;
+    expect(pack.price).toBeGreaterThan(PACKS.find((p) => p.id === "papieze")!.price);
+    let extra = 0;
+    for (let i = 0; i < 300; i++) {
+      const stained = rollPack(pack, rnd).filter((k) => k.endsWith(":stained")).length;
+      expect(stained).toBeGreaterThanOrEqual(2);
+      if (stained > 2) extra++;
+    }
+    expect(extra).toBeGreaterThan(0);
+  });
+
+  it("other packs have no stained-glass guarantee", () => {
+    const rnd = createRng(13);
+    const pack = PACKS.find((p) => p.id === "wspolnota")!;
+    let none = 0;
+    for (let i = 0; i < 100; i++)
+      if (!rollPack(pack, rnd).some((k) => k.endsWith(":stained"))) none++;
+    expect(none).toBeGreaterThan(50);
+  });
+
   it("the saints' pack favours saints in the rare slot", () => {
     const rnd = createRng(5);
     const pack = PACKS.find((p) => p.id === "swieci")!;

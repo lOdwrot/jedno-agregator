@@ -3,7 +3,7 @@ import { COLLECTIBLE } from "../data/cards";
 import type { CardDef, Finish, Rarity } from "../data/types";
 import { keyOf, type CardKey } from "./profile";
 
-export type PackId = "wspolnota" | "swieci" | "papieze" | "skarbiec";
+export type PackId = "wspolnota" | "swieci" | "papieze" | "witraze" | "skarbiec";
 
 export interface PackType {
   id: PackId;
@@ -23,6 +23,8 @@ export interface PackType {
     pool?: (c: CardDef) => boolean;
     /** Chances of a stained / gilded print (default 3% / 12%). */
     finish?: { stained: number; gilded: number };
+    /** At least this many cards come in the stained-glass finish. */
+    minStained?: number;
   };
 }
 
@@ -63,6 +65,22 @@ export const PACKS: readonly PackType[] = [
     odds: { legendary: 0.4, rareInUncommonSlot: 0.25 },
   },
   {
+    id: "witraze",
+    name: "Witraże Katedry",
+    subtitle: "Edycja w kolorach szkła",
+    sticker: "Min. 2 witrażowe karty!",
+    price: 600,
+    art: "mariacka",
+    emoji: "❖",
+    foil: "from-logo-blue via-logo-red to-logo-yellow",
+    odds: {
+      legendary: 0.2,
+      rareInUncommonSlot: 0.2,
+      finish: { stained: 0.1, gilded: 0.15 },
+      minStained: 2,
+    },
+  },
+  {
     id: "skarbiec",
     name: "Skarbiec Katedry",
     subtitle: "Legendarna edycja kolekcjonerska",
@@ -87,17 +105,18 @@ function pickFinish(r: number, odds = DEFAULT_FINISH): Finish {
   return r < odds.stained ? "stained" : r < odds.stained + odds.gilded ? "gilded" : "plain";
 }
 
-function pick(pool: readonly CardDef[], rnd: () => number): CardDef {
+function pick<T>(pool: readonly T[], rnd: () => number): T {
   return pool[Math.floor(rnd() * pool.length)]!;
 }
 
 /**
  * 5 cards: 3 common, 1 uncommon (sometimes rare), 1 rare-or-legendary. The best card comes last.
  * Skarbiec Katedry: the 4th card is always rare and the last one always legendary.
+ * Witraże Katedry: plain/gilded cards are turned into stained glass until `minStained` is reached.
  */
 export function rollPack(pack: PackType, rnd: () => number = Math.random): CardKey[] {
   const of = (r: Rarity) => COLLECTIBLE.filter((c) => c.rarity === r);
-  const out: CardKey[] = [];
+  const out: { id: string; finish: Finish }[] = [];
   for (let slot = 0; slot < 5; slot++) {
     let card: CardDef;
     if (slot < 3) card = pick(of("common"), rnd);
@@ -108,7 +127,12 @@ export function rollPack(pack: PackType, rnd: () => number = Math.random): CardK
       const special = pack.odds.pool ? COLLECTIBLE.filter(pack.odds.pool) : [];
       card = special.length && rnd() < 0.7 ? pick(special, rnd) : pick(of("rare"), rnd);
     }
-    out.push(keyOf(card.id, pickFinish(rnd(), pack.odds.finish)));
+    out.push({ id: card.id, finish: pickFinish(rnd(), pack.odds.finish) });
   }
-  return out;
+  let missing = (pack.odds.minStained ?? 0) - out.filter((c) => c.finish === "stained").length;
+  while (missing-- > 0) {
+    const rest = out.filter((c) => c.finish !== "stained");
+    pick(rest, rnd).finish = "stained";
+  }
+  return out.map((c) => keyOf(c.id, c.finish));
 }
