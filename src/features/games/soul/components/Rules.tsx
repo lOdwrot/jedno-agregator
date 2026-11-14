@@ -23,7 +23,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Moce",
-    "Niektóre postacie mają moc. Moce stałe działają cały czas (np. mniej obrażeń). Moce aktywne użyjesz raz na turę: stuknij postać i wybierz „Użyj mocy” — np. Pani z kancelarii dobiera karty, Siostra zakonna leczy, Animatorka dokłada Łaskę. Moc można użyć także z ławki.",
+    "Niektóre postacie mają moc. Moce stałe działają cały czas (np. mniej obrażeń). Moce aktywne użyjesz raz na turę: stuknij postać i wybierz „Użyj mocy” — np. Pani z kancelarii dobiera karty, Siostra zakonna leczy, Animatorka dokłada Łaskę. Moc można użyć także z ławki. Uwaga na papieży-strażników: dopóki Św. Celestyn V jest aktywną postacią, nikt nie zagrywa przedmiotów, a przy Bł. Piusie IX — pomocników.",
   ],
   [
     "Dobieranie kart",

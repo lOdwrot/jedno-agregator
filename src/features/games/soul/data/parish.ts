@@ -600,6 +600,37 @@ export const PARISH_CARDS: CardDef[] = [
     flavor: "Rozsławił tytuł „sługa sług Bożych”. Chorał nazwano jego imieniem.",
   },
   {
+    id: "celestyn5",
+    kind: "character",
+    side: "parish",
+    name: "Św. Celestyn V",
+    subtitle: "papież, XIII w.",
+    emoji: "🏔️",
+    rarity: "legendary",
+    hp: 120,
+    element: "modlitwa",
+    weakness: "pycha",
+    retreat: 2,
+    souls: 2,
+    ability: {
+      name: "Pustelnik z Morrone",
+      text: "Dopóki ta postać jest aktywna, żaden gracz nie może zagrywać przedmiotów.",
+      effect: { k: "lock", kind: "item" },
+    },
+    attacks: [
+      {
+        name: "Cisza pustelni",
+        cost: 2,
+        damage: 30,
+        text: "Ulecz 30 tej postaci.",
+        effects: [{ k: "heal", target: "self", n: 30 }],
+      },
+      { name: "Bulla przebaczenia", cost: 3, damage: 80 },
+    ],
+    flavor:
+      "Pustelnik wybrany na papieża. Po pięciu miesiącach oddał tiarę i wrócił do celi — bez bagażu.",
+  },
+  {
     id: "innocenty11",
     kind: "character",
     side: "parish",
@@ -624,6 +655,37 @@ export const PARISH_CARDS: CardDef[] = [
     ],
     flavor:
       "Zjednoczył władców przeciw oblężeniu Wiednia. Sobieski odpisał: „Venimus, vidimus, Deus vicit”.",
+  },
+  {
+    id: "pius9",
+    kind: "character",
+    side: "parish",
+    name: "Bł. Pius IX",
+    subtitle: "papież, XIX w.",
+    emoji: "🏛️",
+    rarity: "legendary",
+    hp: 130,
+    element: "slowo",
+    weakness: "gniew",
+    retreat: 2,
+    souls: 2,
+    ability: {
+      name: "Więzień Watykanu",
+      text: "Dopóki ta postać jest aktywna, żaden gracz nie może zagrywać pomocników.",
+      effect: { k: "lock", kind: "supporter" },
+    },
+    attacks: [
+      {
+        name: "Niepokalane Poczęcie",
+        cost: 2,
+        damage: 30,
+        text: "Usuń wszystkie stany ze swoich postaci.",
+        effects: [{ k: "cleanse" }],
+      },
+      { name: "Sobór Watykański I", cost: 4, damage: 110 },
+    ],
+    flavor:
+      "Najdłuższy pontyfikat po św. Piotrze. Po utracie Rzymu nie wychodził za mury — gości też nie przybywało.",
   },
   {
     id: "pius10",

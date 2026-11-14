@@ -76,6 +76,13 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Pope-peter_pprubens.jpg",
     focus: 0.15,
   },
+  pius9: {
+    title: "G.P.A.Healy, Portrait of Pope Pius IX (1871).jpg",
+    author: "George Peter Alexander Healy",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:G.P.A.Healy,_Portrait_of_Pope_Pius_IX_(1871).jpg",
+    focus: 0.2,
+  },
   pius10: {
     title: "His Holiness Pope St. Pius X – edited.jpg",
     author: "Unknown authorUnknown author",
