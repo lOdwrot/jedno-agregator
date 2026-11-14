@@ -19,7 +19,7 @@ import {
 import { createRng } from "../../useGameLoop";
 
 describe("Walka o duszę — collection", () => {
-  it("migrates a saved 24-card profile to the 40-card rules", () => {
+  it("migrates a saved 24-card profile to the 50-card rules", () => {
     const old = {
       version: 1,
       talents: 50,
@@ -32,13 +32,27 @@ describe("Walka o duszę — collection", () => {
       beaten: ["kanapa"],
     };
     const p = migrateProfile(old);
-    expect(p.version).toBe(2);
+    expect(p.version).toBe(3);
     expect(deckProblems(p)).toEqual([]);
     expect(p.deck).toContain(keyOf("jp2", "gilded"));
     expect(p.collection[keyOf("profesor", "plain")]).toBe(1);
     expect(p.collection[keyOf("ministrant", "plain")]).toBe(3);
     expect(p.wins).toBe(3);
     expect(migrateProfile(p)).toBe(p);
+  });
+
+  it("migrates a 40-card profile: gives Ogłoszenia parafialne and fills up with grace", () => {
+    const old = { ...newProfile(), version: 2 };
+    old.deck = old.deck.filter((k) => !k.startsWith("ogloszenia") && !k.startsWith("ksiega"));
+    delete old.collection[keyOf("ogloszenia", "plain")];
+    delete old.collection[keyOf("ksiega", "plain")];
+    old.energy = 40 - old.deck.length;
+    const p = migrateProfile(old);
+    expect(p.version).toBe(3);
+    expect(p.collection[keyOf("ogloszenia", "plain")]).toBe(2);
+    expect(p.deck.filter((k) => k === keyOf("ogloszenia", "plain"))).toHaveLength(2);
+    expect(p.collection[keyOf("ksiega", "plain")]).toBe(1);
+    expect(deckProblems(p)).toEqual([]);
   });
 
   it("starter deck is legal and a welcome booster is ready", () => {

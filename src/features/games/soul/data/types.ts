@@ -99,6 +99,12 @@ export type SupportEffect =
   | { k: "discardOppEnergy"; coin?: boolean; any?: boolean }
   /** Look at the top card of the deck: keep it, or discard it and draw (like Trekking Shoes). */
   | { k: "peek" }
+  /** Discard `discard` cards from your hand, then take any character from your deck (like Ultra Ball). */
+  | { k: "search"; discard: number }
+  /** Take a character from your discard pile into your hand (best one for the board is chosen). */
+  | { k: "recoverCharacter" }
+  /** Shuffle up to n cards from your discard pile back into the deck (characters and energy first). */
+  | { k: "recycle"; n: number }
   /** The opponent's active gets a status (on heads with `coin`). */
   | { k: "oppStatus"; s: Status; coin?: boolean }
   /** The opponent shuffles their hand into the deck and draws `opp`; you draw `self`. */

@@ -81,6 +81,11 @@ state transitions in `use*Reactions` hooks; everything decorative is skipped und
 accessible and handles drag & drop.
 Trainer rules: items never just draw N cards (drawing is for supporters); Różaniec/Powiadomienie are Trekking
 Shoes-like `peek` cards — they set `g.peek` and every move except `{ type: "peek", keep }` is rejected until it is answered.
+Decks have 50 cards (`DECK_SIZE`); the discard pile is never reshuffled — a player who must draw at the start of
+their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Algorytm, like Ultra Ball) set `g.search`
+and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
+`recycle` take cards back from the discard pile. Opponents may carry an `AiBoost` (energy on the starting active from the
+deck, extra draws per turn) — `otchlan` is the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
 Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
 `soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in
 `soul/collection/packs.ts`; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.

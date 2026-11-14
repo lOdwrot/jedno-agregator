@@ -11,6 +11,7 @@ import { CardFace } from "./CardFace";
 import { DuelBars, DuelTopBar } from "./DuelBars";
 import { DuelResult } from "./DuelResult";
 import { DuelSidebar } from "./DuelSidebar";
+import { SearchDialog } from "./SearchDialog";
 import { useDuelPlayer } from "./useDuelPlayer";
 
 interface Props {
@@ -30,7 +31,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
   const reduced = usePrefersReducedMotion();
   const root = useRef<HTMLElement>(null);
   const [initial] = useState<Game>(() =>
-    createGame(deck, opponentDeck(opponent), Date.now() % 1e9),
+    createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.boost),
   );
   const [sel, setSel] = useState<Selection | { zone: "place" } | null>(null);
   const [lesson, setLesson] = useState<string | null>(null);
@@ -203,6 +204,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
           </div>
         )}
       </Dialog>
+      <SearchDialog g={live} open={live.search?.pid === "me" && !busy} onAction={act} />
       <Dialog open={showLog} onClose={() => setShowLog(false)} title="Przebieg walki" size="sm">
         <DuelSidebar g={live} lesson={lesson ?? lastLesson} />
       </Dialog>

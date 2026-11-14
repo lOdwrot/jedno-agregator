@@ -10,7 +10,8 @@ import {
   retreatBlock,
   type Action,
 } from "./actions";
-import { previewDamage } from "./combat";
+import { aiSearch, searchPick } from "./aiSearch";
+import { applyDefense, bonusDamage, previewDamage, retreatCost } from "./combat";
 import { canPlaySupport, supportTargets } from "./support";
 import {
   bestBasic,
@@ -41,6 +42,17 @@ export function bestAttack(
     if (score > bestScore) best = { index, dmg, ko };
   });
   return best;
+}
+
+/** Whether the active's best usable attack would knock out `target` if it stood in front. */
+function canKO(g: Game, pid: PlayerId, target: InPlay): boolean {
+  const a = g.players[pid].active;
+  if (!a || g.turnNo === 1) return false;
+  return charDef(a).attacks.some((atk) => {
+    if (a.energy < atk.cost || atk.damage <= 0) return false;
+    const dmg = applyDefense(a, target, atk.damage + bonusDamage(g, pid, a));
+    return dmg >= hpLeft(target);
+  });
 }
 
 /** How many more energy the character needs for its strongest attack. */
@@ -79,7 +91,7 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
           return play();
         break;
       case "draw":
-        if (me.hand.length <= 5 && me.deck.length > 4) return play();
+        if (me.hand.length <= 5 && me.deck.length > e.n + 6) return play();
         break;
       case "refresh":
         if (me.hand.length <= 2 && me.deck.length > 6) return play();
@@ -88,7 +100,7 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
         if (!me.hand.some((x) => isBasic(getCard(x.cardId))) && me.bench.length < 3) return play();
         break;
       case "drawUntil":
-        if (me.hand.length - 1 <= Math.min(3, e.n - 2) && me.deck.length > 4) return play();
+        if (me.hand.length - 1 <= Math.min(3, e.n - 2) && me.deck.length > e.n + 6) return play();
         break;
       case "benchBasic":
         if (me.bench.length < 2) return play();
@@ -97,10 +109,15 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
         if (!me.hand.some((x) => getCard(x.cardId).kind === "energy")) return play();
         break;
       case "research":
-        if (me.hand.length <= 3 && me.deck.length > 10) return play();
+        if (me.hand.length <= 3 && me.deck.length > 14) return play();
         break;
       case "iono":
-        if (foe.hand.length >= 6 || (me.hand.length <= 2 && me.prizes.length >= 3)) return play();
+        if (
+          (foe.hand.length >= 6 && foe.prizes.length <= me.prizes.length) ||
+          (me.hand.length <= 2 && me.prizes.length >= 3) ||
+          (foe.prizes.length === 1 && foe.hand.length >= 3)
+        )
+          return play();
         break;
       case "shield":
         if (a && bestAttack(g, pid)) return play();
@@ -114,6 +131,15 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
       case "peek":
         if (me.deck.length > 3) return play();
         break;
+      case "search":
+        if (searchPick(g, pid) && me.deck.length > 4) return play();
+        break;
+      case "recoverCharacter":
+        if (searchPick(g, pid, me.discard)) return play();
+        break;
+      case "recycle":
+        if (me.deck.length <= 12 || me.discard.length >= 8) return play();
+        break;
       case "oppStatus":
         if (foe.active && bestAttack(g, pid) && !bestAttack(g, pid)?.ko) return play();
         break;
@@ -126,9 +152,15 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
         break;
       }
       case "gust": {
+        if (!foe.active) break;
+        // pull out a character the active can knock out now (2-soul ones first)
+        const ko = targets
+          .filter((t) => canKO(g, pid, t) && !canKO(g, pid, foe.active!))
+          .sort((x, y) => charDef(y).souls - charDef(x).souls || hpLeft(x) - hpLeft(y))[0];
+        if (ko) return play(ko.uid);
         const t = [...targets].sort((x, y) => hpLeft(x) - hpLeft(y))[0];
-        if (t && foe.active && hpLeft(t) < hpLeft(foe.active) && hpLeft(t) <= 60)
-          return play(t.uid);
+        if (t && hpLeft(t) < hpLeft(foe.active) && hpLeft(t) <= 60 && !e.coin) return play(t.uid);
+        if (t && e.coin && hpLeft(t) <= 60) return play(t.uid);
         break;
       }
       case "switch": {
@@ -160,9 +192,14 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   if (g.phase === "over") return null;
   if (g.phase === "promote") {
     if (g.promote?.who !== pid) return null;
-    const b = [...me.bench].sort(
-      (x, y) => hpLeft(y) + y.energy * 15 - (hpLeft(x) + x.energy * 15),
-    )[0];
+    const foeA = g.players[other(pid)].active;
+    const score = (c: InPlay) => {
+      const ready = charDef(c).attacks.filter((x) => x.cost <= c.energy);
+      const best = Math.max(0, ...ready.map((x) => x.damage));
+      const ko = foeA && best > 0 && applyDefense(c, foeA, best) >= hpLeft(foeA) ? 200 : 0;
+      return ko + best + hpLeft(c) + c.energy * 15;
+    };
+    const b = [...me.bench].sort((x, y) => score(y) - score(x))[0];
     return b ? { type: "promote", uid: b.uid } : null;
   }
   if (g.phase === "setup") {
@@ -171,6 +208,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   }
   if (g.turn !== pid) return null;
   if (g.peek) return g.peek.pid === pid ? { type: "peek", keep: keepPeek(g, pid) } : null;
+  if (g.search) return aiSearch(g, pid);
 
   for (const c of me.hand) {
     const t = evolveTargets(g, pid, c)[0];
@@ -195,11 +233,23 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     const threatened = hpLeft(a) <= 30 && charDef(a).souls >= 1;
     if (t && threatened && hpLeft(t) >= 60 && !bestAttack(g, pid)?.ko)
       return { type: "retreat", target: t.uid };
+    const striker = me.bench.find((b) =>
+      charDef(b).attacks.some(
+        (x) => x.cost <= b.energy && x.damage > 0 && applyDefense(b, foe, x.damage) >= hpLeft(foe),
+      ),
+    );
+    if (striker && !bestAttack(g, pid)?.ko && retreatCost(g, pid, a) <= 1 && g.turnNo > 1)
+      return { type: "retreat", target: striker.uid };
   }
 
   const energy = me.hand.find((c) => canAttach(g, pid, c));
   if (energy && a) {
-    const target = need(a) > 0 ? a : ([...me.bench].sort((x, y) => need(y) - need(x))[0] ?? a);
+    const benchT = [...me.bench]
+      .filter((b) => need(b) > 0)
+      .sort((x, y) => charDef(y).hp - charDef(x).hp || need(x) - need(y))[0];
+    // don't over-invest in an active that is about to fall without hitting back
+    const doomed = need(a) > 1 && hpLeft(a) <= 30 && benchT;
+    const target = need(a) > 0 && !doomed ? a : (benchT ?? a);
     return { type: "attach", uid: energy.uid, target: target.uid };
   }
 

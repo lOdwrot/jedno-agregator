@@ -16,10 +16,11 @@ import {
 } from "./combat";
 import { canUseAbility, activateAbility } from "./abilities";
 import { emit, recordFrames, type Frame } from "./events";
-import { resolvePeek } from "./peek";
+import { resolvePeek, resolveSearch } from "./peek";
 import { playSupport } from "./support";
 import {
   charDef,
+  choicePending,
   coin,
   draw,
   findInPlay,
@@ -46,7 +47,9 @@ export type Action =
   | { type: "endTurn" }
   | { type: "promote"; uid: number }
   /** Answer to a peek card: keep the revealed top card, or discard it and draw. */
-  | { type: "peek"; keep: boolean };
+  | { type: "peek"; keep: boolean }
+  /** Answer to an ultra-ball card: hand cards to discard + the character taken from the deck. */
+  | { type: "search"; discard: number[]; pick: number };
 
 const def = (c: CardInst): CardDef => getCard(c.cardId);
 const canAct = (c: InPlay) => !c.statuses.includes("asleep") && !c.statuses.includes("paralyzed");
@@ -54,7 +57,7 @@ const canAct = (c: InPlay) => !c.statuses.includes("asleep") && !c.statuses.incl
 /* ── queries used by the UI and the AI ── */
 export const canBench = (g: Game, pid: PlayerId, c: CardInst) =>
   g.phase === "main" &&
-  !g.peek &&
+  !choicePending(g) &&
   g.turn === pid &&
   isBasic(def(c)) &&
   g.players[pid].bench.length < BENCH_SIZE;
@@ -63,7 +66,7 @@ export function evolveTargets(g: Game, pid: PlayerId, c: CardInst): InPlay[] {
   const d = def(c);
   if (
     g.phase !== "main" ||
-    g.peek ||
+    choicePending(g) ||
     g.turn !== pid ||
     d.kind !== "character" ||
     !d.evolvesFrom ||
@@ -77,7 +80,7 @@ export function evolveTargets(g: Game, pid: PlayerId, c: CardInst): InPlay[] {
 
 export const canAttach = (g: Game, pid: PlayerId, c: CardInst) =>
   g.phase === "main" &&
-  !g.peek &&
+  !choicePending(g) &&
   g.turn === pid &&
   !g.flags.energy &&
   c.cardId === ENERGY_ID[g.players[pid].side];
@@ -85,7 +88,7 @@ export const canAttach = (g: Game, pid: PlayerId, c: CardInst) =>
 export function attackBlock(g: Game, pid: PlayerId, atk: AttackDef): string | null {
   const a = g.players[pid].active;
   if (g.phase !== "main" || g.turn !== pid || !a) return "To nie Twoja tura.";
-  if (g.peek) return "Najpierw zdecyduj o odkrytej karcie.";
+  if (choicePending(g)) return "Najpierw dokończ wybór kart.";
   if (g.turnNo === 1) return "W pierwszej turze gry nie można atakować.";
   if (a.statuses.includes("asleep")) return "Postać śpi.";
   if (a.statuses.includes("paralyzed")) return "Postać jest zatrzymana.";
@@ -96,7 +99,7 @@ export function attackBlock(g: Game, pid: PlayerId, atk: AttackDef): string | nu
 export function retreatBlock(g: Game, pid: PlayerId): string | null {
   const p = g.players[pid];
   if (g.phase !== "main" || g.turn !== pid || !p.active) return "To nie Twoja tura.";
-  if (g.peek) return "Najpierw zdecyduj o odkrytej karcie.";
+  if (choicePending(g)) return "Najpierw dokończ wybór kart.";
   if (!p.bench.length) return "Ławka jest pusta.";
   if (g.flags.retreated) return "Wycofać można raz na turę.";
   if (!canAct(p.active)) return "Uśpiona lub zatrzymana postać nie może się wycofać.";
@@ -194,6 +197,7 @@ function apply(g: Game, a: Action): boolean {
   const inHand = (uid: number) => p.hand.find((c) => c.uid === uid);
   // a revealed peek card must be answered before anything else happens
   if (g.peek) return a.type === "peek" && resolvePeek(g, pid, a.keep);
+  if (g.search) return a.type === "search" && resolveSearch(g, pid, a.discard, a.pick);
   switch (a.type) {
     case "chooseActive": {
       const me = g.players.me;
@@ -270,6 +274,7 @@ function apply(g: Game, a: Action): boolean {
       endTurn(g);
       return true;
     case "peek":
+    case "search":
       return false;
     case "promote": {
       const pr = g.promote;

@@ -1,5 +1,13 @@
 /** Game state of a single duel + small pure helpers shared by the engine modules. */
-import { BENCH_SIZE, getCard, HAND_START, isBasic, isCharacter, SOULS_TO_WIN } from "../data/cards";
+import {
+  BENCH_SIZE,
+  ENERGY_ID,
+  getCard,
+  HAND_START,
+  isBasic,
+  isCharacter,
+  SOULS_TO_WIN,
+} from "../data/cards";
 import type { CharacterDef, Finish, Side, Status, SupportDef } from "../data/types";
 import { FINISH_BONUS } from "../data/types";
 import { emit } from "./events";
@@ -48,6 +56,9 @@ export interface Game {
   place: { cardId: string; owner: PlayerId } | null;
   /** Top deck card revealed by a peek card — its owner must keep or discard it before moving on. */
   peek: { pid: PlayerId; uid: number } | null;
+  /** Ultra-ball-like card played — its owner must discard `discard` cards and pick a character from the deck. */
+  search: { pid: PlayerId; discard: number } | null;
+  boost: AiBoost;
   winner: PlayerId | null;
   reason: string;
   log: string[];
@@ -57,6 +68,12 @@ export interface Game {
   rng: number;
   nextUid: number;
   seq: number;
+}
+
+/** Computer handicap: energy on its starting active character, extra cards drawn each turn. */
+export interface AiBoost {
+  startEnergy: number;
+  extraDraw: number;
 }
 
 export type DeckList = { cardId: string; finish: Finish }[];
@@ -147,7 +164,12 @@ export function bestBasic(hand: CardInst[]): CardInst | undefined {
     .sort((a, b) => charDef(b).hp - charDef(a).hp)[0];
 }
 
-export function createGame(me: DeckList, ai: DeckList, seed: number): Game {
+export function createGame(
+  me: DeckList,
+  ai: DeckList,
+  seed: number,
+  boost: AiBoost = { startEnergy: 0, extraDraw: 0 },
+): Game {
   const g: Game = {
     players: {} as Game["players"],
     turn: "me",
@@ -157,6 +179,8 @@ export function createGame(me: DeckList, ai: DeckList, seed: number): Game {
     flags: { energy: false, supporter: false, retreated: false },
     place: null,
     peek: null,
+    search: null,
+    boost,
     winner: null,
     reason: "",
     log: [],
@@ -179,10 +203,21 @@ export function createGame(me: DeckList, ai: DeckList, seed: number): Game {
     p.hand = p.hand.filter((c) => c !== b);
     p.bench.push(toInPlay(b, 0));
   }
+  // handicap: energy for the starting active comes straight from the deck
+  for (const c of [p.active])
+    for (let i = 0; i < boost.startEnergy; i++) {
+      const k = p.deck.findIndex((x) => x.cardId === ENERGY_ID.demons);
+      if (k < 0) break;
+      p.deck.splice(k, 1);
+      c.energy++;
+    }
   g.first = coin(g) ? "me" : "ai";
   log(g, g.first === "me" ? "Rzut monetą: zaczynasz Ty!" : "Rzut monetą: zaczynają pomioty.");
   log(g, "Wybierz postać, która stanie do walki jako pierwsza.");
   return g;
 }
+
+/** A card choice (peek / search) is waiting for an answer — every other move is blocked. */
+export const choicePending = (g: Game) => !!g.peek || !!g.search;
 
 export const isCharCard = (c: CardInst) => isCharacter(getCard(c.cardId));

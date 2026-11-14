@@ -436,7 +436,183 @@ export const DEMON_CARDS: CardDef[] = [
         "„Zło dobrem zwyciężaj” (Rz 12,21). Spowiedź, Eucharystia i wspólnota — z nimi nie walczysz sam.",
     },
   },
+  // ── Arch-demons: the strongest cards of the bestiary (only the "Otchłań" deck) ──
+  {
+    id: "lucyfer",
+    kind: "character",
+    side: "demons",
+    name: "Lucyfer, Upadły Anioł",
+    emoji: "🌑",
+    rarity: "legendary",
+    hp: 200,
+    element: "pycha",
+    weakness: "modlitwa",
+    retreat: 4,
+    souls: 2,
+    ability: {
+      name: "Blask, który gaśnie",
+      text: "Ta postać otrzymuje o 20 mniej obrażeń.",
+      effect: { k: "armor", n: 20 },
+    },
+    attacks: [
+      {
+        name: "Non serviam",
+        cost: 3,
+        damage: 70,
+        text: "Odrzuć 1 Łaskę z postaci obrońcy.",
+        effects: [{ k: "discardEnergy" }],
+      },
+      {
+        name: "Upadek gwiazdy zarannej",
+        cost: 5,
+        damage: 160,
+        text: "20 obrażeń każdej postaci na ławce rywala.",
+        effects: [{ k: "bench", n: 20 }],
+      },
+    ],
+    flavor: "Kiedyś niósł światło. Wybrał, że będzie niósł tylko siebie.",
+    lesson: {
+      tempts:
+        "Najstarsza pokusa: „będziecie jak bogowie” (Rdz 3,5). Sam decyduję, co jest dobre, i nikomu nie służę.",
+      defend:
+        "„Oto ja, służebnica Pańska” (Łk 1,38). Pokora Maryi zmiażdżyła pychę węża — powiedz Bogu „tak” w małych rzeczach.",
+    },
+  },
+  {
+    id: "abaddon",
+    kind: "character",
+    side: "demons",
+    name: "Abaddon Niszczyciel",
+    emoji: "🌋",
+    rarity: "legendary",
+    hp: 180,
+    element: "gniew",
+    weakness: "slowo",
+    retreat: 3,
+    souls: 2,
+    ability: {
+      name: "Żar otchłani",
+      text: "Ataki pomiotów zadają +10 obrażeń.",
+      effect: { k: "attackBonus", n: 10 },
+    },
+    attacks: [
+      {
+        name: "Spalone mosty",
+        cost: 3,
+        damage: 60,
+        text: "30 obrażeń każdej postaci na ławce rywala.",
+        effects: [{ k: "bench", n: 30 }],
+      },
+      {
+        name: "Nienawiść bez końca",
+        cost: 4,
+        damage: 100,
+        text: "+20 za każde 10 obrażeń na tej postaci.",
+        effects: [{ k: "revenge", n: 20 }],
+      },
+    ],
+    flavor:
+      "Nie buduje niczego. Za to burzy wszystko, czego dotknie: przyjaźnie, rodziny, wspólnoty.",
+    lesson: {
+      tempts:
+        "Gniew obiecuje sprawiedliwość, a zostawia zgliszcza. Każda krzywda „usprawiedliwia” następną.",
+      defend:
+        "„Niech nad waszym gniewem nie zachodzi słońce” (Ef 4,26). Przebaczenie przerywa spiralę — i to Ty pierwszy jesteś wolny.",
+    },
+  },
+  {
+    id: "acedia",
+    kind: "character",
+    side: "demons",
+    name: "Acedia, Demon Południa",
+    emoji: "🕳️",
+    rarity: "legendary",
+    hp: 170,
+    element: "lenistwo",
+    weakness: "sluzba",
+    retreat: 3,
+    souls: 2,
+    ability: {
+      name: "Wieczne „po co?”",
+      text: "Ta postać jest odporna na stany (sen, zatrzymanie, zwątpienie).",
+      effect: { k: "statusImmune" },
+    },
+    attacks: [
+      {
+        name: "Szara pustka",
+        cost: 2,
+        damage: 40,
+        text: "Obrońca zasypia.",
+        effects: [{ k: "status", s: "asleep" }],
+      },
+      {
+        name: "Nic nie ma sensu",
+        cost: 4,
+        damage: 120,
+        text: "Obrońca popada w zwątpienie.",
+        effects: [{ k: "status", s: "poisoned" }],
+      },
+    ],
+    flavor:
+      "Przychodzi w samo południe, gdy wszystko się dłuży. Szepcze, że i tak nic się nie zmieni.",
+    lesson: {
+      tempts:
+        "Ojcowie pustyni nazywali ją „demonem południa”: znużenie dobrem, smutek z powodu duchowych rzeczy, ucieczka w nic.",
+      defend:
+        "Rób dalej to, co małe i dobre — modlitwę, obowiązek, pomoc drugiemu. Wierność w małym rozprasza mgłę.",
+    },
+  },
   // ── Demon supports ──────────────────────────────────────────────────────────
+  {
+    id: "algorytm",
+    kind: "item",
+    side: "demons",
+    name: "Algorytm",
+    emoji: "🎯",
+    rarity: "uncommon",
+    text: "Odrzuć 2 karty z ręki. Weź z talii do ręki wybranego pomiota.",
+    effect: { k: "search", discard: 2 },
+    flavor: "Wie, czego chcesz, zanim Ty to wiesz. Bo sam Ci to podsunął.",
+    lesson: {
+      tempts:
+        "Podsuwa dokładnie to, co trafi w Twoją słabość — film, zakup, kłótnię w komentarzach. Coraz więcej tego samego.",
+      defend:
+        "To Ty wybierasz, co oglądasz. Wyłącz autoodtwarzanie, posprzątaj obserwowanych, zostaw miejsce na ciszę.",
+    },
+  },
+  {
+    id: "rozpamietywanie",
+    kind: "item",
+    side: "demons",
+    name: "Rozpamiętywanie",
+    emoji: "🔁",
+    rarity: "uncommon",
+    text: "Weź z odrzuconych do ręki pomiota.",
+    effect: { k: "recoverCharacter" },
+    flavor: "„A pamiętasz, jak on Ci wtedy powiedział…?” Pamiętasz. Co do słowa.",
+    lesson: {
+      tempts:
+        "Wyciąga stare urazy i dawne grzechy, które już zostały pokonane, i każe je przeżywać od nowa.",
+      defend:
+        "Co oddałeś Bogu w spowiedzi, jest przebaczone. Nie rozdrapuj — módl się za tego, kto Cię zranił.",
+    },
+  },
+  {
+    id: "nawyki",
+    kind: "supporter",
+    side: "demons",
+    name: "Stare nawyki",
+    emoji: "🧲",
+    rarity: "rare",
+    text: "Wtasuj do talii do 5 kart z odrzuconych (najpierw pomioty, potem Pokusy).",
+    effect: { k: "recycle", n: 5 },
+    flavor: "Wyrzuciłeś je drzwiami. Wracają oknem, jakby nigdy nic.",
+    lesson: {
+      tempts: "Przekonuje, że skoro raz upadłeś, to i tak się nie zmienisz — więc po co walczyć.",
+      defend:
+        "Nawyk zmienia się małymi krokami i nowym dobrem w miejsce starego. Upadek to nie koniec drogi: wstań i idź dalej.",
+    },
+  },
   {
     id: "powiadomienie",
     kind: "item",

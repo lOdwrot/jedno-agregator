@@ -13,7 +13,6 @@ import {
   maxHp,
   nameOf,
   other,
-  shuffle,
   type Game,
   type InPlay,
   type PlayerId,
@@ -198,26 +197,25 @@ export function startTurn(g: Game, pid: PlayerId) {
   g.promote = null;
   g.flags = { energy: false, supporter: false, retreated: false };
   for (const c of inPlay(g.players[pid])) c.shield = 0;
-  const p = g.players[pid];
-  if (!p.deck.length && p.discard.length) {
-    p.deck.push(...p.discard.splice(0));
-    shuffle(g, p.deck);
-    emit(g, { t: "shuffle", pid });
-    log(
-      g,
-      `${pid === "me" ? "Twoja talia" : "Talia pomiotów"} się skończyła — odrzucone karty wracają do talii.`,
-    );
-  }
   emit(g, { t: "turn", pid });
   if (!draw(g, pid, 1)) {
     finish(
       g,
       other(pid),
-      pid === "me" ? "Skończyły Ci się karty w talii." : "Pomiotom skończyły się karty.",
+      pid === "me"
+        ? "Talia się skończyła — nie możesz dobrać karty."
+        : "Talia pomiotów się skończyła — nie mogą dobrać karty.",
     );
     return;
   }
   log(g, pid === "me" ? `Tura ${g.turnNo}: Twój ruch.` : `Tura ${g.turnNo}: ruch pomiotów.`);
+  if (pid === "ai" && g.boost?.extraDraw) draw(g, pid, g.boost.extraDraw);
+  const left = g.players[pid].deck.length;
+  if (left <= 3)
+    log(
+      g,
+      `Uwaga: ${pid === "me" ? "w Twojej talii" : "w talii pomiotów"} ${left === 0 ? "nie ma już kart — kolejne dobranie to porażka" : left === 1 ? "została 1 karta" : `zostały ${left} karty`}.`,
+    );
 }
 
 /** Checkup between turns, then hands the turn over (or asks the player to promote). */

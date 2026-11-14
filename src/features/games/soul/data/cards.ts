@@ -19,7 +19,7 @@ export const COLLECTIBLE: readonly CardDef[] = PARISH_CARDS.filter((c) => c.kind
 export const DEMON_CHARACTERS = DEMON_CARDS.filter(isCharacter);
 
 export const ENERGY_ID = { parish: "laska", demons: "pokusa" } as const;
-export const DECK_SIZE = 40;
+export const DECK_SIZE = 50;
 export const MAX_COPIES = 3;
 export const SOULS_TO_WIN = 4;
 export const BENCH_SIZE = 3;
