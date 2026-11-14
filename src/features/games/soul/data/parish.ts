@@ -34,6 +34,11 @@ export const PARISH_CARDS: CardDef[] = [
     retreat: 1,
     evolvesFrom: "ministrant",
     souls: 1,
+    ability: {
+      name: "Lekcjonarz",
+      text: "Raz na turę: dobierz 1 kartę.",
+      effect: { k: "drawOnce" },
+    },
     attacks: [
       {
         name: "Oto słowo Boże",
@@ -188,6 +193,11 @@ export const PARISH_CARDS: CardDef[] = [
     weakness: "pycha",
     retreat: 2,
     souls: 1,
+    ability: {
+      name: "Twarda jak babcia",
+      text: "Ta postać otrzymuje o 10 mniej obrażeń.",
+      effect: { k: "armor", n: 10 },
+    },
     attacks: [
       {
         name: "Dziesiątek za wnuczka",
@@ -227,6 +237,11 @@ export const PARISH_CARDS: CardDef[] = [
     retreat: 1,
     evolvesFrom: "oazowicz",
     souls: 1,
+    ability: {
+      name: "Ognisko",
+      text: "Raz na turę: dołącz 1 Łaskę z talii do swojej postaci, która jej najbardziej potrzebuje.",
+      effect: { k: "energyOnce" },
+    },
     attacks: [
       {
         name: "Rekolekcje wakacyjne",
@@ -251,6 +266,11 @@ export const PARISH_CARDS: CardDef[] = [
     weakness: "gniew",
     retreat: 1,
     souls: 1,
+    ability: {
+      name: "Opatrunek",
+      text: "Raz na turę: ulecz 20 swojej najbardziej rannej postaci.",
+      effect: { k: "healOnce", n: 20 },
+    },
     attacks: [
       {
         name: "Adoracja",
@@ -285,6 +305,26 @@ export const PARISH_CARDS: CardDef[] = [
       { name: "Toccata na pełnych registrach", cost: 3, damage: 60 },
     ],
     flavor: "Gra 40 lat. Nuty ma tylko dla niepoznaki.",
+  },
+  {
+    id: "kancelaria",
+    kind: "character",
+    side: "parish",
+    name: "Pani z kancelarii",
+    emoji: "🗂️",
+    rarity: "common",
+    hp: 60,
+    element: "sluzba",
+    weakness: "gniew",
+    retreat: 1,
+    souls: 1,
+    ability: {
+      name: "Księgi metrykalne",
+      text: "Raz na turę: dobieraj karty, aż będziesz mieć 4 w ręce.",
+      effect: { k: "drawUntil", n: 4 },
+    },
+    attacks: [{ name: "Zaświadczenie z pieczątką", cost: 1, damage: 10 }],
+    flavor: "Czynne we wtorki i czwartki, 16:00–17:30. Ale dla Ciebie zrobi wyjątek.",
   },
   // ── Characters: saints and blesseds of Pomerania and Poland ────────────────
   {
@@ -772,6 +812,72 @@ export const PARISH_CARDS: CardDef[] = [
     text: "Dołącz 2 Łaski z talii do wybranej swojej postaci.",
     effect: { k: "energyFromDeck", n: 2 },
     flavor: "Pęcherze na stopach, radość w sercu, kilkanaście dni marszu.",
+  },
+  {
+    id: "zbiorka",
+    kind: "supporter",
+    side: "parish",
+    name: "Zbiórka ministrantów",
+    emoji: "🙋",
+    rarity: "common",
+    text: "Dobierz 3 karty.",
+    effect: { k: "draw", n: 3 },
+    flavor: "Kto przyszedł, ten dostaje dzwonki. Kto się spóźnił — kadzidło.",
+  },
+  {
+    id: "rada",
+    kind: "supporter",
+    side: "parish",
+    name: "Rada parafialna",
+    emoji: "🪑",
+    rarity: "uncommon",
+    text: "Dobieraj karty, aż będziesz mieć 6 w ręce.",
+    effect: { k: "drawUntil", n: 6 },
+    flavor: "Trzy godziny o kolorze nowych ławek. Ale decyzja zapadła!",
+  },
+  {
+    id: "profesor",
+    kind: "supporter",
+    side: "parish",
+    name: "Ksiądz profesor",
+    emoji: "📕",
+    rarity: "uncommon",
+    text: "Odrzuć wszystkie karty z ręki i dobierz 7 kart.",
+    effect: { k: "research", n: 7 },
+    flavor: "Wykład z patrologii zaczyna się od słów: „Zapomnijcie wszystko, czego was uczono”.",
+  },
+  {
+    id: "rzecznik",
+    kind: "supporter",
+    side: "parish",
+    name: "Ksiądz rzecznik",
+    emoji: "🎙️",
+    rarity: "rare",
+    text: "Każdy gracz wkłada rękę pod spód talii i dobiera tyle kart, ile dusz zostało mu do zdobycia.",
+    effect: { k: "iono" },
+    flavor: "„Nie mam w tej sprawie nic do dodania”. I dodaje jeszcze 20 minut.",
+  },
+  {
+    id: "zapisy",
+    kind: "item",
+    side: "parish",
+    name: "Zapisy na oazę",
+    emoji: "📝",
+    rarity: "common",
+    text: "Połóż na ławce losową postać podstawową z talii.",
+    effect: { k: "benchBasic" },
+    flavor: "Lista wisi w zakrystii. Długopis przywiązany sznurkiem.",
+  },
+  {
+    id: "paschal",
+    kind: "item",
+    side: "parish",
+    name: "Paschał",
+    emoji: "🕯️",
+    rarity: "common",
+    text: "Weź z talii do ręki 2 Łaski.",
+    effect: { k: "energyToHand", n: 2 },
+    flavor: "Świeci od Wigilii Paschalnej przez cały okres wielkanocny.",
   },
   // ── Places (one in play) ────────────────────────────────────────────────────
   {

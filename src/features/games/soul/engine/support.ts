@@ -1,5 +1,5 @@
 /** Trainer-like cards: items, supporters (one per turn) and places (one on the table). */
-import { ENERGY_ID, getCard, isCharacter } from "../data/cards";
+import { BENCH_SIZE, ENERGY_ID, getCard, isBasic, isCharacter } from "../data/cards";
 import type { SupportDef } from "../data/types";
 import { discardEnergy, healAll } from "./combat";
 import { emit } from "./events";
@@ -12,6 +12,7 @@ import {
   other,
   rand,
   shuffle,
+  toInPlay,
   type CardInst,
   type Game,
   type InPlay,
@@ -65,6 +66,16 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
       return me.deck.length + me.hand.length > 1;
     case "searchCharacter":
       return me.deck.some((c) => isCharacter(getCard(c.cardId)));
+    case "drawUntil":
+      return me.deck.length > 0 && me.hand.length - 1 < e.n;
+    case "benchBasic":
+      return me.bench.length < BENCH_SIZE && me.deck.some((c) => isBasic(getCard(c.cardId)));
+    case "energyToHand":
+      return deckEnergy(g, pid) > 0;
+    case "research":
+      return me.deck.length > 0;
+    case "iono":
+      return me.deck.length + me.hand.length > 1;
     case "cleanse":
     case "fullHeal":
       return !!a && (a.damage > 0 || a.statuses.length > 0);
@@ -128,6 +139,48 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       log(g, pid === "me" ? `Do ręki trafia: ${nameOf(pick)}.` : "Pomioty biorą postać z talii.");
       break;
     }
+    case "drawUntil":
+      draw(g, pid, e.n - me.hand.length);
+      break;
+    case "benchBasic": {
+      const pool = me.deck.filter((c) => isBasic(getCard(c.cardId)));
+      const pick = pool[Math.floor(rand(g) * pool.length)]!;
+      me.deck = me.deck.filter((c) => c !== pick);
+      me.bench.push(toInPlay(pick, g.turnNo));
+      shuffle(g, me.deck);
+      log(g, `Na ławkę wchodzi: ${nameOf(pick)}.`);
+      emit(g, { t: "bench", pid, uid: pick.uid });
+      break;
+    }
+    case "energyToHand": {
+      let k = 0;
+      me.deck = me.deck.filter((c) => {
+        if (k < e.n && c.cardId === ENERGY_ID[me.side]) {
+          k++;
+          me.hand.push(c);
+          return false;
+        }
+        return true;
+      });
+      shuffle(g, me.deck);
+      emit(g, { t: "draw", pid, n: k });
+      break;
+    }
+    case "research":
+      me.discard.push(...me.hand.splice(0));
+      emit(g, { t: "shuffle", pid });
+      draw(g, pid, e.n);
+      break;
+    case "iono":
+      for (const who of [pid, other(pid)]) {
+        const pl = g.players[who];
+        shuffle(g, pl.hand);
+        pl.deck.push(...pl.hand.splice(0));
+        emit(g, { t: "shuffle", pid: who });
+        draw(g, who, Math.max(1, pl.prizes.length));
+      }
+      log(g, "Obaj gracze oddają rękę pod spód talii i dobierają karty.");
+      break;
     case "cleanse":
       a!.statuses = [];
       emit(g, { t: "cleanse", uids: [a!.uid] });

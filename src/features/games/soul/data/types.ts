@@ -37,8 +37,20 @@ export type AbilityEffect =
   | { k: "freeRetreat" }
   | { k: "statusImmune" }
   | { k: "endHeal"; n: number }
+  | { k: "attackBonus"; n: number }
+  /* activated once per turn (like Pokémon TCG Abilities) */
   | { k: "drawOnce" }
-  | { k: "attackBonus"; n: number };
+  | { k: "drawUntil"; n: number }
+  | { k: "healOnce"; n: number }
+  | { k: "energyOnce" };
+
+/** Abilities the player activates (once per turn); the others are always on. */
+export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
+  "drawOnce",
+  "drawUntil",
+  "healOnce",
+  "energyOnce",
+]);
 
 export interface AbilityDef {
   name: string;
@@ -85,6 +97,13 @@ export type SupportEffect =
   | { k: "discardOppEnergy" }
   | { k: "energyFromDeck"; n: number }
   | { k: "fullHeal" }
+  | { k: "drawUntil"; n: number }
+  | { k: "benchBasic" }
+  | { k: "energyToHand"; n: number }
+  /** Discard your hand, draw n (like Professor's Research). */
+  | { k: "research"; n: number }
+  /** Both players put their hand under the deck and draw one card per soul still to win (like Iono). */
+  | { k: "iono" }
   | { k: "place"; attackBonus?: number; endHeal?: number; retreatMinus?: number };
 
 export interface SupportDef extends BaseDef {

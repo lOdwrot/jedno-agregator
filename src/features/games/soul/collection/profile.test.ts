@@ -8,6 +8,7 @@ import {
   donateSpares,
   finishDuel,
   keyOf,
+  migrateProfile,
   newProfile,
   openBooster,
   removeFromDeck,
@@ -18,6 +19,28 @@ import {
 import { createRng } from "../../useGameLoop";
 
 describe("Walka o duszę — collection", () => {
+  it("migrates a saved 24-card profile to the 40-card rules", () => {
+    const old = {
+      version: 1,
+      talents: 50,
+      packs: 0,
+      collection: { [keyOf("ministrant", "plain")]: 2, [keyOf("jp2", "gilded")]: 1 },
+      deck: [keyOf("ministrant", "plain"), keyOf("ministrant", "plain"), keyOf("jp2", "gilded")],
+      energy: 21,
+      wins: 3,
+      losses: 1,
+      beaten: ["kanapa"],
+    };
+    const p = migrateProfile(old);
+    expect(p.version).toBe(2);
+    expect(deckProblems(p)).toEqual([]);
+    expect(p.deck).toContain(keyOf("jp2", "gilded"));
+    expect(p.collection[keyOf("profesor", "plain")]).toBe(1);
+    expect(p.collection[keyOf("ministrant", "plain")]).toBe(3);
+    expect(p.wins).toBe(3);
+    expect(migrateProfile(p)).toBe(p);
+  });
+
   it("starter deck is legal and a welcome booster is ready", () => {
     const p = newProfile();
     expect(deckProblems(p)).toEqual([]);
@@ -48,7 +71,7 @@ describe("Walka o duszę — collection", () => {
     expect(p.beaten).toEqual(["kanapa"]);
   });
 
-  it("deck limits: 24 cards, max 2 copies, only owned prints", () => {
+  it("deck limits: 40 cards, max 3 copies, only owned prints", () => {
     let p = newProfile();
     const k = keyOf("ministrant", "plain");
     expect(canAddToDeck(p, k)).toBe(false); // deck full
@@ -61,10 +84,10 @@ describe("Walka o duszę — collection", () => {
     expect(canAddToDeck(p, keyOf("jp2", "plain"))).toBe(false); // not owned
   });
 
-  it("spare copies above two are donated for talents", () => {
-    const p = { ...newProfile(), collection: { [keyOf("jp2", "stained")]: 4 } };
+  it("spare copies above three are donated for talents", () => {
+    const p = { ...newProfile(), collection: { [keyOf("jp2", "stained")]: 5 } };
     const { profile, gained } = donateSpares(p);
     expect(gained).toBe(120);
-    expect(profile.collection[keyOf("jp2", "stained")]).toBe(2);
+    expect(profile.collection[keyOf("jp2", "stained")]).toBe(3);
   });
 });

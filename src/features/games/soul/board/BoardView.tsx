@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type PointerEvent, type RefObject } from "react";
 import { getCard } from "../data/cards";
 import type { Action } from "../engine/actions";
-import { hpLeft, maxHp, type Game } from "../engine/state";
+import { canUseAbility } from "../engine/abilities";
+import { hpLeft, inPlay, maxHp, type Game } from "../engine/state";
 import type { Selection } from "../components/CardActions";
 import type { BoardRenderer } from "./BoardRenderer";
 import { dropsFor, isPlayable, type Drop } from "./dnd";
@@ -94,6 +95,11 @@ export function BoardView({ view, live, busy, reduced, renderer, onSelect, onAct
       playable: busy
         ? []
         : live.players.me.hand.filter((c) => isPlayable(live, c)).map((c) => c.uid),
+      abilities: busy
+        ? []
+        : inPlay(live.players.me)
+            .filter((c) => canUseAbility(live, "me", c))
+            .map((c) => c.uid),
       targets: [],
       bench: false,
     });

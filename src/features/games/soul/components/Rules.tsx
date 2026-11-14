@@ -7,7 +7,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Start",
-    "Talia ma 24 karty. Dobierasz 5, a 4 karty odkładasz jako dusze. Wybierasz postać podstawową do walki. Monetą losuje się, kto zaczyna — w pierwszej turze gry nie można atakować.",
+    "Talia ma 40 kart. Dobierasz 7, a 4 karty odkładasz jako dusze. Wybierasz postać podstawową do walki. Monetą losuje się, kto zaczyna — w pierwszej turze gry nie można atakować.",
   ],
   [
     "Twoja tura",
@@ -16,6 +16,14 @@ const RULES: [string, string][] = [
   [
     "Atak",
     "Atak kosztuje tyle Łask, ile ✨ przy nazwie — Łaski zostają przy postaci. Słabość podwaja obrażenia: np. Pycha 👑 bije mocno w lektorów, a Służba 🤝 w pomioty lenistwa.",
+  ],
+  [
+    "Moce",
+    "Niektóre postacie mają moc. Moce stałe działają cały czas (np. mniej obrażeń). Moce aktywne użyjesz raz na turę: stuknij postać i wybierz „Użyj mocy” — np. Pani z kancelarii dobiera karty, Siostra zakonna leczy, Animatorka dokłada Łaskę. Moc można użyć także z ławki.",
+  ],
+  [
+    "Dobieranie kart",
+    "Talia jest duża, więc warto ją szybko przeglądać: Różaniec, Zbiórka ministrantów i Rada parafialna dobierają karty, Ksiądz profesor wymienia całą rękę na 7 nowych, a Ksiądz rzecznik zmusza obu graczy do oddania ręki — dobiera ten, komu zostało więcej dusz do zdobycia.",
   ],
   [
     "Stany",
@@ -27,7 +35,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Talia",
-    "W zakładce Talia składasz 24 karty: maksymalnie 2 egzemplarze tej samej karty, Łaski bez limitu. Nadmiarowe karty możesz oddać na tacę za talenty.",
+    "W zakładce Talia składasz 40 kart: maksymalnie 3 egzemplarze tej samej karty, Łaski bez limitu. Nadmiarowe karty możesz oddać na tacę za talenty.",
   ],
 ];
 

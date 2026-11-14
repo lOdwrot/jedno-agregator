@@ -14,6 +14,7 @@ import {
   retreatCost,
   startTurn,
 } from "./combat";
+import { canUseAbility, activateAbility } from "./abilities";
 import { emit, recordFrames, type Frame } from "./events";
 import { playSupport } from "./support";
 import {
@@ -96,12 +97,7 @@ export function retreatBlock(g: Game, pid: PlayerId): string | null {
   return null;
 }
 
-export const canUseAbility = (g: Game, pid: PlayerId, c: InPlay) =>
-  g.phase === "main" &&
-  g.turn === pid &&
-  charDef(c).ability?.effect.k === "drawOnce" &&
-  c.abilityTurn !== g.turnNo &&
-  g.players[pid].deck.length > 0;
+export { canUseAbility };
 
 /* ── moves ── */
 function attack(g: Game, pid: PlayerId, index: number): boolean {
@@ -254,10 +250,7 @@ function apply(g: Game, a: Action): boolean {
     case "ability": {
       const t = findInPlay(p, a.target);
       if (!t || !canUseAbility(g, pid, t)) return false;
-      t.abilityTurn = g.turnNo;
-      emit(g, { t: "ability", pid, uid: t.uid });
-      draw(g, pid, 1);
-      log(g, `${nameOf(t)}: „${charDef(t).ability!.name}” — dobierasz kartę.`);
+      activateAbility(g, pid, t);
       return true;
     }
     case "attack":
