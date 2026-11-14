@@ -1,3 +1,13 @@
+/** Energy cards in hand that a "fuel" attack may discard. */
+export const handEnergy = (g: Game, pid: PlayerId) =>
+  g.players[pid].hand.filter((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
+
+/** How many energy cards from hand the attack can burn right now (0 if it has no fuel effect). */
+export function fuelMax(g: Game, pid: PlayerId, atk: AttackDef): number {
+  const f = atk.effects?.find((e) => e.k === "fuel");
+  return f && f.k === "fuel" ? Math.min(f.max, handEnergy(g, pid).length) : 0;
+}
+
 /** Damage, knock-outs (souls), checkup between turns and turn order. */
 import { ENERGY_ID, getCard, SOULS_TO_WIN } from "../data/cards";
 import type { AbilityEffect, AttackDef, SupportDef } from "../data/types";
@@ -56,12 +66,15 @@ export function applyDefense(attacker: InPlay, defender: InPlay, raw: number): n
 }
 
 /** Damage an attack would deal now (coin flips counted as tails) — used by AI and UI preview. */
-export function previewDamage(g: Game, pid: PlayerId, atk: AttackDef): number {
+export function previewDamage(g: Game, pid: PlayerId, atk: AttackDef, fuel = 0): number {
   const me = g.players[pid].active;
   const foe = g.players[other(pid)].active;
   if (!me || !foe || atk.damage === 0) return 0;
   let raw = atk.damage + bonusDamage(g, pid, me);
-  for (const e of atk.effects ?? []) if (e.k === "revenge") raw += Math.floor(me.damage / 10) * e.n;
+  for (const e of atk.effects ?? []) {
+    if (e.k === "revenge") raw += Math.floor(me.damage / 10) * e.n;
+    if (e.k === "fuel") raw += Math.min(fuel, e.max) * e.n;
+  }
   return applyDefense(me, foe, raw);
 }
 

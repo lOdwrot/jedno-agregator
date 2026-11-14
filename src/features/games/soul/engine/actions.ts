@@ -7,6 +7,8 @@ import {
   bonusDamage,
   discardEnergy,
   endTurn,
+  fuelMax,
+  handEnergy,
   healAll,
   hurt,
   promoteUid,
@@ -43,7 +45,8 @@ export type Action =
   | { type: "support"; uid: number; target?: number }
   | { type: "retreat"; target: number }
   | { type: "ability"; target: number }
-  | { type: "attack"; index: number }
+  /** `fuel`: energy cards from hand burned by a "fuel" attack. */
+  | { type: "attack"; index: number; fuel?: number }
   | { type: "endTurn" }
   | { type: "promote"; uid: number }
   /** Answer to a peek card: keep the revealed top card, or discard it and draw. */
@@ -111,18 +114,27 @@ export function retreatBlock(g: Game, pid: PlayerId): string | null {
 export { canUseAbility };
 
 /* ── moves ── */
-function attack(g: Game, pid: PlayerId, index: number): boolean {
+function attack(g: Game, pid: PlayerId, index: number, fuel = 0): boolean {
   const me = g.players[pid];
   const a = me.active;
   if (!a || !g.players[other(pid)].active) return false;
   const atk = charDef(a).attacks[index];
   if (!atk || attackBlock(g, pid, atk)) return false;
+  if (fuel < 0 || fuel > fuelMax(g, pid, atk)) return false;
   const foe = g.players[other(pid)];
   const d = foe.active!;
   log(g, `${nameOf(a)} używa: „${atk.name}”.`);
   emit(g, { t: "attack", pid, uid: a.uid, target: d.uid, name: atk.name });
   let raw = atk.damage > 0 ? atk.damage + bonusDamage(g, pid, a) : 0;
+  if (fuel > 0) {
+    const burn = handEnergy(g, pid).slice(0, fuel);
+    me.hand = me.hand.filter((c) => !burn.includes(c));
+    me.discard.push(...burn);
+    log(g, `${nameOf(a)} odrzuca z ręki ${fuel} ${fuel === 1 ? "kartę" : "karty"} energii.`);
+    emit(g, { t: "discardEnergy", uid: a.uid, n: fuel });
+  }
   for (const e of atk.effects ?? []) {
+    if (e.k === "fuel") raw += Math.min(fuel, e.max) * e.n;
     if (e.k === "coin") {
       const h = coin(g);
       log(g, h ? `Orzeł! +${e.n}.` : "Reszka.");
@@ -177,6 +189,10 @@ function attack(g: Game, pid: PlayerId, index: number): boolean {
       }
       case "discardEnergy":
         discardEnergy(g, other(pid), d, 1);
+        break;
+      case "selfDiscard":
+        if (a.energy) log(g, `${nameOf(a)} traci ${Math.min(e.n, a.energy)} kart energii.`);
+        discardEnergy(g, pid, a, e.n);
         break;
     }
   }
@@ -268,7 +284,7 @@ function apply(g: Game, a: Action): boolean {
       return true;
     }
     case "attack":
-      return attack(g, pid, a.index);
+      return attack(g, pid, a.index, a.fuel ?? 0);
     case "endTurn":
       if (g.phase !== "main") return false;
       endTurn(g);

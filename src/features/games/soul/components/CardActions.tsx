@@ -10,7 +10,7 @@ import {
   retreatBlock,
   type Action,
 } from "../engine/actions";
-import { previewDamage, retreatCost } from "../engine/combat";
+import { fuelMax, previewDamage, retreatCost } from "../engine/combat";
 import { canPlaySupport, supportTargets, targetKind } from "../engine/support";
 import { charDef, inPlay, nameOf, type CardInst, type Game, type InPlay } from "../engine/state";
 
@@ -107,14 +107,14 @@ function fieldOptions(g: Game, c: InPlay): Opt[] {
   if (me.active?.uid === c.uid) {
     charDef(c).attacks.forEach((a, index) => {
       const block = attackBlock(g, "me", a);
-      out.push(
-        block
-          ? { label: `Atak: ${a.name}`, note: block }
-          : {
-              label: `Atak: ${a.name} (${previewDamage(g, "me", a)} obr.)`,
-              action: { type: "attack", index },
-            },
-      );
+      if (block) return void out.push({ label: `Atak: ${a.name}`, note: block });
+      for (let fuel = 0; fuel <= fuelMax(g, "me", a); fuel++)
+        out.push({
+          label: fuel
+            ? `Atak: ${a.name} + odrzuć ${fuel} ✨ z ręki (${previewDamage(g, "me", a, fuel)} obr.)`
+            : `Atak: ${a.name} (${previewDamage(g, "me", a)} obr.)`,
+          action: fuel ? { type: "attack", index, fuel } : { type: "attack", index },
+        });
     });
   } else {
     const block = retreatBlock(g, "me");

@@ -20,6 +20,10 @@ export type AttackEffect =
   | { k: "cleanse" }
   | { k: "searchEnergy"; n: number }
   | { k: "discardEnergy" }
+  /** Before the attack discard up to `max` energy cards from your hand: +n damage for each. */
+  | { k: "fuel"; n: number; max: number }
+  /** After the attack discard n energy from the attacker itself (99 = all). */
+  | { k: "selfDiscard"; n: number }
   /** +n for every 10 damage already on the attacker ("zło dobrem zwyciężaj"). */
   | { k: "revenge"; n: number };
 

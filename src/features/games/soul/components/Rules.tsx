@@ -18,6 +18,10 @@ const RULES: [string, string][] = [
     "Atak kosztuje tyle Łask, ile ✨ przy nazwie — Łaski zostają przy postaci. Słabość podwaja obrażenia: np. Pycha 👑 bije mocno w lektorów, a Służba 🤝 w pomioty lenistwa.",
   ],
   [
+    "Zapał",
+    "Niektóre ataki pozwalają odrzucić Łaski z ręki — każda dodaje obrażenia (np. Kaznodzieja rekolekcyjny: +30 za Łaskę). Przy takim ataku pojawią się dodatkowe przyciski +🔥1, +🔥2… Inne ataki są potężne, ale po nich postać traci dołączone Łaski (np. Pielgrzym na Jasną Górę, św. Maksymilian Kolbe).",
+  ],
+  [
     "Moce",
     "Niektóre postacie mają moc. Moce stałe działają cały czas (np. mniej obrażeń). Moce aktywne użyjesz raz na turę: stuknij postać i wybierz „Użyj mocy” — np. Pani z kancelarii dobiera karty, Siostra zakonna leczy, Animatorka dokłada Łaskę. Moc można użyć także z ławki.",
   ],
