@@ -84,7 +84,9 @@ Shoes-like `peek` cards — they set `g.peek` and every move except `{ type: "pe
 Decks have 50 cards (`DECK_SIZE`); the discard pile is never reshuffled — a player who must draw at the start of
 their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Algorytm, like Ultra Ball) set `g.search`
 and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
-`recycle` take cards back from the discard pile. Opponents may carry an `AiBoost` (energy on the starting active from the
+`recycle` take cards back from the discard pile. `searchEnergy` attacks take an optional `target` (benched uid) on the
+`attack` action — the UI asks via `benchEnergyTargets` when more than one benched character could get the energy.
+Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is readable on the table without opening the card. Opponents may carry an `AiBoost` (energy on the starting active from the
 deck, extra draws per turn) — `zastepy` (Smocze Zastępy, "bardzo trudny": 2 energy on the start, no extra draw) sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
 Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
 `soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in

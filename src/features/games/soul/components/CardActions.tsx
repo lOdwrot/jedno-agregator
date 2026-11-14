@@ -3,6 +3,7 @@ import { getCard, isBasic } from "../data/cards";
 import type { SupportDef } from "../data/types";
 import {
   attackBlock,
+  benchEnergyTargets,
   canAttach,
   canBench,
   canUseAbility,
@@ -118,6 +119,14 @@ function fieldOptions(g: Game, c: InPlay): Opt[] {
     charDef(c).attacks.forEach((a, index) => {
       const block = attackBlock(g, "me", a);
       if (block) return void out.push({ label: `Atak: ${a.name}`, note: block });
+      const targets = benchEnergyTargets(g, "me", a);
+      if (targets.length)
+        return void targets.forEach((t) =>
+          out.push({
+            label: `Atak: ${a.name} (${previewDamage(g, "me", a)} obr.) — ✨ dla: ${nameOf(t)}`,
+            action: { type: "attack", index, target: t.uid },
+          }),
+        );
       for (let fuel = 0; fuel <= fuelMax(g, "me", a); fuel++)
         out.push({
           label: fuel

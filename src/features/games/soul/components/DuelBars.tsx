@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { Button, Icon } from "@/ui";
 import type { Opponent } from "../data/opponents";
 import type { AudioPrefs } from "../audio/context";
-import { attackBlock, type Action } from "../engine/actions";
+import { attackBlock, benchEnergyTargets, type Action } from "../engine/actions";
 import { fuelMax, previewDamage } from "../engine/combat";
-import { charDef, type Game } from "../engine/state";
+import { charDef, nameOf, type Game } from "../engine/state";
 
 const btn =
   "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-2 text-lg hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-logo-yellow";
@@ -106,6 +107,53 @@ export function DuelBars({
 }) {
   const a = g.players.me.active;
   const myTurn = g.phase === "main" && g.turn === "me" && !busy;
+  // attack waiting for the benched character that gets its energy
+  const [pick, setPick] = useState<number | null>(null);
+  const pickAtk = myTurn && a && pick !== null ? charDef(a).attacks[pick] : undefined;
+  const targets =
+    pickAtk && !attackBlock(g, "me", pickAtk) ? benchEnergyTargets(g, "me", pickAtk) : [];
+  if (pick !== null && !targets.length) setPick(null);
+  if (pickAtk && targets.length)
+    return (
+      <div className="border-t border-white/10 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+        <p className="truncate text-center text-xs text-white/85" aria-live="polite">
+          {pickAtk.name}: wybierz postać na ławce, która dostanie ✨ z talii.
+        </p>
+        <div
+          className="mt-1 flex flex-wrap items-center gap-1.5"
+          role="group"
+          aria-label="Komu dołączyć Łaskę"
+        >
+          {targets.map((t) => (
+            <Button
+              key={t.uid}
+              size="sm"
+              className="shrink-0"
+              onClick={() => {
+                setPick(null);
+                onAction({ type: "attack", index: pick!, target: t.uid });
+              }}
+            >
+              {nameOf(t)}
+              <span className="font-display">
+                {" "}
+                · <span aria-hidden="true">✨</span>
+                <span className="sr-only">Łaska: </span>
+                {t.energy}
+              </span>
+            </Button>
+          ))}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setPick(null)}
+            className="ml-auto shrink-0 border-white/40 text-white"
+          >
+            Anuluj
+          </Button>
+        </div>
+      </div>
+    );
   return (
     <div className="border-t border-white/10 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
       <p className="truncate text-center text-xs text-white/85">{hint(busy ? view : g)}</p>
@@ -128,7 +176,9 @@ export function DuelBars({
                       : undefined
                   }
                   onClick={() =>
-                    onAction(fuel ? { type: "attack", index, fuel } : { type: "attack", index })
+                    !fuel && benchEnergyTargets(g, "me", atk).length
+                      ? setPick(index)
+                      : onAction(fuel ? { type: "attack", index, fuel } : { type: "attack", index })
                   }
                   className="shrink-0"
                 >
