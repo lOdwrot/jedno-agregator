@@ -13,6 +13,9 @@ import {
 } from "./collection/profile";
 import { useProfile } from "./collection/useProfile";
 import type { Opponent } from "./data/opponents";
+import { PatronDialog } from "./rank/PatronDialog";
+import { RankMeter } from "./rank/RankMeter";
+import { afterDuel, rankIndex } from "./rank/xp";
 import { Bestiary } from "./components/Bestiary";
 import { BoosterShop } from "./components/BoosterShop";
 import { DeckBuilder } from "./components/DeckBuilder";
@@ -34,25 +37,28 @@ export function SoulGame() {
   const [duel, setDuel] = useState<{ opponent: Opponent; key: number } | null>(null);
   const [pvp, setPvp] = useState<Session | null>(null);
   const [paying, setPaying] = useState<Opponent | null>(null);
+  const [patron, setPatron] = useState<number | null>(null);
+  const xp = profile.xp ?? 0;
 
   const startDuel = (opponent: Opponent) => setDuel({ opponent, key: Date.now() });
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
-      if (!duel) return { earned: 0, prize: null };
+      if (!duel) return { earned: 0, prize: null, rank: { from: xp, to: xp } };
       const t = reward(duel.opponent.reward, won, souls);
       // a victory over a harder opponent brings one free booster, opened right after the duel
       const table = won ? duel.opponent.prize : undefined;
       const pack = table?.length ? rollPrize(table) : null;
       const cards = pack ? rollPack(pack) : [];
       const prize = pack ? { pack, cards, fresh: freshFlags(profile, cards) } : null;
+      const rank = { from: xp, to: afterDuel(xp, won, duel.opponent.difficulty) };
       update((p) => {
-        const next = finishDuel(p, duel.opponent.id, won, t);
+        const next = { ...finishDuel(p, duel.opponent.id, won, t), xp: rank.to };
         return prize ? grantBooster(next, prize.cards) : next;
       });
-      return { earned: t, prize };
+      return { earned: t, prize, rank };
     },
-    [duel, profile, update],
+    [duel, profile, update, xp],
   );
 
   if (pvp)
@@ -73,6 +79,9 @@ export function SoulGame() {
         opponent={duel.opponent}
         deck={deckList(profile)}
         onFinish={onFinish}
+        onForfeit={() =>
+          update((p) => ({ ...p, xp: afterDuel(p.xp ?? 0, false, duel.opponent.difficulty) }))
+        }
         onExit={(booster) => {
           setDuel(null);
           setTab(booster ? "boostery" : "walka");
@@ -82,6 +91,7 @@ export function SoulGame() {
 
   return (
     <div className="flex flex-col gap-4">
+      <RankMeter xp={xp} onPatron={() => setPatron(rankIndex(xp))} />
       <p className="flex flex-wrap gap-x-5 gap-y-1 rounded-card bg-navy px-4 py-3 text-sm font-bold text-white">
         <span>🪙 Talenty: {profile.talents}</span>
         <span>🎁 Boostery do otwarcia: {profile.packs}</span>
@@ -140,6 +150,9 @@ export function SoulGame() {
           { value: "zasady", label: "Zasady", content: <Rules /> },
         ]}
       />
+      {patron !== null && (
+        <PatronDialog xp={xp} index={patron} onSelect={setPatron} onClose={() => setPatron(null)} />
+      )}
       {paying && (
         <FeePayment
           opponent={paying}

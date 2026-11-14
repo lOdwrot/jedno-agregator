@@ -110,6 +110,11 @@ guest `"ai"` (`g.pvp` set: no AI, both sides `parish`, both pick their first cha
 screen shows `flipGame(g)`. Log lines about a player's move go through `say(g, pid, mine, solo, rival)` so each
 person reads them from their side (`g.pvp.log` / `g.pvp.reason` hold the guest's copy). No talents for PvP.
 Bump `PROTOCOL` in `pvp/protocol.ts` whenever the engine or messages change.
+**Rank** (`soul/rank/`): `Profile.xp` points shown at the top of the hub (`RankMeter`: patron portrait above the progress
+bar; tapping the patron opens `PatronDialog` with the story + the ladder). 11 ranks in `ranks.ts`, each with a patron
+whose picture is a card art key. `xp.ts`: every step costs more (`stepCost`), a win gives `WIN_XP[difficulty]`, a defeat or
+forfeit costs `lossXp` (depends only on the rank, never below 0 — ranks can drop). `DuelResult` animates `from → to`
+through every crossed boundary (`rankStops`) with a flip/burst on promotion and a sinking swap on demotion. PvP doesn't count.
 Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
 `soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in
 `soul/collection/packs.ts`; harder opponents carry `Opponent.fee` (paid with the `FeePayment` animation before the duel) and
