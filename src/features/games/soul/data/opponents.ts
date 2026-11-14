@@ -1,5 +1,12 @@
+import type { PackId } from "../collection/packs";
 import type { AiBoost } from "../engine/state";
 import type { Finish } from "./types";
+
+/** One booster edition a victory can bring, with its chance (the chances of a table sum to 1). */
+export interface PrizeChance {
+  pack: PackId;
+  chance: number;
+}
 
 /** Computer opponents — each comes with a letter from an old demon to his young nephew. */
 export interface Opponent {
@@ -8,6 +15,10 @@ export interface Opponent {
   emoji: string;
   difficulty: "łatwy" | "średni" | "trudny" | "bardzo trudny" | "ekstremalny" | "niepokonany";
   reward: { win: number; loss: number };
+  /** Talents paid to challenge this opponent (harder levels). */
+  fee?: number;
+  /** A victory also brings one free booster, drawn from this table and opened right away. */
+  prize?: readonly PrizeChance[];
   /** Card ids (energy included) — 50 cards. */
   deck: Record<string, number>;
   /** Handicap in the computer's favour (harder opponents). */
@@ -145,6 +156,11 @@ export const OPPONENTS: readonly Opponent[] = [
     emoji: "🐲",
     difficulty: "bardzo trudny",
     reward: { win: 300, loss: 60 },
+    fee: 30,
+    prize: [
+      { pack: "wspolnota", chance: 0.5 },
+      { pack: "swieci", chance: 0.5 },
+    ],
     boost: { startEnergy: 2, extraDraw: 0 },
     deck: {
       plotka: 3,
@@ -187,6 +203,13 @@ export const OPPONENTS: readonly Opponent[] = [
     emoji: "🔥",
     difficulty: "ekstremalny",
     reward: { win: 450, loss: 80 },
+    fee: 50,
+    prize: [
+      { pack: "swieci", chance: 0.55 },
+      { pack: "zakrystia", chance: 0.15 },
+      { pack: "papieze", chance: 0.25 },
+      { pack: "witraze", chance: 0.05 },
+    ],
     boost: { startEnergy: 2, extraDraw: 1 },
     deck: {
       lucyfer: 2,
@@ -231,6 +254,13 @@ export const OPPONENTS: readonly Opponent[] = [
     emoji: "👁️",
     difficulty: "niepokonany",
     reward: { win: 1000, loss: 100 },
+    fee: 100,
+    prize: [
+      { pack: "skarbiec", chance: 0.1 },
+      { pack: "witraze", chance: 0.2 },
+      { pack: "zakrystia", chance: 0.3 },
+      { pack: "papieze", chance: 0.4 },
+    ],
     boost: { startEnergy: 3, extraDraw: 0 },
     finish: "stained",
     theme: "infernal",

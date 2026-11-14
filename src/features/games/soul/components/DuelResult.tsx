@@ -1,4 +1,5 @@
 import { Button, Dialog, Icon } from "@/ui";
+import type { PackType } from "../collection/packs";
 import type { Opponent } from "../data/opponents";
 
 interface Props {
@@ -6,13 +7,24 @@ interface Props {
   reason: string;
   souls: number;
   earned: number;
+  /** Victory booster already opened (and added to the collection). */
+  prize: PackType | null;
   opponent: Opponent;
   onBooster: () => void;
   onMenu: () => void;
 }
 
 /** End screen: result, talents earned, the lesson of the duel and a booster invitation. */
-export function DuelResult({ won, reason, souls, earned, opponent, onBooster, onMenu }: Props) {
+export function DuelResult({
+  won,
+  reason,
+  souls,
+  earned,
+  prize,
+  opponent,
+  onBooster,
+  onMenu,
+}: Props) {
   return (
     <Dialog
       open
@@ -26,6 +38,12 @@ export function DuelResult({ won, reason, souls, earned, opponent, onBooster, on
           +{earned} talentów{" "}
           <span className="font-normal text-ink-muted">(ocalone dusze: {souls})</span>
         </p>
+        {prize && (
+          <p className="text-sm text-ink">
+            {prize.emoji} Nagroda za zwycięstwo: booster <strong>{prize.name}</strong> — karty są
+            już w Twojej kolekcji.
+          </p>
+        )}
         <p className="rounded-card bg-accent-soft p-3 text-left text-sm text-ink">
           <strong className="text-accent-ink">Na drogę:</strong> {opponent.moral}
         </p>

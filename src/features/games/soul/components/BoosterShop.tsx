@@ -3,8 +3,8 @@ import { Badge, Button, Heading, Icon } from "@/ui";
 import { PACKS, rollPack, type PackType } from "../collection/packs";
 import {
   canOpenBooster,
+  freshFlags,
   openBooster,
-  owned,
   type CardKey,
   type Profile,
 } from "../collection/profile";
@@ -32,12 +32,7 @@ export function BoosterShop({
   const open = (pack: PackType, p: Profile = profile) => {
     if (!canOpenBooster(p, pack.price)) return;
     const cards = rollPack(pack);
-    const seen = new Set<CardKey>();
-    const fresh = cards.map((k) => {
-      const isNew = owned(p, k) === 0 && !seen.has(k);
-      seen.add(k);
-      return isNew;
-    });
+    const fresh = freshFlags(p, cards);
     update((x) => openBooster(x, cards, pack.price));
     setOpening({ pack, cards, fresh, key: ++seq.current });
   };

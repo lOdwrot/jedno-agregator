@@ -58,4 +58,24 @@ describe("SoulGame", () => {
       },
     );
   });
+
+  it("charges the entry fee when challenging a harder opponent", async () => {
+    const { newProfile } = await import("./collection/profile");
+    const save = (talents: number) =>
+      localStorage.setItem("jedno-walka-o-dusze:v1", JSON.stringify({ ...newProfile(), talents }));
+    save(10);
+    const { unmount } = setup();
+    await userEvent.click(screen.getByRole("button", { name: /Smocze Zastępy/ }));
+    expect(screen.getByText(/Brakuje 20 talentów na wpisowe/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Stań do walki/ })).not.toBeInTheDocument();
+    unmount();
+
+    save(100);
+    setup();
+    await userEvent.click(screen.getByRole("button", { name: /Smocze Zastępy/ }));
+    expect(screen.getByRole("list", { name: "Szanse na booster" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Stań do walki \(−30 talentów\)/ }));
+    expect(screen.getByRole("region", { name: /Pojedynek z: Smocze Zastępy/ })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!).talents).toBe(70);
+  });
 });

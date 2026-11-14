@@ -2,7 +2,8 @@
 import { DECK_SIZE, ENERGY_ID, getCard, isBasic, MAX_COPIES } from "../data/cards";
 import type { Finish, Rarity } from "../data/types";
 import type { DeckList } from "../engine/state";
-import { PACKS, rollPack } from "./packs";
+import type { PrizeChance } from "../data/opponents";
+import { findPack, PACKS, rollPack, type PackType } from "./packs";
 
 /** Collection key: "cardId:finish". */
 export type CardKey = `${string}:${Finish}`;
@@ -160,6 +161,43 @@ export function finishDuel(p: Profile, opponentId: string, won: boolean, talents
   };
 }
 
+/* ── challenge fee & victory booster ── */
+export const canChallenge = (p: Profile, fee = 0) => p.talents >= fee;
+
+/** Pays the fee for challenging a harder opponent (unchanged when the player can't afford it). */
+export const payFee = (p: Profile, fee = 0): Profile =>
+  fee > 0 && canChallenge(p, fee) ? { ...p, talents: p.talents - fee } : p;
+
+/** Draws the edition of the victory booster from the opponent's prize table. */
+export function rollPrize(
+  table: readonly PrizeChance[],
+  rnd: () => number = Math.random,
+): PackType {
+  let r = rnd();
+  for (const { pack, chance } of table) {
+    if (r < chance) return findPack(pack);
+    r -= chance;
+  }
+  return findPack(table.at(-1)!.pack);
+}
+
+/** Which cards of a freshly rolled booster are new to the collection (first copy only). */
+export function freshFlags(p: Profile, cards: CardKey[]): boolean[] {
+  const seen = new Set<CardKey>();
+  return cards.map((k) => {
+    const isNew = owned(p, k) === 0 && !seen.has(k);
+    seen.add(k);
+    return isNew;
+  });
+}
+
+/** A free booster (victory prize): the cards go straight into the collection. */
+export function grantBooster(p: Profile, cards: CardKey[]): Profile {
+  const collection = { ...p.collection };
+  for (const k of cards) collection[k] = (collection[k] ?? 0) + 1;
+  return { ...p, collection };
+}
+
 export const canOpenBooster = (p: Profile, price = BOOSTER_PRICE) =>
   p.packs > 0 && p.talents >= price;
 
@@ -170,9 +208,7 @@ export function rollBooster(rnd: () => number = Math.random): CardKey[] {
 
 export function openBooster(p: Profile, cards: CardKey[], price = BOOSTER_PRICE): Profile {
   if (!canOpenBooster(p, price)) return p;
-  const collection = { ...p.collection };
-  for (const k of cards) collection[k] = (collection[k] ?? 0) + 1;
-  return { ...p, talents: p.talents - price, packs: p.packs - 1, collection };
+  return { ...grantBooster(p, cards), talents: p.talents - price, packs: p.packs - 1 };
 }
 
 /** Talents for copies above what a deck can use (more than 2 of the same print). */

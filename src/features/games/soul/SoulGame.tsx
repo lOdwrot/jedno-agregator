@@ -1,12 +1,22 @@
 import { useCallback, useState } from "react";
 import { Tabs } from "@/ui";
-import { deckList, deckProblems, finishDuel, reward } from "./collection/profile";
+import { rollPack } from "./collection/packs";
+import {
+  deckList,
+  deckProblems,
+  finishDuel,
+  freshFlags,
+  grantBooster,
+  payFee,
+  reward,
+  rollPrize,
+} from "./collection/profile";
 import { useProfile } from "./collection/useProfile";
 import type { Opponent } from "./data/opponents";
 import { Bestiary } from "./components/Bestiary";
 import { BoosterShop } from "./components/BoosterShop";
 import { DeckBuilder } from "./components/DeckBuilder";
-import { SoloDuel } from "./components/SoloDuel";
+import { SoloDuel, type DuelOutcome } from "./components/SoloDuel";
 import { OpponentPicker } from "./components/OpponentPicker";
 import { Rules } from "./components/Rules";
 import { PvpDuel } from "./pvp/PvpDuel";
@@ -23,13 +33,21 @@ export function SoulGame() {
   const [pvp, setPvp] = useState<Session | null>(null);
 
   const onFinish = useCallback(
-    (won: boolean, souls: number) => {
-      if (!duel) return 0;
+    (won: boolean, souls: number): DuelOutcome => {
+      if (!duel) return { earned: 0, prize: null };
       const t = reward(duel.opponent.reward, won, souls);
-      update((p) => finishDuel(p, duel.opponent.id, won, t));
-      return t;
+      // a victory over a harder opponent brings one free booster, opened right after the duel
+      const table = won ? duel.opponent.prize : undefined;
+      const pack = table?.length ? rollPrize(table) : null;
+      const cards = pack ? rollPack(pack) : [];
+      const prize = pack ? { pack, cards, fresh: freshFlags(profile, cards) } : null;
+      update((p) => {
+        const next = finishDuel(p, duel.opponent.id, won, t);
+        return prize ? grantBooster(next, prize.cards) : next;
+      });
+      return { earned: t, prize };
     },
-    [duel, update],
+    [duel, profile, update],
   );
 
   if (pvp)
@@ -77,8 +95,13 @@ export function SoulGame() {
             content: (
               <OpponentPicker
                 beaten={profile.beaten}
+                talents={profile.talents}
                 problems={deckProblems(profile)}
-                onFight={(opponent) => setDuel({ opponent, key: Date.now() })}
+                onFight={(opponent) => {
+                  if (profile.talents < (opponent.fee ?? 0)) return;
+                  update((p) => payFee(p, opponent.fee));
+                  setDuel({ opponent, key: Date.now() });
+                }}
                 onEditDeck={() => setTab("talia")}
               />
             ),

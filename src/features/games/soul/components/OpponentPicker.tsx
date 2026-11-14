@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Button, Icon } from "@/ui";
+import { findPack } from "../collection/packs";
 import { OPPONENTS, type Opponent } from "../data/opponents";
 
 interface Props {
   beaten: string[];
+  talents: number;
   problems: string[];
   onFight: (o: Opponent) => void;
   onEditDeck: () => void;
 }
 
 /** Choose who to fight — each opponent is introduced by a letter from an old demon. */
-export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props) {
+export function OpponentPicker({ beaten, talents, problems, onFight, onEditDeck }: Props) {
   const [pick, setPick] = useState<Opponent>(OPPONENTS[0]!);
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,20rem)_1fr]">
@@ -53,6 +55,8 @@ export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props)
                     {o.difficulty}
                   </Badge>
                   <Badge>wygrana: {o.reward.win} talentów</Badge>
+                  {o.fee ? <Badge>wpisowe: {o.fee}</Badge> : null}
+                  {o.prize && <Badge tone="accent">+ booster</Badge>}
                   {beaten.includes(o.id) && <Badge tone="navy">pokonani ✓</Badge>}
                 </span>
               </span>
@@ -83,6 +87,26 @@ export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props)
           Przegrana też coś daje: {pick.reward.loss} talentów + 10 za każdą ocaloną duszę. Po każdym
           pojedynku możesz otworzyć jeden booster.
         </p>
+        {pick.prize && (
+          <div className="mt-3 rounded-card bg-surface p-3 text-sm text-ink">
+            <p>
+              <strong>Wpisowe: {pick.fee ?? 0} talentów</strong> (płatne przy wyzwaniu, nie wraca po
+              porażce). Za zwycięstwo — oprócz talentów — darmowy booster otwierany od razu:
+            </p>
+            <ul className="mt-1 flex flex-wrap gap-1" aria-label="Szanse na booster">
+              {pick.prize.map(({ pack, chance }) => {
+                const p = findPack(pack);
+                return (
+                  <li key={pack}>
+                    <Badge tone="navy">
+                      {p.emoji} {p.name} {Math.round(chance * 100)}%
+                    </Badge>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
         {problems.length > 0 ? (
           <div className="mt-4 rounded-card bg-danger/12 p-3 text-sm text-danger">
             {problems.map((p) => (
@@ -92,6 +116,11 @@ export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props)
               Popraw talię
             </Button>
           </div>
+        ) : talents < (pick.fee ?? 0) ? (
+          <p className="mt-4 rounded-card bg-danger/12 p-3 text-sm text-danger">
+            Brakuje {(pick.fee ?? 0) - talents} talentów na wpisowe. Pokonaj łatwiejszych
+            przeciwników, żeby je zebrać.
+          </p>
         ) : (
           <Button
             className="mt-4"
@@ -99,7 +128,7 @@ export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props)
             onClick={() => onFight(pick)}
             leftIcon={<Icon name="play" size={18} />}
           >
-            Stań do walki
+            {pick.fee ? `Stań do walki (−${pick.fee} talentów)` : "Stań do walki"}
           </Button>
         )}
       </article>
