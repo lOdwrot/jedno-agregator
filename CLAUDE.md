@@ -69,7 +69,10 @@ Features: `home`, `news`, `events`, `communities`, `media`, `infos`, `notificati
 Each game has a pure, unit-tested `engine.ts` (state + `step(dt)`) and an SVG view driven by `useGameLoop`.
 Every game must stay playable by touch AND keyboard, announce status via `aria-live`, and end with the verse card.
 Games: `dawid-i-goliat` (FIFA-penalty style: tap locks the swinging angle, then power), `morze-czerwone` (3-lane run),
-`arka-noego` (memory, `?poziom=latwy|sredni|trudny`), `mury-jerycha` (rhythm game, Web Audio synth in `jericho/sound.ts`).
+`arka-noego` (memory, `?poziom=latwy|sredni|trudny`), `mury-jerycha` (rhythm game).
+Shared juice: `games/audio` (Web Audio synth + `sfx` library + global persisted mute, `SoundToggle` on the game page),
+`games/fx` (`useFx` + `<Particles>` in the SVG world, `shake`/`pop`/`wobble` via WAAPI, `<Confetti>`). Effects react to
+state transitions in `use*Reactions` hooks; everything decorative is skipped under reduced motion.
 `walka-o-dusze` (`soul/`) is a single-player trading-card game: pure engine in `soul/engine` (every move goes through
 `dispatch`; `dispatchFrames` also records one animation frame per event via `emit`), collection/boosters in
 `soul/collection` (localStorage), and a full-screen duel drawn with **PixiJS** in `soul/board` (lazy-loaded; tweens in

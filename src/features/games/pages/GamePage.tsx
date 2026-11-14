@@ -7,6 +7,7 @@ import { Container, Icon, Link, LoadingState, PageHeader, Skeleton } from "@/ui"
 import { findGame, GAMES, type GameSlug } from "../catalog";
 import { GameCard } from "../components/GameCard";
 import { HowToPlay } from "../components/HowToPlay";
+import { SoundToggle } from "../components/SoundToggle";
 import { VerseCard } from "../components/VerseCard";
 
 const GAME_COMPONENTS: Record<GameSlug, ComponentType> = {
@@ -22,6 +23,15 @@ const GAME_COMPONENTS: Record<GameSlug, ComponentType> = {
   "arka-noego": lazy(() => import("../ark/ArkGame").then((m) => ({ default: m.ArkGame }))),
   "walka-o-dusze": lazy(() => import("../soul/SoulGame").then((m) => ({ default: m.SoulGame }))),
 };
+
+/** Games with sound effects get the shared sound switch. */
+const SOUND_GAMES = new Set<GameSlug>([
+  "walka-o-dusze",
+  "dawid-i-goliat",
+  "morze-czerwone",
+  "arka-noego",
+  "mury-jerycha",
+]);
 
 export function GamePage() {
   const { slug } = useParams();
@@ -43,6 +53,7 @@ export function GamePage() {
         accent={game.accent}
         description={game.tagline}
         className="pt-2 sm:pt-4"
+        actions={SOUND_GAMES.has(game.slug) ? <SoundToggle /> : undefined}
       />
 
       <Suspense

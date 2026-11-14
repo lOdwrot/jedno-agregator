@@ -22,9 +22,10 @@ export function RhythmTrack({ s }: { s: JerichoState }) {
         ) : null;
       })}
       <circle
-        cx={TARGET_X}
-        cy={TRACK_Y}
+        cx={0}
+        cy={0}
         r={30}
+        transform={`translate(${TARGET_X} ${TRACK_Y}) scale(${1 + 0.12 * Math.max(0, 1 - ((s.time / BEAT) % 1) * 4)})`}
         className="fill-white/10 stroke-logo-yellow"
         strokeWidth={4}
       />

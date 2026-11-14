@@ -3,6 +3,9 @@ import { useSearchParams } from "react-router";
 import { cn } from "@/lib/cn";
 import { Button, ChipGroup, Heading, Icon } from "@/ui";
 import { lowerIsBetter, useBestScore } from "../useBestScore";
+import { sfx } from "../audio/sfx";
+import { Confetti } from "../fx/Confetti";
+import { pop, wobble } from "../fx/shake";
 import { ArkScene } from "./ArkScene";
 import {
   ANIMALS,
@@ -69,10 +72,26 @@ function ArkBoard({ level }: { level: Level }) {
 
   const onFlip = (i: number) => {
     const n = flip(s, i);
-    if (n.won && !s.won) setRecord(best.submit(n.moves));
+    if (n === s) return;
+    sfx.unlock();
+    sfx.flip();
+    const pair = [...s.open, i].map((k) => cards.current[k]);
+    if (n.matched.length > s.matched.length) {
+      sfx.chime(n.matched.length - 1);
+      setTimeout(() => pair.forEach((el) => pop(el, 1.12)), 380);
+    } else if (n.mismatch) {
+      setTimeout(() => sfx.boing(), 420);
+      pair.forEach((el) => wobble(el, 480));
+    }
+    if (n.won && !s.won) {
+      setRecord(best.submit(n.moves));
+      setTimeout(() => sfx.fanfare(), 500);
+      setTimeout(() => sfx.coo(), 1500);
+    }
     setS(n);
   };
   const restart = () => {
+    sfx.click();
     setS(createArk(level));
     setRecord(false);
     cards.current[0]?.focus();
@@ -134,8 +153,12 @@ function ArkBoard({ level }: { level: Level }) {
 
       <div>
         {s.won ? (
-          <div className="rounded-card bg-surface p-6 text-center shadow-card">
-            <p aria-hidden="true" className="text-5xl">
+          <div className="relative overflow-hidden rounded-card bg-surface p-6 text-center shadow-card">
+            <Confetti count={30} />
+            <p
+              aria-hidden="true"
+              className="text-5xl motion-safe:animate-[game-pop-in_0.7s_var(--ease-spring)_both]"
+            >
               🌈
             </p>
             <Heading level={2} size="md" className="mt-2">
@@ -199,6 +222,14 @@ function ArkBoard({ level }: { level: Level }) {
                       )}
                     >
                       <span aria-hidden="true">{a.emoji}</span>
+                      {id === s.lastMatch && (
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute -top-1 -right-1 text-xl motion-safe:animate-[game-sparkle_0.9s_ease-out_0.4s_both] motion-reduce:hidden"
+                        >
+                          ✨
+                        </span>
+                      )}
                     </span>
                   </span>
                 </button>

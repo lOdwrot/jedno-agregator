@@ -1,3 +1,4 @@
+import { isMuted, setMuted } from "../../audio/mute";
 /** Shared Web Audio graph of the card game: one context, separate volumes for effects and music. */
 type AudioCtor = typeof AudioContext;
 
@@ -18,14 +19,15 @@ export interface AudioPrefs {
 export function loadPrefs(): AudioPrefs {
   try {
     const p = JSON.parse(localStorage.getItem(KEY) ?? "null") as AudioPrefs | null;
-    if (p && typeof p.sfx === "boolean") return p;
+    if (p && typeof p.music === "boolean") return { music: p.music, sfx: !isMuted() };
   } catch {
     /* ignore */
   }
-  return { sfx: true, music: true };
+  return { sfx: !isMuted(), music: true };
 }
 
 export function savePrefs(p: AudioPrefs) {
+  if (p.sfx === isMuted()) setMuted(!p.sfx);
   try {
     localStorage.setItem(KEY, JSON.stringify(p));
   } catch {
@@ -72,6 +74,7 @@ interface ToneOpts {
 
 /** One enveloped oscillator note. */
 export function tone(freq: number, dur: number, o: ToneOpts = {}) {
+  if (o.out !== "music" && isMuted()) return;
   const g = audio();
   if (!g) return;
   const { ctx } = g;
@@ -101,6 +104,7 @@ export function noise(
   dur: number,
   o: { cutoff?: number; gain?: number; delay?: number; highpass?: boolean } = {},
 ) {
+  if (isMuted()) return;
   const g = audio();
   if (!g) return;
   const { ctx } = g;
