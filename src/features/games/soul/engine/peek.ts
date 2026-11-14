@@ -1,7 +1,7 @@
 /** Peek cards (Różaniec, Powiadomienie — like Trekking Shoes): keep the revealed top card or swap it. */
 import { getCard, isCharacter } from "../data/cards";
 import { emit } from "./events";
-import { draw, log, nameOf, shuffle, type Game, type PlayerId } from "./state";
+import { draw, nameOf, say, shuffle, type Game, type PlayerId } from "./state";
 
 /** Keep the revealed top card, or discard it and draw the next one (Trekking Shoes). */
 export function resolvePeek(g: Game, pid: PlayerId, keep: boolean): boolean {
@@ -14,16 +14,23 @@ export function resolvePeek(g: Game, pid: PlayerId, keep: boolean): boolean {
   const [card] = me.deck.splice(i, 1);
   if (keep) {
     me.hand.push(card!);
-    log(g, pid === "me" ? `Bierzesz do ręki: ${nameOf(card!)}.` : "Pomioty biorą kartę do ręki.");
+    say(
+      g,
+      pid,
+      `Bierzesz do ręki: ${nameOf(card!)}.`,
+      "Pomioty biorą kartę do ręki.",
+      (n) => `${n} bierze kartę do ręki.`,
+    );
     emit(g, { t: "peek", pid, uid: card!.uid, kept: true });
     return true;
   }
   me.discard.push(card!);
-  log(
+  say(
     g,
-    pid === "me"
-      ? `Odrzucasz: ${nameOf(card!)} i dobierasz kolejną kartę.`
-      : `Pomioty odrzucają: ${nameOf(card!)} i dobierają kolejną kartę.`,
+    pid,
+    `Odrzucasz: ${nameOf(card!)} i dobierasz kolejną kartę.`,
+    `Pomioty odrzucają: ${nameOf(card!)} i dobierają kolejną kartę.`,
+    (n) => `${n} odrzuca: ${nameOf(card!)} i dobiera kolejną kartę.`,
   );
   emit(g, { t: "peek", pid, uid: card!.uid, kept: false });
   draw(g, pid, 1);
@@ -48,9 +55,12 @@ export function resolveSearch(g: Game, pid: PlayerId, discard: number[], pick: n
   shuffle(g, me.deck);
   emit(g, { t: "shuffle", pid });
   emit(g, { t: "draw", pid, n: 1 });
-  log(
+  say(
     g,
-    pid === "me" ? `Do ręki trafia: ${nameOf(card)}.` : `Pomioty biorą z talii: ${nameOf(card)}.`,
+    pid,
+    `Do ręki trafia: ${nameOf(card)}.`,
+    `Pomioty biorą z talii: ${nameOf(card)}.`,
+    (n) => `${n} bierze z talii: ${nameOf(card)}.`,
   );
   return true;
 }

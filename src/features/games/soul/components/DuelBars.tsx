@@ -10,8 +10,10 @@ const btn =
   "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-2 text-lg hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-logo-yellow";
 
 interface TopProps {
-  opponent: Opponent;
+  opponent: Pick<Opponent, "emoji" | "name">;
   over: boolean;
+  /** Label of the back button while the duel is on. */
+  exitLabel: string;
   prefs: AudioPrefs;
   full: boolean;
   onExit: () => void;
@@ -23,6 +25,7 @@ interface TopProps {
 export function DuelTopBar({
   opponent,
   over,
+  exitLabel,
   prefs,
   full,
   onExit,
@@ -36,7 +39,7 @@ export function DuelTopBar({
         type="button"
         className={btn}
         onClick={onExit}
-        aria-label={over ? "Wróć do menu" : "Poddaj się i wyjdź (bez nagrody)"}
+        aria-label={over ? "Wróć do menu" : exitLabel}
       >
         <Icon name="chevronLeft" size={20} />
       </button>
@@ -81,6 +84,7 @@ export function DuelTopBar({
 }
 
 function hint(g: Game): string {
+  if (g.phase === "setup" && g.players.me.active) return "Czekaj, aż rywal wystawi postać…";
   if (g.phase === "setup")
     return "Przeciągnij (albo stuknij) postać podstawową z ręki, żeby stanęła do walki.";
   if (g.phase === "promote" && g.promote?.who === "me")
@@ -88,7 +92,8 @@ function hint(g: Game): string {
   if (g.phase === "over") return "Koniec pojedynku.";
   if (g.peek?.pid === "me") return "Weź odkrytą kartę albo odrzuć ją i dobierz następną.";
   if (g.search?.pid === "me") return "Wybierz 2 karty do odrzucenia i postać z talii.";
-  if (g.turn === "ai") return "Pomioty wykonują ruch…";
+  if (g.phase === "promote") return "Rywal wybiera nową postać do walki…";
+  if (g.turn === "ai") return g.pvp ? `${g.pvp.names.ai} wykonuje ruch…` : "Pomioty wykonują ruch…";
   if (g.turnNo === 1)
     return "Pierwsza tura: rozstaw się (bez ataku). Przeciągaj karty z ręki na stół.";
   return "Przeciągnij kartę na stół albo stuknij ją. Atak kończy turę.";

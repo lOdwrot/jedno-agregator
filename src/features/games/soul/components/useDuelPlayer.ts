@@ -3,23 +3,34 @@ import { getCard } from "../data/cards";
 import { dispatchFrames, type Action } from "../engine/actions";
 import { aiAction } from "../engine/ai";
 import type { Frame } from "../engine/events";
-import type { Game } from "../engine/state";
+import type { Game, PlayerId } from "../engine/state";
 import type { BoardRenderer } from "../board/BoardRenderer";
+import { frameAs, viewAs } from "../pvp/flip";
+
+export interface DuelPlayerOpts {
+  onOver: (g: Game) => void;
+  onDemon?: (cardId: string) => void;
+  /** The computer plays the "ai" seat (solo). Off in a two-player duel. */
+  ai?: boolean;
+  /** Whose eyes the screen shows: "me" (solo, host) or "ai" (guest of a two-player duel). */
+  pov?: PlayerId;
+}
 
 /**
  * Owns the duel state and plays engine frames one by one on the board.
- * `live` is the real state, `view` is what the board currently shows (it lags behind while animating).
+ * `live` is the real state, `view` is what the board currently shows (it lags behind while animating) —
+ * both as seen by `pov`. The canonical state (host perspective) is what moves are applied to.
  */
-export function useDuelPlayer(
-  initial: Game,
-  opts: { onOver: (g: Game) => void; onDemon: (cardId: string) => void },
-) {
-  const [live, setLive] = useState(initial);
-  const [view, setView] = useState(initial);
+export function useDuelPlayer(initial: Game, opts: DuelPlayerOpts) {
+  const pov = opts.pov ?? "me";
+  const ai = opts.ai ?? true;
+  const [live, setLive] = useState(() => viewAs(initial, pov));
+  const [view, setView] = useState(() => viewAs(initial, pov));
   const [busy, setBusy] = useState(false);
   const renderer = useRef<BoardRenderer | null>(null);
   const queue = useRef<Promise<void>>(Promise.resolve());
-  const viewRef = useRef(initial);
+  const canon = useRef(initial);
+  const viewRef = useRef(viewAs(initial, pov));
   const pending = useRef(0);
   const reported = useRef(false);
   const o = useRef(opts);
@@ -45,13 +56,14 @@ export function useDuelPlayer(
         viewRef.current = f.state;
         setView(f.state);
         const ev = f.ev;
+        const onDemon = o.current.onDemon;
+        if (!onDemon) continue;
         if ((ev.t === "bench" || ev.t === "toActive") && ev.pid === "ai") {
           const p = f.state.players.ai;
           const c = [p.active, ...p.bench].find((x) => x?.uid === ev.uid);
-          if (c) o.current.onDemon(c.cardId);
+          if (c) onDemon(c.cardId);
         }
-        if ((ev.t === "support" || ev.t === "place") && ev.pid === "ai")
-          o.current.onDemon(ev.cardId);
+        if ((ev.t === "support" || ev.t === "place") && ev.pid === "ai") onDemon(ev.cardId);
       }
       viewRef.current = final;
       setView(final);
@@ -66,36 +78,64 @@ export function useDuelPlayer(
     });
   }, []);
 
+  /** Applies a move to the canonical state right away; its animation waits for earlier ones. */
+  const push = useCallback(
+    (a: Action): Game | null => {
+      const { state, frames } = dispatchFrames(canon.current, a);
+      if (state === canon.current) return null;
+      canon.current = state;
+      const seen = viewAs(state, pov);
+      setLive(seen);
+      enqueue(
+        frames.map((f) => frameAs(f, pov)),
+        seen,
+      );
+      return state;
+    },
+    [enqueue, pov],
+  );
+
+  /** Replaces the state without animating (two-player resync). */
+  const reset = useCallback(
+    (g: Game) => {
+      canon.current = g;
+      const seen = viewAs(g, pov);
+      setLive(seen);
+      enqueue([], seen);
+    },
+    [enqueue, pov],
+  );
+
   const act = useCallback(
     (a: Action) => {
-      if (busy) return;
-      const { state, frames } = dispatchFrames(live, a);
-      if (state === live) return;
-      setLive(state);
-      enqueue(frames, state);
+      if (!busy) push(a);
     },
-    [busy, live, enqueue],
+    [busy, push],
   );
 
   // the computer moves one step at a time, each with its own animation
   useEffect(() => {
-    renderer.current?.setThinking(live.phase === "main" && live.turn === "ai");
-    if (busy || live.phase !== "main" || live.turn !== "ai") return;
+    const theirs = live.phase === "main" && live.turn === "ai";
+    renderer.current?.setThinking(theirs, live);
+    if (!ai || busy || !theirs) return;
     const t = setTimeout(() => {
-      const a = aiAction(live, "ai");
-      let res = a ? dispatchFrames(live, a) : { state: live, frames: [] };
-      if (res.state === live) res = dispatchFrames(live, { type: "endTurn" });
-      setLive(res.state);
-      enqueue(res.frames, res.state);
+      const g = canon.current;
+      const a = aiAction(g, "ai");
+      if (!(a && push(a))) push({ type: "endTurn" });
     }, 420);
     return () => clearTimeout(t);
-  }, [busy, live, enqueue]);
+  }, [ai, busy, live, push]);
+
+  const canonical = useCallback(() => canon.current, []);
 
   return {
     live,
     view,
     busy,
     act,
+    push,
+    reset,
+    canonical,
     renderer,
     isDemon: (id: string) => getCard(id).side === "demons",
   };

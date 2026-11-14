@@ -22,7 +22,9 @@ import {
   log,
   maxHp,
   nameOf,
+  nameOfPlayer,
   other,
+  say,
   type Game,
   type InPlay,
   type PlayerId,
@@ -155,10 +157,14 @@ function knockOut(g: Game, owner: PlayerId, c: InPlay) {
   taker.souls += n;
   taker.hand.push(...taker.prizes.splice(0, n));
   emit(g, { t: "souls", pid: other(owner), n });
-  const who = owner === "me" ? "Twoja postać" : "Pomiot";
-  log(
+  const souls = n === 2 ? "2 dusze" : "duszę";
+  const takerName = nameOfPlayer(g, other(owner));
+  say(
     g,
-    `${who} ${nameOf(c)} schodzi z pola. ${owner === "me" ? "Pomioty przejmują" : "Ocalasz"} ${n === 2 ? "2 dusze" : "duszę"}! 🕊️`,
+    owner,
+    `Twoja postać ${nameOf(c)} schodzi z pola. ${g.pvp ? `${takerName} ocala` : "Pomioty przejmują"} ${souls}! 🕊️`,
+    `Pomiot ${nameOf(c)} schodzi z pola. Ocalasz ${souls}! 🕊️`,
+    (name) => `Postać gracza ${name} (${nameOf(c)}) schodzi z pola. Ocalasz ${souls}! 🕊️`,
   );
 }
 
@@ -169,28 +175,31 @@ export function resolveKOs(g: Game): PlayerId | null {
   for (const pid of [g.turn, other(g.turn)]) {
     const p = g.players[pid];
     if (p.souls >= SOULS_TO_WIN || p.prizes.length === 0) {
-      return finish(
-        g,
-        pid,
-        pid === "me" ? "Ocaliłeś wszystkie dusze!" : "Pomioty przejęły wszystkie dusze.",
-      );
+      return finish(g, pid, {
+        win: "Ocaliłeś wszystkie dusze!",
+        lose: g.pvp
+          ? `${nameOfPlayer(g, pid)} ocala wszystkie dusze.`
+          : "Pomioty przejęły wszystkie dusze.",
+      });
     }
   }
   for (const pid of [other(g.turn), g.turn]) {
     const p = g.players[pid];
     if (!p.active && !p.bench.length)
-      return finish(
-        g,
-        other(pid),
-        pid === "ai" ? "Na polu nie został żaden pomiot!" : "Nie została Ci żadna postać.",
-      );
+      return finish(g, other(pid), {
+        win: g.pvp
+          ? `${nameOfPlayer(g, pid)} nie ma już żadnej postaci na polu!`
+          : "Na polu nie został żaden pomiot!",
+        lose: "Nie została Ci żadna postać.",
+      });
   }
   let needs: PlayerId | null = null;
   for (const pid of ["ai", "me"] as const) {
     const p = g.players[pid];
     if (p.active) continue;
-    if (pid === "ai") promoteBest(g, pid);
-    else needs = "me";
+    // the computer promotes at once; people choose (in a two-player duel one after the other)
+    if (pid === "ai" && !g.pvp) promoteBest(g, pid);
+    else needs ??= pid;
   }
   return needs;
 }
@@ -209,15 +218,27 @@ export function promoteUid(g: Game, pid: PlayerId, uid: number) {
   if (!c) return;
   p.bench = p.bench.filter((b) => b !== c);
   p.active = c;
-  log(g, `${pid === "me" ? "Do walki staje" : "Wychodzi"}: ${nameOf(c)}.`);
+  say(
+    g,
+    pid,
+    `Do walki staje: ${nameOf(c)}.`,
+    `Wychodzi: ${nameOf(c)}.`,
+    (n) => `${n} wystawia do walki: ${nameOf(c)}.`,
+  );
   emit(g, { t: "toActive", pid, uid: c.uid });
 }
 
-function finish(g: Game, winner: PlayerId, reason: string): null {
+/** Ends the duel; `win` / `lose` are the reason as read by the winner / the loser. */
+function finish(g: Game, winner: PlayerId, reason: { win: string; lose: string }): null {
   g.phase = "over";
   g.winner = winner;
-  g.reason = reason;
-  log(g, winner === "me" ? `Zwycięstwo! ${reason}` : `Porażka. ${reason}`);
+  const forMe = winner === "me" ? reason.win : reason.lose;
+  const forAi = winner === "ai" ? reason.win : reason.lose;
+  g.reason = forMe;
+  if (g.pvp) g.pvp.reason = forAi;
+  const line = (pid: PlayerId, r: string) =>
+    winner === pid ? `Zwycięstwo! ${r}` : `Porażka. ${r}`;
+  log(g, line("me", forMe), line("ai", forAi));
   emit(g, { t: "over", winner });
   return null;
 }
@@ -234,26 +255,41 @@ export function startTurn(g: Game, pid: PlayerId) {
   for (const c of inPlay(g.players[pid])) c.shield = 0;
   emit(g, { t: "turn", pid });
   if (!draw(g, pid, 1)) {
-    finish(
-      g,
-      other(pid),
-      pid === "me"
-        ? "Talia się skończyła — nie możesz dobrać karty."
+    finish(g, other(pid), {
+      win: g.pvp
+        ? `Talia gracza ${nameOfPlayer(g, pid)} się skończyła — nie może dobrać karty.`
         : "Talia pomiotów się skończyła — nie mogą dobrać karty.",
-    );
+      lose: "Talia się skończyła — nie możesz dobrać karty.",
+    });
     return;
   }
-  log(g, pid === "me" ? `Tura ${g.turnNo}: Twój ruch.` : `Tura ${g.turnNo}: ruch pomiotów.`);
+  say(
+    g,
+    pid,
+    `Tura ${g.turnNo}: Twój ruch.`,
+    `Tura ${g.turnNo}: ruch pomiotów.`,
+    (n) => `Tura ${g.turnNo}: ruch gracza ${n}.`,
+  );
   if (pid === "ai" && g.boost?.extraDraw) draw(g, pid, g.boost.extraDraw);
   const placeDraw = placeAura(g, pid)?.extraDraw ?? 0;
   if (placeDraw && draw(g, pid, placeDraw))
     log(g, `${getCard(g.place!.cardId).name}: dodatkowa karta.`);
   const left = g.players[pid].deck.length;
-  if (left <= 3)
-    log(
+  if (left <= 3) {
+    const rest =
+      left === 0
+        ? "nie ma już kart — kolejne dobranie to porażka"
+        : left === 1
+          ? "została 1 karta"
+          : `zostały ${left} karty`;
+    say(
       g,
-      `Uwaga: ${pid === "me" ? "w Twojej talii" : "w talii pomiotów"} ${left === 0 ? "nie ma już kart — kolejne dobranie to porażka" : left === 1 ? "została 1 karta" : `zostały ${left} karty`}.`,
+      pid,
+      `Uwaga: w Twojej talii ${rest}.`,
+      `Uwaga: w talii pomiotów ${rest}.`,
+      (n) => `Uwaga: w talii gracza ${n} ${rest}.`,
     );
+  }
 }
 
 /** Checkup between turns, then hands the turn over (or asks the player to promote). */

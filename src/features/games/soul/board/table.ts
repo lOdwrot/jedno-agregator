@@ -113,12 +113,12 @@ export class Table {
       this.label("talia", d.x, d.y + (CARD_H * s) / 2 + 9, 11, p.line);
       const dc = this.a.discard[pid];
       if (!pl.discard.length) this.label("odrzucone", dc.x, dc.y, 11, p.line);
-      this.souls(pid, pl.souls);
+      this.souls(pid, pl.souls, !!g.pvp);
     }
     if (!g.place) this.label("miejsce", this.a.place.x, this.a.place.y, 11, p.line);
   }
 
-  private souls(pid: PlayerId, n: number) {
+  private souls(pid: PlayerId, n: number, pvp: boolean) {
     const p = palette();
     const c = this.a.souls[pid];
     const gap = Math.max(16, CARD_W * this.a.unit * 0.2);
@@ -130,7 +130,7 @@ export class Table {
       this.labels.addChild(t);
     }
     this.label(
-      pid === "me" ? `ocalone: ${n}/${SOULS_TO_WIN}` : `przejęte: ${n}/${SOULS_TO_WIN}`,
+      `${pid === "me" || pvp ? "ocalone" : "przejęte"}: ${n}/${SOULS_TO_WIN}`,
       c.x,
       c.y + gap * 0.85,
       11,

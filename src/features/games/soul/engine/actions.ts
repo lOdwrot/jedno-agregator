@@ -31,6 +31,7 @@ import {
   log,
   nameOf,
   other,
+  say,
   toInPlay,
   type CardInst,
   type Game,
@@ -173,7 +174,13 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0, target?: number
       case "bench":
         for (const b of foe.bench) b.damage += e.n;
         if (foe.bench.length) {
-          log(g, `Ławka rywala obrywa po ${e.n}.`);
+          say(
+            g,
+            pid,
+            `Ławka rywala obrywa po ${e.n}.`,
+            `Twoja ławka obrywa po ${e.n}.`,
+            () => `Twoja ławka obrywa po ${e.n}.`,
+          );
           emit(g, { t: "benchDamage", uids: foe.bench.map((b) => b.uid), amount: e.n });
         }
         break;
@@ -229,14 +236,22 @@ function apply(g: Game, a: Action): boolean {
   if (g.search) return a.type === "search" && resolveSearch(g, pid, a.discard, a.pick);
   switch (a.type) {
     case "chooseActive": {
-      const me = g.players.me;
-      const c = me.hand.find((x) => x.uid === a.uid);
-      if (g.phase !== "setup" || !c || !isBasic(def(c))) return false;
+      // solo: only the human picks; two-player duel: whoever holds the card, once
+      const who = setupOwner(g, a.uid);
+      const me = who && g.players[who];
+      const c = me?.hand.find((x) => x.uid === a.uid);
+      if (g.phase !== "setup" || !who || !me || me.active || !c || !isBasic(def(c))) return false;
       me.hand = me.hand.filter((x) => x !== c);
       me.active = toInPlay(c, 0);
-      log(g, `Do walki staje: ${nameOf(c)}.`);
-      emit(g, { t: "toActive", pid: "me", uid: c.uid });
-      startTurn(g, g.first);
+      say(
+        g,
+        who,
+        `Do walki staje: ${nameOf(c)}.`,
+        "",
+        (n) => `${n} wystawia do walki: ${nameOf(c)}.`,
+      );
+      emit(g, { t: "toActive", pid: who, uid: c.uid });
+      if (g.players.me.active && g.players.ai.active) startTurn(g, g.first);
       return true;
     }
     case "playBasic": {
@@ -244,7 +259,13 @@ function apply(g: Game, a: Action): boolean {
       if (!c || !canBench(g, pid, c)) return false;
       p.hand = p.hand.filter((x) => x !== c);
       p.bench.push(toInPlay(c, g.turnNo));
-      log(g, `${pid === "me" ? "Na ławkę siada" : "Na ławkę pomiotów wchodzi"}: ${nameOf(c)}.`);
+      say(
+        g,
+        pid,
+        `Na ławkę siada: ${nameOf(c)}.`,
+        `Na ławkę pomiotów wchodzi: ${nameOf(c)}.`,
+        (n) => `Na ławkę gracza ${n} wchodzi: ${nameOf(c)}.`,
+      );
       emit(g, { t: "bench", pid, uid: c.uid });
       return true;
     }
@@ -310,6 +331,12 @@ function apply(g: Game, a: Action): boolean {
       if (g.phase !== "promote" || !pr) return false;
       if (!g.players[pr.who].bench.some((b) => b.uid === a.uid)) return false;
       promoteUid(g, pr.who, a.uid);
+      // two-player duel: both actives may have fallen at once — the other one picks next
+      const next = other(pr.who);
+      if (g.pvp && !g.players[next].active && g.players[next].bench.length) {
+        g.promote = { who: next, then: pr.then };
+        return true;
+      }
       g.phase = "main";
       g.promote = null;
       if (pr.then === "endTurn") endTurn(g);
@@ -320,6 +347,21 @@ function apply(g: Game, a: Action): boolean {
 }
 
 /** Like `dispatch`, plus the animation frames of everything that happened (move by move). */
+/** Whose hand a setup card is in (solo: only the human sets up by hand). */
+function setupOwner(g: Game, uid: number): PlayerId | null {
+  for (const pid of g.pvp ? (["me", "ai"] as const) : (["me"] as const))
+    if (g.players[pid].hand.some((c) => c.uid === uid)) return pid;
+  return null;
+}
+
+/** Who may make this move now — used by the two-player sync to reject moves out of turn. */
+export function actorOf(g: Game, a: Action): PlayerId | null {
+  if (g.phase === "over") return null;
+  if (g.phase === "setup") return a.type === "chooseActive" ? setupOwner(g, a.uid) : null;
+  if (g.phase === "promote") return a.type === "promote" ? (g.promote?.who ?? null) : null;
+  return g.turn;
+}
+
 export function dispatchFrames(g: Game, a: Action): { state: Game; frames: Frame[] } {
   const { result, frames } = recordFrames(() => dispatch(g, a));
   return { state: result, frames: result === g ? [] : frames };

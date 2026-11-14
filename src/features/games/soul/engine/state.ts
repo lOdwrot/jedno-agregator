@@ -68,6 +68,16 @@ export interface Game {
   rng: number;
   nextUid: number;
   seq: number;
+  /** Two-player duel (both decks belong to people) — see `pvp/`. */
+  pvp?: PvpInfo;
+}
+
+/** Extra state of a two-player duel. `log`/`reason` above are written for "me" (the host);
+ *  the same lines as read by the other player live here, so the guest can flip the game. */
+export interface PvpInfo {
+  names: Record<PlayerId, string>;
+  log: string[];
+  reason: string;
 }
 
 /** Computer handicap: energy on its starting active character, extra cards drawn each turn. */
@@ -104,9 +114,33 @@ export const inPlay = (p: PlayerState): InPlay[] =>
 export const findInPlay = (p: PlayerState, uid: number) => inPlay(p).find((c) => c.uid === uid);
 export const nameOf = (c: CardInst) => getCard(c.cardId).name;
 
-export function log(g: Game, msg: string) {
-  g.log.push(msg);
-  if (g.log.length > 40) g.log.splice(0, g.log.length - 40);
+const push = (l: string[], msg: string) => {
+  l.push(msg);
+  if (l.length > 40) l.splice(0, l.length - 40);
+};
+
+/** Adds a log line; `forAi` is how the other player reads it in a two-player duel. */
+export function log(g: Game, msg: string, forAi = msg) {
+  push(g.log, msg);
+  if (g.pvp) push(g.pvp.log, forAi);
+}
+
+/** Name of a player in a two-player duel. */
+export const nameOfPlayer = (g: Game, pid: PlayerId) => g.pvp?.names[pid] ?? "Rywal";
+
+/**
+ * A line about a move of `pid`: `mine` is what `pid` reads, `solo` what the human reads about the
+ * computer, `rival(name)` what the other person reads in a two-player duel.
+ */
+export function say(
+  g: Game,
+  pid: PlayerId,
+  mine: string,
+  solo: string,
+  rival: (name: string) => string,
+) {
+  const theirs = g.pvp ? rival(nameOfPlayer(g, pid)) : solo;
+  log(g, pid === "me" ? mine : theirs, pid === "ai" ? mine : theirs);
 }
 
 export function draw(g: Game, pid: PlayerId, n: number): number {
@@ -169,6 +203,7 @@ export function createGame(
   ai: DeckList,
   seed: number,
   boost: AiBoost = { startEnergy: 0, extraDraw: 0 },
+  pvp?: { names: Record<PlayerId, string> },
 ): Game {
   const g: Game = {
     players: {} as Game["players"],
@@ -190,8 +225,16 @@ export function createGame(
     nextUid: 1,
     seq: 0,
   };
+  if (pvp) g.pvp = { names: { ...pvp.names }, log: [], reason: "" };
   g.players.me = makePlayer(g, "parish", me);
-  g.players.ai = makePlayer(g, "demons", ai);
+  g.players.ai = makePlayer(g, pvp ? "parish" : "demons", ai);
+  if (pvp) {
+    // two people: each one picks the first character on their own
+    g.first = coin(g) ? "me" : "ai";
+    say(g, g.first, "Rzut monetą: zaczynasz Ty!", "", (n) => `Rzut monetą: zaczyna ${n}.`);
+    log(g, "Wybierz postać, która stanie do walki jako pierwsza.");
+    return g;
+  }
   // the computer sets up right away: strongest basic active, up to two more on the pew (bench)
   const p = g.players.ai;
   const act = bestBasic(p.hand)!;

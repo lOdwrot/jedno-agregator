@@ -28,6 +28,8 @@ const where = (g: Game, c: InPlay) => (g.players.me.active?.uid === c.uid ? "akt
 function handOptions(g: Game, c: CardInst): Opt[] {
   const d = getCard(c.cardId);
   const me = g.players.me;
+  if (g.phase === "setup" && me.active)
+    return [{ label: "", note: "Czekaj, aż rywal wystawi postać." }];
   if (g.phase === "setup") {
     return isBasic(d)
       ? [{ label: "Wystaw do walki", action: { type: "chooseActive", uid: c.uid } }]

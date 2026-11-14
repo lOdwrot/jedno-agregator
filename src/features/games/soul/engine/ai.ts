@@ -219,7 +219,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     return b ? { type: "promote", uid: b.uid } : null;
   }
   if (g.phase === "setup") {
-    const b = pid === "me" ? bestBasic(me.hand) : undefined;
+    const b = (pid === "me" || g.pvp) && !me.active ? bestBasic(me.hand) : undefined;
     return b ? { type: "chooseActive", uid: b.uid } : null;
   }
   if (g.turn !== pid) return null;

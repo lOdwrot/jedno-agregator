@@ -6,17 +6,21 @@ import type { Opponent } from "./data/opponents";
 import { Bestiary } from "./components/Bestiary";
 import { BoosterShop } from "./components/BoosterShop";
 import { DeckBuilder } from "./components/DeckBuilder";
-import { DuelView } from "./components/DuelView";
+import { SoloDuel } from "./components/SoloDuel";
 import { OpponentPicker } from "./components/OpponentPicker";
 import { Rules } from "./components/Rules";
+import { PvpDuel } from "./pvp/PvpDuel";
+import { PvpLobby } from "./pvp/PvpLobby";
+import type { Session } from "./pvp/session";
 
-type Tab = "walka" | "talia" | "boostery" | "bestiariusz" | "zasady";
+type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zasady";
 
-/** "Walka o duszę" — single-player card duel: hub (deck, boosters, bestiary) + the duel itself. */
+/** "Walka o duszę" — card duel vs the computer or a friend (WebRTC): hub (deck, boosters, bestiary) + the duel. */
 export function SoulGame() {
   const { profile, update } = useProfile();
   const [tab, setTab] = useState<Tab>("walka");
   const [duel, setDuel] = useState<{ opponent: Opponent; key: number } | null>(null);
+  const [pvp, setPvp] = useState<Session | null>(null);
 
   const onFinish = useCallback(
     (won: boolean, souls: number) => {
@@ -28,9 +32,20 @@ export function SoulGame() {
     [duel, update],
   );
 
+  if (pvp)
+    return (
+      <PvpDuel
+        session={pvp}
+        onExit={() => {
+          setPvp(null);
+          setTab("multiplayer");
+        }}
+      />
+    );
+
   if (duel)
     return (
-      <DuelView
+      <SoloDuel
         key={duel.key}
         opponent={duel.opponent}
         deck={deckList(profile)}
@@ -65,6 +80,18 @@ export function SoulGame() {
                 problems={deckProblems(profile)}
                 onFight={(opponent) => setDuel({ opponent, key: Date.now() })}
                 onEditDeck={() => setTab("talia")}
+              />
+            ),
+          },
+          {
+            value: "multiplayer",
+            label: "Multiplayer",
+            content: (
+              <PvpLobby
+                deck={deckList(profile)}
+                problems={deckProblems(profile)}
+                onEditDeck={() => setTab("talia")}
+                onStart={setPvp}
               />
             ),
           },
