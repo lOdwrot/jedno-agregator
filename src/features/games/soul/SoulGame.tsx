@@ -17,7 +17,9 @@ import { Bestiary } from "./components/Bestiary";
 import { BoosterShop } from "./components/BoosterShop";
 import { DeckBuilder } from "./components/DeckBuilder";
 import { SoloDuel, type DuelOutcome } from "./components/SoloDuel";
+import { FeePayment } from "./components/FeePayment";
 import { OpponentPicker } from "./components/OpponentPicker";
+import { PrizeTable } from "./components/PrizeTable";
 import { Rules } from "./components/Rules";
 import { PvpDuel } from "./pvp/PvpDuel";
 import { PvpLobby } from "./pvp/PvpLobby";
@@ -31,6 +33,9 @@ export function SoulGame() {
   const [tab, setTab] = useState<Tab>("walka");
   const [duel, setDuel] = useState<{ opponent: Opponent; key: number } | null>(null);
   const [pvp, setPvp] = useState<Session | null>(null);
+  const [paying, setPaying] = useState<Opponent | null>(null);
+
+  const startDuel = (opponent: Opponent) => setDuel({ opponent, key: Date.now() });
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
@@ -93,17 +98,20 @@ export function SoulGame() {
             value: "walka",
             label: "Pojedynek",
             content: (
-              <OpponentPicker
-                beaten={profile.beaten}
-                talents={profile.talents}
-                problems={deckProblems(profile)}
-                onFight={(opponent) => {
-                  if (profile.talents < (opponent.fee ?? 0)) return;
-                  update((p) => payFee(p, opponent.fee));
-                  setDuel({ opponent, key: Date.now() });
-                }}
-                onEditDeck={() => setTab("talia")}
-              />
+              <div className="flex flex-col gap-6">
+                <OpponentPicker
+                  beaten={profile.beaten}
+                  talents={profile.talents}
+                  problems={deckProblems(profile)}
+                  onFight={(opponent) => {
+                    if (profile.talents < (opponent.fee ?? 0)) return;
+                    if (opponent.fee) setPaying(opponent);
+                    else startDuel(opponent);
+                  }}
+                  onEditDeck={() => setTab("talia")}
+                />
+                <PrizeTable />
+              </div>
             ),
           },
           {
@@ -132,6 +140,18 @@ export function SoulGame() {
           { value: "zasady", label: "Zasady", content: <Rules /> },
         ]}
       />
+      {paying && (
+        <FeePayment
+          opponent={paying}
+          fee={paying.fee ?? 0}
+          talents={profile.talents}
+          onDone={() => {
+            update((p) => payFee(p, paying.fee));
+            setPaying(null);
+            startDuel(paying);
+          }}
+        />
+      )}
     </div>
   );
 }

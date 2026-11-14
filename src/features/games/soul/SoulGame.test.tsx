@@ -73,8 +73,16 @@ describe("SoulGame", () => {
     save(100);
     setup();
     await userEvent.click(screen.getByRole("button", { name: /Smocze Zastępy/ }));
-    expect(screen.getByRole("list", { name: "Szanse na booster" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Szanse na booster: Smocze Zastępy" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Wpisowe: 30 talentów")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /Stań do walki \(−30 talentów\)/ }));
+    expect(
+      screen.getByRole("dialog", { name: /Wpisowe za wyzwanie: Smocze Zastępy/ }),
+    ).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!).talents).toBe(100);
+    await userEvent.click(screen.getByRole("button", { name: "Do walki!" }));
     expect(screen.getByRole("region", { name: /Pojedynek z: Smocze Zastępy/ })).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!).talents).toBe(70);
   });

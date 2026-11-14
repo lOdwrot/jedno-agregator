@@ -8,6 +8,7 @@ const badgeStyles = tv({
     tone: {
       neutral: "bg-surface-muted text-ink-muted",
       accent: "bg-accent-soft text-accent-ink",
+      accentSolid: "bg-accent-strong text-white",
       navy: "bg-navy text-white",
       success: "bg-success text-white",
       danger: "bg-danger/12 text-danger",
