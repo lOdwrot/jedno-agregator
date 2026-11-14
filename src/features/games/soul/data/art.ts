@@ -19,6 +19,13 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Benedykt_XVI_(2010-10-17)_4.jpg",
     focus: 0.62,
   },
+  brygida: {
+    title: "Gdansk Kosciol Brygidy1.jpg",
+    author: "Pankrzysztoff",
+    license: "CC BY-SA 3.0 pl",
+    url: "https://commons.wikimedia.org/wiki/File:Gdansk_Kosciol_Brygidy1.jpg",
+    focus: 0.4,
+  },
   celestyn5: {
     title: "San Pedro Celestino, papa, de Bartolomé Román (Museo del Prado).jpg",
     author: "Bartolomé Román",
@@ -62,12 +69,19 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Jan_Pawe%C5%82_II_portret_Z._Koty%C5%82%C5%82o.jpg",
     focus: 0.2,
   },
-  komorowski: {
-    title: "Bronislaw Komorowski - pomnik plac B K - Gdansk.jpg",
-    author: "Rudolf H. Boettcher",
+  kalwaria: {
+    title: "Kalwaria Wejherowska - Wniebowstąpienie 1.jpg",
+    author: "Izoldaw",
+    license: "CC BY-SA 3.0 pl",
+    url: "https://commons.wikimedia.org/wiki/File:Kalwaria_Wejherowska_-_Wniebowst%C4%85pienie_1.jpg",
+    focus: 0.5,
+  },
+  kartuzy: {
+    title: "Kartuzy kolegiata.jpg",
+    author: "Panek",
     license: "CC BY-SA 4.0",
-    url: "https://commons.wikimedia.org/wiki/File:Bronislaw_Komorowski_-_pomnik_plac_B_K_-_Gdansk.jpg",
-    focus: 0.2,
+    url: "https://commons.wikimedia.org/wiki/File:Kartuzy_kolegiata.jpg",
+    focus: 0.45,
   },
   kolbe: {
     title: "Fr.Maximilian Kolbe in 1936.jpg",
@@ -75,6 +89,13 @@ export const ART: Record<string, ArtCredit> = {
     license: "domena publiczna",
     url: "https://commons.wikimedia.org/wiki/File:Fr.Maximilian_Kolbe_in_1936.jpg",
     focus: 0.25,
+  },
+  komorowski: {
+    title: "Bronislaw Komorowski - pomnik plac B K - Gdansk.jpg",
+    author: "Rudolf H. Boettcher",
+    license: "CC BY-SA 4.0",
+    url: "https://commons.wikimedia.org/wiki/File:Bronislaw_Komorowski_-_pomnik_plac_B_K_-_Gdansk.jpg",
+    focus: 0.2,
   },
   leon1: {
     title: "Raphael - The Meeting of Leo the Great and Attila.jpg",
@@ -90,11 +111,32 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Bazylika_Mariacka_DSC01870.jpg",
     focus: 0.4,
   },
+  matemblewo: {
+    title: "Matemblewo Church in Gdańsk 01.jpg",
+    author: "Topory",
+    license: "CC BY-SA 4.0",
+    url: "https://commons.wikimedia.org/wiki/File:Matemblewo_Church_in_Gda%C5%84sk_01.jpg",
+    focus: 0.35,
+  },
+  mikolaj: {
+    title: "Interior of Kościół św. Mikołaja in Gdańsk.jpg",
+    author: "DerHexer",
+    license: "CC BY-SA 3.0",
+    url: "https://commons.wikimedia.org/wiki/File:Interior_of_Ko%C5%9Bci%C3%B3%C5%82_%C5%9Bw._Miko%C5%82aja_in_Gda%C5%84sk.jpg",
+    focus: 0.4,
+  },
   oliwa: {
     title: "Oliwa Cathedral, great organ.jpg",
     author: "Gerda Arendt",
     license: "CC0",
     url: "https://commons.wikimedia.org/wiki/File:Oliwa_Cathedral,_great_organ.jpg",
+    focus: 0.4,
+  },
+  pelplin: {
+    title: "2010.10.02 PELPLIN (17).jpg",
+    author: "Kozak1410",
+    license: "CC BY-SA 3.0 pl",
+    url: "https://commons.wikimedia.org/wiki/File:2010.10.02_PELPLIN_(17).jpg",
     focus: 0.4,
   },
   piotr: {
@@ -104,13 +146,6 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Pope-peter_pprubens.jpg",
     focus: 0.15,
   },
-  pius9: {
-    title: "G.P.A.Healy, Portrait of Pope Pius IX (1871).jpg",
-    author: "George Peter Alexander Healy",
-    license: "domena publiczna",
-    url: "https://commons.wikimedia.org/wiki/File:G.P.A.Healy,_Portrait_of_Pope_Pius_IX_(1871).jpg",
-    focus: 0.2,
-  },
   pius10: {
     title: "His Holiness Pope St. Pius X – edited.jpg",
     author: "Unknown authorUnknown author",
@@ -118,12 +153,26 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:His_Holiness_Pope_St._Pius_X_%E2%80%93_edited.jpg",
     focus: 0.25,
   },
+  pius9: {
+    title: "G.P.A.Healy, Portrait of Pope Pius IX (1871).jpg",
+    author: "George Peter Alexander Healy",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:G.P.A.Healy,_Portrait_of_Pope_Pius_IX_(1871).jpg",
+    focus: 0.2,
+  },
   popieluszko: {
     title: "Jerzy Popieluszko.jpg",
     author: "Unknown authorUnknown author",
     license: "domena publiczna",
     url: "https://commons.wikimedia.org/wiki/File:Jerzy_Popieluszko.jpg",
     focus: 0.2,
+  },
+  swarzewo: {
+    title: "Swarzewo - Church 01.jpg",
+    author: "Yarl",
+    license: "CC BY-SA 3.0",
+    url: "https://commons.wikimedia.org/wiki/File:Swarzewo_-_Church_01.jpg",
+    focus: 0.4,
   },
   wojciech: {
     title: "Szt-adalbert.jpg",
