@@ -76,7 +76,7 @@ state transitions in `use*Reactions` hooks; everything decorative is skipped und
 `walka-o-dusze` (`soul/`) is a single-player trading-card game: pure engine in `soul/engine` (every move goes through
 `dispatch`; `dispatchFrames` also records one animation frame per event via `emit`), collection/boosters in
 `soul/collection` (localStorage), and a full-screen duel drawn with **PixiJS** in `soul/board` (lazy-loaded; tweens in
-`tween.ts`, one animation + sound per event in `playFrame.ts`, Web Audio sfx/music in `soul/audio`; the music grows with the score — `musicPlan.ts` maps the leading soul count to 4 intensity levels, the last soul is a fast, bright D-major finale). The canvas is
+`tween.ts`, one animation + sound per event in `playFrame.ts`, Web Audio sfx/music in `soul/audio`; the default "church" music is calm and cheerful — D major only, pentatonic bells, no tritones/minor seconds even on the demons' turn (`musicPlan.test.ts` enforces it) — and grows with the score: `musicPlan.ts` maps the leading soul count to 4 intensity levels, the last soul is a fast, bright finale). The canvas is
 `aria-hidden`; an invisible layer of real `<button>`s (from the same pure `layout.ts`) keeps it keyboard/screen-reader
 accessible and handles drag & drop.
 Trainer rules: items never just draw N cards (drawing is for supporters); Różaniec/Powiadomienie are Trekking

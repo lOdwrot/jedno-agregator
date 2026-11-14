@@ -24,7 +24,21 @@ describe("musicPlan", () => {
   it("plays a major chord with a major third in the cheerful finale", () => {
     const tonic = planBar(3, false, 0).chord;
     expect(tonic).toContain(16); // F# above D: D major
-    expect(planBar(0, false, 0).chord).toContain(15); // F: calm D dorian
+    expect(planBar(0, false, 0).chord).toContain(16); // calm music is in D major too
+  });
+
+  it("stays cheerful and calm: no tritones or minor seconds, bells inside D major", () => {
+    const dMajor = [0, 2, 4, 5, 7, 9, 11].map((x) => (x + 2) % 12); // pitch classes above C
+    for (const l of [0, 1, 2, 3] as const)
+      for (let n = 0; n < 8; n++)
+        for (const dark of [false, true]) {
+          const p = planBar(l, dark, n);
+          const c = p.chord;
+          const clash = c.some((a) => c.some((b) => [1, 6, 11].includes(Math.abs(a - b) % 12)));
+          expect(clash).toBe(false);
+          for (const s of [...c, ...p.bells.map(([b]) => b)])
+            expect(dMajor).toContain((((s + 2) % 12) + 12) % 12);
+        }
   });
 
   it("keeps the bell melody inside the bar", () => {

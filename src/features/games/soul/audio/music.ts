@@ -1,6 +1,6 @@
 /**
- * Generative background music: an organ-like chord progression (D dorian, like a quiet church)
- * with a bell melody. Darker chords play while the demons take their turn, and the music grows
+ * Generative background music: a calm, cheerful organ-like chord progression (D major) with a
+ * pentatonic bell melody. Softer, wistful chords play while the demons take their turn, and the music grows
  * with the score — faster and brighter until the fight for the last soul (see `musicPlan`).
  * The "infernal" theme (hardest opponent) swaps it for a detuned, droning, heartbeat-driven score.
  */
@@ -107,7 +107,7 @@ function flourish(to: MusicLevel) {
       ? [12, 13, 18, 19, 24]
       : to === 3
         ? [12, 16, 19, 24, 28]
-        : [12, 15, 19, 24];
+        : [12, 16, 19, 24];
   run.forEach((s, i) =>
     tone(f(s) * 2, 0.9, { type: "sine", gain: 0.03, delay: i * 0.09, out: "music" }),
   );

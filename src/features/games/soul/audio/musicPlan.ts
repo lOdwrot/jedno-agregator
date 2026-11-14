@@ -1,28 +1,30 @@
 /**
  * Pure arrangement of the duel music. The intensity level follows the souls taken so far
- * (the higher score of the two players): 0 = calm organ, 3 = the fight for the last soul —
- * faster, brighter, in D major, with a driving pulse, arpeggios and light percussion.
+ * (the higher score of the two players): 0 = calm, cheerful organ in D major, 3 = the fight for the
+ * last soul — faster and brighter, with a driving pulse, arpeggios and light percussion.
  */
 import { SOULS_TO_WIN } from "../data/cards";
 import { planInfernalBar } from "./musicInfernal";
 
-/** "church": the calm parish organ; "infernal": the unsettling music of the "Niepokonany" duel. */
+/** "church": the calm, cheerful parish organ (D major); "infernal": the unsettling music of the "Niepokonany" duel. */
 export type MusicTheme = "church" | "infernal";
 
 export type MusicLevel = 0 | 1 | 2 | 3;
 
-/** Chords as semitones above D3. */
+/** Chords as semitones above D3 — everything stays in D major, so it always sounds warm. */
+/** D – Bm – G – A: a cheerful, calm progression. */
 const CALM = [
-  [0, 7, 12, 15],
-  [-2, 5, 10, 14],
-  [-4, 3, 8, 12],
-  [-5, 2, 7, 10],
+  [0, 7, 12, 16],
+  [-3, 4, 9, 12],
+  [-7, 0, 5, 9],
+  [-5, 2, 7, 11],
 ];
+/** The demons' turn: softer and more wistful (Bm – G – Em – A), but never scary. */
 const DARK = [
-  [0, 6, 12, 15],
-  [1, 7, 13, 16],
-  [-1, 6, 11, 14],
-  [0, 3, 6, 12],
+  [-3, 4, 9, 12],
+  [-7, 0, 5, 9],
+  [-10, 2, 5, 9],
+  [-5, 2, 7, 11],
 ];
 /** D – A – Bm – G: the joyful finale. */
 const FINALE = [
@@ -31,15 +33,16 @@ const FINALE = [
   [-3, 4, 9, 12],
   [-7, 0, 5, 9],
 ];
-/** The demons' turn in the finale: still driving, but minor with a dominant A. */
+/** The demons' turn in the finale: still driving, starting from B minor. */
 const FINALE_DARK = [
-  [0, 7, 12, 15],
-  [-2, 5, 10, 14],
-  [-4, 3, 8, 12],
+  [-3, 4, 9, 12],
+  [-7, 0, 5, 9],
+  [0, 7, 12, 16],
   [-5, 2, 7, 11],
 ];
 
-const BELL_DORIAN = [12, 14, 15, 17, 19, 21, 24];
+/** D-major pentatonic: no semitone clashes, so the bells always sound gentle. */
+const BELL_PENTA = [12, 14, 16, 19, 21, 24];
 const BELL_MAJOR = [12, 14, 16, 19, 21, 24, 26, 28];
 
 export interface BarPlan {
@@ -99,15 +102,14 @@ export function planBar(
   const finale = level === 3;
   const set = finale ? (dark ? FINALE_DARK : FINALE) : dark ? DARK : CALM;
   const chord = set[n % 4]!;
-  const scale = finale && !dark ? BELL_MAJOR : BELL_DORIAN;
-  const shift = dark && !finale ? -1 : 0;
+  const scale = finale && !dark ? BELL_MAJOR : BELL_PENTA;
   const bells: [number, number][] = [];
   const { bellCount: count, ...rest } = LEVELS[level];
   const step = 4 / count;
   for (let i = 0; i < count; i++) {
     if (!finale && (n * 7 + i * 3) % 5 === 0) continue;
     if (finale && i % 4 === 3 && n % 2 === 1) continue;
-    const s = scale[(n * 5 + i * 2) % scale.length]! + shift;
+    const s = scale[(n * 5 + i * 2) % scale.length]!;
     bells.push([s, (level === 0 ? 0.6 : 0) + i * step]);
   }
   return { ...rest, chord, kick: finale, bells };
