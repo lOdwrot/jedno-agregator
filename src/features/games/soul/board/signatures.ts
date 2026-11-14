@@ -37,6 +37,26 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
         r.tw.wait(500).then(() => impact(r.fx, r.tw, to, P().danger, 1.3)),
       ),
   },
+  "Bulla przebaczenia": {
+    sound: "pardon",
+    play: async ({ r, from, to }) => {
+      await stream(r.fx, r.tw, from, to, "📜", 2, 52, 900);
+      await both(
+        pillar(r.fx, r.tw, to, P().surface, 150),
+        impact(r.fx, r.tw, to, P()["logo-yellow"], 1.4),
+      );
+    },
+  },
+  "Sobór Watykański I": {
+    sound: "council",
+    play: async ({ r, from, to }) => {
+      await both(
+        rain(r.fx, r.tw, to, "🕯️", 10, 30),
+        stream(r.fx, r.tw, from, to, "🔑", 3, 40, 1000),
+      );
+      await both(impact(r.fx, r.tw, to, P()["logo-red"], 1.8), shake(r.tw, r.stage, 12, r.reduced));
+    },
+  },
   "Chorał gregoriański": {
     sound: "chant",
     play: ({ r, from, to }) =>

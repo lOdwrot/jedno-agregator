@@ -42,6 +42,8 @@ export type AbilityEffect =
   | { k: "statusImmune" }
   | { k: "endHeal"; n: number }
   | { k: "attackBonus"; n: number }
+  /** While this character is active, neither player may play cards of this kind. */
+  | { k: "lock"; kind: "item" | "supporter" }
   /* activated once per turn (like Pokémon TCG Abilities) */
   | { k: "drawOnce" }
   | { k: "drawUntil"; n: number }

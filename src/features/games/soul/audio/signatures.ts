@@ -49,6 +49,16 @@ export const signatureSound: Record<string, () => void> = {
     choir([0, 4, 7, 12], 0.35);
   },
   gong: () => gong(),
+  pardon: () => {
+    bell(12);
+    bell(7, 0.35, 0.05);
+    choir([0, 4, 7], 0.6, 2.2);
+  },
+  council: () => {
+    gong();
+    choir([-12, -5, 0, 4, 7], 0.3, 2.4);
+    [0.9, 1.15, 1.4].forEach((d) => bell(12, d, 0.04));
+  },
   scroll: () => {
     noise(0.5, { cutoff: 4000, gain: 0.12, highpass: true });
     drum(0.55, 0.35);

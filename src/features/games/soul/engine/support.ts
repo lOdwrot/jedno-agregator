@@ -5,6 +5,7 @@ import { addStatus, discardEnergy, healAll, placeRule } from "./combat";
 import { recoverPick } from "./aiSearch";
 import { emit } from "./events";
 import {
+  charDef,
   choicePending,
   coin,
   draw,
@@ -53,13 +54,24 @@ export function supportTargets(g: Game, pid: PlayerId, def: SupportDef): InPlay[
 const deckEnergy = (g: Game, pid: PlayerId) =>
   g.players[pid].deck.filter((c) => c.cardId === ENERGY_ID[g.players[pid].side]).length;
 
+/** The active character (of either player) whose ability forbids playing cards of this kind. */
+export function lockedBy(g: Game, kind: SupportDef["kind"]): InPlay | null {
+  if (placeRule(g, "noAbilities")) return null;
+  for (const pid of ["me", "ai"] as const) {
+    const a = g.players[pid].active;
+    const e = a && charDef(a).ability?.effect;
+    if (e?.k === "lock" && e.kind === kind) return a;
+  }
+  return null;
+}
+
 /** Whether the card would do anything right now (and is allowed this turn). */
 export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean {
   const def = getCard(card.cardId);
   if (def.kind !== "item" && def.kind !== "supporter" && def.kind !== "place") return false;
   if (def.kind === "supporter" && g.flags.supporter) return false;
   if (def.kind === "item" && placeRule(g, "noItems")) return false;
-  if (choicePending(g)) return false;
+  if (choicePending(g) || lockedBy(g, def.kind)) return false;
   const me = g.players[pid];
   const foe = g.players[other(pid)];
   const a = me.active;
