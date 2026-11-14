@@ -1,20 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/cn";
 import { Button, usePrefersReducedMotion } from "@/ui";
 import { Confetti } from "../../fx/Confetti";
 import { shake } from "../../fx/shake";
-import { noise, tone } from "../audio/context";
+import { packSfx } from "../audio/packSfx";
 import { sfx } from "../audio/sfx";
 import type { PackType } from "../collection/packs";
 import { parseKey, type CardKey } from "../collection/profile";
 import { getCard } from "../data/cards";
 import { FINISH_LABEL, RARITY_LABEL } from "../data/types";
-import { BoosterPack } from "./BoosterPack";
+import { BoosterIntro } from "./BoosterIntro";
+import { INTRO_MS } from "./boosterTimeline";
+import { CardBack } from "./CardBack";
 import { CardFace } from "./CardFace";
 import { CardMini } from "./CardMini";
 
-type Phase = "charge" | "tear" | "rise" | "reveal";
+type Phase = "charge" | "tear" | "burst" | "reveal";
 
 interface Props {
   pack: PackType;
@@ -27,7 +29,10 @@ interface Props {
 const rank = (k: CardKey) =>
   ({ common: 0, uncommon: 1, rare: 2, legendary: 3 })[getCard(parseKey(k).cardId).rarity];
 
-/** Full-screen booster opening: charge → tear → cards rise → flip one by one with rarity effects. */
+/**
+ * Full-screen booster opening: the pack is squeezed, its top tears off, the cards pop out into a fan
+ * and glide into the grid, where they flip one by one with rarity effects.
+ */
 export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) {
   const reduce = usePrefersReducedMotion();
   const [phase, setPhase] = useState<Phase>("charge");
@@ -37,6 +42,7 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
   const root = useRef<HTMLDivElement>(null);
   const board = useRef<HTMLUListElement>(null);
   const zoomClose = useRef<HTMLElement>(null);
+  const layoutPrefix = `booster-card-${useId()}`;
   useEffect(() => {
     if (zoom !== null) zoomClose.current?.focus();
   }, [zoom]);
@@ -51,30 +57,17 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
     };
   }, []);
 
-  // charge: rising rumble, then the pack bursts open
+  // charge → tear → burst → reveal (sounds of each step live in BoosterIntro)
   useEffect(() => {
-    if (phase === "charge") {
-      for (let i = 0; i < 8; i++)
-        tone(80 + i * 25, 0.25, {
-          type: "sawtooth",
-          gain: 0.02 + i * 0.006,
-          delay: i * 0.11,
-          cutoff: 600 + i * 150,
-        });
-      const t = setTimeout(() => setPhase("tear"), reduce ? 200 : 1100);
-      return () => clearTimeout(t);
-    }
-    if (phase === "tear") {
-      noise(0.45, { cutoff: 6000, gain: 0.25, highpass: true });
-      sfx.soul();
-      const t = setTimeout(() => setPhase("rise"), reduce ? 150 : 700);
-      return () => clearTimeout(t);
-    }
-    if (phase === "rise") {
-      sfx.shuffle();
-      const t = setTimeout(() => setPhase("reveal"), reduce ? 150 : 900);
-      return () => clearTimeout(t);
-    }
+    if (phase === "reveal") return;
+    const next: Record<Exclude<Phase, "reveal">, Phase> = {
+      charge: "tear",
+      tear: "burst",
+      burst: "reveal",
+    };
+    if (reduce) packSfx.rip(0.3);
+    const t = setTimeout(() => setPhase(next[phase]), reduce ? 150 : INTRO_MS[phase]);
+    return () => clearTimeout(t);
   }, [phase, reduce]);
 
   const shownRef = useRef(0);
@@ -116,7 +109,7 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
     >
       {party && <Confetti count={70} />}
       <AnimatePresence>
-        {(phase === "tear" || phase === "rise") && !reduce && (
+        {(phase === "tear" || phase === "burst") && !reduce && (
           <motion.span
             key="rays"
             aria-hidden="true"
@@ -130,47 +123,27 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
       </AnimatePresence>
 
       {phase !== "reveal" && (
-        <div className="relative">
+        <>
           {phase === "charge" && (
             <span
               aria-hidden="true"
-              className="absolute inset-0 rounded-full bg-logo-yellow/40 blur-3xl"
+              className="absolute size-72 rounded-full bg-logo-yellow/30 blur-3xl"
             />
           )}
-          <motion.div
-            className={cn(phase === "charge" && "soul-pack-shake")}
-            initial={{ scale: 0.6, y: 60, opacity: 0 }}
-            animate={
-              phase === "rise"
-                ? { y: 260, opacity: 0, scale: 0.9 }
-                : { scale: 1.25, y: 0, opacity: 1 }
-            }
-            transition={{ duration: phase === "rise" ? 0.7 : 0.45, ease: "easeOut" }}
+          <BoosterIntro
+            pack={pack}
+            count={cards.length}
+            phase={phase}
+            layoutPrefix={layoutPrefix}
+          />
+          <Button
+            variant="ghost"
+            className="absolute right-4 bottom-4 text-white/80"
+            onClick={() => setPhase("reveal")}
           >
-            <BoosterPack pack={pack} torn={phase !== "charge"} />
-          </motion.div>
-          {phase === "tear" && (
-            <motion.div
-              aria-hidden="true"
-              className={cn(
-                "soul-crimp absolute inset-x-0 top-0 h-[9%] bg-gradient-to-r",
-                pack.foil,
-              )}
-              initial={{ y: 0, rotate: 0, opacity: 1 }}
-              animate={{ y: -220, x: 120, rotate: 35, opacity: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-            />
-          )}
-          {phase !== "charge" && (
-            <motion.span
-              aria-hidden="true"
-              className="absolute inset-0 rounded-full bg-surface"
-              initial={{ opacity: 0.9, scale: 0.4 }}
-              animate={{ opacity: 0, scale: 3 }}
-              transition={{ duration: 0.6 }}
-            />
-          )}
-        </div>
+            Pomiń
+          </Button>
+        </>
       )}
 
       {phase === "reveal" && (
@@ -187,18 +160,7 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
               const up = i < shown;
               const r = rank(k);
               return (
-                <motion.li
-                  key={i}
-                  initial={{ y: 180, opacity: 0, rotate: (i - 2) * 6 }}
-                  animate={{ y: 0, opacity: 1, rotate: 0 }}
-                  transition={{
-                    delay: reduce ? 0 : i * 0.08,
-                    type: "spring",
-                    stiffness: 220,
-                    damping: 20,
-                  }}
-                  className="relative"
-                >
+                <li key={i} className="relative">
                   {up && r >= 2 && !reduce && (
                     <span
                       aria-hidden="true"
@@ -214,8 +176,10 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
                       className="soul-rays pointer-events-none absolute -inset-16"
                     />
                   )}
-                  <button
+                  <motion.button
                     type="button"
+                    layoutId={reduce ? undefined : `${layoutPrefix}-${i}`}
+                    transition={{ type: "spring", stiffness: 260, damping: 26 }}
                     onClick={() => (up ? setZoom(i) : reveal(i))}
                     aria-disabled={!up && i !== shown ? true : undefined}
                     className="relative block aspect-[5/7] w-full rounded-card perspective-[900px]"
@@ -226,18 +190,8 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
                         up && "rotate-y-180",
                       )}
                     >
-                      <span
-                        className={cn(
-                          "absolute inset-0 grid place-items-center rounded-card bg-gradient-to-br text-4xl shadow-lift backface-hidden",
-                          pack.foil,
-                        )}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="grid size-16 place-items-center rounded-full bg-navy/80"
-                        >
-                          🕊️
-                        </span>
+                      <span className="absolute inset-0 backface-hidden">
+                        <CardBack foil={pack.foil} className="size-full" />
                         {!up && (
                           <span className="sr-only">
                             Zakryta karta {i + 1}
@@ -257,8 +211,8 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain }: Props) 
                         )}
                       </span>
                     </span>
-                  </button>
-                </motion.li>
+                  </motion.button>
+                </li>
               );
             })}
           </ul>
