@@ -1,3 +1,5 @@
+import { Link } from "@/ui";
+import { ART } from "../data/art";
 const RULES: [string, string][] = [
   [
     "Cel",
@@ -29,16 +31,37 @@ const RULES: [string, string][] = [
   ],
 ];
 
-/** Short rules (inspired by trading card games). */
+/** Short rules (inspired by trading card games) and credits of the illustrations. */
 export function Rules() {
+  const credits = Object.entries(ART);
   return (
-    <dl className="grid max-w-3xl gap-3">
-      {RULES.map(([t, d]) => (
-        <div key={t} className="rounded-card bg-surface p-4 shadow-card">
-          <dt className="font-display font-extrabold text-navy">{t}</dt>
-          <dd className="mt-1 text-ink">{d}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="flex max-w-3xl flex-col gap-6">
+      <dl className="grid gap-3">
+        {RULES.map(([t, d]) => (
+          <div key={t} className="rounded-card bg-surface p-4 shadow-card">
+            <dt className="font-display font-extrabold text-navy">{t}</dt>
+            <dd className="mt-1 text-ink">{d}</dd>
+          </div>
+        ))}
+      </dl>
+      {credits.length > 0 && (
+        <section aria-labelledby="soul-credits" className="rounded-card bg-surface p-4 shadow-card">
+          <h3 id="soul-credits" className="font-display font-extrabold text-navy">
+            Źródła ilustracji
+          </h3>
+          <p className="mt-1 text-sm text-ink-muted">
+            Obrazy i zdjęcia pochodzą z Wikimedia Commons (domena publiczna lub wolne licencje).
+            Zostały przycięte i zmniejszone.
+          </p>
+          <ul className="mt-2 flex flex-col gap-1 text-sm">
+            {credits.map(([key, c]) => (
+              <li key={key}>
+                <Link to={c.url}>{c.title}</Link> — {c.author}, {c.license}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
   );
 }

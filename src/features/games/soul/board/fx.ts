@@ -26,6 +26,23 @@ export class Fx {
     ticker.add((t) => this.update(t.deltaMS / 1000));
   }
 
+  /** Adds a free particle (used by the attack effects in `attackFx.ts`). */
+  spawn(
+    g: Container,
+    o: { vx: number; vy: number; life: number; gravity?: number; spin?: number },
+  ) {
+    this.layer.addChild(g);
+    this.parts.push({
+      g,
+      vx: o.vx,
+      vy: o.vy,
+      life: o.life,
+      max: o.life,
+      gravity: o.gravity ?? 0,
+      spin: o.spin ?? 0,
+    });
+  }
+
   private update(dt: number) {
     for (const p of this.parts) {
       p.life -= dt;

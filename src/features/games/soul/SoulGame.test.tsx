@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -37,14 +37,25 @@ describe("SoulGame", () => {
     );
   });
 
-  it("opens the welcome booster and saves the cards", async () => {
+  it("opens the welcome booster with the animation and saves the cards", async () => {
     setup();
     await userEvent.click(screen.getByRole("tab", { name: /Boostery/ }));
-    await userEvent.click(screen.getByRole("button", { name: /Otwórz \(100 talentów\)/ }));
-    await userEvent.click(screen.getByRole("button", { name: "Odkryj wszystkie" }));
-    expect(screen.getAllByRole("button", { name: /Pokaż kartę/ })).toHaveLength(5);
+    expect(screen.getAllByRole("button", { name: /^Otwórz paczkę/ })).toHaveLength(3);
+    await userEvent.click(screen.getByRole("button", { name: /Otwórz paczkę Wspólnota/ }));
+    expect(
+      screen.getByRole("dialog", { name: /Otwieranie boostera: Wspólnota/ }),
+    ).toBeInTheDocument();
     const saved = JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!);
     expect(saved.packs).toBe(0);
     expect(saved.talents).toBe(0);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Odkryj wszystkie" }, { timeout: 5000 }),
+    );
+    await waitFor(
+      () => expect(screen.getAllByRole("button", { name: /Pokaż kartę/ })).toHaveLength(5),
+      {
+        timeout: 4000,
+      },
+    );
   });
 });

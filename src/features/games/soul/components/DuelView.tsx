@@ -156,7 +156,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
           </div>
         )}
       </div>
-      <DuelBars g={live} busy={busy} onAction={act} />
+      <DuelBars g={live} view={view} busy={busy} onAction={act} />
 
       <p role="status" aria-live="polite" className="sr-only">
         {view.log.at(-1)}
@@ -170,7 +170,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
         size="sm"
       >
         {selCard && sel && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 pt-10">
             <CardFace
               cardId={selCard.cardId}
               finish={selCard.finish}

@@ -10,6 +10,7 @@ import {
   type CardDef,
   type Finish,
 } from "../data/types";
+import { CardArt } from "./CardArt";
 import { ELEMENT_ART, FINISH_FRAME } from "./styles";
 
 const KIND_LABEL: Record<CardDef["kind"], string> = {
@@ -90,11 +91,11 @@ export function CardFace({
         <div
           aria-hidden="true"
           className={cn(
-            "relative grid h-24 place-items-center overflow-hidden rounded-xl bg-gradient-to-br",
+            "relative grid h-32 place-items-center overflow-hidden rounded-xl bg-gradient-to-br",
             art,
           )}
         >
-          <span className="text-6xl drop-shadow-lg">{c.emoji}</span>
+          <CardArt cardId={cardId} emojiClass="text-6xl" />
           {finish !== "plain" && <span className="soul-shine absolute inset-0" />}
         </div>
 

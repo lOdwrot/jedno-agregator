@@ -1,7 +1,8 @@
 /** Player's collection, deck, currency ("talenty") and boosters — pure functions + storage. */
-import { COLLECTIBLE, DECK_SIZE, ENERGY_ID, getCard, isBasic, MAX_COPIES } from "../data/cards";
+import { DECK_SIZE, ENERGY_ID, getCard, isBasic, MAX_COPIES } from "../data/cards";
 import type { Finish, Rarity } from "../data/types";
 import type { DeckList } from "../engine/state";
+import { PACKS, rollPack } from "./packs";
 
 /** Collection key: "cardId:finish". */
 export type CardKey = `${string}:${Finish}`;
@@ -121,34 +122,19 @@ export function finishDuel(p: Profile, opponentId: string, won: boolean, talents
   };
 }
 
-export const canOpenBooster = (p: Profile) => p.packs > 0 && p.talents >= BOOSTER_PRICE;
+export const canOpenBooster = (p: Profile, price = BOOSTER_PRICE) =>
+  p.packs > 0 && p.talents >= price;
 
-function pickRarity(r: number, slot: number): Rarity {
-  if (slot < 3) return "common";
-  if (slot === 3) return r < 0.85 ? "uncommon" : "rare";
-  return r < 0.2 ? "legendary" : "rare";
-}
-function pickFinish(r: number): Finish {
-  return r < 0.03 ? "stained" : r < 0.15 ? "gilded" : "plain";
-}
-
-/** 5 cards: 3 common, 1 uncommon (or rare), 1 rare (20% legendary). Rarest is revealed last. */
+/** Classic "Wspólnota" pack (see `packs.ts` for all editions). */
 export function rollBooster(rnd: () => number = Math.random): CardKey[] {
-  const out: CardKey[] = [];
-  for (let slot = 0; slot < BOOSTER_SIZE; slot++) {
-    const rarity = pickRarity(rnd(), slot);
-    const pool = COLLECTIBLE.filter((c) => c.rarity === rarity);
-    const card = pool[Math.floor(rnd() * pool.length)]!;
-    out.push(keyOf(card.id, pickFinish(rnd())));
-  }
-  return out;
+  return rollPack(PACKS[0]!, rnd);
 }
 
-export function openBooster(p: Profile, cards: CardKey[]): Profile {
-  if (!canOpenBooster(p)) return p;
+export function openBooster(p: Profile, cards: CardKey[], price = BOOSTER_PRICE): Profile {
+  if (!canOpenBooster(p, price)) return p;
   const collection = { ...p.collection };
   for (const k of cards) collection[k] = (collection[k] ?? 0) + 1;
-  return { ...p, talents: p.talents - BOOSTER_PRICE, packs: p.packs - 1, collection };
+  return { ...p, talents: p.talents - price, packs: p.packs - 1, collection };
 }
 
 /** Talents for copies above what a deck can use (more than 2 of the same print). */

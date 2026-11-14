@@ -16,6 +16,7 @@ import {
   type CardKey,
   type Profile,
 } from "../collection/profile";
+import { CardArt } from "./CardArt";
 import { CardFace } from "./CardFace";
 
 const ORDER: Record<CardDef["kind"], number> = {
@@ -116,9 +117,9 @@ export function DeckBuilder({
               >
                 <span
                   aria-hidden="true"
-                  className="grid size-11 shrink-0 place-items-center rounded-lg bg-surface-muted text-2xl"
+                  className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-muted"
                 >
-                  {c.emoji}
+                  <CardArt cardId={cardId} emojiClass="text-2xl" />
                 </span>
                 <span className="min-w-0">
                   <span className="block truncate font-bold text-navy">
@@ -192,7 +193,11 @@ export function DeckBuilder({
         size="sm"
       >
         {preview && (
-          <CardFace cardId={parseKey(preview).cardId} finish={parseKey(preview).finish} />
+          <CardFace
+            className="mt-10"
+            cardId={parseKey(preview).cardId}
+            finish={parseKey(preview).finish}
+          />
         )}
       </Dialog>
     </div>
