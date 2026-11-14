@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Button, Icon } from "@/ui";
-import { findPack } from "../collection/packs";
 import { OPPONENTS, type Opponent } from "../data/opponents";
 
 interface Props {
@@ -55,8 +54,8 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onEditDeck 
                     {o.difficulty}
                   </Badge>
                   <Badge>wygrana: {o.reward.win} talentów</Badge>
-                  {o.fee ? <Badge>wpisowe: {o.fee}</Badge> : null}
-                  {o.prize && <Badge tone="accent">+ booster</Badge>}
+                  {o.fee ? <Badge tone="accentSolid">🪙 wpisowe {o.fee}</Badge> : null}
+                  {o.prize && <Badge tone="accent">🎁 + booster</Badge>}
                   {beaten.includes(o.id) && <Badge tone="navy">pokonani ✓</Badge>}
                 </span>
               </span>
@@ -87,26 +86,21 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onEditDeck 
           Przegrana też coś daje: {pick.reward.loss} talentów + 10 za każdą ocaloną duszę. Po każdym
           pojedynku możesz otworzyć jeden booster.
         </p>
-        {pick.prize && (
-          <div className="mt-3 rounded-card bg-surface p-3 text-sm text-ink">
-            <p>
-              <strong>Wpisowe: {pick.fee ?? 0} talentów</strong> (płatne przy wyzwaniu, nie wraca po
-              porażce). Za zwycięstwo — oprócz talentów — darmowy booster otwierany od razu:
+        {pick.fee ? (
+          <div className="mt-4 flex items-center gap-3 rounded-card border-2 border-accent bg-accent-soft p-3 text-ink">
+            <span aria-hidden="true" className="text-3xl">
+              🪙
+            </span>
+            <p className="text-sm">
+              <strong className="block font-display text-lg text-navy">
+                Wpisowe: {pick.fee} talentów
+              </strong>
+              Płatne przy wyzwaniu, nie wraca po porażce. Masz {talents} → po opłacie{" "}
+              {Math.max(0, talents - pick.fee)}. Za zwycięstwo — oprócz talentów — darmowy booster
+              (szanse w sekcji „Boostery za zwycięstwo” poniżej).
             </p>
-            <ul className="mt-1 flex flex-wrap gap-1" aria-label="Szanse na booster">
-              {pick.prize.map(({ pack, chance }) => {
-                const p = findPack(pack);
-                return (
-                  <li key={pack}>
-                    <Badge tone="navy">
-                      {p.emoji} {p.name} {Math.round(chance * 100)}%
-                    </Badge>
-                  </li>
-                );
-              })}
-            </ul>
           </div>
-        )}
+        ) : null}
         {problems.length > 0 ? (
           <div className="mt-4 rounded-card bg-danger/12 p-3 text-sm text-danger">
             {problems.map((p) => (
