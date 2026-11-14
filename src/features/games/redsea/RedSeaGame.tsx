@@ -15,7 +15,11 @@ import {
   stretchHand,
   type RedSeaState,
 } from "./engine";
+import { Meter } from "./Meter";
 import { RedSeaStage } from "./RedSeaStage";
+import { useRedSeaReactions } from "./useRedSeaReactions";
+import { sfx } from "../audio/sfx";
+import { useFx } from "../fx/useFx";
 
 const ACTIVE = new Set(["running", "shore", "flood"]);
 
@@ -25,21 +29,30 @@ export function RedSeaGame() {
   const stageRef = useRef<HTMLDivElement>(null);
   const best = useBestScore("morze-czerwone", higherIsBetter);
   const active = ACTIVE.has(s.phase);
+  const fx = useFx();
+  const react = useRedSeaReactions(stageRef, fx.spawn);
 
   useGameLoop((dt) => {
     const n = stepRedSea(s, dt);
+    react(s, n);
     if (n.phase === "won" && s.phase !== "won") setRecord(best.submit(n.sheep));
     setS(n);
   }, active);
 
   const start = () => {
+    sfx.unlock();
+    fx.clear();
     setS(startRedSea());
     setRecord(false);
     stageRef.current?.focus({ preventScroll: true });
     stageRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
   };
-  const left = () => setS((x) => moveLane(x, -1));
-  const right = () => setS((x) => moveLane(x, 1));
+  const turn = (dir: -1 | 1) => {
+    if (moveLane(s, dir).lane !== s.lane) sfx.swish();
+    setS((x) => moveLane(x, dir));
+  };
+  const left = () => turn(-1);
+  const right = () => turn(1);
   const stretch = () => setS((x) => stretchHand(x));
 
   useEffect(() => {
@@ -57,7 +70,7 @@ export function RedSeaGame() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active]);
+  });
 
   const onTap = (e: PointerEvent<HTMLDivElement>) => {
     if (s.phase === "shore") return stretch();
@@ -85,7 +98,7 @@ export function RedSeaGame() {
         className="relative mx-auto aspect-[9/16] w-full max-w-[min(100%,calc(70svh*9/16))] touch-manipulation overflow-hidden rounded-card bg-logo-blue shadow-card select-none"
       >
         {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
-        <RedSeaStage s={s} />
+        <RedSeaStage s={s} fx={fx.items} />
 
         {fresh && (
           <p
@@ -135,6 +148,7 @@ export function RedSeaGame() {
           <StageOverlay
             emoji={s.phase === "won" ? "🎉🌊" : "🧱"}
             title={s.phase === "won" ? "Lud jest wolny!" : "Złapali Cię…"}
+            celebrate={s.phase === "won"}
             actionLabel="Jeszcze raz"
             onAction={start}
             footer={
@@ -198,40 +212,6 @@ export function RedSeaGame() {
       <p role="status" aria-live="polite" className="sr-only">
         {fresh?.text ?? ""}
       </p>
-    </div>
-  );
-}
-
-function Meter({
-  label,
-  value,
-  tone,
-  text,
-}: {
-  label: string;
-  value: number;
-  tone: string;
-  text: string;
-}) {
-  return (
-    <div className="mb-3 last:mb-0">
-      <div className="mb-1 flex justify-between text-sm font-bold text-navy">
-        <span>{label}</span>
-        <span>{text}</span>
-      </div>
-      <div
-        role="meter"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={value}
-        className="h-3 overflow-hidden rounded-pill bg-surface-muted"
-      >
-        <div
-          className={cn("h-full origin-left rounded-pill transition-transform duration-200", tone)}
-          style={{ transform: `scaleX(${value / 100})` }}
-        />
-      </div>
     </div>
   );
 }

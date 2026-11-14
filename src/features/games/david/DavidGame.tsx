@@ -4,10 +4,9 @@ import { Button, Icon } from "@/ui";
 import { StageOverlay } from "../components/StageOverlay";
 import { higherIsBetter, useBestScore } from "../useBestScore";
 import { useGameLoop } from "../useGameLoop";
+import { sfx } from "../audio/sfx";
+import { useFx } from "../fx/useFx";
 import {
-  GROUND,
-  H,
-  SLING,
   STONES,
   TAUNTS,
   W,
@@ -18,32 +17,48 @@ import {
   tap,
   type DavidState,
 } from "./engine";
-import { DavidFigure, GoliathFigure, Scenery } from "./Figures";
-import { AimGauges } from "./AimGauges";
+import { DavidStage } from "./DavidStage";
+import { useDavidReactions } from "./useDavidReactions";
 
 export function DavidGame() {
   const [s, setS] = useState<DavidState>(createDavid);
   const [record, setRecord] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
   const best = useBestScore("dawid-i-goliat", higherIsBetter);
+  const fx = useFx();
+  const [hitAt, setHitAt] = useState<number | null>(null);
+
+  const react = useDavidReactions(stageRef, fx.spawn, setHitAt);
 
   useGameLoop(
     (dt) => {
       const n = stepDavid(s, dt);
+      react(s, n);
       if (n.phase === "won" && s.phase !== "won") setRecord(best.submit(n.stonesLeft));
       setS(n);
     },
-    s.phase === "playing" || (s.phase === "won" && s.fall < 1),
+    s.phase === "playing" || (s.phase === "won" && s.time - (s.feedback?.at ?? 0) < 4),
   );
 
   const start = () => {
+    sfx.unlock();
+    fx.clear();
+    setHitAt(null);
     setS(startDavid());
     setRecord(false);
     stageRef.current?.focus({ preventScroll: true });
     stageRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
   };
   const canThrow = s.phase === "playing" && !s.stone && s.stonesLeft > 0;
-  const doTap = () => setS((x) => tap(x));
+  const doTap = () => {
+    if (!canThrow) return;
+    if (s.aimStage === "angle") sfx.click();
+    else {
+      sfx.whoosh();
+      sfx.whistle();
+    }
+    setS(tap(s));
+  };
 
   const onKey = (e: KeyboardEvent) => {
     const map: Record<string, () => void> = {
@@ -101,47 +116,7 @@ export function DavidGame() {
         className="relative aspect-square overflow-hidden rounded-card bg-accent-soft shadow-card select-none sm:aspect-video"
       >
         {/* eslint-enable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions */}
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          className="block size-full touch-none"
-          preserveAspectRatio="xMidYMax meet"
-          aria-hidden="true"
-          onPointerDown={(e) => {
-            if (s.phase !== "playing") return;
-            e.preventDefault();
-            doTap();
-          }}
-        >
-          <Scenery />
-          <text x={34} y={398} fontSize={38}>
-            🐑
-          </text>
-          <g transform={`translate(${SLING.x - 22} ${GROUND})`}>
-            <DavidFigure aiming={canThrow} angle={s.aim.angle} />
-          </g>
-          <AimGauges s={s} />
-          <g
-            transform={`translate(${s.goliathX} ${GROUND}) rotate(${-s.fall * 84}) translate(0 ${
-              s.phase === "playing" ? Math.abs(Math.sin(s.time * 5)) * -4 : 0
-            })`}
-          >
-            <GoliathFigure dizzy={s.phase === "won"} />
-          </g>
-          {s.phase === "won" && (
-            <text x={s.goliathX - 260 * s.fall} y={GROUND - 40 - 30 * s.fall} fontSize={34}>
-              💫
-            </text>
-          )}
-          {s.stone && (
-            <circle
-              cx={s.stone.x}
-              cy={s.stone.y}
-              r={7}
-              className="fill-ink-muted stroke-navy"
-              strokeWidth={2}
-            />
-          )}
-        </svg>
+        <DavidStage s={s} fx={fx.items} hitAt={hitAt} onTap={doTap} />
 
         {s.phase !== "lost" && (
           <p
@@ -174,6 +149,7 @@ export function DavidGame() {
           <StageOverlay
             emoji={s.phase === "won" ? "🏆" : "😅"}
             title={s.phase === "won" ? "Goliat pokonany!" : "Tym razem Goliat górą"}
+            celebrate={s.phase === "won"}
             actionLabel="Zagraj jeszcze raz"
             onAction={start}
             footer={

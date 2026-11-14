@@ -21,7 +21,11 @@ import {
 } from "./engine";
 import { JerichoScene } from "./JerichoScene";
 import { RhythmTrack } from "./RhythmTrack";
-import { createSound, type JerichoSound } from "./sound";
+import { sfx } from "../audio/sfx";
+import { Particles } from "../fx/Particles";
+import { pop, shake } from "../fx/shake";
+import { useFx } from "../fx/useFx";
+import { TARGET_X, TRACK_Y } from "./RhythmTrack";
 
 const TAUNTS = [
   "Hej, orkiestra! Gracie na weselu?",
@@ -35,16 +39,12 @@ const KEYS = new Set([" ", "enter", "arrowup", "j", "f"]);
 export function JerichoGame() {
   const [s, setS] = useState<JerichoState>(createJericho);
   const [record, setRecord] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const sound = useRef<JerichoSound | null>(null);
   const lastBeat = useRef(-1);
   const stageRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLElement>(null);
+  const fx = useFx();
   const best = useBestScore("mury-jerycha", higherIsBetter);
   const active = s.phase === "playing" || s.phase === "collapse";
-
-  const sfx = (fn: (x: JerichoSound) => void) => {
-    if (!muted && sound.current) fn(sound.current);
-  };
 
   useGameLoop((dt) => {
     const n = stepJericho(s, dt);
@@ -52,21 +52,43 @@ export function JerichoGame() {
       const beat = Math.floor(n.time / BEAT);
       if (beat !== lastBeat.current) {
         lastBeat.current = beat;
-        sfx((x) => x.tick(beat % 4 === 0));
+        sfx.tick(beat % 4 === 0);
       }
     }
     const newMiss = n.notes.some(
       (note, i) => note.result === "miss" && s.notes[i]!.result !== "miss",
     );
-    if (newMiss) sfx((x) => x.miss());
-    if (n.phase === "collapse" && s.phase !== "collapse") sfx((x) => x.rumble());
-    if (n.phase === "won" && s.phase !== "won") setRecord(best.submit(n.score));
+    if (newMiss) {
+      sfx.fart();
+      fx.spawn("text", TARGET_X + 40, TRACK_Y - 40, n.time, {
+        text: "Pudło",
+        tone: "fill-ink-muted",
+      });
+    }
+    if (n.phase === "collapse" && s.phase !== "collapse") {
+      sfx.rumble();
+      sfx.boom();
+      shake(stageRef.current, 12, 900);
+      [240, 320, 400, 480, 560].forEach((x, i) =>
+        fx.spawn("dust", x, 290, n.time + i * 0.12, {
+          scale: 2.6,
+          life: 1.8,
+          tone: "fill-logo-yellow",
+        }),
+      );
+      fx.spawn("stars", 400, 200, n.time, { scale: 2 });
+    }
+    if (n.phase === "won" && s.phase !== "won") {
+      setRecord(best.submit(n.score));
+      sfx.fanfare();
+    }
+    if (n.phase === "lost" && s.phase !== "lost") sfx.sadTrombone();
     setS(n);
   }, active);
 
   const start = () => {
-    sound.current ??= createSound();
-    sound.current.unlock();
+    sfx.unlock();
+    fx.clear();
     lastBeat.current = -1;
     setS(startJericho());
     setRecord(false);
@@ -77,9 +99,29 @@ export function JerichoGame() {
   const doBlow = () => {
     const n = blow(s);
     const hit = n.notes.find((note, i) => note.result !== s.notes[i]!.result);
-    if (hit?.kind === "shout") sfx((x) => x.shout());
-    else if (hit) sfx((x) => x.horn(hit.result === "perfect"));
-    else if (n !== s) sfx((x) => x.miss());
+    pop(buttonRef.current, 1.04, 180);
+    if (hit?.kind === "shout") {
+      sfx.shout();
+      shake(stageRef.current, 8);
+      fx.spawn("stars", TARGET_X, TRACK_Y, n.time, { scale: 2 });
+      fx.spawn("text", 400, 120, n.time, { text: "OKRZYK!", scale: 2.2, tone: "fill-logo-red" });
+    } else if (hit) {
+      const perfect = hit.result === "perfect";
+      sfx.horn(perfect);
+      fx.spawn("burst", TARGET_X, TRACK_Y, n.time, { scale: perfect ? 1.3 : 1 });
+      if (perfect) fx.spawn("stars", TARGET_X, TRACK_Y, n.time, { scale: 0.8 });
+      if (n.combo > 0 && n.combo % 10 === 0) {
+        sfx.chime(n.combo / 10);
+        fx.spawn("text", 400, 160, n.time, {
+          text: `Seria ×${n.combo}!`,
+          scale: 1.6,
+          tone: "fill-accent-ink",
+        });
+      }
+    } else if (n !== s) {
+      sfx.fart();
+      shake(stageRef.current, 3, 200);
+    }
     setS(n);
   };
 
@@ -113,9 +155,6 @@ export function JerichoGame() {
         <p>
           Seria: {s.combo} · Celność: {accuracy}% · Punkty: {s.score}
         </p>
-        <Button size="sm" variant="ghost" onClick={() => setMuted((m) => !m)} aria-pressed={muted}>
-          {muted ? "🔇 Dźwięk wyłączony" : "🔊 Dźwięk włączony"}
-        </Button>
       </div>
 
       {/* Game stage is a focusable keyboard target (role=application), like a canvas game. */}
@@ -141,6 +180,7 @@ export function JerichoGame() {
         >
           <JerichoScene time={s.time} cracks={cracks} collapse={collapse} />
           <RhythmTrack s={s} />
+          <Particles items={fx.items} time={s.time} />
         </svg>
 
         {s.phase === "playing" && (
@@ -181,14 +221,15 @@ export function JerichoGame() {
             onAction={start}
             footer={best.best !== null ? `Rekord: ${best.best} pkt` : undefined}
           >
-            Trąb, gdy nuta wpadnie w złote kółko. Siedem okrążeń, a na końcu — wielki okrzyk! Gra ma
-            dźwięk 🔊.
+            Trąb, gdy nuta wpadnie w złote kółko. Siedem okrążeń, a na końcu — wielki okrzyk! Włącz
+            dźwięk 🔊 — to gra rytmiczna.
           </StageOverlay>
         )}
         {(s.phase === "won" || s.phase === "lost") && (
           <StageOverlay
             emoji={s.phase === "won" ? "🏆🧱" : "🙉"}
             title={s.phase === "won" ? "Mury runęły!" : "Mury jeszcze stoją…"}
+            celebrate={s.phase === "won"}
             actionLabel="Jeszcze raz"
             onAction={start}
             footer={
@@ -225,6 +266,7 @@ export function JerichoGame() {
       </p>
 
       <Button
+        ref={buttonRef}
         size="lg"
         fullWidth
         disabled={s.phase !== "playing"}

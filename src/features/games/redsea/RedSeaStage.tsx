@@ -11,11 +11,13 @@ import {
   type RedSeaState,
 } from "./engine";
 import { Chariot, FarShore, Moses, SeaWalls } from "./SeaArt";
+import { Particles } from "../fx/Particles";
+import type { Fx } from "../fx/useFx";
 
 const CHARIOT_OFFSETS = [12, 0, 18];
 
 /** Pure render of the game state (SVG, decorative — status is announced separately). */
-export function RedSeaStage({ s }: { s: RedSeaState }) {
+export function RedSeaStage({ s, fx }: { s: RedSeaState; fx: Fx[] }) {
   const shoreY = shoreLineY(s);
   const flood = s.phase === "flood" || s.phase === "won" ? clamp(s.phaseT / 1.3, 0, 1) : 0;
   const floating = flood > 0;
@@ -32,6 +34,21 @@ export function RedSeaStage({ s }: { s: RedSeaState }) {
           key={x}
           transform={`translate(${x} ${y + (floating ? Math.sin(s.time * 4 + i) * 5 : 0)}) rotate(${tilt})`}
         >
+          {!floating &&
+            [0, 1, 2].map((k) => {
+              const p = (s.time * 2.2 + k / 3 + i * 0.17) % 1;
+              return (
+                <circle
+                  key={k}
+                  cx={0}
+                  cy={0}
+                  r={7}
+                  transform={`translate(${(k - 1) * 12} ${26 + p * 26}) scale(${0.6 + p * 1.4})`}
+                  className="fill-logo-yellow"
+                  opacity={(1 - p) * 0.8}
+                />
+              );
+            })}
           <Chariot t={s.time * 14 + i * 1.7} />
         </g>
       );
@@ -122,8 +139,19 @@ export function RedSeaStage({ s }: { s: RedSeaState }) {
       {floating && <g opacity={0.9}>{chariots}</g>}
 
       <g transform={`translate(${s.px} ${s.playerY + bob})`}>
+        {(s.phase === "shore" || s.phase === "flood") && (
+          <circle
+            cx={0}
+            cy={0}
+            r={16}
+            transform={`translate(${s.phase === "shore" ? 16 : 44} ${s.phase === "shore" ? -32 : -54}) scale(${1 + Math.sin(s.time * 10) * 0.25})`}
+            className="fill-logo-yellow"
+            opacity={0.55}
+          />
+        )}
         <Moses stretching={s.phase === "flood" || s.phase === "won"} />
       </g>
+      <Particles items={fx} time={s.time} />
     </svg>
   );
 }
