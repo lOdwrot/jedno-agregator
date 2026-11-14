@@ -1,32 +1,21 @@
 import { useState } from "react";
-import { Badge, Button, Dialog, useToast } from "@/ui";
+import { Button, Dialog, useToast } from "@/ui";
+import { cn } from "@/lib/cn";
 import { COLLECTIBLE, DECK_SIZE, getCard, MAX_COPIES } from "../data/cards";
-import { FINISH_LABEL, RARITY_SYMBOL, type CardDef } from "../data/types";
+import { groupDeckKeys } from "../collection/deckGroups";
 import {
-  addToDeck,
-  canAddToDeck,
   deckProblems,
   deckSize,
   donateSpares,
   owned,
   parseKey,
-  removeFromDeck,
   setEnergy,
   spares,
   type CardKey,
   type Profile,
 } from "../collection/profile";
-import { CardArt } from "./CardArt";
 import { CardFace } from "./CardFace";
-
-const ORDER: Record<CardDef["kind"], number> = {
-  character: 0,
-  supporter: 1,
-  item: 2,
-  place: 3,
-  energy: 4,
-};
-const RANK = { common: 0, uncommon: 1, rare: 2, legendary: 3 } as const;
+import { DeckRow } from "./DeckRow";
 
 /** Edit the 50-card deck from the owned collection (max 3 copies of a card). */
 export function DeckBuilder({
@@ -38,17 +27,8 @@ export function DeckBuilder({
 }) {
   const [preview, setPreview] = useState<CardKey | null>(null);
   const { toast } = useToast();
-  const keys = (Object.keys(profile.collection) as CardKey[])
-    .filter((k) => owned(profile, k) > 0)
-    .sort((a, b) => {
-      const ca = getCard(parseKey(a).cardId);
-      const cb = getCard(parseKey(b).cardId);
-      return (
-        ORDER[ca.kind] - ORDER[cb.kind] ||
-        RANK[cb.rarity] - RANK[ca.rarity] ||
-        ca.name.localeCompare(cb.name, "pl")
-      );
-    });
+  const keys = (Object.keys(profile.collection) as CardKey[]).filter((k) => owned(profile, k) > 0);
+  const groups = groupDeckKeys(keys);
   const problems = deckProblems(profile);
   const distinct = new Set(keys.map((k) => parseKey(k).cardId)).size;
   const extra = spares(profile);
@@ -59,33 +39,6 @@ export function DeckBuilder({
         <p className="font-display text-lg font-extrabold text-navy">
           Talia: {deckSize(profile)} / {DECK_SIZE}
         </p>
-        <div
-          className="flex items-center gap-1"
-          role="group"
-          aria-label="Liczba kart Łaski w talii"
-        >
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => update((p) => setEnergy(p, p.energy - 1))}
-            disabled={profile.energy === 0}
-            aria-label="Usuń 1 Łaskę"
-          >
-            −1
-          </Button>
-          <span className="min-w-24 text-center font-bold text-navy">
-            ✨ Łaska × {profile.energy}
-          </span>
-          <Button
-            size="sm"
-            variant="soft"
-            onClick={() => update((p) => setEnergy(p, p.energy + 1))}
-            disabled={deckSize(profile) >= DECK_SIZE}
-            aria-label="Dodaj 1 Łaskę"
-          >
-            +1
-          </Button>
-        </div>
         <p className="text-sm text-ink-muted sm:ml-auto">
           Kolekcja: {distinct} / {COLLECTIBLE.length} różnych kart
         </p>
@@ -103,70 +56,90 @@ export function DeckBuilder({
         </ul>
       )}
 
-      <ul className="grid gap-2 sm:grid-cols-2">
-        {keys.map((k) => {
-          const { cardId, finish } = parseKey(k);
-          const c = getCard(cardId);
-          const inDeck = profile.deck.filter((x) => x === k).length;
-          return (
-            <li key={k} className="flex items-center gap-3 rounded-card bg-surface p-2 shadow-card">
-              <button
-                type="button"
-                onClick={() => setPreview(k)}
-                className="flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left"
-              >
-                <span
-                  aria-hidden="true"
-                  className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-muted"
-                >
-                  <CardArt cardId={cardId} emojiClass="text-2xl" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block truncate font-bold text-navy">
-                    {c.name}
-                    <span className="sr-only"> — podgląd karty</span>
-                  </span>
-                  <span className="flex flex-wrap gap-1 text-xs text-ink-muted">
-                    <span aria-hidden="true">{RARITY_SYMBOL[c.rarity]}</span>
-                    {finish !== "plain" && <Badge tone="accent">{FINISH_LABEL[finish]}</Badge>}
-                    <span>masz × {owned(profile, k)}</span>
-                  </span>
-                </span>
-              </button>
-              <div
-                className="flex shrink-0 items-center gap-1"
-                role="group"
-                aria-label={`${c.name} w talii`}
-              >
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => update((p) => removeFromDeck(p, k))}
-                  disabled={!inDeck}
-                  aria-label={`Usuń z talii: ${c.name}`}
-                >
-                  −
-                </Button>
-                <span
-                  className="w-6 text-center font-bold text-navy"
-                  aria-label={`w talii: ${inDeck}`}
-                >
-                  {inDeck}
-                </span>
-                <Button
-                  size="sm"
-                  variant="soft"
-                  onClick={() => update((p) => addToDeck(p, k))}
-                  disabled={!canAddToDeck(profile, k)}
-                  aria-label={`Dodaj do talii: ${c.name}`}
-                >
-                  +
-                </Button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      <section aria-labelledby="deck-group-energy" className="flex flex-col gap-2">
+        <h3 id="deck-group-energy" className="font-display text-lg font-extrabold text-navy">
+          Łaska
+        </h3>
+        <div className="flex items-center gap-3 self-start rounded-card bg-surface p-2 shadow-card">
+          <div
+            className="flex items-center gap-1"
+            role="group"
+            aria-label="Liczba kart Łaski w talii"
+          >
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => update((p) => setEnergy(p, p.energy - 1))}
+              disabled={profile.energy === 0}
+              aria-label="Usuń 1 Łaskę"
+            >
+              −1
+            </Button>
+            <span className="min-w-24 text-center font-bold text-navy">
+              ✨ Łaska × {profile.energy}
+            </span>
+            <Button
+              size="sm"
+              variant="soft"
+              onClick={() => update((p) => setEnergy(p, p.energy + 1))}
+              disabled={deckSize(profile) >= DECK_SIZE}
+              aria-label="Dodaj 1 Łaskę"
+            >
+              +1
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {groups.map((g) => (
+        <section key={g.id} aria-labelledby={`deck-group-${g.id}`} className="flex flex-col gap-2">
+          <h3 id={`deck-group-${g.id}`} className="font-display text-lg font-extrabold text-navy">
+            {g.label}{" "}
+            <span className="text-sm font-bold text-ink-muted">
+              ({g.stacks.reduce((n, s) => n + s.length, 0)})
+            </span>
+          </h3>
+          <ul className="grid items-start gap-2 sm:grid-cols-2">
+            {g.stacks.map((stack) => (
+              <li key={stack[0]} className="rounded-card bg-surface shadow-card">
+                {stack.length === 1 ? (
+                  <DeckRow
+                    cardKey={stack[0]!}
+                    profile={profile}
+                    update={update}
+                    onPreview={setPreview}
+                  />
+                ) : (
+                  <ol aria-label={`Linia ewolucji: ${getCard(parseKey(stack[0]!).cardId).name}`}>
+                    {stack.map((k, i) => (
+                      <li key={k} className={i > 0 ? "border-t border-line" : undefined}>
+                        {i > 0 && isNextStage(stack, i) && (
+                          <span
+                            aria-hidden="true"
+                            className={cn(
+                              "-mb-2 block pt-1 text-xs text-ink-muted",
+                              STAGE_PAD[stageOf(stack, i)],
+                            )}
+                          >
+                            ↓ ewoluuje
+                          </span>
+                        )}
+                        <DeckRow
+                          cardKey={k}
+                          profile={profile}
+                          update={update}
+                          onPreview={setPreview}
+                          className={STAGE_PAD[stageOf(stack, i)]}
+                        />
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
       <p className="text-sm text-ink-muted">
         W talii możesz mieć najwyżej {MAX_COPIES} egzemplarze tej samej karty (dowolnej wersji).
         Łaska jest bez limitu.
@@ -202,4 +175,17 @@ export function DeckBuilder({
       </Dialog>
     </div>
   );
+}
+
+const STAGE_PAD = ["pl-2", "pl-7", "pl-12", "pl-16"] as const;
+
+/** Evolution stage of row i (0 = the first card of the line; other finishes share the stage). */
+function stageOf(stack: readonly CardKey[], i: number) {
+  const ids = new Set(stack.slice(0, i + 1).map((k) => parseKey(k).cardId));
+  return Math.min(ids.size - 1, STAGE_PAD.length - 1);
+}
+
+/** Whether row i of an evolution stack is a later stage (not just another finish of the card above). */
+function isNextStage(stack: readonly CardKey[], i: number) {
+  return parseKey(stack[i]!).cardId !== parseKey(stack[i - 1]!).cardId;
 }
