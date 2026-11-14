@@ -4,7 +4,7 @@ import { OPPONENTS } from "../data/opponents";
 import { deckList, newProfile } from "../collection/profile";
 import { dispatch, evolveTargets } from "./actions";
 import { aiAction } from "./ai";
-import { applyDefense } from "./combat";
+import { applyDefense, placeArmor, previewDamage, startTurn } from "./combat";
 import { createGame, toInPlay, type DeckList, type Game } from "./state";
 
 const opponentDeck = (i: number): DeckList =>
@@ -44,6 +44,27 @@ describe("Walka o duszę — engine", () => {
     const piotr = toInPlay({ uid: 3, cardId: "piotr", finish: "plain" }, 0); // Opoka −20
     expect(applyDefense(att, scholanka, 40)).toBe(80);
     expect(applyDefense(att, piotr, 40)).toBe(20);
+  });
+
+  it("places: armor reduces damage taken, extra draw adds a card each turn", () => {
+    const g = createGame(deckList(newProfile()), opponentDeck(0), 5);
+    g.players.me.active = toInPlay({ uid: 900, cardId: "scholanka", finish: "plain" }, 0);
+    const atk = { name: "test", cost: 0, damage: 30 };
+    const before = previewDamage(g, "ai", atk);
+    g.place = { cardId: "swarzewo", owner: "me" };
+    expect(placeArmor(g, "me")).toBe(10);
+    expect(placeArmor(g, "ai")).toBe(0);
+    expect(previewDamage(g, "ai", atk)).toBe(before - 10);
+    g.place = { cardId: "pelplin", owner: "me" };
+    expect(previewDamage(g, "ai", atk)).toBe(before - 10);
+
+    g.place = { cardId: "brygida", owner: "me" };
+    const hand = g.players.me.hand.length;
+    startTurn(g, "me");
+    expect(g.players.me.hand.length).toBe(hand + 2);
+    const aiHand = g.players.ai.hand.length;
+    startTurn(g, "ai");
+    expect(g.players.ai.hand.length).toBe(aiHand + 1);
   });
 
   it("evolution is not allowed in the first turns", () => {

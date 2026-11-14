@@ -43,6 +43,9 @@ export function placeAura(g: Game, pid: PlayerId) {
   return e.k === "place" ? e : null;
 }
 
+/** Damage reduction a place gives the characters of `pid`. */
+export const placeArmor = (g: Game, pid: PlayerId) => placeAura(g, pid)?.armor ?? 0;
+
 export function retreatCost(g: Game, pid: PlayerId, c: InPlay): number {
   if (abilities(g, pid).some((a) => a.k === "freeRetreat")) return 0;
   return Math.max(0, charDef(c).retreat - (placeAura(g, pid)?.retreatMinus ?? 0));
@@ -54,14 +57,19 @@ export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   return ab + (placeAura(g, pid)?.attackBonus ?? 0) + FINISH_BONUS[attacker.finish].damage;
 }
 
-/** Final damage to the defending character (weakness ×2, armor, shield). */
-export function applyDefense(attacker: InPlay, defender: InPlay, raw: number): number {
+/** Final damage to the defending character (weakness ×2, armor, place armor, shield). */
+export function applyDefense(
+  attacker: InPlay,
+  defender: InPlay,
+  raw: number,
+  placeArmor = 0,
+): number {
   if (raw <= 0) return 0;
   let d = raw;
   if (charDef(defender).weakness === charDef(attacker).element) d *= 2;
   const ab = own(defender);
   if (ab?.k === "armor") d -= ab.n;
-  d -= defender.shield;
+  d -= placeArmor + defender.shield;
   return Math.max(0, d);
 }
 
@@ -75,7 +83,7 @@ export function previewDamage(g: Game, pid: PlayerId, atk: AttackDef, fuel = 0):
     if (e.k === "revenge") raw += Math.floor(me.damage / 10) * e.n;
     if (e.k === "fuel") raw += Math.min(fuel, e.max) * e.n;
   }
-  return applyDefense(me, foe, raw);
+  return applyDefense(me, foe, raw, placeArmor(g, other(pid)));
 }
 
 export function hurt(g: Game, target: InPlay, amount: number, weak = false) {
@@ -223,6 +231,9 @@ export function startTurn(g: Game, pid: PlayerId) {
   }
   log(g, pid === "me" ? `Tura ${g.turnNo}: Twój ruch.` : `Tura ${g.turnNo}: ruch pomiotów.`);
   if (pid === "ai" && g.boost?.extraDraw) draw(g, pid, g.boost.extraDraw);
+  const placeDraw = placeAura(g, pid)?.extraDraw ?? 0;
+  if (placeDraw && draw(g, pid, placeDraw))
+    log(g, `${getCard(g.place!.cardId).name}: dodatkowa karta.`);
   const left = g.players[pid].deck.length;
   if (left <= 3)
     log(
