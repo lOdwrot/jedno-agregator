@@ -83,7 +83,7 @@ describe("50-card rules", () => {
 
   it("the computer answers its own search and the extreme opponent starts boosted", () => {
     const o = OPPONENTS.find((x) => x.id === "otchlan")!;
-    const g = createGame(deckList(newProfile()), oppDeck(3), 5, o.boost);
+    const g = createGame(deckList(newProfile()), oppDeck(OPPONENTS.indexOf(o)), 5, o.boost);
     expect(g.players.ai.active!.energy).toBe(2);
     expect(g.players.ai.deck.length + g.players.ai.hand.length).toBe(50 - 4 - inPlayCount(g) - 2);
   });

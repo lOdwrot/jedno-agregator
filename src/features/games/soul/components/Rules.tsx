@@ -43,7 +43,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Poziomy trudności",
-    "Chochliki z kanapy są łatwe, Biesy plotkary średnie (ich pierwszy pomiot zaczyna z 1 Pokusą), Legion Pychy trudny, a Otchłań Upadłych ekstremalna: Lucyfer, Abaddon i Acedia, 2 Pokusy na pierwszym pomiocie od startu i dodatkowa karta co turę. Za to ich talia kończy się szybciej…",
+    "Chochliki z kanapy są łatwe, Biesy plotkary średnie (ich pierwszy pomiot zaczyna z 1 Pokusą), Legion Pychy trudny, Smocze Zastępy bardzo trudne (ich pierwszy pomiot zaczyna z 2 Pokusami), a Otchłań Upadłych ekstremalna: Lucyfer, Abaddon i Acedia, 2 Pokusy na pierwszym pomiocie od startu i dodatkowa karta co turę. Za to ich talia kończy się szybciej…",
   ],
   [
     "Kolekcja",

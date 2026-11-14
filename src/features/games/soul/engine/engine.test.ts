@@ -101,7 +101,7 @@ describe("Walka o duszę — engine", () => {
     expect(evolveTargets(g, g.turn, kleryk)).toEqual([]);
   });
 
-  it.each([0, 1, 2, 3])("full AI-vs-AI duel against opponent %i always finishes", (i) => {
+  it.each(OPPONENTS.map((_, i) => i))("full AI-vs-AI duel against opponent %i always finishes", (i) => {
     for (const seed of [1, 2, 3, 4, 5, 6]) {
       const g = autoplay(
         createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.boost),
