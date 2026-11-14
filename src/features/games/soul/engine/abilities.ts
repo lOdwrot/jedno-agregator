@@ -22,6 +22,11 @@ const energyInDeck = (g: Game, pid: PlayerId) =>
 export const energyNeed = (c: InPlay) =>
   Math.max(0, Math.max(...charDef(c).attacks.map((x) => x.cost)) - c.energy);
 
+/** Characters in play of `pid` whose activated ability can be used right now. */
+export function readyAbilities(g: Game, pid: PlayerId): InPlay[] {
+  return inPlay(g.players[pid]).filter((c) => canUseAbility(g, pid, c));
+}
+
 export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
   const e = charDef(c).ability?.effect;
   if (

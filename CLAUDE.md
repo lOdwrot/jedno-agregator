@@ -86,6 +86,8 @@ their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Al
 and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
 `recycle` take cards back from the discard pile. `searchEnergy` attacks take an optional `target` (benched uid) on the
 `attack` action — the UI asks via `benchEnergyTargets` when more than one benched character could get the energy.
+Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
+`readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in
 `index.css`; canvas: `board/prestige.ts`), stained prints add lead-lined glass panes, a glass reflection and — while
 active (active slot, hovered, dragged; DOM: `active` prop or hover/focus) — a rainbow aura with rising sparkles.
