@@ -3,7 +3,7 @@ import { COLLECTIBLE } from "../data/cards";
 import type { CardDef, Finish, Rarity } from "../data/types";
 import { keyOf, type CardKey } from "./profile";
 
-export type PackId = "wspolnota" | "swieci" | "papieze";
+export type PackId = "wspolnota" | "swieci" | "papieze" | "skarbiec";
 
 export interface PackType {
   id: PackId;
@@ -17,7 +17,13 @@ export interface PackType {
   emoji: string;
   /** Tailwind gradient (tokens only) of the foil. */
   foil: string;
-  odds: { legendary: number; rareInUncommonSlot: number; pool?: (c: CardDef) => boolean };
+  odds: {
+    legendary: number;
+    rareInUncommonSlot: number;
+    pool?: (c: CardDef) => boolean;
+    /** Chances of a stained / gilded print (default 3% / 12%). */
+    finish?: { stained: number; gilded: number };
+  };
 }
 
 const SAINTS = new Set(["wojciech", "dorota", "komorowski", "popieluszko"]);
@@ -56,19 +62,39 @@ export const PACKS: readonly PackType[] = [
     foil: "from-logo-yellow via-surface to-logo-yellow",
     odds: { legendary: 0.4, rareInUncommonSlot: 0.25 },
   },
+  {
+    id: "skarbiec",
+    name: "Skarbiec Katedry",
+    subtitle: "Legendarna edycja kolekcjonerska",
+    sticker: "Pewna legenda i rzadka!",
+    price: 1000,
+    art: "oliwa",
+    emoji: "💎",
+    foil: "from-logo-yellow via-logo-red to-logo-yellow",
+    odds: {
+      legendary: 1,
+      rareInUncommonSlot: 1,
+      finish: { stained: 0.12, gilded: 0.35 },
+    },
+  },
 ];
 
 export const findPack = (id: string) => PACKS.find((p) => p.id === id) ?? PACKS[0]!;
 
-function pickFinish(r: number): Finish {
-  return r < 0.03 ? "stained" : r < 0.15 ? "gilded" : "plain";
+const DEFAULT_FINISH = { stained: 0.03, gilded: 0.12 };
+
+function pickFinish(r: number, odds = DEFAULT_FINISH): Finish {
+  return r < odds.stained ? "stained" : r < odds.stained + odds.gilded ? "gilded" : "plain";
 }
 
 function pick(pool: readonly CardDef[], rnd: () => number): CardDef {
   return pool[Math.floor(rnd() * pool.length)]!;
 }
 
-/** 5 cards: 3 common, 1 uncommon (sometimes rare), 1 rare-or-legendary. The best card comes last. */
+/**
+ * 5 cards: 3 common, 1 uncommon (sometimes rare), 1 rare-or-legendary. The best card comes last.
+ * Skarbiec Katedry: the 4th card is always rare and the last one always legendary.
+ */
 export function rollPack(pack: PackType, rnd: () => number = Math.random): CardKey[] {
   const of = (r: Rarity) => COLLECTIBLE.filter((c) => c.rarity === r);
   const out: CardKey[] = [];
@@ -82,7 +108,7 @@ export function rollPack(pack: PackType, rnd: () => number = Math.random): CardK
       const special = pack.odds.pool ? COLLECTIBLE.filter(pack.odds.pool) : [];
       card = special.length && rnd() < 0.7 ? pick(special, rnd) : pick(of("rare"), rnd);
     }
-    out.push(keyOf(card.id, pickFinish(rnd())));
+    out.push(keyOf(card.id, pickFinish(rnd(), pack.odds.finish)));
   }
   return out;
 }

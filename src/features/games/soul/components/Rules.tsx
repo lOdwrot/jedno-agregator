@@ -43,7 +43,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Kolekcja",
-    "Za każdą walkę dostajesz talenty (więcej za wygraną i za ocalone dusze) i prawo do 1 boostera. Rzadkość: ● pospolita, ◆ niepospolita, ★ rzadka, 👑 legendarna. Ta sama karta może trafić się złocona ✦ lub witrażowa ❖ — jest wtedy silniejsza.",
+    "Za każdą walkę dostajesz talenty (więcej za wygraną i za ocalone dusze) i prawo do 1 boostera. Rzadkość: ● pospolita, ◆ niepospolita, ★ rzadka, 👑 legendarna. Ta sama karta może trafić się złocona ✦ lub witrażowa ❖ — jest wtedy silniejsza. Legendarny Skarbiec Katedry (1000 talentów) zawsze ma kartę rzadką i legendarną.",
   ],
   [
     "Talia",

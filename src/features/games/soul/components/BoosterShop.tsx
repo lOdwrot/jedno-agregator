@@ -18,7 +18,7 @@ interface Opening {
   key: number;
 }
 
-/** Three booster editions to choose from; opening one plays the full-screen animation. */
+/** Booster editions to choose from; opening one plays the full-screen animation. */
 export function BoosterShop({
   profile,
   update,
@@ -58,10 +58,11 @@ export function BoosterShop({
         <p className="mt-1 text-sm text-ink-muted">
           Każda paczka ma 5 kart: 3 pospolite, 1 niepospolitą i 1 rzadką lub legendarną. Karty mogą
           trafić się w wersji złoconej ✦ (+10 ♥) albo witrażowej ❖ (+20 ♥, +10 obrażeń). Po każdym
-          pojedynku możesz otworzyć jedną paczkę.
+          pojedynku możesz otworzyć jedną paczkę. Skarbiec Katedry za 1000 talentów gwarantuje kartę
+          rzadką i legendarną oraz daje dużo większą szansę na złocenia i witraże.
         </p>
       </div>
-      <ul className="grid gap-6 sm:grid-cols-3">
+      <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {PACKS.map((pack) => {
           const reason = why(pack);
           return (
