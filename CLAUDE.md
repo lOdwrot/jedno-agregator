@@ -110,7 +110,8 @@ person reads them from their side (`g.pvp.log` / `g.pvp.reason` hold the guest's
 Bump `PROTOCOL` in `pvp/protocol.ts` whenever the engine or messages change.
 Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
 `soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in
-`soul/collection/packs.ts`; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.
+`soul/collection/packs.ts`; harder opponents carry `Opponent.fee` (paid with the `FeePayment` animation before the duel) and
+`Opponent.prize` (edition odds of a free booster opened right after a win, listed in `PrizeTable`); signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.
 
 ## Conventions
 
