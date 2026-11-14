@@ -38,7 +38,8 @@ export const OPPONENTS: readonly Opponent[] = [
       algorytm: 1,
       czat: 1,
       "wieczne-jutro": 1,
-      pokusa: 26,
+      banka: 1,
+      pokusa: 25,
     },
     letter: {
       greeting: "Mój drogi Smołku,",
@@ -77,7 +78,8 @@ export const OPPONENTS: readonly Opponent[] = [
       influencer: 1,
       rozpamietywanie: 1,
       lawina: 1,
-      pokusa: 17,
+      kabaret: 1,
+      pokusa: 16,
     },
     letter: {
       greeting: "Smołku, ty kompletny amatorze,",
@@ -117,7 +119,9 @@ export const OPPONENTS: readonly Opponent[] = [
       influencer: 1,
       rozpamietywanie: 1,
       nawyki: 1,
-      pokusa: 16,
+      impreza: 1,
+      banka: 1,
+      pokusa: 14,
     },
     letter: {
       greeting: "Smołku, ostatnia szansa,",
@@ -159,7 +163,9 @@ export const OPPONENTS: readonly Opponent[] = [
       rozpamietywanie: 1,
       nawyki: 1,
       smok: 1,
-      pokusa: 14,
+      impreza: 1,
+      kabaret: 1,
+      pokusa: 12,
     },
     letter: {
       greeting: "Smołku, odsuń się,",

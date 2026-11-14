@@ -10,7 +10,7 @@ import {
   retreatBlock,
   type Action,
 } from "../engine/actions";
-import { fuelMax, previewDamage, retreatCost } from "../engine/combat";
+import { fuelMax, placeRule, previewDamage, retreatCost } from "../engine/combat";
 import { canPlaySupport, supportTargets, targetKind } from "../engine/support";
 import { charDef, inPlay, nameOf, type CardInst, type Game, type InPlay } from "../engine/state";
 
@@ -68,7 +68,9 @@ function handOptions(g: Game, c: CardInst): Opt[] {
         note:
           s.kind === "supporter" && g.flags.supporter
             ? "Pomocnika można zagrać raz na turę."
-            : "Ta karta teraz nic by nie zmieniła.",
+            : s.kind === "item" && placeRule(g, "noItems")
+              ? `${getCard(g.place!.cardId).name}: nikt nie może teraz zagrywać przedmiotów.`
+              : "Ta karta teraz nic by nie zmieniła.",
       },
     ];
   const kind = targetKind(s);
@@ -103,6 +105,11 @@ function fieldOptions(g: Game, c: InPlay): Opt[] {
     out.push({
       label: `Użyj mocy: ${charDef(c).ability!.name}`,
       action: { type: "ability", target: c.uid },
+    });
+  else if (charDef(c).ability && placeRule(g, "noAbilities"))
+    out.push({
+      label: "",
+      note: `${getCard(g.place!.cardId).name}: nikt nie może teraz używać mocy.`,
     });
   if (me.active?.uid === c.uid) {
     charDef(c).attacks.forEach((a, index) => {

@@ -11,7 +11,7 @@ import {
   handEnergy,
   healAll,
   hurt,
-  placeArmor,
+  isWeak,
   promoteUid,
   resolveKOs,
   retreatCost,
@@ -144,8 +144,8 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0): boolean {
     }
     if (e.k === "revenge") raw += Math.floor(a.damage / 10) * e.n;
   }
-  const dmg = applyDefense(a, d, raw, placeArmor(g, other(pid)));
-  hurt(g, d, dmg, dmg > 0 && charDef(d).weakness === charDef(a).element);
+  const dmg = applyDefense(g, other(pid), a, d, raw);
+  hurt(g, d, dmg, dmg > 0 && isWeak(g, a, d));
   if (atk.damage > 0) log(g, `${nameOf(d)} otrzymuje ${dmg} obrażeń.`);
   for (const e of atk.effects ?? []) {
     switch (e.k) {
