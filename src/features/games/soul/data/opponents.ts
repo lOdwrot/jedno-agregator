@@ -205,9 +205,9 @@ export const OPPONENTS: readonly Opponent[] = [
     reward: { win: 450, loss: 80 },
     fee: 50,
     prize: [
-      { pack: "swieci", chance: 0.55 },
+      { pack: "swieci", chance: 0.15 },
       { pack: "zakrystia", chance: 0.15 },
-      { pack: "papieze", chance: 0.25 },
+      { pack: "papieze", chance: 0.65 },
       { pack: "witraze", chance: 0.05 },
     ],
     boost: { startEnergy: 2, extraDraw: 1 },
