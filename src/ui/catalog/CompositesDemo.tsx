@@ -11,6 +11,7 @@ import {
   Marquee,
   Section,
   Select,
+  TextField,
   ShareButton,
   Sheet,
   Tabs,
@@ -63,6 +64,9 @@ export function CompositesDemo() {
           />
         </Sheet>
       </Demo>
+      <Demo name="TextField">
+        <TextFieldDemo />
+      </Demo>
       <Demo name="Tabs">
         <Tabs
           label="Media"
@@ -114,5 +118,21 @@ export function CompositesDemo() {
         />
       </Demo>
     </Group>
+  );
+}
+
+function TextFieldDemo() {
+  const [v, setV] = useState("");
+  return (
+    <TextField
+      label="Kod gry"
+      hint="4 cyfry od gospodarza"
+      value={v}
+      onChange={setV}
+      inputMode="numeric"
+      maxLength={4}
+      error={v && !/^\d+$/.test(v) ? "Tylko cyfry." : null}
+      className="max-w-xs"
+    />
   );
 }

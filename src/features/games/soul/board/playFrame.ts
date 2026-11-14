@@ -40,7 +40,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       await fx.banner(
         a.mid,
         r.w,
-        ev.pid === "me" ? "Twoja tura" : "Tura pomiotów",
+        ev.pid === "me" ? "Twoja tura" : state.pvp ? "Tura rywala" : "Tura pomiotów",
         `Tura ${state.turnNo}`,
         ev.pid === "me" ? p["logo-yellow"] : p["logo-red"],
       );
@@ -350,7 +350,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       await fx.banner(
         a.mid,
         r.w,
-        won ? "Dusze ocalone!" : "Pomioty górą",
+        won ? "Dusze ocalone!" : state.pvp ? "Rywal górą" : "Pomioty górą",
         "",
         won ? p["logo-yellow"] : p["logo-red"],
       );

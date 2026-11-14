@@ -68,7 +68,11 @@ export class BoardRenderer {
   }
 
   destroy() {
-    this.app.destroy(true, { children: true });
+    try {
+      this.app.destroy(true, { children: true });
+    } catch {
+      /* init never finished (e.g. no WebGL) — nothing to tear down */
+    }
   }
 
   /** Data of the card shown under `key` in the state. */
@@ -171,8 +175,9 @@ export class BoardRenderer {
     return this.sprites.get(key);
   }
 
-  setThinking(on: boolean) {
+  setThinking(on: boolean, g?: Game) {
     this.table.thinking.visible = on;
+    if (on && g) this.table.thinking.text = g.pvp ? "rywal myśli…" : "pomioty kombinują…";
   }
 
   setHover(key: number | null) {

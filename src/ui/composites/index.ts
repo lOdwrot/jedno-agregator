@@ -2,6 +2,7 @@ export { Dialog, type DialogProps } from "./Dialog";
 export { Sheet, type SheetProps } from "./Sheet";
 export { Tabs, type TabsProps, type TabItem } from "./Tabs";
 export { Select, type SelectProps, type SelectOption } from "./Select";
+export { TextField, type TextFieldProps } from "./TextField";
 export { Carousel, type CarouselProps } from "./Carousel";
 export { Marquee, type MarqueeProps } from "./Marquee";
 export { ToastProvider } from "./Toast";

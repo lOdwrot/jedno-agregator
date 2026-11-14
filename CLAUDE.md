@@ -88,6 +88,15 @@ and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, 
 `attack` action — the UI asks via `benchEnergyTargets` when more than one benched character could get the energy.
 Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is readable on the table without opening the card. Opponents may carry an `AiBoost` (energy on the starting active from the
 deck, extra draws per turn) — `zastepy` (Smocze Zastępy, "bardzo trudny": 2 energy on the start, no extra draw) sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
+**Multiplayer** (tab "Multiplayer", `soul/pvp/`): two people, each with their own deck, over WebRTC (PeerJS —
+the free broker `0.peerjs.com` only introduces the browsers; `VITE_PEER_SERVER` points to another one, e.g. a local
+`peer` server for tests). The host registers `jedno-wod-<4 digits>`, the guest types the code. Lock-step sync
+(`pvp/sync.ts`): the host orders every move and sends `apply` + a state checksum, the guest replays it on the same
+deterministic engine (resync with the full state on mismatch). The engine always calls the host `"me"` and the
+guest `"ai"` (`g.pvp` set: no AI, both sides `parish`, both pick their first character, chained promotes); the guest's
+screen shows `flipGame(g)`. Log lines about a player's move go through `say(g, pid, mine, solo, rival)` so each
+person reads them from their side (`g.pvp.log` / `g.pvp.reason` hold the guest's copy). No talents for PvP.
+Bump `PROTOCOL` in `pvp/protocol.ts` whenever the engine or messages change.
 Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
 `soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in
 `soul/collection/packs.ts`; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.

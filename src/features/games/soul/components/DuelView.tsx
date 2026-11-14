@@ -1,43 +1,56 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button, Dialog, usePrefersReducedMotion } from "@/ui";
 import { getCard } from "../data/cards";
-import type { Opponent } from "../data/opponents";
 import { music } from "../audio/music";
 import { loadPrefs, savePrefs, type AudioPrefs } from "../audio/context";
 import { BoardView } from "../board/BoardView";
-import { createGame, type DeckList, type Game } from "../engine/state";
+import type { Game, PlayerId } from "../engine/state";
+import type { Link } from "../pvp/link";
+import type { Role } from "../pvp/sync";
+import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
 import { CardFace } from "./CardFace";
 import { DuelBars, DuelTopBar } from "./DuelBars";
-import { DuelResult } from "./DuelResult";
 import { DuelSidebar } from "./DuelSidebar";
 import { SearchDialog } from "./SearchDialog";
 import { useDuelPlayer } from "./useDuelPlayer";
 
 interface Props {
-  opponent: Opponent;
-  deck: DeckList;
-  onFinish: (won: boolean, souls: number) => number;
-  onExit: (openBooster: boolean) => void;
+  initial: Game;
+  /** Who we play against (top bar). */
+  opponent: { emoji: string; name: string };
+  /** Two-player duel: the screen shows this seat and moves go through the WebRTC sync. */
+  net?: { role: Role; link: Link };
+  onOver: (g: Game) => void;
+  /** End-of-duel dialog, shown once the last animation finished. */
+  result: ReactNode;
+  /** Extra notice over the board (e.g. the other player disconnected). */
+  notice?: ReactNode;
+  /** No more moves (the other player left). */
+  frozen?: boolean;
+  exitLabel: string;
+  onExit: () => void;
 }
 
-const opponentDeck = (o: Opponent): DeckList =>
-  Object.entries(o.deck).flatMap(([cardId, n]) =>
-    Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
-  );
-
 /** Full-screen duel: Pixi board in the middle, slim bars on top and bottom, no page scrolling. */
-export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
+export function DuelView({
+  initial,
+  opponent,
+  net,
+  onOver,
+  result,
+  notice,
+  exitLabel,
+  onExit,
+  frozen,
+}: Props) {
   const reduced = usePrefersReducedMotion();
   const root = useRef<HTMLElement>(null);
-  const [initial] = useState<Game>(() =>
-    createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.boost),
-  );
+  const pov: PlayerId = net?.role === "guest" ? "ai" : "me";
   const [sel, setSel] = useState<Selection | { zone: "place" } | null>(null);
   const [lesson, setLesson] = useState<string | null>(null);
   const [lastLesson, setLastLesson] = useState<string | null>(null);
   const [showLog, setShowLog] = useState(false);
-  const [earned, setEarned] = useState<number | null>(null);
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [full, setFull] = useState(false);
   const seen = useRef(new Set<string>());
@@ -48,11 +61,15 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
     setLesson(id);
     setLastLesson(id);
   }, []);
-  const onOver = useCallback(
-    (g: Game) => setEarned(onFinish(g.winner === "me", g.players.me.souls)),
-    [onFinish],
-  );
-  const { live, view, busy, act, renderer } = useDuelPlayer(initial, { onOver, onDemon });
+  const player = useDuelPlayer(initial, {
+    onOver,
+    onDemon: net ? undefined : onDemon,
+    ai: !net,
+    pov,
+  });
+  const { live, view, busy, renderer } = player;
+  const move = usePvpSync(net, player);
+  const act = frozen ? () => undefined : (move ?? player.act);
 
   // lock page scroll, start the music (the duel starts from a click, so audio is allowed)
   useEffect(() => {
@@ -125,9 +142,10 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
       <DuelTopBar
         opponent={opponent}
         over={live.phase === "over"}
+        exitLabel={exitLabel}
         prefs={prefs}
         full={full}
-        onExit={() => onExit(false)}
+        onExit={onExit}
         onToggle={togglePref}
         onFull={toggleFull}
         onLog={() => setShowLog(true)}
@@ -158,6 +176,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
             </div>
           </div>
         )}
+        {notice}
       </div>
       <DuelBars g={live} view={view} busy={busy} onAction={act} />
 
@@ -208,17 +227,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
       <Dialog open={showLog} onClose={() => setShowLog(false)} title="Przebieg walki" size="sm">
         <DuelSidebar g={live} lesson={lesson ?? lastLesson} />
       </Dialog>
-      {live.phase === "over" && earned !== null && !busy && (
-        <DuelResult
-          won={live.winner === "me"}
-          reason={live.reason}
-          souls={me.souls}
-          earned={earned}
-          opponent={opponent}
-          onBooster={() => onExit(true)}
-          onMenu={() => onExit(false)}
-        />
-      )}
+      {live.phase === "over" && !busy && result}
     </section>
   );
 }

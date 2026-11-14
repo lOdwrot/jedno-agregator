@@ -13,6 +13,7 @@ import {
   inPlay,
   log,
   nameOf,
+  say,
   other,
   rand,
   shuffle,
@@ -140,8 +141,13 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
 
   me.hand = me.hand.filter((c) => c.uid !== card.uid);
   if (def.kind === "supporter") g.flags.supporter = true;
-  const who = pid === "me" ? "Zagrywasz" : "Pomioty zagrywają";
-  log(g, `${who}: ${def.emoji} ${def.name}.`);
+  say(
+    g,
+    pid,
+    `Zagrywasz: ${def.emoji} ${def.name}.`,
+    `Pomioty zagrywają: ${def.emoji} ${def.name}.`,
+    (n) => `${n} zagrywa: ${def.emoji} ${def.name}.`,
+  );
   if (def.kind !== "place") {
     me.discard.push(card);
     emit(g, { t: "support", pid, cardId: def.id, uid: card.uid });
@@ -168,7 +174,13 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       me.hand.push(pick);
       shuffle(g, me.deck);
       emit(g, { t: "draw", pid, n: 1 });
-      log(g, pid === "me" ? `Do ręki trafia: ${nameOf(pick)}.` : "Pomioty biorą postać z talii.");
+      say(
+        g,
+        pid,
+        `Do ręki trafia: ${nameOf(pick)}.`,
+        "Pomioty biorą postać z talii.",
+        (n) => `${n} bierze postać z talii.`,
+      );
       break;
     }
     case "drawUntil":
@@ -282,19 +294,24 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       me.deck.push(...back);
       shuffle(g, me.deck);
       emit(g, { t: "shuffle", pid });
-      log(
+      const cards = `${back.length} ${back.length === 1 ? "kartę" : back.length < 5 ? "karty" : "kart"}`;
+      say(
         g,
-        `${pid === "me" ? "Wtasowujesz" : "Pomioty wtasowują"} do talii ${back.length} ${back.length === 1 ? "kartę" : back.length < 5 ? "karty" : "kart"} z odrzuconych.`,
+        pid,
+        `Wtasowujesz do talii ${cards} z odrzuconych.`,
+        `Pomioty wtasowują do talii ${cards} z odrzuconych.`,
+        (n) => `${n} wtasowuje do talii ${cards} z odrzuconych.`,
       );
       break;
     }
     case "search":
       g.search = { pid, discard: e.discard };
-      log(
+      say(
         g,
-        pid === "me"
-          ? `Odrzuć ${e.discard} karty z ręki i wybierz dowolną postać z talii.`
-          : "Pomioty przeszukują swoją talię.",
+        pid,
+        `Odrzuć ${e.discard} karty z ręki i wybierz dowolną postać z talii.`,
+        "Pomioty przeszukują swoją talię.",
+        (n) => `${n} przeszukuje swoją talię.`,
       );
       break;
     case "oppStatus":
@@ -308,11 +325,12 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       emit(g, { t: "shuffle", pid: other(pid) });
       draw(g, other(pid), e.opp);
       draw(g, pid, e.self);
-      log(
+      say(
         g,
-        pid === "me"
-          ? `Rywal wtasowuje rękę i dobiera ${e.opp}, Ty dobierasz ${e.self}.`
-          : `Wtasowujesz rękę do talii i dobierasz ${e.opp} karty. Pomioty dobierają ${e.self}.`,
+        pid,
+        `Rywal wtasowuje rękę i dobiera ${e.opp}, Ty dobierasz ${e.self}.`,
+        `Wtasowujesz rękę do talii i dobierasz ${e.opp} karty. Pomioty dobierają ${e.self}.`,
+        (n) => `Wtasowujesz rękę do talii i dobierasz ${e.opp} karty. ${n} dobiera ${e.self}.`,
       );
       break;
     }

@@ -15,7 +15,7 @@ export interface Drop {
 export function dropsFor(g: Game, c: CardInst): Drop[] {
   const d = getCard(c.cardId);
   if (g.phase === "setup")
-    return isBasic(d)
+    return isBasic(d) && !g.players.me.active
       ? [{ target: { kind: "board" }, action: { type: "chooseActive", uid: c.uid } }]
       : [];
   if (g.phase !== "main" || g.turn !== "me") return [];
