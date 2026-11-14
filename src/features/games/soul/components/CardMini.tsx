@@ -1,6 +1,7 @@
 import { cn } from "@/lib/cn";
 import { getCard } from "../data/cards";
 import { CardArt } from "./CardArt";
+import { PrestigeLayers } from "./PrestigeLayers";
 import { FINISH_LABEL, RARITY_LABEL, RARITY_SYMBOL, type Finish } from "../data/types";
 
 /** Compact card front (booster reveal, small grids): art, name, rarity and print. */
@@ -15,7 +16,7 @@ export function CardMini({
 }) {
   const c = getCard(cardId);
   return (
-    <span className="relative block size-full overflow-hidden rounded-card p-1">
+    <span className="soul-card relative block size-full overflow-hidden rounded-card p-1">
       {finish !== "plain" && (
         <span
           aria-hidden="true"
@@ -27,11 +28,12 @@ export function CardMini({
       )}
       <span
         className={cn(
-          "relative flex size-full flex-col gap-1 rounded-[0.8rem] p-1.5 text-center",
+          "relative isolate flex size-full flex-col gap-1 rounded-[0.8rem] p-1.5 text-center",
           c.rarity === "legendary" ? "bg-accent-soft" : "bg-surface",
           finish === "plain" && "ring-1 ring-line",
         )}
       >
+        <PrestigeLayers finish={finish} />
         <span className="relative grid flex-1 place-items-center overflow-hidden rounded-lg bg-gradient-to-b from-logo-blue/40 to-surface-muted">
           <CardArt cardId={cardId} emojiClass="text-4xl" />
         </span>

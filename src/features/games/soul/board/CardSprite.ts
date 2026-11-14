@@ -23,6 +23,7 @@ import {
 import type { InPlay } from "../engine/state";
 import { CARD_H, CARD_W } from "./layout";
 import { FONT_DISPLAY, FONT_SANS, palette, type Token } from "./palette";
+import { PrestigeFx } from "./prestige";
 
 const W = CARD_W;
 const H = CARD_H;
@@ -79,6 +80,12 @@ export class CardSprite extends Container {
   private overlay = new Container();
   private glowG = new Graphics();
   private shine: Graphics | null = null;
+  private artWin: Graphics | null = null;
+  /** Foil, stained glass, aura and sparkles of gilded / stained prints. */
+  private prestige: PrestigeFx | null = null;
+  private sparkLayer = new Container();
+  /** Active character (or the card under the pointer / being dragged): stained prints sparkle. */
+  active = false;
   cardId = "";
   finish: Finish = "plain";
   faceUp = true;
@@ -87,7 +94,7 @@ export class CardSprite extends Container {
 
   constructor() {
     super();
-    this.addChild(this.glowG, this.body);
+    this.addChild(this.glowG, this.body, this.sparkLayer);
     this.body.addChild(this.back, this.front, this.overlay);
     this.drawBack();
   }
@@ -98,6 +105,8 @@ export class CardSprite extends Container {
     this.finish = finish;
     this.front.removeChildren().forEach((c) => c.destroy());
     this.shine = null;
+    this.prestige?.destroy();
+    this.prestige = null;
     this.drawFront();
   }
 
@@ -117,6 +126,7 @@ export class CardSprite extends Container {
       this.shine.visible = !reduced;
       this.shine.x = ((this.t * 160) % 900) - 450;
     }
+    this.prestige?.tick(dt, this.t, reduced, this.active && this.faceUp && this.visible);
   }
 
   setGlow(color: string | null) {
@@ -170,10 +180,17 @@ export class CardSprite extends Container {
             : p["surface-muted"];
     const g = new Graphics().roundRect(-W / 2, -H / 2, W, H, 16).fill(frame);
     g.roundRect(-W / 2 + 7, -H / 2 + 7, W - 14, H - 14, 12).fill(panel);
+    this.front.addChild(g);
+    if (this.finish !== "plain") {
+      this.prestige = new PrestigeFx(this.finish, this.cardId, dark, this.sparkLayer);
+      this.front.addChild(this.prestige.background);
+      this.addChildAt(this.prestige.aura, 1);
+    }
     const el: Element = c.kind === "character" ? c.element : dark ? "pycha" : "slowo";
     const [a1, a2] = ART[el];
-    g.roundRect(-84, -78, 168, 108, 10).fill(grad([p[a1], p[a2]], false));
-    this.front.addChild(g);
+    const win = new Graphics().roundRect(-84, -78, 168, 108, 10).fill(grad([p[a1], p[a2]], false));
+    this.artWin = win;
+    this.front.addChild(win);
 
     const art = text(c.emoji, { fontSize: 76 });
     art.anchor.set(0.5);
@@ -247,6 +264,7 @@ export class CardSprite extends Container {
     rar.position.set(88, 132);
     this.front.addChild(rar);
 
+    if (this.prestige) this.front.addChild(this.prestige.glass);
     if (this.finish !== "plain") {
       const mask = new Graphics().roundRect(-W / 2, -H / 2, W, H, 16).fill(p.surface);
       const shine = new Graphics().rect(-40, -H, 80, H * 2).fill({ color: p.surface, alpha: 0.35 });
@@ -307,7 +325,8 @@ export class CardSprite extends Container {
         const holder = new Container();
         holder.addChild(mask, sp);
         holder.mask = mask;
-        this.front.addChildAt(holder, 1);
+        const at = this.artWin ? this.front.getChildIndex(this.artWin) + 1 : 1;
+        this.front.addChildAt(holder, at);
         emoji.visible = false;
       })
       .catch(() => undefined);

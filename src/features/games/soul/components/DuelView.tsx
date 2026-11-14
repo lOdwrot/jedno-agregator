@@ -99,6 +99,10 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
             const p = live.players[sel.zone === "opp" ? "ai" : "me"];
             return [p.active, ...p.bench, ...p.discard].find((c) => c?.uid === sel.uid);
           })());
+  const selActive =
+    !!sel &&
+    "uid" in sel &&
+    [live.players.me.active, live.players.ai.active].some((c) => c?.uid === sel.uid);
 
   const onSelect = (s: Selection | { zone: "place" }) => {
     if (
@@ -177,6 +181,7 @@ export function DuelView({ opponent, deck, onFinish, onExit }: Props) {
             <CardFace
               cardId={selCard.cardId}
               finish={selCard.finish}
+              active={selActive}
               showLesson={sel.zone === "opp"}
             />
             {sel.zone !== "place" && !busy && (
