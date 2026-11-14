@@ -46,8 +46,9 @@ export type Action =
   | { type: "support"; uid: number; target?: number }
   | { type: "retreat"; target: number }
   | { type: "ability"; target: number }
-  /** `fuel`: energy cards from hand burned by a "fuel" attack. */
-  | { type: "attack"; index: number; fuel?: number }
+  /** `fuel`: energy cards from hand burned by a "fuel" attack; `target`: benched character
+   *  that gets the energy of a "searchEnergy" attack (default: the one with the fewest). */
+  | { type: "attack"; index: number; fuel?: number; target?: number }
   | { type: "endTurn" }
   | { type: "promote"; uid: number }
   /** Answer to a peek card: keep the revealed top card, or discard it and draw. */
@@ -112,16 +113,25 @@ export function retreatBlock(g: Game, pid: PlayerId): string | null {
   return null;
 }
 
+/** Benched characters to pick from for a "searchEnergy" attack — empty when there is no real choice. */
+export function benchEnergyTargets(g: Game, pid: PlayerId, atk: AttackDef): InPlay[] {
+  const me = g.players[pid];
+  if (!atk.effects?.some((e) => e.k === "searchEnergy")) return [];
+  if (!me.deck.some((c) => c.cardId === ENERGY_ID[me.side])) return [];
+  return me.bench.length > 1 ? me.bench : [];
+}
+
 export { canUseAbility };
 
 /* ── moves ── */
-function attack(g: Game, pid: PlayerId, index: number, fuel = 0): boolean {
+function attack(g: Game, pid: PlayerId, index: number, fuel = 0, target?: number): boolean {
   const me = g.players[pid];
   const a = me.active;
   if (!a || !g.players[other(pid)].active) return false;
   const atk = charDef(a).attacks[index];
   if (!atk || attackBlock(g, pid, atk)) return false;
   if (fuel < 0 || fuel > fuelMax(g, pid, atk)) return false;
+  if (target !== undefined && !me.bench.some((b) => b.uid === target)) return false;
   const foe = g.players[other(pid)];
   const d = foe.active!;
   log(g, `${nameOf(a)} używa: „${atk.name}”.`);
@@ -178,7 +188,9 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0): boolean {
         emit(g, { t: "cleanse", uids: inPlay(me).map((c) => c.uid) });
         break;
       case "searchEnergy": {
-        const t = [...me.bench].sort((x, y) => x.energy - y.energy)[0];
+        const t =
+          me.bench.find((b) => b.uid === target) ??
+          [...me.bench].sort((x, y) => x.energy - y.energy)[0];
         const i = me.deck.findIndex((c) => c.cardId === ENERGY_ID[me.side]);
         if (t && i >= 0) {
           me.deck.splice(i, 1);
@@ -285,7 +297,7 @@ function apply(g: Game, a: Action): boolean {
       return true;
     }
     case "attack":
-      return attack(g, pid, a.index, a.fuel ?? 0);
+      return attack(g, pid, a.index, a.fuel ?? 0, a.target);
     case "endTurn":
       if (g.phase !== "main") return false;
       endTurn(g);

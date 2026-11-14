@@ -101,21 +101,24 @@ describe("Walka o duszę — engine", () => {
     expect(evolveTargets(g, g.turn, kleryk)).toEqual([]);
   });
 
-  it.each(OPPONENTS.map((_, i) => i))("full AI-vs-AI duel against opponent %i always finishes", (i) => {
-    for (const seed of [1, 2, 3, 4, 5, 6]) {
-      const g = autoplay(
-        createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.boost),
-      );
-      expect(g.phase).toBe("over");
-      expect(g.winner).not.toBeNull();
-      const p = g.players[g.winner!];
-      const loser = g.players[g.winner === "me" ? "ai" : "me"];
-      // win by souls, empty field or opponent's empty deck
-      expect(
-        p.souls >= 4 || (!loser.active && !loser.bench.length) || loser.deck.length === 0,
-      ).toBe(true);
-    }
-  });
+  it.each(OPPONENTS.map((_, i) => i))(
+    "full AI-vs-AI duel against opponent %i always finishes",
+    (i) => {
+      for (const seed of [1, 2, 3, 4, 5, 6]) {
+        const g = autoplay(
+          createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.boost),
+        );
+        expect(g.phase).toBe("over");
+        expect(g.winner).not.toBeNull();
+        const p = g.players[g.winner!];
+        const loser = g.players[g.winner === "me" ? "ai" : "me"];
+        // win by souls, empty field or opponent's empty deck
+        expect(
+          p.souls >= 4 || (!loser.active && !loser.bench.length) || loser.deck.length === 0,
+        ).toBe(true);
+      }
+    },
+  );
 
   it("never loses or duplicates cards", () => {
     const g = autoplay(createGame(deckList(newProfile()), opponentDeck(1), 11));

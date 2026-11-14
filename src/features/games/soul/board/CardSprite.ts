@@ -215,6 +215,7 @@ export class CardSprite extends Container {
       atk.position.set(86, 36);
       fit(atk, 120);
       this.front.addChild(hp, line, atk);
+      if (c.weakness) this.drawWeakness(c.weakness, dark);
     } else {
       const kind = text(KIND[c.kind].toUpperCase(), {
         fontFamily: FONT_DISPLAY,
@@ -256,6 +257,37 @@ export class CardSprite extends Container {
       this.front.addChild(holder);
       this.shine = shine;
     }
+  }
+
+  /** Weakness badge ("słabość 💢 ×2") — readable on the table without opening the card. */
+  private drawWeakness(w: Element, dark: boolean) {
+    const p = palette();
+    const pill = new Graphics()
+      .roundRect(-88, 68, 176, 28, 14)
+      .fill({ color: p.danger, alpha: dark ? 0.35 : 0.14 })
+      .roundRect(-88, 68, 176, 28, 14)
+      .stroke({ width: 2, color: p.danger, alpha: 0.8 });
+    const label = text("SŁABOŚĆ", {
+      fontFamily: FONT_DISPLAY,
+      fontSize: 14,
+      fontWeight: "800",
+      fill: dark ? p.surface : p.navy,
+      letterSpacing: 1,
+    });
+    label.anchor.set(0, 0.5);
+    label.position.set(-78, 82);
+    const icon = text(ELEMENT_INFO[w].emoji, { fontSize: 22 });
+    icon.anchor.set(0.5);
+    icon.position.set(36, 82);
+    const x2 = text("×2", {
+      fontFamily: FONT_DISPLAY,
+      fontSize: 20,
+      fontWeight: "800",
+      fill: dark ? p.surface : p.danger,
+    });
+    x2.anchor.set(1, 0.5);
+    x2.position.set(82, 82);
+    this.front.addChild(pill, label, icon, x2);
   }
 
   /** Swaps the emoji for the card's picture once it is loaded (cover-fit into the art window). */
