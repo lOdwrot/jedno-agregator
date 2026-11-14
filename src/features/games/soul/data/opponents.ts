@@ -2,10 +2,10 @@ import type { AiBoost } from "../engine/state";
 
 /** Computer opponents — each comes with a letter from an old demon to his young nephew. */
 export interface Opponent {
-  id: "kanapa" | "plotkary" | "pycha" | "otchlan";
+  id: "kanapa" | "plotkary" | "pycha" | "zastepy" | "otchlan";
   name: string;
   emoji: string;
-  difficulty: "łatwy" | "średni" | "trudny" | "ekstremalny";
+  difficulty: "łatwy" | "średni" | "trudny" | "bardzo trudny" | "ekstremalny";
   reward: { win: number; loss: number };
   /** Card ids (energy included) — 50 cards. */
   deck: Record<string, number>;
@@ -133,6 +133,48 @@ export const OPPONENTS: readonly Opponent[] = [
     },
     moral:
       "Pycha przebiera się nawet za pokorę. Najlepszą obroną jest wdzięczność i patrzenie bardziej na Boga i innych niż na siebie.",
+  },
+  {
+    id: "zastepy",
+    name: "Smocze Zastępy",
+    emoji: "🐲",
+    difficulty: "bardzo trudny",
+    reward: { win: 300, loss: 60 },
+    boost: { startEnergy: 2, extraDraw: 0 },
+    deck: {
+      plotka: 3,
+      obmowa: 2,
+      lawina: 1,
+      pyszalek: 4,
+      lewiatan: 3,
+      smok: 1,
+      belzebub: 2,
+      krytykant: 1,
+      algorytm: 3,
+      powiadomienie: 2,
+      szef: 2,
+      remont: 2,
+      hejt: 1,
+      obietnica: 1,
+      czat: 1,
+      kompleksy: 1,
+      rozpamietywanie: 1,
+      nawyki: 1,
+      influencer: 1,
+      kabaret: 1,
+      banka: 1,
+      pokusa: 15,
+    },
+    letter: {
+      greeting: "Smołku, nie waż się więcej meldować porażki,",
+      body: [
+        "Legion wrócił poobijany, a Twój podopieczny dalej dziękuje Bogu za byle drobiazg. Czas na Zastępy. Plotka urośnie w lawinę oszczerstw, a mała pycha — w smoka o siedmiu głowach.",
+        "Tym razem pierwszy z naszych wejdzie do gry już rozgrzany. Gniew i pycha ramię w ramię: niech się obraża na ludzi i jednocześnie uważa się za lepszego od nich. Zarząd obserwuje.",
+      ],
+      signature: "Wuj Siarkowąs (z dopiskiem: „ostatnie ostrzeżenie”)",
+    },
+    moral:
+      "Gniew i pycha karmią się nawzajem: kto czuje się lepszy, łatwo się obraża. Przebaczenie i pokora gaszą oba ognie naraz — zanim urosną w smoka.",
   },
   {
     id: "otchlan",

@@ -85,7 +85,7 @@ Decks have 50 cards (`DECK_SIZE`); the discard pile is never reshuffled — a pl
 their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Algorytm, like Ultra Ball) set `g.search`
 and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
 `recycle` take cards back from the discard pile. Opponents may carry an `AiBoost` (energy on the starting active from the
-deck, extra draws per turn) — `otchlan` is the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
+deck, extra draws per turn) — `zastepy` (Smocze Zastępy, "bardzo trudny": 2 energy on the start, no extra draw) sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
 Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
 `soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in
 `soul/collection/packs.ts`; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.
