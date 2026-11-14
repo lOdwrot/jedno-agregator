@@ -49,9 +49,8 @@ describe("SoulGame", () => {
     const saved = JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!);
     expect(saved.packs).toBe(0);
     expect(saved.talents).toBe(0);
-    await userEvent.click(
-      await screen.findByRole("button", { name: "Odkryj wszystkie" }, { timeout: 5000 }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Pomiń" }));
+    await userEvent.click(screen.getByRole("button", { name: "Odkryj wszystkie" }));
     await waitFor(
       () => expect(screen.getAllByRole("button", { name: /Pokaż kartę/ })).toHaveLength(5),
       {
