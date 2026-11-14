@@ -48,6 +48,13 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Jan_Pawe%C5%82_II_portret_Z._Koty%C5%82%C5%82o.jpg",
     focus: 0.2,
   },
+  kolbe: {
+    title: "Fr.Maximilian Kolbe in 1936.jpg",
+    author: "autor nieznany",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:Fr.Maximilian_Kolbe_in_1936.jpg",
+    focus: 0.25,
+  },
   leon1: {
     title: "Raphael - The Meeting of Leo the Great and Attila.jpg",
     author: "Raphael",
