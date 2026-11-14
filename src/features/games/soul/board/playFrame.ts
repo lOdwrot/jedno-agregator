@@ -5,7 +5,10 @@ import { sfx } from "../audio/sfx";
 import type { Frame } from "../engine/events";
 import { other, type Game } from "../engine/state";
 import type { BoardRenderer } from "./BoardRenderer";
+import { elementStyle, impact, projectile, shards } from "./attackFx";
 import { shake } from "./fx";
+import { playSignature } from "./signatures";
+import { powerSound } from "../audio/signatures";
 import { palette } from "./palette";
 import { ease } from "./tween";
 
@@ -138,13 +141,23 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
         ev.name,
         color,
       );
+      const attacker = r.charAt(prev, ev.uid);
+      const atkDef = attacker?.def.attacks.find((x) => x.name === ev.name);
+      const dmg = atkDef?.damage ?? 0;
       if (sp) {
         sfx.windup();
         const k = sp.scale.x;
+        sp.setGlow(attacker ? elementStyle(attacker.def.element).core : color);
         await Promise.all([
           tw.to(sp.scale, { x: k * 1.12, y: k * 1.12 }, 260),
           tw.to(sp, { y: from.y + (from.y > to.y ? 18 : -18) }, 260),
         ]);
+        const signed = await playSignature(ev.name, { r, from, to });
+        if (!signed && dmg > 0 && attacker) {
+          powerSound(dmg);
+          await projectile(fx, tw, from, to, attacker.def.element, dmg >= 60);
+        }
+        sp.setGlow(null);
         await tw.to(
           sp,
           { x: from.x + (to.x - from.x) * 0.55, y: from.y + (to.y - from.y) * 0.55 },
@@ -162,7 +175,26 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       const hit = r.charAt(prev, ev.uid);
       sfx.hit(ev.amount);
       const spark = hit ? p[ELEMENT_SPARK[hit.def.element] as "logo-blue"] : p.danger;
-      fx.burst(s.x, s.y, [p.danger, spark, p.surface], 26, 380);
+      const foe = prev.players[hit && prev.players.me.active?.uid === ev.uid ? "ai" : "me"].active;
+      const atkStyle = foe ? elementStyle(r.charAt(prev, foe.uid)!.def.element) : null;
+      const power = Math.min(2, 0.6 + ev.amount / 60);
+      fx.burst(
+        s.x,
+        s.y,
+        [p.danger, spark, p.surface, ...(atkStyle?.colors ?? [])],
+        Math.round(20 + ev.amount / 3),
+        300 + ev.amount * 2,
+      );
+      shards(
+        fx,
+        s,
+        hit?.def.side === "demons" ? p["navy-600"] : p.surface,
+        Math.round(6 + ev.amount / 8),
+        power,
+      );
+      void impact(fx, tw, s, atkStyle?.core ?? p.danger, power);
+      if (atkStyle && ev.amount >= 40)
+        fx.emojis(s.x, s.y, atkStyle.emoji, Math.round(ev.amount / 15), false, 26);
       if (ev.amount >= 60) void shake(tw, r.stage, Math.min(18, ev.amount / 6), r.reduced);
       void fx.flash(r.w, r.h, p.danger, Math.min(0.3, ev.amount / 400));
       if (sp) void shake(tw, sp, 14, r.reduced);

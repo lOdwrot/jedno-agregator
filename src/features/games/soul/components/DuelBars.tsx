@@ -93,9 +93,11 @@ function hint(g: Game): string {
 
 export function DuelBars({
   g,
+  view,
   busy,
   onAction,
 }: {
+  view: Game;
   g: Game;
   busy: boolean;
   onAction: (a: Action) => void;
@@ -104,7 +106,7 @@ export function DuelBars({
   const myTurn = g.phase === "main" && g.turn === "me" && !busy;
   return (
     <div className="border-t border-white/10 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
-      <p className="truncate text-center text-xs text-white/85">{hint(g)}</p>
+      <p className="truncate text-center text-xs text-white/85">{hint(busy ? view : g)}</p>
       <div className="mt-1 flex items-center gap-1.5" role="group" aria-label="Ataki i koniec tury">
         <div className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto">
           {a &&

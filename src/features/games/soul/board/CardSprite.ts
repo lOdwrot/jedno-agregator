@@ -1,5 +1,15 @@
 /** One card on the canvas: face (art, name, HP), back, in-play overlay (HP bar, energy, statuses), glow. */
-import { Container, FillGradient, Graphics, Text, type TextStyleOptions } from "pixi.js";
+import {
+  Assets,
+  Container,
+  FillGradient,
+  Graphics,
+  Sprite,
+  Text,
+  type Texture,
+  type TextStyleOptions,
+} from "pixi.js";
+import { ART as ARTWORK, artSrc } from "../data/art";
 import { getCard } from "../data/cards";
 import {
   ELEMENT_INFO,
@@ -168,6 +178,7 @@ export class CardSprite extends Container {
     const art = text(c.emoji, { fontSize: 76 });
     art.anchor.set(0.5);
     art.y = -24;
+    this.loadArt(art);
     const isChar = c.kind === "character";
     const name = text(twoLines(c.name, isChar ? 11 : 15), {
       fontFamily: FONT_DISPLAY,
@@ -177,7 +188,7 @@ export class CardSprite extends Container {
       lineHeight: 24,
     });
     name.position.set(-86, -134);
-    fit(name, isChar ? 124 : 172);
+    fit(name, isChar ? 112 : 172);
     this.front.addChild(art, name);
 
     if (c.kind === "character") {
@@ -245,6 +256,29 @@ export class CardSprite extends Container {
       this.front.addChild(holder);
       this.shine = shine;
     }
+  }
+
+  /** Swaps the emoji for the card's picture once it is loaded (cover-fit into the art window). */
+  private loadArt(emoji: Text) {
+    const src = artSrc(this.cardId);
+    if (!src) return;
+    const id = this.cardId;
+    void Assets.load<Texture>(src)
+      .then((tex) => {
+        if (this.destroyed || this.cardId !== id) return;
+        const sp = new Sprite(tex);
+        const k = Math.max(168 / tex.width, 108 / tex.height);
+        sp.scale.set(k);
+        sp.anchor.set(0.5, 0);
+        sp.y = -78 - (tex.height * k - 108) * (ARTWORK[id]?.focus ?? 0.3);
+        const mask = new Graphics().roundRect(-84, -78, 168, 108, 10).fill(palette().surface);
+        const holder = new Container();
+        holder.addChild(mask, sp);
+        holder.mask = mask;
+        this.front.addChildAt(holder, 1);
+        emoji.visible = false;
+      })
+      .catch(() => undefined);
   }
 
   /** HP bar, energy pips and status badges of a character in play (hidden in hand/discard). */

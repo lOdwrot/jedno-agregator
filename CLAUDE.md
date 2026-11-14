@@ -79,6 +79,9 @@ state transitions in `use*Reactions` hooks; everything decorative is skipped und
 `tween.ts`, one animation + sound per event in `playFrame.ts`, Web Audio sfx/music in `soul/audio`). The canvas is
 `aria-hidden`; an invisible layer of real `<button>`s (from the same pure `layout.ts`) keeps it keyboard/screen-reader
 accessible and handles drag & drop.
+Card pictures: `public/soul/art/<key>.webp` (Wikimedia Commons, PD/CC — every file needs a credit entry in
+`soul/data/art.ts`, shown under "Źródła ilustracji"; `art.test.ts` enforces it). Booster editions + odds live in
+`soul/collection/packs.ts`; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.
 
 ## Conventions
 

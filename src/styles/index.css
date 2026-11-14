@@ -211,3 +211,57 @@
     transform: translateX(-100px);
   }
 }
+
+/* Walka o duszę — boosters: crimped foil edges, light rays, holographic border, pack shake */
+.soul-crimp {
+  mask-image: linear-gradient(90deg, black 50%, transparent 50%);
+  mask-size: 8px 100%;
+  border-radius: 2px;
+}
+.soul-rays {
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--color-logo-yellow) 70%, transparent) 0deg 8deg,
+    transparent 8deg 24deg
+  );
+  mask-image: radial-gradient(circle, black 20%, transparent 70%);
+  animation: soul-spin 6s linear infinite;
+}
+.soul-holo {
+  background: conic-gradient(
+    from var(--soul-angle, 0deg),
+    var(--color-logo-blue),
+    var(--color-logo-red),
+    var(--color-logo-yellow),
+    var(--color-success),
+    var(--color-logo-blue)
+  );
+  animation: soul-spin 3s linear infinite;
+}
+@keyframes soul-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes soul-pack-shake {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-3deg) scale(1.03);
+  }
+  75% {
+    transform: rotate(3deg) scale(1.03);
+  }
+}
+.soul-pack-shake {
+  animation: soul-pack-shake 0.18s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .soul-rays,
+  .soul-holo,
+  .soul-pack-shake {
+    animation: none;
+  }
+}
