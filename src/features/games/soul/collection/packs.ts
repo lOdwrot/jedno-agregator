@@ -3,7 +3,7 @@ import { COLLECTIBLE } from "../data/cards";
 import type { CardDef, Finish, Rarity } from "../data/types";
 import { keyOf, type CardKey } from "./profile";
 
-export type PackId = "wspolnota" | "swieci" | "papieze" | "witraze" | "skarbiec";
+export type PackId = "wspolnota" | "swieci" | "papieze" | "zakrystia" | "witraze" | "skarbiec";
 
 export interface PackType {
   id: PackId;
@@ -21,6 +21,8 @@ export interface PackType {
     legendary: number;
     rareInUncommonSlot: number;
     pool?: (c: CardDef) => boolean;
+    /** Every slot draws only from these cards (falls back to all cards of a rarity it lacks). */
+    only?: (c: CardDef) => boolean;
     /** Chances of a stained / gilded print (default 3% / 12%). */
     finish?: { stained: number; gilded: number };
     /** At least this many cards come in the stained-glass finish. */
@@ -63,6 +65,21 @@ export const PACKS: readonly PackType[] = [
     emoji: "👑",
     foil: "from-logo-yellow via-surface to-logo-yellow",
     odds: { legendary: 0.4, rareInUncommonSlot: 0.25 },
+  },
+  {
+    id: "zakrystia",
+    name: "Zakrystia i sanktuaria",
+    subtitle: "Same przedmioty i miejsca",
+    sticker: "Tylko przedmioty i miejsca!",
+    price: 200,
+    art: "zakrystia",
+    emoji: "🕯️",
+    foil: "from-logo-dark via-logo-orange to-logo-dark",
+    odds: {
+      legendary: 0.15,
+      rareInUncommonSlot: 0.25,
+      only: (c) => c.kind === "item" || c.kind === "place",
+    },
   },
   {
     id: "witraze",
@@ -112,10 +129,15 @@ function pick<T>(pool: readonly T[], rnd: () => number): T {
 /**
  * 5 cards: 3 common, 1 uncommon (sometimes rare), 1 rare-or-legendary. The best card comes last.
  * Skarbiec Katedry: the 4th card is always rare and the last one always legendary.
+ * Zakrystia i sanktuaria: only items and places (`odds.only`).
  * Witraże Katedry: plain/gilded cards are turned into stained glass until `minStained` is reached.
  */
 export function rollPack(pack: PackType, rnd: () => number = Math.random): CardKey[] {
-  const of = (r: Rarity) => COLLECTIBLE.filter((c) => c.rarity === r);
+  const of = (r: Rarity) => {
+    const all = COLLECTIBLE.filter((c) => c.rarity === r);
+    const only = pack.odds.only ? all.filter(pack.odds.only) : [];
+    return only.length ? only : all;
+  };
   const out: { id: string; finish: Finish }[] = [];
   for (let slot = 0; slot < 5; slot++) {
     let card: CardDef;
