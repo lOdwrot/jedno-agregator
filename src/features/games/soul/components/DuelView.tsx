@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { cn } from "@/lib/cn";
 import { Button, Dialog, usePrefersReducedMotion } from "@/ui";
 import { getCard } from "../data/cards";
 import { music } from "../audio/music";
@@ -18,7 +19,7 @@ import { useDuelPlayer } from "./useDuelPlayer";
 interface Props {
   initial: Game;
   /** Who we play against (top bar). */
-  opponent: { emoji: string; name: string };
+  opponent: { emoji: string; name: string; theme?: "infernal" };
   /** Two-player duel: the screen shows this seat and moves go through the WebRTC sync. */
   net?: { role: Role; link: Link };
   onOver: (g: Game) => void;
@@ -54,6 +55,7 @@ export function DuelView({
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [full, setFull] = useState(false);
   const seen = useRef(new Set<string>());
+  const infernal = opponent.theme === "infernal";
 
   const onDemon = useCallback((id: string) => {
     if (seen.current.has(id)) return;
@@ -77,16 +79,18 @@ export function DuelView({
     const prev = html.style.overflow;
     html.style.overflow = "hidden";
     root.current?.focus();
+    music.setTheme(infernal ? "infernal" : "church");
     if (loadPrefs().music) music.start();
     const onFs = () => setFull(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onFs);
     return () => {
       html.style.overflow = prev;
       music.stop();
+      music.setTheme("church");
       document.removeEventListener("fullscreenchange", onFs);
       if (document.fullscreenElement) void document.exitFullscreen?.();
     };
-  }, []);
+  }, [infernal]);
 
   useEffect(() => {
     if (!lesson) return;
@@ -141,7 +145,10 @@ export function DuelView({
       ref={root}
       tabIndex={-1}
       aria-label={`Pojedynek z: ${opponent.name}`}
-      className="fixed inset-0 z-50 flex h-dvh flex-col bg-navy text-white outline-none"
+      className={cn(
+        "fixed inset-0 z-50 flex h-dvh flex-col text-white outline-none",
+        infernal ? "bg-hell-950" : "bg-navy",
+      )}
     >
       <DuelTopBar
         opponent={opponent}
@@ -163,6 +170,7 @@ export function DuelView({
           renderer={renderer}
           onSelect={onSelect}
           onAction={act}
+          theme={infernal ? "infernal" : "default"}
         />
         {lessonCard && "lesson" in lessonCard && lessonCard.lesson && (
           <div className="absolute top-1 left-1 max-w-[15rem] rounded-card bg-surface/95 px-3 py-2 text-ink shadow-lift sm:max-w-xs">

@@ -4,6 +4,10 @@
  * faster, brighter, in D major, with a driving pulse, arpeggios and light percussion.
  */
 import { SOULS_TO_WIN } from "../data/cards";
+import { planInfernalBar } from "./musicInfernal";
+
+/** "church": the calm parish organ; "infernal": the unsettling music of the "Niepokonany" duel. */
+export type MusicTheme = "church" | "infernal";
 
 export type MusicLevel = 0 | 1 | 2 | 3;
 
@@ -53,6 +57,13 @@ export interface BarPlan {
   hats: number;
   /** Bell melody: [semitone, delay in beats] pairs. */
   bells: [number, number][];
+  /* infernal theme only */
+  /** "Lub-dub" heartbeats per bar instead of the kick. */
+  heartbeats?: number;
+  /** Low sawtooth drone two octaves below the chord root. */
+  drone?: boolean;
+  /** Detune ratio of a second pad voice — the slow beating makes it uneasy (e.g. 1.012). */
+  detune?: number;
 }
 
 interface LevelSpec {
@@ -78,7 +89,13 @@ export function musicLevel(souls: number): MusicLevel {
   return Math.round((n / (SOULS_TO_WIN - 1)) * 3) as MusicLevel;
 }
 
-export function planBar(level: MusicLevel, dark: boolean, n: number): BarPlan {
+export function planBar(
+  level: MusicLevel,
+  dark: boolean,
+  n: number,
+  theme: MusicTheme = "church",
+): BarPlan {
+  if (theme === "infernal") return planInfernalBar(level, dark, n);
   const finale = level === 3;
   const set = finale ? (dark ? FINALE_DARK : FINALE) : dark ? DARK : CALM;
   const chord = set[n % 4]!;

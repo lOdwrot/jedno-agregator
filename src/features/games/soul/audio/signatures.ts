@@ -166,6 +166,34 @@ export const signatureSound: Record<string, () => void> = {
     );
     noise(1.8, { cutoff: 250, gain: 0.15 });
   },
+  beast: () => {
+    noise(1.2, { cutoff: 500, gain: 0.3 });
+    [-24, -18, -13].forEach((s, i) =>
+      tone(n(s), 1.8, {
+        type: "sawtooth",
+        gain: 0.06,
+        delay: i * 0.2,
+        slideTo: n(s) * 0.9,
+        cutoff: 800,
+      }),
+    );
+    gong(0.8);
+  },
+  skyfire: () => {
+    for (let i = 0; i < 5; i++)
+      tone(1600 - i * 120, 0.6, {
+        type: "sawtooth",
+        gain: 0.03,
+        delay: i * 0.12,
+        slideTo: 90,
+        cutoff: 1800,
+      });
+    noise(1.3, { cutoff: 900, gain: 0.3, delay: 0.5 });
+  },
+  stampede: () => {
+    for (let i = 0; i < 10; i++) drum(i * 0.09, 0.22);
+    tone(n(-12), 0.6, { type: "square", gain: 0.03, delay: 0.95, slideTo: n(-30), cutoff: 1200 });
+  },
   high_c: () =>
     tone(n(15) * 2, 1.0, { type: "sine", gain: 0.07, attack: 0.1, slideTo: n(15) * 2.02 }),
 };

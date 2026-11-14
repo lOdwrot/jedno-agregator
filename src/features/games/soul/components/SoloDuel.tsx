@@ -13,7 +13,7 @@ interface Props {
 
 const opponentDeck = (o: Opponent): DeckList =>
   Object.entries(o.deck).flatMap(([cardId, n]) =>
-    Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
+    Array.from({ length: n }, () => ({ cardId, finish: o.finish ?? "plain" })),
   );
 
 /** Duel against the computer: talents for the result, the opponent's moral at the end. */

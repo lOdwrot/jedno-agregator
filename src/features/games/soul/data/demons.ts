@@ -1,10 +1,11 @@
+import { ABYSS_CARDS } from "./abyss";
 import type { CardDef } from "./types";
 
 /**
  * Cards of the demon side (played by the computer). Every demon carries a short lesson:
  * how this temptation works and how to resist it — inspired by C.S. Lewis' "The Screwtape Letters".
  */
-export const DEMON_CARDS: CardDef[] = [
+const BASE_DEMONS: CardDef[] = [
   {
     id: "drzemka",
     kind: "character",
@@ -1003,3 +1004,6 @@ export const DEMON_CARDS: CardDef[] = [
     flavor: "Zawsze wygląda lepiej z daleka.",
   },
 ];
+
+/** All demon cards; the apocalyptic ones (`abyss.ts`) close the bestiary. */
+export const DEMON_CARDS: CardDef[] = [...BASE_DEMONS, ...ABYSS_CARDS];

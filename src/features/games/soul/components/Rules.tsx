@@ -43,7 +43,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Poziomy trudności",
-    "Chochliki z kanapy są łatwe, Biesy plotkary średnie (ich pierwszy pomiot zaczyna z 1 Pokusą), Legion Pychy trudny, Smocze Zastępy bardzo trudne (ich pierwszy pomiot zaczyna z 2 Pokusami), a Otchłań Upadłych ekstremalna: Lucyfer, Abaddon i Acedia, 2 Pokusy na pierwszym pomiocie od startu i dodatkowa karta co turę. Za to ich talia kończy się szybciej…",
+    "Chochliki z kanapy są łatwe, Biesy plotkary średnie (ich pierwszy pomiot zaczyna z 1 Pokusą), Legion Pychy trudny, Smocze Zastępy bardzo trudne (ich pierwszy pomiot zaczyna z 2 Pokusami), a Otchłań Upadłych ekstremalna: Lucyfer, Abaddon i Acedia, 2 Pokusy na pierwszym pomiocie od startu i dodatkowa karta co turę. Za to ich talia kończy się szybciej… Ponad nimi jest już tylko Tron Bestii — poziom „niepokonany”: Bestia z morza, Fałszywy Prorok, Legion i Babilon Wielki, wszystkie karty witrażowe (+20 wytrwałości, +10 obrażeń), 3 Pokusy na pierwszym pomiocie i piekielna plansza. Prawie nikt go nie pokonał.",
   ],
   [
     "Kolekcja",

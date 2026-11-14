@@ -4,6 +4,7 @@ import { charDef, maxHp, type Game, type InPlay } from "../engine/state";
 import type { Frame } from "../engine/events";
 import { CardSprite } from "./CardSprite";
 import { Fx } from "./fx";
+import type { BoardTheme } from "./inferno";
 import { computeSlots, PLACE_KEY, type Slot } from "./layout";
 import { palette } from "./palette";
 import { playFrame } from "./playFrame";
@@ -34,7 +35,7 @@ export class BoardRenderer {
   private drag: { key: number; x: number; y: number } | null = null;
   private hl: Highlights = { playable: [], targets: [], bench: false };
 
-  async init(el: HTMLElement, reduced: boolean) {
+  async init(el: HTMLElement, reduced: boolean, theme: BoardTheme = "default") {
     await document.fonts?.ready;
     await this.app.init({
       resizeTo: el,
@@ -51,6 +52,7 @@ export class BoardRenderer {
     this.tw.speed = reduced ? 0.15 : 1;
     this.fx = new Fx(this.tw, this.app.ticker);
     this.fx.reduced = reduced;
+    this.table.setTheme(theme, this.app.ticker, reduced);
     this.cards.sortableChildren = true;
     this.stage.addChild(this.table.layer, this.cards, this.fx.layer);
     this.app.stage.addChild(this.stage);
@@ -178,7 +180,8 @@ export class BoardRenderer {
 
   setThinking(on: boolean, g?: Game) {
     this.table.thinking.visible = on;
-    if (on && g) this.table.thinking.text = g.pvp ? "rywal myśli…" : "pomioty kombinują…";
+    if (on && g && this.table.theme !== "infernal")
+      this.table.thinking.text = g.pvp ? "rywal myśli…" : "pomioty kombinują…";
   }
 
   setHover(key: number | null) {

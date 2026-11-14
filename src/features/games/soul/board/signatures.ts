@@ -4,13 +4,14 @@ import { impact, pillar, rain, shards, stream, sweep, type Pt } from "./attackFx
 import type { BoardRenderer } from "./BoardRenderer";
 import { shake } from "./fx";
 import { palette } from "./palette";
+import { ABYSS_SIG } from "./signaturesAbyss";
 
-interface Ctx {
+export interface Ctx {
   r: BoardRenderer;
   from: Pt;
   to: Pt;
 }
-type Play = (c: Ctx) => Promise<void>;
+export type Play = (c: Ctx) => Promise<void>;
 
 const P = () => palette();
 const both = (...jobs: Promise<unknown>[]) => Promise.all(jobs).then(() => undefined);
@@ -318,6 +319,8 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
     },
   },
 };
+
+Object.assign(SIG, ABYSS_SIG);
 
 export function signatureFor(name: string) {
   return SIG[name] ?? null;
