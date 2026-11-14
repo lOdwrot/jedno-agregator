@@ -33,6 +33,17 @@ describe("Niepokonany (Tron Bestii)", () => {
     for (const id of Object.keys(o.deck)) expect(getCard(id).side).toBe("demons");
   });
 
+  it("its apocalyptic characters outclass the arch-demons of Otchłań", () => {
+    const arch = ["lucyfer", "abaddon", "acedia"].map(getCard).filter(isCharacter);
+    const top = (c: (typeof arch)[number]) => Math.max(...c.attacks.map((a) => a.damage));
+    const archHp = Math.min(...arch.map((c) => c.hp));
+    for (const c of ABYSS_CARDS.filter(isCharacter)) {
+      expect(c.hp, c.id).toBeGreaterThanOrEqual(180);
+      if (c.attacks.length > 1) expect(top(c), c.id).toBeGreaterThanOrEqual(130);
+    }
+    expect(Math.max(...ABYSS_CARDS.filter(isCharacter).map((c) => c.hp))).toBeGreaterThan(archHp);
+  });
+
   it("starts with 3 energy on a stained (stronger) active", () => {
     const g = createGame(deckList(newProfile()), deck(), 11, o.boost);
     const a = g.players.ai.active!;

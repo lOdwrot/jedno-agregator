@@ -31,15 +31,21 @@ type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zas
 export function SoulGame() {
   const { profile, update } = useProfile();
   const [tab, setTab] = useState<Tab>("walka");
-  const [duel, setDuel] = useState<{ opponent: Opponent; key: number } | null>(null);
+  const [duel, setDuel] = useState<{
+    opponent: Opponent;
+    training: boolean;
+    key: number;
+  } | null>(null);
   const [pvp, setPvp] = useState<Session | null>(null);
   const [paying, setPaying] = useState<Opponent | null>(null);
 
-  const startDuel = (opponent: Opponent) => setDuel({ opponent, key: Date.now() });
+  const startDuel = (opponent: Opponent, training = false) =>
+    setDuel({ opponent, training, key: Date.now() });
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
-      if (!duel) return { earned: 0, prize: null };
+      // a practice duel changes nothing in the profile: no talents, booster or record
+      if (!duel || duel.training) return { earned: 0, prize: null };
       const t = reward(duel.opponent.reward, won, souls);
       // a victory over a harder opponent brings one free booster, opened right after the duel
       const table = won ? duel.opponent.prize : undefined;
@@ -71,6 +77,7 @@ export function SoulGame() {
       <SoloDuel
         key={duel.key}
         opponent={duel.opponent}
+        training={duel.training}
         deck={deckList(profile)}
         onFinish={onFinish}
         onExit={(booster) => {
@@ -108,6 +115,7 @@ export function SoulGame() {
                     if (opponent.fee) setPaying(opponent);
                     else startDuel(opponent);
                   }}
+                  onTrain={(opponent) => startDuel(opponent, true)}
                   onEditDeck={() => setTab("talia")}
                 />
                 <PrizeTable />
