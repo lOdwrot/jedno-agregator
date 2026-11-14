@@ -7,13 +7,14 @@ import {
   bonusDamage,
   discardEnergy,
   endTurn,
-  heal,
+  healAll,
   hurt,
   promoteUid,
   resolveKOs,
   retreatCost,
   startTurn,
 } from "./combat";
+import { emit, recordFrames, type Frame } from "./events";
 import { playSupport } from "./support";
 import {
   charDef,
@@ -105,45 +106,56 @@ export const canUseAbility = (g: Game, pid: PlayerId, c: InPlay) =>
 /* ── moves ── */
 function attack(g: Game, pid: PlayerId, index: number): boolean {
   const me = g.players[pid];
-  const a = me.active!;
+  const a = me.active;
+  if (!a || !g.players[other(pid)].active) return false;
   const atk = charDef(a).attacks[index];
   if (!atk || attackBlock(g, pid, atk)) return false;
   const foe = g.players[other(pid)];
   const d = foe.active!;
   log(g, `${nameOf(a)} używa: „${atk.name}”.`);
+  emit(g, { t: "attack", pid, uid: a.uid, target: d.uid, name: atk.name });
   let raw = atk.damage > 0 ? atk.damage + bonusDamage(g, pid, a) : 0;
   for (const e of atk.effects ?? []) {
     if (e.k === "coin") {
       const h = coin(g);
       log(g, h ? `Orzeł! +${e.n}.` : "Reszka.");
+      emit(g, { t: "coin", heads: h });
       if (h) raw += e.n;
     }
     if (e.k === "revenge") raw += Math.floor(a.damage / 10) * e.n;
   }
   const dmg = applyDefense(a, d, raw);
-  hurt(g, d, dmg);
+  hurt(g, d, dmg, dmg > 0 && charDef(d).weakness === charDef(a).element);
   if (atk.damage > 0) log(g, `${nameOf(d)} otrzymuje ${dmg} obrażeń.`);
   for (const e of atk.effects ?? []) {
     switch (e.k) {
       case "heal":
-        for (const c of e.target === "all" ? inPlay(me) : [a]) heal(c, e.n);
+        healAll(g, e.target === "all" ? inPlay(me) : [a], e.n);
         break;
       case "status":
-        if (!e.coin || coin(g)) addStatus(g, d, e.s);
-        else log(g, "Reszka — bez efektu.");
+        if (e.coin) {
+          const h = coin(g);
+          emit(g, { t: "coin", heads: h });
+          if (h) addStatus(g, d, e.s);
+          else log(g, "Reszka — bez efektu.");
+        } else addStatus(g, d, e.s);
         break;
       case "bench":
         for (const b of foe.bench) b.damage += e.n;
-        if (foe.bench.length) log(g, `Ławka rywala obrywa po ${e.n}.`);
+        if (foe.bench.length) {
+          log(g, `Ławka rywala obrywa po ${e.n}.`);
+          emit(g, { t: "benchDamage", uids: foe.bench.map((b) => b.uid), amount: e.n });
+        }
         break;
       case "draw":
         draw(g, pid, e.n);
         break;
       case "recoil":
-        a.damage += e.n;
+        hurt(g, a, e.n);
         break;
       case "cleanse":
         for (const c of inPlay(me)) c.statuses = [];
+        emit(g, { t: "cleanse", uids: inPlay(me).map((c) => c.uid) });
         break;
       case "searchEnergy": {
         const t = [...me.bench].sort((x, y) => x.energy - y.energy)[0];
@@ -152,6 +164,7 @@ function attack(g: Game, pid: PlayerId, index: number): boolean {
           me.deck.splice(i, 1);
           t.energy++;
           log(g, `${nameOf(t)} dostaje 1 kartę energii z talii.`);
+          emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
         }
         break;
       }
@@ -183,6 +196,7 @@ function apply(g: Game, a: Action): boolean {
       me.hand = me.hand.filter((x) => x !== c);
       me.active = toInPlay(c, 0);
       log(g, `Do walki staje: ${nameOf(c)}.`);
+      emit(g, { t: "toActive", pid: "me", uid: c.uid });
       startTurn(g, g.first);
       return true;
     }
@@ -192,6 +206,7 @@ function apply(g: Game, a: Action): boolean {
       p.hand = p.hand.filter((x) => x !== c);
       p.bench.push(toInPlay(c, g.turnNo));
       log(g, `${pid === "me" ? "Na ławkę siada" : "Na ławkę pomiotów wchodzi"}: ${nameOf(c)}.`);
+      emit(g, { t: "bench", pid, uid: c.uid });
       return true;
     }
     case "evolve": {
@@ -205,6 +220,7 @@ function apply(g: Game, a: Action): boolean {
       t.finish = c.finish;
       t.statuses = [];
       t.playedTurn = g.turnNo;
+      emit(g, { t: "evolve", pid, uid: t.uid });
       return true;
     }
     case "attach": {
@@ -215,6 +231,7 @@ function apply(g: Game, a: Action): boolean {
       t.energy++;
       g.flags.energy = true;
       log(g, `${nameOf(t)} otrzymuje: ${def(c).emoji} ${def(c).name}.`);
+      emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       return true;
     }
     case "support": {
@@ -231,12 +248,14 @@ function apply(g: Game, a: Action): boolean {
       p.active = t;
       g.flags.retreated = true;
       log(g, `${nameOf(old)} wycofuje się. Do walki staje: ${nameOf(t)}.`);
+      emit(g, { t: "swap", pid });
       return true;
     }
     case "ability": {
       const t = findInPlay(p, a.target);
       if (!t || !canUseAbility(g, pid, t)) return false;
       t.abilityTurn = g.turnNo;
+      emit(g, { t: "ability", pid, uid: t.uid });
       draw(g, pid, 1);
       log(g, `${nameOf(t)}: „${charDef(t).ability!.name}” — dobierasz kartę.`);
       return true;
@@ -259,6 +278,12 @@ function apply(g: Game, a: Action): boolean {
       return true;
     }
   }
+}
+
+/** Like `dispatch`, plus the animation frames of everything that happened (move by move). */
+export function dispatchFrames(g: Game, a: Action): { state: Game; frames: Frame[] } {
+  const { result, frames } = recordFrames(() => dispatch(g, a));
+  return { state: result, frames: result === g ? [] : frames };
 }
 
 /** Pure: returns a new game state, or the same object if the move is not allowed. */

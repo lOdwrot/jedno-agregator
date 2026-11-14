@@ -24,11 +24,17 @@ describe("SoulGame", () => {
     expect(screen.getByText("Mój drogi Smołku,")).toBeInTheDocument();
   });
 
-  it("starts a duel and asks for the first character", async () => {
+  it("starts a full-screen duel and asks for the first character", async () => {
     setup();
     await userEvent.click(screen.getByRole("button", { name: /Stań do walki/ }));
-    expect(screen.getByText(/Wybierz z ręki postać podstawową/)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Twoja ręka \(5\)/ })).toBeInTheDocument();
+    const duel = screen.getByRole("region", { name: /Pojedynek z: Chochliki z kanapy/ });
+    expect(duel).toBeInTheDocument();
+    expect(screen.getByText(/postać podstawową z ręki/)).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(5);
+    expect(screen.getByRole("button", { name: "Muzyka w tle" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   it("opens the welcome booster and saves the cards", async () => {

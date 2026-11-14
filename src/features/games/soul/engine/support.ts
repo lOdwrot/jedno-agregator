@@ -1,7 +1,8 @@
 /** Trainer-like cards: items, supporters (one per turn) and places (one on the table). */
 import { ENERGY_ID, getCard, isCharacter } from "../data/cards";
 import type { SupportDef } from "../data/types";
-import { discardEnergy, heal } from "./combat";
+import { discardEnergy, healAll } from "./combat";
+import { emit } from "./events";
 import {
   draw,
   findInPlay,
@@ -98,12 +99,15 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
   if (def.kind === "supporter") g.flags.supporter = true;
   const who = pid === "me" ? "Zagrywasz" : "Pomioty zagrywają";
   log(g, `${who}: ${def.emoji} ${def.name}.`);
+  if (def.kind !== "place") {
+    me.discard.push(card);
+    emit(g, { t: "support", pid, cardId: def.id, uid: card.uid });
+  }
   const e = def.effect;
   const a = me.active;
   switch (e.k) {
     case "heal":
-      for (const c of e.target === "all" ? inPlay(me) : e.target === "active" ? [a!] : [target!])
-        heal(c, e.n);
+      healAll(g, e.target === "all" ? inPlay(me) : e.target === "active" ? [a!] : [target!], e.n);
       break;
     case "draw":
       draw(g, pid, e.n);
@@ -111,6 +115,7 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
     case "refresh":
       me.deck.push(...me.hand.splice(0));
       shuffle(g, me.deck);
+      emit(g, { t: "shuffle", pid });
       draw(g, pid, e.n);
       break;
     case "searchCharacter": {
@@ -119,19 +124,23 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       me.deck = me.deck.filter((c) => c !== pick);
       me.hand.push(pick);
       shuffle(g, me.deck);
+      emit(g, { t: "draw", pid, n: 1 });
       log(g, pid === "me" ? `Do ręki trafia: ${nameOf(pick)}.` : "Pomioty biorą postać z talii.");
       break;
     }
     case "cleanse":
       a!.statuses = [];
-      heal(a!, e.heal);
+      emit(g, { t: "cleanse", uids: [a!.uid] });
+      healAll(g, [a!], e.heal);
       break;
     case "fullHeal":
       a!.statuses = [];
-      a!.damage = 0;
+      emit(g, { t: "cleanse", uids: [a!.uid] });
+      healAll(g, [a!], a!.damage);
       break;
     case "shield":
       a!.shield = e.n;
+      emit(g, { t: "shield", uid: a!.uid });
       break;
     case "switch": {
       const old = me.active!;
@@ -139,6 +148,7 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       me.bench = me.bench.map((b) => (b === target ? old : b));
       me.active = target!;
       log(g, `Do walki staje: ${nameOf(target!)}.`);
+      emit(g, { t: "swap", pid });
       break;
     }
     case "gust": {
@@ -146,6 +156,7 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       foe.bench = foe.bench.map((b) => (b === target ? old : b));
       foe.active = target!;
       log(g, `Na pierwszą linię wychodzi: ${nameOf(target!)}.`);
+      emit(g, { t: "swap", pid: other(pid) });
       break;
     }
     case "discardOppEnergy":
@@ -162,6 +173,7 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       });
       target!.energy += k;
       shuffle(g, me.deck);
+      if (k) emit(g, { t: "attach", pid, uid: target!.uid, n: k });
       break;
     }
     case "place":
@@ -172,8 +184,8 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
           finish: "plain",
         });
       g.place = { cardId: def.id, owner: pid };
+      emit(g, { t: "place", pid, cardId: def.id });
       break;
   }
-  if (def.kind !== "place") me.discard.push(card);
   return true;
 }

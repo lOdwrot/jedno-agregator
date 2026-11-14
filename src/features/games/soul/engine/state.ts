@@ -2,6 +2,7 @@
 import { BENCH_SIZE, getCard, HAND_START, isBasic, isCharacter, SOULS_TO_WIN } from "../data/cards";
 import type { CharacterDef, Finish, Side, Status, SupportDef } from "../data/types";
 import { FINISH_BONUS } from "../data/types";
+import { emit } from "./events";
 
 export type PlayerId = "me" | "ai";
 export const other = (p: PlayerId): PlayerId => (p === "me" ? "ai" : "me");
@@ -96,6 +97,7 @@ export function draw(g: Game, pid: PlayerId, n: number): number {
     p.hand.push(p.deck.shift()!);
     k++;
   }
+  if (k) emit(g, { t: "draw", pid, n: k });
   return k;
 }
 
