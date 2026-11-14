@@ -86,4 +86,22 @@ describe("SoulGame", () => {
     expect(screen.getByRole("region", { name: /Pojedynek z: Smocze Zastępy/ })).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!).talents).toBe(70);
   });
+
+  it("offers a free practice duel against opponents with an entry fee", async () => {
+    const { newProfile } = await import("./collection/profile");
+    localStorage.setItem(
+      "jedno-walka-o-dusze:v1",
+      JSON.stringify({ ...newProfile(), talents: 10 }),
+    );
+    setup();
+    expect(screen.queryByRole("button", { name: /Trenuj/ })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Tron Bestii/ }));
+    expect(screen.getByText(/Brakuje 90 talentów na wpisowe/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Trenuj \(za darmo\)/ }));
+    expect(
+      screen.getByRole("region", { name: "Pojedynek z: Tron Bestii (trening)" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Zakończ trening" })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!).talents).toBe(10);
+  });
 });

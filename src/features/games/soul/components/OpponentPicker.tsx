@@ -8,11 +8,13 @@ interface Props {
   talents: number;
   problems: string[];
   onFight: (o: Opponent) => void;
+  /** Practice duel (opponents with an entry fee): free, but no talents, boosters or record. */
+  onTrain: (o: Opponent) => void;
   onEditDeck: () => void;
 }
 
 /** Choose who to fight — each opponent is introduced by a letter from an old demon. */
-export function OpponentPicker({ beaten, talents, problems, onFight, onEditDeck }: Props) {
+export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, onEditDeck }: Props) {
   const [pick, setPick] = useState<Opponent>(OPPONENTS[0]!);
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,20rem)_1fr]">
@@ -110,20 +112,37 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onEditDeck 
               Popraw talię
             </Button>
           </div>
-        ) : talents < (pick.fee ?? 0) ? (
-          <p className="mt-4 rounded-card bg-danger/12 p-3 text-sm text-danger">
-            Brakuje {(pick.fee ?? 0) - talents} talentów na wpisowe. Pokonaj łatwiejszych
-            przeciwników, żeby je zebrać.
-          </p>
         ) : (
-          <Button
-            className="mt-4"
-            size="lg"
-            onClick={() => onFight(pick)}
-            leftIcon={<Icon name="play" size={18} />}
-          >
-            {pick.fee ? `Stań do walki (−${pick.fee} talentów)` : "Stań do walki"}
-          </Button>
+          <>
+            {talents < (pick.fee ?? 0) ? (
+              <p className="mt-4 rounded-card bg-danger/12 p-3 text-sm text-danger">
+                Brakuje {(pick.fee ?? 0) - talents} talentów na wpisowe. Pokonaj łatwiejszych
+                przeciwników, żeby je zebrać — albo najpierw potrenuj.
+              </p>
+            ) : null}
+            <div className="mt-4 flex flex-wrap gap-3">
+              {talents >= (pick.fee ?? 0) && (
+                <Button
+                  size="lg"
+                  onClick={() => onFight(pick)}
+                  leftIcon={<Icon name="play" size={18} />}
+                >
+                  {pick.fee ? `Stań do walki (−${pick.fee} talentów)` : "Stań do walki"}
+                </Button>
+              )}
+              {pick.fee ? (
+                <Button size="lg" variant="outline" onClick={() => onTrain(pick)}>
+                  🎯 Trenuj (za darmo)
+                </Button>
+              ) : null}
+            </div>
+            {pick.fee ? (
+              <p className="mt-2 text-sm text-ink-muted">
+                Trening: bez wpisowego, ale też bez talentów, boostera i wpisu do statystyk — tylko
+                nauka gry przeciw tej talii.
+              </p>
+            ) : null}
+          </>
         )}
       </article>
     </div>

@@ -15,6 +15,8 @@ export interface DuelOutcome {
 
 interface Props {
   opponent: Opponent;
+  /** Practice duel: no fee, no rewards. */
+  training?: boolean;
   deck: DeckList;
   onFinish: (won: boolean, souls: number) => DuelOutcome;
   onExit: (openBooster: boolean) => void;
@@ -28,8 +30,9 @@ const opponentDeck = (o: Opponent): DeckList =>
 /**
  * Duel against the computer: talents for the result, the opponent's moral at the end.
  * A prize booster (harder opponents) is opened first, then the result dialog follows.
+ * A practice duel (`training`) is the same fight without any reward.
  */
-export function SoloDuel({ opponent, deck, onFinish, onExit }: Props) {
+export function SoloDuel({ opponent, training = false, deck, onFinish, onExit }: Props) {
   const [initial] = useState<Game>(() =>
     createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.boost),
   );
@@ -42,9 +45,9 @@ export function SoloDuel({ opponent, deck, onFinish, onExit }: Props) {
   return (
     <DuelView
       initial={initial}
-      opponent={opponent}
+      opponent={training ? { ...opponent, name: `${opponent.name} (trening)` } : opponent}
       onOver={onOver}
-      exitLabel="Poddaj się i wyjdź (bez nagrody)"
+      exitLabel={training ? "Zakończ trening" : "Poddaj się i wyjdź (bez nagrody)"}
       onExit={() => onExit(false)}
       result={
         over &&
@@ -64,6 +67,7 @@ export function SoloDuel({ opponent, deck, onFinish, onExit }: Props) {
             earned={over.earned}
             prize={over.prize?.pack ?? null}
             opponent={opponent}
+            training={training}
             onBooster={() => onExit(true)}
             onMenu={() => onExit(false)}
           />
