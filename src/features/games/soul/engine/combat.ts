@@ -10,7 +10,7 @@ export function fuelMax(g: Game, pid: PlayerId, atk: AttackDef): number {
 
 /** Damage, knock-outs (souls), checkup between turns and turn order. */
 import { ENERGY_ID, getCard, SOULS_TO_WIN } from "../data/cards";
-import type { AbilityEffect, AttackDef, SupportDef } from "../data/types";
+import type { AbilityEffect, AttackDef, PlaceRule, SupportDef } from "../data/types";
 import { FINISH_BONUS, STATUS_INFO } from "../data/types";
 import { emit } from "./events";
 import {
@@ -28,14 +28,23 @@ import {
   type PlayerId,
 } from "./state";
 
-/** Ability effects of a player's characters in play. */
+/** Whether the place in play (whoever owns it) enforces this rule on both players. */
+export function placeRule(g: Game, rule: PlaceRule): boolean {
+  if (!g.place) return false;
+  const e = (getCard(g.place.cardId) as SupportDef).effect;
+  return e.k === "place" && e.rule === rule;
+}
+
+/** Ability effects of a player's characters in play (none while a place blocks abilities). */
 export function abilities(g: Game, pid: PlayerId): AbilityEffect[] {
+  if (placeRule(g, "noAbilities")) return [];
   return inPlay(g.players[pid]).flatMap((c) => {
     const a = charDef(c).ability;
     return a ? [a.effect] : [];
   });
 }
-const own = (c: InPlay): AbilityEffect | undefined => charDef(c).ability?.effect;
+const own = (g: Game, c: InPlay): AbilityEffect | undefined =>
+  placeRule(g, "noAbilities") ? undefined : charDef(c).ability?.effect;
 
 export function placeAura(g: Game, pid: PlayerId) {
   if (!g.place || g.place.owner !== pid) return null;
@@ -57,19 +66,24 @@ export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   return ab + (placeAura(g, pid)?.attackBonus ?? 0) + FINISH_BONUS[attacker.finish].damage;
 }
 
-/** Final damage to the defending character (weakness ×2, armor, place armor, shield). */
+/** Whether the defender's weakness applies to this attacker (places may switch weakness off). */
+export const isWeak = (g: Game, attacker: InPlay, defender: InPlay) =>
+  !placeRule(g, "noWeakness") && charDef(defender).weakness === charDef(attacker).element;
+
+/** Final damage to the defending character of `defPid` (weakness ×2, armor, place armor, shield). */
 export function applyDefense(
+  g: Game,
+  defPid: PlayerId,
   attacker: InPlay,
   defender: InPlay,
   raw: number,
-  placeArmor = 0,
 ): number {
   if (raw <= 0) return 0;
   let d = raw;
-  if (charDef(defender).weakness === charDef(attacker).element) d *= 2;
-  const ab = own(defender);
+  if (isWeak(g, attacker, defender)) d *= 2;
+  const ab = own(g, defender);
   if (ab?.k === "armor") d -= ab.n;
-  d -= placeArmor + defender.shield;
+  d -= placeArmor(g, defPid) + defender.shield;
   return Math.max(0, d);
 }
 
@@ -83,7 +97,7 @@ export function previewDamage(g: Game, pid: PlayerId, atk: AttackDef, fuel = 0):
     if (e.k === "revenge") raw += Math.floor(me.damage / 10) * e.n;
     if (e.k === "fuel") raw += Math.min(fuel, e.max) * e.n;
   }
-  return applyDefense(me, foe, raw, placeArmor(g, other(pid)));
+  return applyDefense(g, other(pid), me, foe, raw);
 }
 
 export function hurt(g: Game, target: InPlay, amount: number, weak = false) {
@@ -106,7 +120,7 @@ export function heal(c: InPlay, n: number) {
 }
 
 export function addStatus(g: Game, c: InPlay, s: InPlay["statuses"][number]) {
-  if (own(c)?.k === "statusImmune") {
+  if (own(g, c)?.k === "statusImmune") {
     log(g, `${nameOf(c)} jest odporna na ${STATUS_INFO[s].label.toLowerCase()}.`);
     emit(g, { t: "cleanse", uids: [c.uid] });
     return;
@@ -248,7 +262,7 @@ export function endTurn(g: Game) {
   const pid = g.turn;
   const endHeal = placeAura(g, pid)?.endHeal ?? 0;
   for (const c of inPlay(g.players[pid])) {
-    const a = own(c);
+    const a = own(g, c);
     healAll(g, [c], endHeal + (a?.k === "endHeal" ? a.n : 0));
   }
   for (const who of ["me", "ai"] as const) {

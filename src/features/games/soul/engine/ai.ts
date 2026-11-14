@@ -13,7 +13,6 @@ import {
 import { aiSearch, searchPick } from "./aiSearch";
 import {
   applyDefense,
-  placeArmor,
   bonusDamage,
   fuelMax,
   handEnergy,
@@ -66,12 +65,7 @@ function canKO(g: Game, pid: PlayerId, target: InPlay): boolean {
   if (!a || g.turnNo === 1) return false;
   return charDef(a).attacks.some((atk) => {
     if (a.energy < atk.cost || atk.damage <= 0) return false;
-    const dmg = applyDefense(
-      a,
-      target,
-      atk.damage + bonusDamage(g, pid, a),
-      placeArmor(g, other(pid)),
-    );
+    const dmg = applyDefense(g, other(pid), a, target, atk.damage + bonusDamage(g, pid, a));
     return dmg >= hpLeft(target);
   });
 }
@@ -217,7 +211,8 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     const score = (c: InPlay) => {
       const ready = charDef(c).attacks.filter((x) => x.cost <= c.energy);
       const best = Math.max(0, ...ready.map((x) => x.damage));
-      const ko = foeA && best > 0 && applyDefense(c, foeA, best) >= hpLeft(foeA) ? 200 : 0;
+      const ko =
+        foeA && best > 0 && applyDefense(g, other(pid), c, foeA, best) >= hpLeft(foeA) ? 200 : 0;
       return ko + best + hpLeft(c) + c.energy * 15;
     };
     const b = [...me.bench].sort((x, y) => score(y) - score(x))[0];
@@ -256,7 +251,10 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
       return { type: "retreat", target: t.uid };
     const striker = me.bench.find((b) =>
       charDef(b).attacks.some(
-        (x) => x.cost <= b.energy && x.damage > 0 && applyDefense(b, foe, x.damage) >= hpLeft(foe),
+        (x) =>
+          x.cost <= b.energy &&
+          x.damage > 0 &&
+          applyDefense(g, other(pid), b, foe, x.damage) >= hpLeft(foe),
       ),
     );
     if (striker && !bestAttack(g, pid)?.ko && retreatCost(g, pid, a) <= 1 && g.turnNo > 1)

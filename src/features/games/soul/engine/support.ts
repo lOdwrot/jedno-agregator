@@ -1,7 +1,7 @@
 /** Trainer-like cards: items, supporters (one per turn) and places (one on the table). */
 import { BENCH_SIZE, ENERGY_ID, getCard, isBasic, isCharacter } from "../data/cards";
 import type { SupportDef } from "../data/types";
-import { addStatus, discardEnergy, healAll } from "./combat";
+import { addStatus, discardEnergy, healAll, placeRule } from "./combat";
 import { recoverPick } from "./aiSearch";
 import { emit } from "./events";
 import {
@@ -58,6 +58,7 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
   const def = getCard(card.cardId);
   if (def.kind !== "item" && def.kind !== "supporter" && def.kind !== "place") return false;
   if (def.kind === "supporter" && g.flags.supporter) return false;
+  if (def.kind === "item" && placeRule(g, "noItems")) return false;
   if (choicePending(g)) return false;
   const me = g.players[pid];
   const foe = g.players[other(pid)];

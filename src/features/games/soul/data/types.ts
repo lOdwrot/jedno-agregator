@@ -89,6 +89,9 @@ export interface CharacterDef extends BaseDef {
   lesson?: { tempts: string; defend: string };
 }
 
+/** Global place rules: no abilities, no items, no weakness. */
+export type PlaceRule = "noAbilities" | "noItems" | "noWeakness";
+
 export type SupportEffect =
   | { k: "heal"; n: number; target: "own" | "active" | "all" }
   | { k: "draw"; n: number }
@@ -131,6 +134,8 @@ export type SupportEffect =
       armor?: number;
       /** Draw n extra cards at the start of your turn. */
       extraDraw?: number;
+      /** A rule for BOTH players while the place is in play. */
+      rule?: PlaceRule;
     };
 
 export interface SupportDef extends BaseDef {

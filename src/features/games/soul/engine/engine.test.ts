@@ -5,6 +5,8 @@ import { deckList, newProfile } from "../collection/profile";
 import { dispatch, evolveTargets } from "./actions";
 import { aiAction } from "./ai";
 import { applyDefense, placeArmor, previewDamage, startTurn } from "./combat";
+import { canUseAbility } from "./abilities";
+import { canPlaySupport } from "./support";
 import { createGame, toInPlay, type DeckList, type Game } from "./state";
 
 const opponentDeck = (i: number): DeckList =>
@@ -42,8 +44,13 @@ describe("Walka o duszę — engine", () => {
     const att = toInPlay({ uid: 1, cardId: "zlosnik", finish: "plain" }, 0); // gniew
     const scholanka = toInPlay({ uid: 2, cardId: "scholanka", finish: "plain" }, 0); // weak to gniew
     const piotr = toInPlay({ uid: 3, cardId: "piotr", finish: "plain" }, 0); // Opoka −20
-    expect(applyDefense(att, scholanka, 40)).toBe(80);
-    expect(applyDefense(att, piotr, 40)).toBe(20);
+    const g = createGame(deckList(newProfile()), opponentDeck(0), 1);
+    expect(applyDefense(g, "me", att, scholanka, 40)).toBe(80);
+    expect(applyDefense(g, "me", att, piotr, 40)).toBe(20);
+    g.place = { cardId: "matemblewo", owner: "me" }; // no weakness
+    expect(applyDefense(g, "me", att, scholanka, 40)).toBe(40);
+    g.place = { cardId: "impreza", owner: "ai" }; // no abilities — Opoka is off
+    expect(applyDefense(g, "me", att, piotr, 40)).toBe(40);
   });
 
   it("places: armor reduces damage taken, extra draw adds a card each turn", () => {
@@ -65,6 +72,26 @@ describe("Walka o duszę — engine", () => {
     const aiHand = g.players.ai.hand.length;
     startTurn(g, "ai");
     expect(g.players.ai.hand.length).toBe(aiHand + 1);
+  });
+
+  it("place rules block items and abilities for both players", () => {
+    const g = createGame(deckList(newProfile()), opponentDeck(0), 2);
+    g.phase = "main";
+    g.turn = "me";
+    const woda = { uid: 901, cardId: "rozaniec", finish: "plain" as const };
+    g.players.me.hand.push(woda);
+    expect(canPlaySupport(g, "me", woda)).toBe(true);
+    g.place = { cardId: "kabaret", owner: "ai" };
+    expect(canPlaySupport(g, "me", woda)).toBe(false);
+    g.place = { cardId: "kartuzy", owner: "me" };
+    expect(canPlaySupport(g, "me", woda)).toBe(false);
+
+    const lektor = toInPlay({ uid: 902, cardId: "lektor", finish: "plain" }, 0); // drawOnce
+    g.players.me.bench.push(lektor);
+    g.place = null;
+    expect(canUseAbility(g, "me", lektor)).toBe(true);
+    g.place = { cardId: "adoracja", owner: "me" };
+    expect(canUseAbility(g, "me", lektor)).toBe(false);
   });
 
   it("evolution is not allowed in the first turns", () => {

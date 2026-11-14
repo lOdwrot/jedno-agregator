@@ -1,7 +1,7 @@
 /** Activated abilities ("moce"): each character may use its ability once per turn. */
 import { ENERGY_ID } from "../data/cards";
 import { ACTIVE_ABILITIES } from "../data/types";
-import { healAll } from "./combat";
+import { healAll, placeRule } from "./combat";
 import { emit } from "./events";
 import {
   charDef,
@@ -30,7 +30,8 @@ export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
     g.phase !== "main" ||
     choicePending(g) ||
     g.turn !== pid ||
-    c.abilityTurn === g.turnNo
+    c.abilityTurn === g.turnNo ||
+    placeRule(g, "noAbilities")
   )
     return false;
   const p = g.players[pid];
