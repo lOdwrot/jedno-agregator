@@ -102,9 +102,15 @@ export function tone(freq: number, dur: number, o: ToneOpts = {}) {
 /** Filtered noise burst (swishes, impacts). */
 export function noise(
   dur: number,
-  o: { cutoff?: number; gain?: number; delay?: number; highpass?: boolean } = {},
+  o: {
+    cutoff?: number;
+    gain?: number;
+    delay?: number;
+    highpass?: boolean;
+    out?: "sfx" | "music";
+  } = {},
 ) {
-  if (isMuted()) return;
+  if (o.out !== "music" && isMuted()) return;
   const g = audio();
   if (!g) return;
   const { ctx } = g;
@@ -120,6 +126,9 @@ export function noise(
   filter.type = o.highpass ? "highpass" : "lowpass";
   filter.frequency.value = o.cutoff ?? 2000;
   amp.gain.value = o.gain ?? 0.2;
-  src.connect(filter).connect(amp).connect(g.sfx);
+  src
+    .connect(filter)
+    .connect(amp)
+    .connect(o.out === "music" ? g.music : g.sfx);
   src.start(t);
 }
