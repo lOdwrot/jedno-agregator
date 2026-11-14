@@ -169,4 +169,94 @@ export const ABYSS_CARDS: CardDef[] = [
         "„Prawda was wyzwoli” (J 8,32). Nazwij kłamstwo po imieniu, sprawdź je ze Słowem Bożym i powiedz je komuś zaufanemu na głos.",
     },
   },
+  {
+    id: "duch-swiata",
+    kind: "character",
+    side: "demons",
+    name: "Duch tego świata",
+    subtitle: "1 Kor 2,12",
+    emoji: "🌫️",
+    rarity: "legendary",
+    hp: 150,
+    element: "lenistwo",
+    weakness: "sluzba",
+    retreat: 1,
+    souls: 1,
+    ability: {
+      name: "Wszyscy tak robią",
+      text: "Działa także z ławki: dopóki ta postać jest w grze, pomioty nie mają słabości.",
+      effect: { k: "noWeakness" },
+    },
+    attacks: [
+      {
+        name: "Szara codzienność",
+        cost: 2,
+        damage: 50,
+        text: "Obrońca popada w zwątpienie.",
+        effects: [{ k: "status", s: "poisoned" }],
+      },
+    ],
+    flavor:
+      "Nie atakuje wprost. Po prostu sprawia, że to, co kiedyś raziło, wydaje się normalne — także nasze słabe strony.",
+    lesson: {
+      tempts:
+        "Mentalność „wszyscy tak robią”: przestajemy widzieć grzech, bo jest powszechny, i nie szukamy już pomocy tam, gdzie jesteśmy słabi.",
+      defend:
+        "„Nie bierzcie wzoru z tego świata, lecz przemieniajcie się przez odnawianie umysłu” (Rz 12,2). Rachunek sumienia pokazuje słabe miejsca — i tam działa łaska.",
+    },
+  },
+  {
+    id: "jezdziec",
+    kind: "character",
+    side: "demons",
+    name: "Jeździec na rudym koniu",
+    subtitle: "Ap 6,4",
+    emoji: "🐎",
+    rarity: "legendary",
+    hp: 180,
+    element: "gniew",
+    weakness: "modlitwa",
+    retreat: 2,
+    souls: 2,
+    ability: {
+      name: "Ostroga",
+      text: "Raz na turę (także z ławki): dołącz 1 Pokusę z talii do swojego pomiota, który jej najbardziej potrzebuje.",
+      effect: { k: "energyOnce" },
+    },
+    attacks: [
+      {
+        name: "Miecz wielki",
+        cost: 3,
+        damage: 90,
+        text: "10 obrażeń każdej postaci na ławce rywala.",
+        effects: [{ k: "bench", n: 10 }],
+      },
+    ],
+    flavor:
+      "„Dano mu władzę odebrać ziemi pokój, żeby się wzajemnie zabijali” (Ap 6,4). Galopuje szybciej, niż zdążysz przeprosić.",
+    lesson: {
+      tempts:
+        "Wojna zaczyna się w sercu: w domu, w sieci, przy stole. Złość nakręca się szybko, a każda kłótnia dokłada ognia do następnej.",
+      defend:
+        "„Błogosławieni, którzy wprowadzają pokój” (Mt 5,9). Zatrzymaj konia, zanim ruszy: policz do dziesięciu, pomódl się i pierwszy podaj rękę.",
+    },
+  },
+  {
+    id: "kielich",
+    kind: "item",
+    side: "demons",
+    name: "Złoty kielich Babilonu",
+    emoji: "🍷",
+    rarity: "legendary",
+    text: "Dołącz 2 Pokusy z talii do wybranego swojego pomiota.",
+    effect: { k: "energyFromDeck", n: 2 },
+    flavor:
+      "Złoty z zewnątrz, pełen obrzydliwości w środku (Ap 17,4). Każdy łyk smakuje jak „jeszcze trochę”.",
+    lesson: {
+      tempts:
+        "Upijanie się czymkolwiek — alkoholem, sukcesem, przyjemnością — żeby nie czuć pustki. Na chwilę dodaje sił, potem zostawia jeszcze większy głód.",
+      defend:
+        "Jezus daje kielich, który naprawdę syci: Eucharystię. Szukaj radości, po której nie zostaje wstyd.",
+    },
+  },
 ];

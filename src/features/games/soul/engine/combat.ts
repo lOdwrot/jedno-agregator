@@ -68,9 +68,19 @@ export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   return ab + (placeAura(g, pid)?.attackBonus ?? 0) + FINISH_BONUS[attacker.finish].damage;
 }
 
-/** Whether the defender's weakness applies to this attacker (places may switch weakness off). */
-export const isWeak = (g: Game, attacker: InPlay, defender: InPlay) =>
-  !placeRule(g, "noWeakness") && charDef(defender).weakness === charDef(attacker).element;
+/** Owner of a character in play (null for a character that is not on the table). */
+const ownerOf = (g: Game, c: InPlay): PlayerId | null =>
+  (["me", "ai"] as const).find((pid) => inPlay(g.players[pid]).some((x) => x.uid === c.uid)) ??
+  null;
+
+/** Whether the defender's weakness applies to this attacker (places and `noWeakness` abilities —
+ *  also from the bench — may switch weakness off). */
+export function isWeak(g: Game, attacker: InPlay, defender: InPlay): boolean {
+  if (placeRule(g, "noWeakness") || charDef(defender).weakness !== charDef(attacker).element)
+    return false;
+  const owner = ownerOf(g, defender);
+  return !owner || !abilities(g, owner).some((a) => a.k === "noWeakness");
+}
 
 /** Final damage to the defending character of `defPid` (weakness ×2, armor, place armor, shield). */
 export function applyDefense(
