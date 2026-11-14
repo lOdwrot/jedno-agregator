@@ -300,6 +300,103 @@ export const DEMON_CARDS: CardDef[] = [
     },
   },
   {
+    id: "wieczne-jutro",
+    kind: "character",
+    side: "demons",
+    name: "Wieczne Jutro",
+    emoji: "⏳",
+    rarity: "rare",
+    hp: 120,
+    element: "lenistwo",
+    weakness: "sluzba",
+    retreat: 2,
+    evolvesFrom: "odkladanie",
+    souls: 2,
+    attacks: [
+      {
+        name: "Od poniedziałku",
+        cost: 2,
+        damage: 30,
+        text: "Obrońca zasypia.",
+        effects: [{ k: "status", s: "asleep" }],
+      },
+      { name: "Zmarnowane lata", cost: 4, damage: 90 },
+    ],
+    flavor: "Jutro się pomodli, jutro przeprosi, jutro zacznie. Jutro nigdy nie przychodzi.",
+    lesson: {
+      tempts:
+        "Odkładanie zamienia się w styl życia. Nie mówisz Bogu „nie” — tylko „jeszcze nie”, przez całe lata.",
+      defend:
+        "„Oto teraz czas upragniony” (2 Kor 6,2). Wybierz jedną rzecz i zrób ją dzisiaj, choćby małą.",
+    },
+  },
+  {
+    id: "lawina",
+    kind: "character",
+    side: "demons",
+    name: "Lawina Oszczerstw",
+    emoji: "🌪️",
+    rarity: "rare",
+    hp: 140,
+    element: "gniew",
+    weakness: "slowo",
+    retreat: 2,
+    evolvesFrom: "obmowa",
+    souls: 2,
+    attacks: [
+      {
+        name: "Podaj dalej",
+        cost: 2,
+        damage: 30,
+        text: "20 obrażeń każdej postaci na ławce rywala.",
+        effects: [{ k: "bench", n: 20 }],
+      },
+      { name: "Burza w komentarzach", cost: 4, damage: 120 },
+    ],
+    flavor: "Zaczęło się od „podobno”. Skończyło na trzech tysiącach udostępnień.",
+    lesson: {
+      tempts:
+        "Plotka rośnie z każdym podaniem dalej. Nikt nie czuje się winny, bo „tylko powtarzał”.",
+      defend:
+        "Zatrzymaj lawinę na sobie: nie udostępniaj, nie dopowiadaj, stań w obronie nieobecnego.",
+    },
+  },
+  {
+    id: "smok",
+    kind: "character",
+    side: "demons",
+    name: "Smok Apokalipsy",
+    emoji: "🐲",
+    rarity: "legendary",
+    hp: 190,
+    element: "pycha",
+    weakness: "sluzba",
+    retreat: 4,
+    evolvesFrom: "lewiatan",
+    souls: 2,
+    ability: {
+      name: "Siedem głów",
+      text: "Ta postać otrzymuje o 30 mniej obrażeń.",
+      effect: { k: "armor", n: 30 },
+    },
+    attacks: [
+      {
+        name: "Ogon zmiatający gwiazdy",
+        cost: 4,
+        damage: 150,
+        text: "10 obrażeń każdej postaci na ławce rywala.",
+        effects: [{ k: "bench", n: 10 }],
+      },
+    ],
+    flavor: "Pycha w ostatecznej formie: siedem głów, dziesięć rogów i ani jednego „dziękuję”.",
+    lesson: {
+      tempts:
+        "Pycha dojrzała chce zająć miejsce Boga i wojuje z każdym, kto przypomina, że jest tylko stworzeniem (Ap 12).",
+      defend:
+        "Smok przegrywa z Niewiastą i Barankiem. Pokora, Maryja i Eucharystia — tam nie ma dla niego miejsca.",
+    },
+  },
+  {
     id: "porownania",
     kind: "character",
     side: "demons",
