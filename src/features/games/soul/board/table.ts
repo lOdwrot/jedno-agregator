@@ -1,8 +1,9 @@
 /** Static-ish table: felt halves, card slots, deck stacks, soul counters, discard labels, "thinking" hint. */
-import { Container, FillGradient, Graphics, Text } from "pixi.js";
+import { Container, FillGradient, Graphics, Text, type Ticker } from "pixi.js";
 import { BENCH_SIZE, SOULS_TO_WIN } from "../data/cards";
 import type { Game, PlayerId } from "../engine/state";
 import { text } from "./CardSprite";
+import { Inferno, type BoardTheme } from "./inferno";
 import { anchors, CARD_H, CARD_W, type Anchors } from "./layout";
 import { FONT_DISPLAY, palette } from "./palette";
 
@@ -14,6 +15,8 @@ export class Table {
   private labels = new Container();
   readonly thinking: Text;
   readonly benchGlow = new Graphics();
+  private inferno: Inferno | null = null;
+  theme: BoardTheme = "default";
   a!: Anchors;
   w = 0;
   h = 0;
@@ -38,11 +41,25 @@ export class Table {
     );
   }
 
+  /** The infernal look: red-black felt, lava cracks and rising embers (static under reduced motion). */
+  setTheme(theme: BoardTheme, ticker: Ticker, reduced: boolean) {
+    this.theme = theme;
+    if (theme !== "infernal" || this.inferno) return;
+    this.inferno = new Inferno(ticker, reduced);
+    this.layer.addChildAt(this.inferno.layer, 1);
+    this.thinking.text = "Tron Bestii patrzy…";
+  }
+
   resize(w: number, h: number) {
     this.w = w;
     this.h = h;
     this.a = anchors(w, h);
     const p = palette();
+    const hell = this.theme === "infernal";
+    const [c0, c1, c2] = hell
+      ? [p["hell-950"], p["hell-800"], p["hell-600"]]
+      : [p.navy, p["navy-800"], p["navy-600"]];
+    const line = hell ? p.ember : p["logo-yellow"];
     const mid = this.a.mid;
     this.felt
       .clear()
@@ -53,8 +70,8 @@ export class Table {
           start: { x: 0, y: 0 },
           end: { x: 0, y: 1 },
           colorStops: [
-            { offset: 0, color: p.navy },
-            { offset: 1, color: p["navy-800"] },
+            { offset: 0, color: c0 },
+            { offset: 1, color: c1 },
           ],
           textureSpace: "local",
         }),
@@ -66,19 +83,21 @@ export class Table {
           start: { x: 0, y: 0 },
           end: { x: 0, y: 1 },
           colorStops: [
-            { offset: 0, color: p["navy-800"] },
-            { offset: 1, color: p["navy-600"] },
+            { offset: 0, color: c1 },
+            { offset: 1, color: c2 },
           ],
           textureSpace: "local",
         }),
       )
       .rect(0, mid - 1.5, w, 3)
-      .fill({ color: p["logo-yellow"], alpha: 0.45 });
+      .fill({ color: line, alpha: hell ? 0.8 : 0.45 });
+    if (hell) this.felt.rect(0, mid - 9, w, 18).fill({ color: p.ember, alpha: 0.1 });
+    this.inferno?.resize(w, h, mid);
     const u = this.a.unit;
     const slot = (x: number, y: number, s: number) =>
       this.slots
         .roundRect(x - (CARD_W * s) / 2, y - (CARD_H * s) / 2, CARD_W * s, CARD_H * s, 12 * s * 2)
-        .stroke({ width: 2, color: p.surface, alpha: 0.18 });
+        .stroke({ width: 2, color: hell ? p.ember : p.surface, alpha: hell ? 0.3 : 0.18 });
     this.slots.clear();
     for (const pid of ["ai", "me"] as const) {
       slot(this.a.active[pid].x, this.a.active[pid].y, u);
@@ -106,8 +125,12 @@ export class Table {
         const y = d.y - (CARD_H * s) / 2 - i * 2.5;
         this.decks
           .roundRect(x, y, CARD_W * s, CARD_H * s, 10 * s * 2)
-          .fill(p.navy)
-          .stroke({ width: 2, color: p["logo-yellow"], alpha: 0.7 });
+          .fill(this.theme === "infernal" ? p["hell-800"] : p.navy)
+          .stroke({
+            width: 2,
+            color: this.theme === "infernal" ? p.ember : p["logo-yellow"],
+            alpha: 0.7,
+          });
       }
       this.label(`${pl.deck.length}`, d.x, d.y, 22, p["logo-yellow"]);
       this.label("talia", d.x, d.y + (CARD_H * s) / 2 + 9, 11, p.line);

@@ -19,6 +19,10 @@ const TOKENS = [
   "line",
   "success",
   "danger",
+  "hell-950",
+  "hell-800",
+  "hell-600",
+  "ember",
 ] as const;
 
 export type Token = (typeof TOKENS)[number];

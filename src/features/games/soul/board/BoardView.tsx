@@ -6,6 +6,7 @@ import { readyAbilities } from "../engine/abilities";
 import { AbilityButtons } from "./AbilityButtons";
 import type { Selection } from "../components/CardActions";
 import type { BoardRenderer } from "./BoardRenderer";
+import type { BoardTheme } from "./inferno";
 import { dropsFor, isPlayable, type Drop } from "./dnd";
 import { benchZone, computeSlots, inside, PLACE_KEY, slotRect, type Slot } from "./layout";
 
@@ -17,6 +18,8 @@ interface Props {
   renderer: RefObject<BoardRenderer | null>;
   onSelect: (s: Selection | { zone: "place" }) => void;
   onAction: (a: Action) => void;
+  /** Infernal look of the hardest level. */
+  theme?: BoardTheme;
 }
 
 const ZONE_LABEL = {
@@ -39,7 +42,16 @@ function label(g: Game, s: Slot): string {
 }
 
 /** Canvas board (Pixi) + an invisible layer of real buttons for touch, mouse, keyboard and screen readers. */
-export function BoardView({ view, live, busy, reduced, renderer, onSelect, onAction }: Props) {
+export function BoardView({
+  view,
+  live,
+  busy,
+  reduced,
+  renderer,
+  onSelect,
+  onAction,
+  theme = "default",
+}: Props) {
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 390, h: 640 });
   const [failed, setFailed] = useState(false);
@@ -61,7 +73,7 @@ export function BoardView({ view, live, busy, reduced, renderer, onSelect, onAct
     void import("./BoardRenderer")
       .then(async ({ BoardRenderer: R }) => {
         r = new R();
-        await r.init(el, reduced);
+        await r.init(el, reduced, theme);
         if (!alive) return r.destroy();
         r.resize(el.clientWidth, el.clientHeight);
         renderer.current = r;

@@ -1,16 +1,21 @@
 import type { AiBoost } from "../engine/state";
+import type { Finish } from "./types";
 
 /** Computer opponents — each comes with a letter from an old demon to his young nephew. */
 export interface Opponent {
-  id: "kanapa" | "plotkary" | "pycha" | "zastepy" | "otchlan";
+  id: "kanapa" | "plotkary" | "pycha" | "zastepy" | "otchlan" | "niepokonany";
   name: string;
   emoji: string;
-  difficulty: "łatwy" | "średni" | "trudny" | "bardzo trudny" | "ekstremalny";
+  difficulty: "łatwy" | "średni" | "trudny" | "bardzo trudny" | "ekstremalny" | "niepokonany";
   reward: { win: number; loss: number };
   /** Card ids (energy included) — 50 cards. */
   deck: Record<string, number>;
   /** Handicap in the computer's favour (harder opponents). */
   boost?: AiBoost;
+  /** Print of every card in the computer's deck (stained = +20 HP, +10 damage). */
+  finish?: Finish;
+  /** Look & sound of the duel: the infernal board and unsettling music. */
+  theme?: "infernal";
   letter: { greeting: string; body: string[]; signature: string };
   /** What the player should take away from this duel. */
   moral: string;
@@ -219,6 +224,49 @@ export const OPPONENTS: readonly Opponent[] = [
     },
     moral:
       "Zło bywa głośne i przytłaczające, ale nie jest wszechmocne. Nikt nie walczy sam: modlitwa, sakramenty i wspólnota są silniejsze niż najgroźniejsza pokusa.",
+  },
+  {
+    id: "niepokonany",
+    name: "Tron Bestii",
+    emoji: "👁️",
+    difficulty: "niepokonany",
+    reward: { win: 1000, loss: 100 },
+    boost: { startEnergy: 3, extraDraw: 0 },
+    finish: "stained",
+    theme: "infernal",
+    deck: {
+      bestia: 3,
+      prorok: 2,
+      legion: 2,
+      lucyfer: 2,
+      abaddon: 2,
+      acedia: 1,
+      belzebub: 1,
+      pyszalek: 2,
+      lewiatan: 2,
+      smok: 1,
+      babilon: 2,
+      "ojciec-klamstwa": 2,
+      algorytm: 3,
+      obietnica: 2,
+      szef: 2,
+      remont: 2,
+      hejt: 1,
+      czat: 1,
+      rozpamietywanie: 1,
+      nawyki: 1,
+      pokusa: 15,
+    },
+    letter: {
+      greeting: "Do robaczka zwanego Smołkiem — i do Ciebie, który to czytasz,",
+      body: [
+        "Rada Otchłani została rozwiązana. Za miękka. Od dziś piszę ja. Moje karty są witrażowe, bo kradnę wszystko, co piękne — są przez to twardsze i biją mocniej. Mój pierwszy sługa wchodzi do gry z trzema Pokusami w garści, a w Babilonie zawsze jest „więcej”.",
+        "Bestia z morza leczy swoje rany, Prorok zamyka Ci usta, a Legion… cóż, jest nas wielu. Mówią na mnie „Niepokonany” i nikt jeszcze nie udowodnił, że jest inaczej. Ten Baranek się nie liczy. Nie wspominaj przy mnie o Baranku.",
+      ],
+      signature: "Tron Bestii (wuj Siarkowąs nie ma już nic do powiedzenia)",
+    },
+    moral:
+      "Zło lubi nazywać się niepokonanym, ale ostatnie słowo nie należy do niego: „Baranek ich zwycięży, bo jest Panem panów i Królem królów” (Ap 17,14). Nawet gdy przegrywasz bitwę — wojna jest już wygrana.",
   },
 ];
 

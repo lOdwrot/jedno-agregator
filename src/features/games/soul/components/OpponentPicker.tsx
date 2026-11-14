@@ -29,7 +29,10 @@ export function OpponentPicker({ beaten, problems, onFight, onEditDeck }: Props)
             >
               <span
                 aria-hidden="true"
-                className="grid size-12 shrink-0 place-items-center rounded-full bg-navy text-2xl"
+                className={cn(
+                  "grid size-12 shrink-0 place-items-center rounded-full text-2xl",
+                  o.theme === "infernal" ? "bg-hell-950 ring-2 ring-ember" : "bg-navy",
+                )}
               >
                 {o.emoji}
               </span>

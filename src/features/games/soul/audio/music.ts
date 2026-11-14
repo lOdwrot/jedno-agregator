@@ -2,9 +2,10 @@
  * Generative background music: an organ-like chord progression (D dorian, like a quiet church)
  * with a bell melody. Darker chords play while the demons take their turn, and the music grows
  * with the score — faster and brighter until the fight for the last soul (see `musicPlan`).
+ * The "infernal" theme (hardest opponent) swaps it for a detuned, droning, heartbeat-driven score.
  */
 import { audio, noise, tone } from "./context";
-import { musicLevel, planBar, type MusicLevel } from "./musicPlan";
+import { musicLevel, planBar, type MusicLevel, type MusicTheme } from "./musicPlan";
 
 const D = 146.83;
 const f = (semi: number) => D * 2 ** (semi / 12);
@@ -13,9 +14,10 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 let bar = 0;
 let dark = false;
 let level: MusicLevel = 0;
+let theme: MusicTheme = "church";
 
 function playBar(): number {
-  const p = planBar(level, dark, bar);
+  const p = planBar(level, dark, bar, theme);
   bar++;
   if (!audio()) return p.bar;
   const beat = p.bar / 4;
@@ -23,6 +25,32 @@ function playBar(): number {
   for (const s of p.chord) {
     tone(f(s), p.bar + 0.6, { ...opts, type: "sine", gain: p.padGain, attack: 0.9 });
     tone(f(s) * 2, p.bar, { ...opts, type: "triangle", gain: 0.012, attack: 1.2 });
+  }
+  if (p.detune)
+    for (const s of p.chord)
+      tone(f(s) * p.detune, p.bar + 0.6, { ...opts, type: "sawtooth", gain: 0.01, attack: 1.4 });
+  if (p.drone)
+    tone(f(p.chord[0]! - 24), p.bar + 0.8, {
+      type: "sawtooth",
+      gain: 0.05,
+      attack: 1.2,
+      cutoff: 260,
+      out: "music",
+    });
+  for (let i = 0; i < (p.heartbeats ?? 0); i++) {
+    const at = (i * p.bar) / (p.heartbeats ?? 1);
+    for (const [d, gain] of [
+      [0, 0.16],
+      [0.22, 0.11],
+    ] as const)
+      tone(70, 0.28, {
+        type: "sine",
+        gain,
+        slideTo: 34,
+        attack: 0.006,
+        delay: at + d,
+        out: "music",
+      });
   }
   const root = f(p.chord[0]! - 12);
   if (!p.pulse) tone(root, p.bar + 0.6, { type: "sine", gain: 0.06, attack: 0.6, out: "music" });
@@ -57,19 +85,29 @@ function playBar(): number {
       out: "music",
     });
   }
-  for (const [s, at] of p.bells)
-    tone(f(s) * 2, Math.min(1.8, beat * 1.6), {
-      type: "sine",
-      gain: 0.025,
-      delay: at * beat,
-      out: "music",
-    });
+  for (const [s, at] of p.bells) {
+    const len = Math.min(1.8, beat * 1.6) * (theme === "infernal" ? 2 : 1);
+    tone(f(s) * 2, len, { type: "sine", gain: 0.025, delay: at * beat, out: "music" });
+    // cracked bell: an inharmonic, slightly flat partial
+    if (theme === "infernal")
+      tone(f(s) * 2 * 2.41, len * 0.7, {
+        type: "sine",
+        gain: 0.012,
+        delay: at * beat,
+        out: "music",
+      });
+  }
   return p.bar;
 }
 
 /** A short rising bell run when the music steps up a level. */
 function flourish(to: MusicLevel) {
-  const run = to === 3 ? [12, 16, 19, 24, 28] : [12, 15, 19, 24];
+  const run =
+    theme === "infernal"
+      ? [12, 13, 18, 19, 24]
+      : to === 3
+        ? [12, 16, 19, 24, 28]
+        : [12, 15, 19, 24];
   run.forEach((s, i) =>
     tone(f(s) * 2, 0.9, { type: "sine", gain: 0.03, delay: i * 0.09, out: "music" }),
   );
@@ -90,6 +128,10 @@ export const music = {
   stop() {
     if (timer) clearTimeout(timer);
     timer = null;
+  },
+  /** Church organ (default) or the unsettling infernal score; takes effect from the next bar. */
+  setTheme(t: MusicTheme) {
+    theme = t;
   },
   /** Switch to darker harmonies (demons' turn) or back. */
   setDark(v: boolean) {

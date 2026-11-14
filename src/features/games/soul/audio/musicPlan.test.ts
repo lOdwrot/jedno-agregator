@@ -33,3 +33,34 @@ describe("musicPlan", () => {
         for (const [, at] of planBar(l, n % 2 === 0, n).bells) expect(at).toBeLessThan(4);
   });
 });
+
+describe("musicPlan — infernal theme", () => {
+  const bar = (l: 0 | 1 | 2 | 3, dark = false, n = 0) => planBar(l, dark, n, "infernal");
+
+  it("is slower, darker and its heartbeat speeds up with the score", () => {
+    for (const l of [0, 1, 2, 3] as const) {
+      expect(bar(l).bar).toBeGreaterThan(planBar(l, false, 0).bar);
+      expect(bar(l).cutoff).toBeLessThan(planBar(l, false, 0).cutoff);
+      expect(bar(l).drone).toBe(true);
+      expect(bar(l).detune).toBeGreaterThan(1);
+    }
+    expect(bar(3).heartbeats!).toBeGreaterThan(bar(0).heartbeats!);
+    expect(bar(3).bar).toBeLessThan(bar(0).bar);
+  });
+
+  it("has no bright finale: every chord keeps a tritone or a minor second", () => {
+    for (const l of [0, 1, 2, 3] as const)
+      for (let n = 0; n < 8; n++) {
+        const c = bar(l, n % 2 === 1, n).chord;
+        const uneasy = c.some((a) => c.some((b) => [1, 6].includes(Math.abs(a - b) % 12)));
+        expect(uneasy).toBe(true);
+        expect(c).not.toContain(16); // never the D-major third
+      }
+  });
+
+  it("keeps the tolling bell inside the bar", () => {
+    for (const l of [0, 1, 2, 3] as const)
+      for (let n = 0; n < 8; n++)
+        for (const [, at] of bar(l, false, n).bells) expect(at).toBeLessThan(4);
+  });
+});

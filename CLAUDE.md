@@ -93,6 +93,12 @@ Gilded / stained prints look prestigious: a drifting foil background (DOM: `Pres
 active (active slot, hovered, dragged; DOM: `active` prop or hover/focus) — a rainbow aura with rising sparkles.
 Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is readable on the table without opening the card. Opponents may carry an `AiBoost` (energy on the starting active from the
 deck, extra draws per turn) — `zastepy` (Smocze Zastępy, "bardzo trudny": 2 energy on the start, no extra draw) sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
+The top level is `niepokonany` (Tron Bestii, "niepokonany": ~10× harder than `otchlan` in AI-vs-AI sims): it plays the
+apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, Legion, Babilon Wielki, Ojciec kłamstwa),
+its whole deck is printed `stained` (`Opponent.finish`) and it starts with 3 energy. `Opponent.theme: "infernal"` switches
+the duel to the hellish look and sound: `board/inferno.ts` (lava cracks, red glow, rising embers — static under reduced
+motion; colours `hell-*`/`ember` in a `@theme static` block so the canvas can read them) and `audio/musicInfernal.ts`
+(detuned tritone clusters, drone, heartbeat, cracked bell; no bright finale).
 **Multiplayer** (tab "Multiplayer", `soul/pvp/`): two people, each with their own deck, over WebRTC (PeerJS —
 the free broker `0.peerjs.com` only introduces the browsers; `VITE_PEER_SERVER` points to another one, e.g. a local
 `peer` server for tests). The host registers `jedno-wod-<4 digits>`, the guest types the code. Lock-step sync
