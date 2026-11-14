@@ -26,6 +26,8 @@ export interface Profile {
   losses: number;
   /** Opponents beaten at least once. */
   beaten: string[];
+  /** Rank points (see `rank/xp.ts`); missing in older saves = 0. */
+  xp?: number;
 }
 
 export const BOOSTER_PRICE = 100;
@@ -71,6 +73,7 @@ export function newProfile(): Profile {
     wins: 0,
     losses: 0,
     beaten: [],
+    xp: 0,
   };
 }
 

@@ -1,12 +1,14 @@
 import { Button, Dialog, Icon } from "@/ui";
 import type { PackType } from "../collection/packs";
 import type { Opponent } from "../data/opponents";
+import { RankMeter } from "../rank/RankMeter";
 
 interface Props {
   won: boolean;
   reason: string;
   souls: number;
   earned: number;
+  rank: { from: number; to: number };
   /** Victory booster already opened (and added to the collection). */
   prize: PackType | null;
   opponent: Opponent;
@@ -22,6 +24,7 @@ export function DuelResult({
   reason,
   souls,
   earned,
+  rank,
   prize,
   opponent,
   training = false,
@@ -37,6 +40,7 @@ export function DuelResult({
     >
       <div className="flex flex-col gap-3 text-center">
         <p className="text-ink">{reason}</p>
+        {!training && <RankMeter xp={rank.to} from={rank.from} />}
         {training ? (
           <p className="font-bold text-navy">
             🎯 Trening — bez nagród{" "}

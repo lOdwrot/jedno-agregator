@@ -10,6 +10,8 @@ import { DuelView } from "./DuelView";
 /** What a finished duel brought: talents and, for a victory over a harder opponent, a booster. */
 export interface DuelOutcome {
   earned: number;
+  /** Rank points before and after the duel. */
+  rank: { from: number; to: number };
   prize: { pack: PackType; cards: CardKey[]; fresh: boolean[] } | null;
 }
 
@@ -20,6 +22,8 @@ interface Props {
   deck: DeckList;
   onFinish: (won: boolean, souls: number) => DuelOutcome;
   onExit: (openBooster: boolean) => void;
+  /** Leaving before the end: counts as a defeat for the rank. */
+  onForfeit: () => void;
 }
 
 const opponentDeck = (o: Opponent): DeckList =>
@@ -32,7 +36,7 @@ const opponentDeck = (o: Opponent): DeckList =>
  * A prize booster (harder opponents) is opened first, then the result dialog follows.
  * A practice duel (`training`) is the same fight without any reward.
  */
-export function SoloDuel({ opponent, training = false, deck, onFinish, onExit }: Props) {
+export function SoloDuel({ opponent, training = false, deck, onFinish, onExit, onForfeit }: Props) {
   const [initial] = useState<Game>(() =>
     createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.boost),
   );
@@ -47,8 +51,13 @@ export function SoloDuel({ opponent, training = false, deck, onFinish, onExit }:
       initial={initial}
       opponent={training ? { ...opponent, name: `${opponent.name} (trening)` } : opponent}
       onOver={onOver}
-      exitLabel={training ? "Zakończ trening" : "Poddaj się i wyjdź (bez nagrody)"}
-      onExit={() => onExit(false)}
+      exitLabel={
+        training ? "Zakończ trening" : "Poddaj się i wyjdź (bez nagrody, tracisz punkty rangi)"
+      }
+      onExit={() => {
+        if (!over && !training) onForfeit();
+        onExit(false);
+      }}
       result={
         over &&
         (over.prize && prizeOpen ? (
@@ -65,6 +74,7 @@ export function SoloDuel({ opponent, training = false, deck, onFinish, onExit }:
             reason={over.g.reason}
             souls={over.g.players.me.souls}
             earned={over.earned}
+            rank={over.rank}
             prize={over.prize?.pack ?? null}
             opponent={opponent}
             training={training}
