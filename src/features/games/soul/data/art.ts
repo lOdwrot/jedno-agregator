@@ -12,6 +12,20 @@ export interface ArtCredit {
 }
 
 export const ART: Record<string, ArtCredit> = {
+  benedykt16: {
+    title: "Benedykt XVI (2010-10-17) 4.jpg",
+    author: "Kancelaria Prezydenta RP",
+    license: "GFDL 1.2",
+    url: "https://commons.wikimedia.org/wiki/File:Benedykt_XVI_(2010-10-17)_4.jpg",
+    focus: 0.62,
+  },
+  celestyn5: {
+    title: "San Pedro Celestino, papa, de Bartolomé Román (Museo del Prado).jpg",
+    author: "Bartolomé Román",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:San_Pedro_Celestino,_papa,_de_Bartolom%C3%A9_Rom%C3%A1n_(Museo_del_Prado).jpg",
+    focus: 0.2,
+  },
   franciszek: {
     title: "Pope Francis in March 2013.jpg",
     author: "Casa Rosada",
@@ -46,6 +60,13 @@ export const ART: Record<string, ArtCredit> = {
     author: "Zbigniew Kotyłło",
     license: "CC BY-SA 3.0",
     url: "https://commons.wikimedia.org/wiki/File:Jan_Pawe%C5%82_II_portret_Z._Koty%C5%82%C5%82o.jpg",
+    focus: 0.2,
+  },
+  komorowski: {
+    title: "Bronislaw Komorowski - pomnik plac B K - Gdansk.jpg",
+    author: "Rudolf H. Boettcher",
+    license: "CC BY-SA 4.0",
+    url: "https://commons.wikimedia.org/wiki/File:Bronislaw_Komorowski_-_pomnik_plac_B_K_-_Gdansk.jpg",
     focus: 0.2,
   },
   kolbe: {
