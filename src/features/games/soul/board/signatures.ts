@@ -228,6 +228,45 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
       await impact(r.fx, r.tw, to, P()["logo-dark"], 1.8);
     },
   },
+  "Gloria in excelsis": {
+    sound: "fear_not",
+    play: async ({ r, from, to }) => {
+      await pillar(r.fx, r.tw, from, P()["logo-yellow"], 200);
+      await stream(r.fx, r.tw, from, to, "🎶", 12, 32, 1100);
+    },
+  },
+  "Oaza Nowego Życia": {
+    sound: "campfire",
+    play: async ({ r, from, to }) => {
+      await stream(r.fx, r.tw, from, to, "🕊️", 6, 40);
+      await impact(r.fx, r.tw, to, P()["logo-yellow"], 1.8);
+    },
+  },
+  "Zmarnowane lata": {
+    sound: "clock",
+    play: async ({ r, from, to }) => {
+      await stream(r.fx, r.tw, from, to, "⏳", 6, 40, 1000);
+      await impact(r.fx, r.tw, to, P()["logo-dark"], 1.6);
+    },
+  },
+  "Burza w komentarzach": {
+    sound: "boo",
+    play: async ({ r, to }) => {
+      await both(rain(r.fx, r.tw, to, "💬", 16, 30), rain(r.fx, r.tw, to, "⚡", 5, 40));
+      await shake(r.tw, r.stage, 14, r.reduced);
+    },
+  },
+  "Ogon zmiatający gwiazdy": {
+    sound: "roar",
+    play: async ({ r, to }) => {
+      await sweep(r.fx, r.tw, r.w, to.y, "🐲", 110, false, 900);
+      await both(
+        rain(r.fx, r.tw, to, "⭐", 10, 30),
+        impact(r.fx, r.tw, to, P().danger, 2.2),
+        shake(r.tw, r.stage, 22, r.reduced),
+      );
+    },
+  },
 };
 
 export function signatureFor(name: string) {

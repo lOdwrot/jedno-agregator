@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DECK_SIZE, getCard } from "../data/cards";
+import { ALL_CARDS, DECK_SIZE, getCard } from "../data/cards";
 import { OPPONENTS } from "../data/opponents";
 import { deckList, newProfile } from "../collection/profile";
 import { dispatch, evolveTargets } from "./actions";
@@ -79,6 +79,23 @@ describe("Walka o duszę — engine", () => {
       const placeHere = g.place && g.players[g.place.owner] === p ? 1 : 0;
       expect(total + placeHere).toBe(DECK_SIZE);
     }
+  });
+
+  it("evolutions come from a same-side character; both sides have several stage 2 cards", () => {
+    const chars = ALL_CARDS.filter((c) => c.kind === "character");
+    const stage = (id: string): number => {
+      const c = getCard(id);
+      return c.kind === "character" && c.evolvesFrom ? 1 + stage(c.evolvesFrom) : 0;
+    };
+    for (const c of chars)
+      if (c.kind === "character" && c.evolvesFrom) {
+        expect(getCard(c.evolvesFrom).side, c.id).toBe(c.side);
+        expect(getCard(c.evolvesFrom).kind, c.id).toBe("character");
+      }
+    for (const side of ["parish", "demons"] as const)
+      expect(
+        chars.filter((c) => c.side === side && stage(c.id) === 2).length,
+      ).toBeGreaterThanOrEqual(3);
   });
 
   it("all referenced cards exist", () => {
