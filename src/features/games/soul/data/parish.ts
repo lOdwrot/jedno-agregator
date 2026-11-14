@@ -698,8 +698,8 @@ export const PARISH_CARDS: CardDef[] = [
     name: "Różaniec",
     emoji: "📿",
     rarity: "common",
-    text: "Dobierz 2 karty.",
-    effect: { k: "draw", n: 2 },
+    text: "Spójrz na wierzchnią kartę swojej talii. Weź ją do ręki albo odrzuć ją i dobierz kartę.",
+    effect: { k: "peek" },
     flavor: "Po jednym w każdej kieszeni kurtki. I w schowku w aucie.",
   },
   {

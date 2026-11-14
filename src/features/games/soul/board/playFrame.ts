@@ -303,6 +303,17 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       await r.reconcile(state, 420, 80);
       return;
     }
+    case "peek": {
+      const d = a.deck[ev.pid];
+      if (ev.kept === null) {
+        sfx.shuffle();
+        await fx.ring(d.x, d.y, p["logo-yellow"], 60, 4);
+        return;
+      }
+      if (ev.kept) sfx.deal(0);
+      await r.reconcile(state, 380);
+      return;
+    }
     case "swap":
       sfx.swap();
       await r.reconcile(state, 480);

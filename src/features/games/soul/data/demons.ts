@@ -444,11 +444,11 @@ export const DEMON_CARDS: CardDef[] = [
     name: "Powiadomienie",
     emoji: "🔔",
     rarity: "common",
-    text: "Dobierz 2 karty.",
-    effect: { k: "draw", n: 2 },
-    flavor: "Ding! (Nic ważnego.)",
+    text: "Spójrz na wierzchnią kartę swojej talii. Weź ją do ręki albo odrzuć ją i dobierz kartę.",
+    effect: { k: "peek" },
+    flavor: "Ding! Nic ciekawego? Przewiń dalej. Ding!",
     lesson: {
-      tempts: "Każde „ding” wyrywa z modlitwy, nauki i rozmowy.",
+      tempts: "Każde „ding” wyrywa z modlitwy, nauki i rozmowy — a potem jeszcze jedno, i jeszcze.",
       defend: "Tryb skupienia na czas Mszy, nauki i rodzinnego obiadu.",
     },
   },
@@ -469,13 +469,13 @@ export const DEMON_CARDS: CardDef[] = [
   },
   {
     id: "falszywy",
-    kind: "supporter",
+    kind: "item",
     side: "demons",
     name: "Fałszywy kolega",
     emoji: "🕶️",
     rarity: "uncommon",
-    text: "Zamień aktywną postać rywala z postacią z jego ławki.",
-    effect: { k: "gust" },
+    text: "Rzuć monetą. Orzeł: zamień aktywną postać rywala z wybraną postacią z jego ławki.",
+    effect: { k: "gust", coin: true },
     flavor: "„Chodź, jedna impreza, nikt się nie dowie”.",
     lesson: {
       tempts: "Presja grupy wyciąga nas z miejsc, w których jesteśmy silni.",
@@ -604,6 +604,73 @@ export const DEMON_CARDS: CardDef[] = [
     lesson: {
       tempts: "Grzech zawsze obiecuje więcej, niż daje: szczęście, wolność, akceptację.",
       defend: "Patrz na skutki, nie na opakowanie. Prawdziwe dobro zostawia pokój, a nie pustkę.",
+    },
+  },
+  {
+    id: "szef",
+    kind: "supporter",
+    side: "demons",
+    name: "Toksyczny szef",
+    emoji: "💼",
+    rarity: "rare",
+    text: "Zamień aktywną postać rywala z wybraną postacią z jego ławki.",
+    effect: { k: "gust" },
+    flavor: "„Mail wysłany w niedzielę o 23:58. Odpowiedź na wczoraj”.",
+    lesson: {
+      tempts:
+        "Praca i obowiązki potrafią wyciągnąć nas z modlitwy i z domu — zawsze „tylko ten jeden raz”.",
+      defend:
+        "Twoja wartość nie zależy od wyników. Postaw granice: niedziela i czas dla bliskich nie są do negocjacji.",
+    },
+  },
+  {
+    id: "remont",
+    kind: "item",
+    side: "demons",
+    name: "Remont u sąsiada",
+    emoji: "🔨",
+    rarity: "uncommon",
+    text: "Rzuć monetą. Orzeł: odrzuć 1 Łaskę z wybranej postaci rywala.",
+    effect: { k: "discardOppEnergy", coin: true, any: true },
+    flavor: "Wiertarka, niedziela, 7:00. Akurat w trakcie porannej modlitwy.",
+    lesson: {
+      tempts: "Drobne irytacje wybijają ze spokoju i odbierają pokój serca na cały dzień.",
+      defend:
+        "Nie pozwól, by hałas zabrał Ci pokój. Westchnienie do Boga, życzliwe słowo — i wracasz do siebie.",
+    },
+  },
+  {
+    id: "ciche-dni",
+    kind: "item",
+    side: "demons",
+    name: "Ciche dni",
+    emoji: "🤐",
+    rarity: "uncommon",
+    text: "Rzuć monetą. Orzeł: aktywna postać rywala zostaje zatrzymana.",
+    effect: { k: "oppStatus", s: "paralyzed", coin: true },
+    flavor: "„Nic się nie stało”. (Stało się. I nikt nie zamierza o tym mówić.)",
+    lesson: {
+      tempts:
+        "Obrażone milczenie zamraża relacje i każe czekać, aż to ten drugi zrobi pierwszy krok.",
+      defend:
+        "„Niech nad waszym gniewem nie zachodzi słońce” (Ef 4,26). Zrób pierwszy krok — przeproś.",
+    },
+  },
+  {
+    id: "kompleksy",
+    kind: "supporter",
+    side: "demons",
+    name: "Kompleksy",
+    emoji: "🪞",
+    rarity: "rare",
+    text: "Rywal wtasowuje rękę do talii i dobiera 3 karty. Ty dobierasz 3 karty.",
+    effect: { k: "disrupt", opp: 3, self: 3 },
+    flavor: "Lustro, filtr, porównanie. Lustro, filtr, porównanie.",
+    lesson: {
+      tempts:
+        "Szepcze, że jesteś „za mało”: za mało ładny, mądry, popularny — i że inni mają lepiej.",
+      defend:
+        "Jesteś stworzony na obraz Boga i kochany bez warunków. Dziękuj za to, kim jesteś, zamiast porównywać.",
     },
   },
   {

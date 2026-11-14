@@ -23,6 +23,7 @@ export type GameEvent =
   | { t: "cleanse"; uids: number[] }
   | { t: "shield"; uid: number }
   | { t: "coin"; heads: boolean }
+  | { t: "peek"; pid: PlayerId; uid: number; kept: boolean | null }
   | { t: "ko"; pid: PlayerId; uid: number }
   | { t: "souls"; pid: PlayerId; n: number }
   | { t: "swap"; pid: PlayerId }

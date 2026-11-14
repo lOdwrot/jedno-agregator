@@ -18,6 +18,7 @@ export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
     !e ||
     !ACTIVE_ABILITIES.has(e.k) ||
     g.phase !== "main" ||
+    g.peek ||
     g.turn !== pid ||
     c.abilityTurn === g.turnNo
   )

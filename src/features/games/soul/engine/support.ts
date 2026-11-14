@@ -1,9 +1,10 @@
 /** Trainer-like cards: items, supporters (one per turn) and places (one on the table). */
 import { BENCH_SIZE, ENERGY_ID, getCard, isBasic, isCharacter } from "../data/cards";
 import type { SupportDef } from "../data/types";
-import { discardEnergy, healAll } from "./combat";
+import { addStatus, discardEnergy, healAll } from "./combat";
 import { emit } from "./events";
 import {
+  coin,
   draw,
   findInPlay,
   inPlay,
@@ -19,13 +20,14 @@ import {
   type PlayerId,
 } from "./state";
 
-export type TargetKind = "own" | "ownBench" | "oppBench" | null;
+export type TargetKind = "own" | "ownBench" | "oppBench" | "oppAny" | null;
 
 export function targetKind(def: SupportDef): TargetKind {
   const e = def.effect;
   if ((e.k === "heal" && e.target === "own") || e.k === "energyFromDeck") return "own";
   if (e.k === "switch") return "ownBench";
   if (e.k === "gust") return "oppBench";
+  if (e.k === "discardOppEnergy" && e.any) return "oppAny";
   return null;
 }
 
@@ -39,6 +41,8 @@ export function supportTargets(g: Game, pid: PlayerId, def: SupportDef): InPlay[
       return me.bench;
     case "oppBench":
       return g.players[other(pid)].bench;
+    case "oppAny":
+      return inPlay(g.players[other(pid)]).filter((c) => c.energy > 0);
     default:
       return [];
   }
@@ -52,6 +56,7 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
   const def = getCard(card.cardId);
   if (def.kind !== "item" && def.kind !== "supporter" && def.kind !== "place") return false;
   if (def.kind === "supporter" && g.flags.supporter) return false;
+  if (g.peek) return false;
   const me = g.players[pid];
   const foe = g.players[other(pid)];
   const a = me.active;
@@ -82,7 +87,13 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
     case "shield":
       return !!a;
     case "discardOppEnergy":
-      return (foe.active?.energy ?? 0) > 0;
+      return e.any ? true : (foe.active?.energy ?? 0) > 0;
+    case "peek":
+      return me.deck.length > 0;
+    case "oppStatus":
+      return !!foe.active && !foe.active.statuses.includes(e.s);
+    case "disrupt":
+      return foe.hand.length > 0 || me.deck.length > 0;
     case "energyFromDeck":
       return deckEnergy(g, pid) > 0;
     case "place":
@@ -99,8 +110,8 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
   const foe = g.players[other(pid)];
   const kind = targetKind(def);
   const target =
-    kind === "oppBench"
-      ? foe.bench.find((b) => b.uid === targetUid)
+    kind === "oppBench" || kind === "oppAny"
+      ? findInPlay(foe, targetUid ?? -1)
       : kind
         ? findInPlay(me, targetUid ?? -1)
         : undefined;
@@ -205,6 +216,7 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       break;
     }
     case "gust": {
+      if (e.coin && !flip(g)) break;
       const old = foe.active!;
       foe.bench = foe.bench.map((b) => (b === target ? old : b));
       foe.active = target!;
@@ -213,8 +225,40 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       break;
     }
     case "discardOppEnergy":
-      discardEnergy(g, other(pid), foe.active!, 1);
+      if (e.coin && !flip(g)) break;
+      discardEnergy(g, other(pid), e.any ? target! : foe.active!, 1);
       break;
+    case "peek": {
+      const top = me.deck[0]!;
+      g.peek = { pid, uid: top.uid };
+      log(
+        g,
+        pid === "me"
+          ? `Odkrywasz wierzchnią kartę: ${nameOf(top)}. Weź ją albo odrzuć i dobierz następną.`
+          : "Pomioty podglądają wierzchnią kartę swojej talii.",
+      );
+      emit(g, { t: "peek", pid, uid: top.uid, kept: null });
+      break;
+    }
+    case "oppStatus":
+      if (e.coin && !flip(g)) break;
+      addStatus(g, foe.active!, e.s);
+      break;
+    case "disrupt": {
+      shuffle(g, foe.hand);
+      foe.deck.push(...foe.hand.splice(0));
+      shuffle(g, foe.deck);
+      emit(g, { t: "shuffle", pid: other(pid) });
+      draw(g, other(pid), e.opp);
+      draw(g, pid, e.self);
+      log(
+        g,
+        pid === "me"
+          ? `Rywal wtasowuje rękę i dobiera ${e.opp}, Ty dobierasz ${e.self}.`
+          : `Wtasowujesz rękę do talii i dobierasz ${e.opp} karty. Pomioty dobierają ${e.self}.`,
+      );
+      break;
+    }
     case "energyFromDeck": {
       let k = 0;
       me.deck = me.deck.filter((c) => {
@@ -241,4 +285,12 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       break;
   }
   return true;
+}
+
+/** Coin flip of a trainer card (logged + animated). Returns heads. */
+function flip(g: Game): boolean {
+  const h = coin(g);
+  emit(g, { t: "coin", heads: h });
+  log(g, h ? "Orzeł!" : "Reszka — karta nie działa.");
+  return h;
 }

@@ -46,6 +46,8 @@ export interface Game {
   promote: { who: PlayerId; then: "endTurn" | "startNext" } | null;
   flags: { energy: boolean; supporter: boolean; retreated: boolean };
   place: { cardId: string; owner: PlayerId } | null;
+  /** Top deck card revealed by a peek card — its owner must keep or discard it before moving on. */
+  peek: { pid: PlayerId; uid: number } | null;
   winner: PlayerId | null;
   reason: string;
   log: string[];
@@ -154,6 +156,7 @@ export function createGame(me: DeckList, ai: DeckList, seed: number): Game {
     promote: null,
     flags: { energy: false, supporter: false, retreated: false },
     place: null,
+    peek: null,
     winner: null,
     reason: "",
     log: [],

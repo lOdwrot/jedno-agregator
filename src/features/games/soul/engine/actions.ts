@@ -16,6 +16,7 @@ import {
 } from "./combat";
 import { canUseAbility, activateAbility } from "./abilities";
 import { emit, recordFrames, type Frame } from "./events";
+import { resolvePeek } from "./peek";
 import { playSupport } from "./support";
 import {
   charDef,
@@ -43,7 +44,9 @@ export type Action =
   | { type: "ability"; target: number }
   | { type: "attack"; index: number }
   | { type: "endTurn" }
-  | { type: "promote"; uid: number };
+  | { type: "promote"; uid: number }
+  /** Answer to a peek card: keep the revealed top card, or discard it and draw. */
+  | { type: "peek"; keep: boolean };
 
 const def = (c: CardInst): CardDef => getCard(c.cardId);
 const canAct = (c: InPlay) => !c.statuses.includes("asleep") && !c.statuses.includes("paralyzed");
@@ -51,6 +54,7 @@ const canAct = (c: InPlay) => !c.statuses.includes("asleep") && !c.statuses.incl
 /* ── queries used by the UI and the AI ── */
 export const canBench = (g: Game, pid: PlayerId, c: CardInst) =>
   g.phase === "main" &&
+  !g.peek &&
   g.turn === pid &&
   isBasic(def(c)) &&
   g.players[pid].bench.length < BENCH_SIZE;
@@ -59,6 +63,7 @@ export function evolveTargets(g: Game, pid: PlayerId, c: CardInst): InPlay[] {
   const d = def(c);
   if (
     g.phase !== "main" ||
+    g.peek ||
     g.turn !== pid ||
     d.kind !== "character" ||
     !d.evolvesFrom ||
@@ -72,6 +77,7 @@ export function evolveTargets(g: Game, pid: PlayerId, c: CardInst): InPlay[] {
 
 export const canAttach = (g: Game, pid: PlayerId, c: CardInst) =>
   g.phase === "main" &&
+  !g.peek &&
   g.turn === pid &&
   !g.flags.energy &&
   c.cardId === ENERGY_ID[g.players[pid].side];
@@ -79,6 +85,7 @@ export const canAttach = (g: Game, pid: PlayerId, c: CardInst) =>
 export function attackBlock(g: Game, pid: PlayerId, atk: AttackDef): string | null {
   const a = g.players[pid].active;
   if (g.phase !== "main" || g.turn !== pid || !a) return "To nie Twoja tura.";
+  if (g.peek) return "Najpierw zdecyduj o odkrytej karcie.";
   if (g.turnNo === 1) return "W pierwszej turze gry nie można atakować.";
   if (a.statuses.includes("asleep")) return "Postać śpi.";
   if (a.statuses.includes("paralyzed")) return "Postać jest zatrzymana.";
@@ -89,6 +96,7 @@ export function attackBlock(g: Game, pid: PlayerId, atk: AttackDef): string | nu
 export function retreatBlock(g: Game, pid: PlayerId): string | null {
   const p = g.players[pid];
   if (g.phase !== "main" || g.turn !== pid || !p.active) return "To nie Twoja tura.";
+  if (g.peek) return "Najpierw zdecyduj o odkrytej karcie.";
   if (!p.bench.length) return "Ławka jest pusta.";
   if (g.flags.retreated) return "Wycofać można raz na turę.";
   if (!canAct(p.active)) return "Uśpiona lub zatrzymana postać nie może się wycofać.";
@@ -184,6 +192,8 @@ function apply(g: Game, a: Action): boolean {
   const pid = g.turn;
   const p = g.players[pid];
   const inHand = (uid: number) => p.hand.find((c) => c.uid === uid);
+  // a revealed peek card must be answered before anything else happens
+  if (g.peek) return a.type === "peek" && resolvePeek(g, pid, a.keep);
   switch (a.type) {
     case "chooseActive": {
       const me = g.players.me;
@@ -259,6 +269,8 @@ function apply(g: Game, a: Action): boolean {
       if (g.phase !== "main") return false;
       endTurn(g);
       return true;
+    case "peek":
+      return false;
     case "promote": {
       const pr = g.promote;
       if (g.phase !== "promote" || !pr) return false;
