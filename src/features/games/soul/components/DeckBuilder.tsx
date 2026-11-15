@@ -179,10 +179,19 @@ export function DeckBuilder({
 
 const STAGE_PAD = ["pl-2", "pl-7", "pl-12", "pl-16"] as const;
 
-/** Evolution stage of row i (0 = the first card of the line; other finishes share the stage). */
+/** Evolution depth of a card (0 = basic). */
+function depth(cardId: string): number {
+  const c = getCard(cardId);
+  return c.kind === "character" && c.evolvesFrom ? 1 + depth(c.evolvesFrom) : 0;
+}
+
+/**
+ * Evolution stage of row i, counted from the first card of the line (other finishes share the
+ * stage; sibling evolutions — e.g. every pope from the candidate — share it too).
+ */
 function stageOf(stack: readonly CardKey[], i: number) {
-  const ids = new Set(stack.slice(0, i + 1).map((k) => parseKey(k).cardId));
-  return Math.min(ids.size - 1, STAGE_PAD.length - 1);
+  const stage = depth(parseKey(stack[i]!).cardId) - depth(parseKey(stack[0]!).cardId);
+  return Math.min(stage, STAGE_PAD.length - 1);
 }
 
 /** Whether row i of an evolution stack is a later stage (not just another finish of the card above). */

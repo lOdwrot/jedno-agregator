@@ -14,6 +14,11 @@ export function getCard(id: string): CardDef {
 export const isCharacter = (c: CardDef): c is CharacterDef => c.kind === "character";
 export const isBasic = (c: CardDef): c is CharacterDef => isCharacter(c) && !c.evolvesFrom;
 
+/** Every pope evolves from this one basic card. */
+export const POPE_CANDIDATE = "kandydat";
+export const isPopeCard = (c: CardDef): c is CharacterDef =>
+  isCharacter(c) && c.evolvesFrom === POPE_CANDIDATE;
+
 /** Collectible parish cards (energy is unlimited and never in boosters). */
 export const COLLECTIBLE: readonly CardDef[] = PARISH_CARDS.filter((c) => c.kind !== "energy");
 export const DEMON_CHARACTERS = DEMON_CARDS.filter(isCharacter);

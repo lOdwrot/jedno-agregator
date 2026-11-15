@@ -133,6 +133,16 @@ function pick<T>(pool: readonly T[], rnd: () => number): T {
   return pool[Math.floor(rnd() * pool.length)]!;
 }
 
+/** Extra-rare cards: chance relative to the other cards of the same rarity (default 1). */
+export const PULL_WEIGHT: Readonly<Record<string, number>> = { sobor: 0.4 };
+
+function pickCard(pool: readonly CardDef[], rnd: () => number): CardDef {
+  const w = (c: CardDef) => PULL_WEIGHT[c.id] ?? 1;
+  let r = rnd() * pool.reduce((s, c) => s + w(c), 0);
+  for (const c of pool) if ((r -= w(c)) < 0) return c;
+  return pool.at(-1)!;
+}
+
 /**
  * 5 cards: 3 common, 1 uncommon (sometimes rare), 1 rare-or-legendary. The best card comes last.
  * Skarbiec Katedry: the 4th card is always rare and the last one always legendary.
@@ -149,13 +159,13 @@ export function rollPack(pack: PackType, rnd: () => number = Math.random): CardK
   const out: { id: string; finish: Finish }[] = [];
   for (let slot = 0; slot < 5; slot++) {
     let card: CardDef;
-    if (slot < 3) card = pick(of("common"), rnd);
+    if (slot < 3) card = pickCard(of("common"), rnd);
     else if (slot === 3)
-      card = pick(of(rnd() < pack.odds.rareInUncommonSlot ? "rare" : "uncommon"), rnd);
-    else if (rnd() < pack.odds.legendary) card = pick(of("legendary"), rnd);
+      card = pickCard(of(rnd() < pack.odds.rareInUncommonSlot ? "rare" : "uncommon"), rnd);
+    else if (rnd() < pack.odds.legendary) card = pickCard(of("legendary"), rnd);
     else {
       const special = pack.odds.pool ? COLLECTIBLE.filter(pack.odds.pool) : [];
-      card = special.length && rnd() < 0.7 ? pick(special, rnd) : pick(of("rare"), rnd);
+      card = special.length && rnd() < 0.7 ? pickCard(special, rnd) : pickCard(of("rare"), rnd);
     }
     const first = slot === 0 ? pack.odds.first : undefined;
     if (first) out.push({ id: first.id, finish: pickFinish(rnd(), first.finish) });

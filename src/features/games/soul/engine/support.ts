@@ -1,5 +1,5 @@
 /** Trainer-like cards: items, supporters (one per turn) and places (one on the table). */
-import { BENCH_SIZE, ENERGY_ID, getCard, isBasic, isCharacter } from "../data/cards";
+import { BENCH_SIZE, ENERGY_ID, getCard, isBasic, isCharacter, isPopeCard } from "../data/cards";
 import type { SupportDef } from "../data/types";
 import { addStatus, discardEnergy, healAll, placeRule } from "./combat";
 import { recoverPick } from "./aiSearch";
@@ -50,6 +50,14 @@ export function supportTargets(g: Game, pid: PlayerId, def: SupportDef): InPlay[
     default:
       return [];
   }
+}
+
+/** Popes in hand that "Przyspieszony Sobór Watykański" could put on the bench. */
+export function councilPicks(g: Game, pid: PlayerId): CardInst[] {
+  const me = g.players[pid];
+  if (me.bench.length >= BENCH_SIZE || !me.hand.some((c) => c.cardId === ENERGY_ID[me.side]))
+    return [];
+  return me.hand.filter((c) => isPopeCard(getCard(c.cardId)));
 }
 
 const deckEnergy = (g: Game, pid: PlayerId) =>
@@ -118,6 +126,8 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
       return foe.hand.length > 0 || me.deck.length > 0;
     case "energyFromDeck":
       return deckEnergy(g, pid) > 0;
+    case "council":
+      return councilPicks(g, pid).length > 0;
     case "place":
       return g.place?.cardId !== def.id;
     default:
@@ -138,6 +148,9 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
         ? findInPlay(me, targetUid ?? -1)
         : undefined;
   if (kind && (!target || !supportTargets(g, pid, def).includes(target))) return false;
+  const pope =
+    def.effect.k === "council" ? councilPicks(g, pid).find((c) => c.uid === targetUid) : undefined;
+  if (def.effect.k === "council" && !pope) return false;
 
   me.hand = me.hand.filter((c) => c.uid !== card.uid);
   if (def.kind === "supporter") g.flags.supporter = true;
@@ -346,6 +359,21 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
       target!.energy += k;
       shuffle(g, me.deck);
       if (k) emit(g, { t: "attach", pid, uid: target!.uid, n: k });
+      break;
+    }
+    case "council": {
+      const energy = me.hand.find((c) => c.cardId === ENERGY_ID[me.side])!;
+      me.hand = me.hand.filter((c) => c !== energy && c !== pope);
+      me.discard.push(energy);
+      me.bench.push(toInPlay(pope!, g.turnNo));
+      say(
+        g,
+        pid,
+        `Odrzucasz Łaskę — na ławkę prosto z ręki wchodzi: ${nameOf(pope!)}.`,
+        `Pomioty odrzucają energię i sadzają na ławce: ${nameOf(pope!)}.`,
+        (n) => `${n} odrzuca Łaskę — na ławkę prosto z ręki wchodzi: ${nameOf(pope!)}.`,
+      );
+      emit(g, { t: "bench", pid, uid: pope!.uid });
       break;
     }
     case "place":

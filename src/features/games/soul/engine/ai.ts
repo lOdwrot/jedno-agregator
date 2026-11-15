@@ -19,7 +19,7 @@ import {
   previewDamage,
   retreatCost,
 } from "./combat";
-import { canPlaySupport, supportTargets } from "./support";
+import { canPlaySupport, councilPicks, supportTargets } from "./support";
 import {
   benchValue,
   bestBasic,
@@ -91,6 +91,15 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
       case "place":
         if (!g.place || g.place.owner !== pid) return play();
         break;
+      case "council": {
+        const hp = (x: { cardId: string }) => {
+          const d = getCard(x.cardId);
+          return d.kind === "character" ? d.hp : 0;
+        };
+        const pope = [...councilPicks(g, pid)].sort((x, y) => hp(y) - hp(x))[0];
+        if (pope) return play(pope.uid);
+        break;
+      }
       case "heal":
         if (e.target === "own") {
           const t = [...targets].sort((x, y) => y.damage - x.damage)[0];
