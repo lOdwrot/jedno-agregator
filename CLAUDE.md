@@ -88,7 +88,8 @@ and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, 
 `attack` action — the UI asks via `benchEnergyTargets` when more than one benched character could get the energy.
 Every pope (legendary, 2 souls) is a stage 1 evolution of the single common basic `kandydat` (Kandydat na papieża) —
 none can be played straight from the hand (`popes.test.ts`); the starter deck holds 2 candidates and profile v4
-migration gives them to older saves (in place of grace when the deck already has popes).
+migration gives them to older saves (in place of grace when the deck already has popes). The "Papieże wieków" booster
+always opens with a candidate (`odds.first`: 15% stained, 35% gilded); in other packs it is an ordinary common.
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in
