@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { Button, Dialog, usePrefersReducedMotion } from "@/ui";
+import { Button, Dialog, usePageScrollLock, usePrefersReducedMotion } from "@/ui";
 import { getCard } from "../data/cards";
 import { music } from "../audio/music";
 import { loadPrefs, savePrefs, type AudioPrefs } from "../audio/context";
@@ -73,18 +73,15 @@ export function DuelView({
   const move = usePvpSync(net, player);
   const act = frozen ? () => undefined : (move ?? player.act);
 
-  // lock page scroll, start the music (the duel starts from a click, so audio is allowed)
+  usePageScrollLock();
+  // start the music (the duel starts from a click, so audio is allowed)
   useEffect(() => {
-    const html = document.documentElement;
-    const prev = html.style.overflow;
-    html.style.overflow = "hidden";
     root.current?.focus();
     music.setTheme(infernal ? "infernal" : "church");
     if (loadPrefs().music) music.start();
     const onFs = () => setFull(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onFs);
     return () => {
-      html.style.overflow = prev;
       music.stop();
       music.setTheme("church");
       document.removeEventListener("fullscreenchange", onFs);

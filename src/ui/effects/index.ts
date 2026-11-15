@@ -1,4 +1,5 @@
 export { useMediaQuery, usePrefersReducedMotion, useFinePointer } from "./useMediaQuery";
+export { usePageScrollLock } from "./usePageScrollLock";
 export { Reveal, RevealGroup, RevealItem, type RevealProps, type RevealGroupProps } from "./Reveal";
 export { SplitText, type SplitTextProps } from "./SplitText";
 export { Spotlight, type SpotlightProps } from "./Spotlight";

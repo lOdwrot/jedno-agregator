@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/cn";
-import { Button, usePrefersReducedMotion } from "@/ui";
+import { Button, usePageScrollLock, usePrefersReducedMotion } from "@/ui";
 import { Confetti } from "../../fx/Confetti";
 import { shake } from "../../fx/shake";
 import { packSfx } from "../audio/packSfx";
@@ -49,15 +49,8 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }:
     if (zoom !== null) zoomClose.current?.focus();
   }, [zoom]);
 
-  useEffect(() => {
-    root.current?.focus();
-    const html = document.documentElement;
-    const prev = html.style.overflow;
-    html.style.overflow = "hidden";
-    return () => {
-      html.style.overflow = prev;
-    };
-  }, []);
+  usePageScrollLock();
+  useEffect(() => root.current?.focus(), []);
 
   // charge → tear → burst → reveal (sounds of each step live in BoosterIntro)
   useEffect(() => {
