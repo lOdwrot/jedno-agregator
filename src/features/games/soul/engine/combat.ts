@@ -10,7 +10,7 @@ export function fuelMax(g: Game, pid: PlayerId, atk: AttackDef): number {
 
 /** Damage, knock-outs (souls), checkup between turns and turn order. */
 import { ENERGY_ID, getCard, SOULS_TO_WIN } from "../data/cards";
-import type { AbilityEffect, AttackDef, PlaceRule, SupportDef } from "../data/types";
+import type { AbilityEffect, AttackDef, SupportDef } from "../data/types";
 import { FINISH_BONUS, STATUS_INFO } from "../data/types";
 import { emit } from "./events";
 import {
@@ -24,18 +24,15 @@ import {
   nameOf,
   nameOfPlayer,
   other,
+  ownerOf,
+  placeRule,
   say,
   type Game,
   type InPlay,
   type PlayerId,
 } from "./state";
 
-/** Whether the place in play (whoever owns it) enforces this rule on both players. */
-export function placeRule(g: Game, rule: PlaceRule): boolean {
-  if (!g.place) return false;
-  const e = (getCard(g.place.cardId) as SupportDef).effect;
-  return e.k === "place" && e.rule === rule;
-}
+export { placeRule };
 
 /** Ability effects of a player's characters in play (none while a place blocks abilities). */
 export function abilities(g: Game, pid: PlayerId): AbilityEffect[] {
@@ -68,10 +65,6 @@ export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   return ab + (placeAura(g, pid)?.attackBonus ?? 0) + FINISH_BONUS[attacker.finish].damage;
 }
 
-/** Owner of a character in play (null for a character that is not on the table). */
-const ownerOf = (g: Game, c: InPlay): PlayerId | null =>
-  (["me", "ai"] as const).find((pid) => inPlay(g.players[pid]).some((x) => x.uid === c.uid)) ??
-  null;
 
 /** Whether the defender's weakness applies to this attacker (places and `noWeakness` abilities —
  *  also from the bench — may switch weakness off). */
@@ -181,7 +174,16 @@ function knockOut(g: Game, owner: PlayerId, c: InPlay) {
 /** Removes knocked-out characters; returns who has to pick a new active (null if nobody / game over). */
 export function resolveKOs(g: Game): PlayerId | null {
   for (const pid of ["me", "ai"] as const)
-    for (const c of inPlay(g.players[pid])) if (c.damage >= maxHp(c)) knockOut(g, pid, c);
+    // Repeat: a knock-out can lower another character's max HP (`blessedHp`).
+    for (let found = true; found; ) {
+      found = false;
+      for (const c of inPlay(g.players[pid]))
+        if (c.damage >= maxHp(g, c)) {
+          knockOut(g, pid, c);
+          found = true;
+          break;
+        }
+    }
   for (const pid of [g.turn, other(g.turn)]) {
     const p = g.players[pid];
     if (p.souls >= SOULS_TO_WIN || p.prizes.length === 0) {
@@ -217,7 +219,7 @@ export function resolveKOs(g: Game): PlayerId | null {
 export function promoteBest(g: Game, pid: PlayerId) {
   const p = g.players[pid];
   const best = [...p.bench].sort(
-    (a, b) => hpLeft(b) + b.energy * 15 - (hpLeft(a) + a.energy * 15),
+    (a, b) => hpLeft(g, b) + b.energy * 15 - (hpLeft(g, a) + a.energy * 15),
   )[0];
   if (best) promoteUid(g, pid, best.uid);
 }

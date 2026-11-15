@@ -12,6 +12,8 @@ export function getCard(id: string): CardDef {
 }
 
 export const isCharacter = (c: CardDef): c is CharacterDef => c.kind === "character";
+/** Blessed characters ("Bł." in the name) — counted by the `blessedHp` ability. */
+export const isBlessed = (c: CardDef): boolean => isCharacter(c) && c.name.startsWith("Bł. ");
 export const isBasic = (c: CardDef): c is CharacterDef => isCharacter(c) && !c.evolvesFrom;
 
 /** Every pope evolves from this one basic card. */

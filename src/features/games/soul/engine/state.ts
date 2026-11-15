@@ -4,10 +4,11 @@ import {
   getCard,
   HAND_START,
   isBasic,
+  isBlessed,
   isCharacter,
   SOULS_TO_WIN,
 } from "../data/cards";
-import type { CharacterDef, Finish, Side, Status, SupportDef } from "../data/types";
+import type { CharacterDef, Finish, PlaceRule, Side, Status, SupportDef } from "../data/types";
 import { FINISH_BONUS } from "../data/types";
 import { emit } from "./events";
 
@@ -50,7 +51,8 @@ export interface Game {
   turn: PlayerId;
   turnNo: number;
   phase: "setup" | "main" | "promote" | "over";
-  promote: { who: PlayerId; then: "endTurn" | "startNext" } | null;
+  /** After the pick: end the turn, start the next one, or go on with the current turn (mid-turn knock-out). */
+  promote: { who: PlayerId; then: "endTurn" | "startNext" | "continue" } | null;
   flags: { energy: boolean; supporter: boolean; retreated: boolean };
   place: { cardId: string; owner: PlayerId } | null;
   /** Top deck card revealed by a peek card — its owner must keep or discard it before moving on. */
@@ -101,10 +103,34 @@ export function shuffle<T>(g: Game, a: T[]): void {
 /* ── lookups ── */
 export const charDef = (c: CardInst) => getCard(c.cardId) as CharacterDef;
 export const supportDef = (c: CardInst) => getCard(c.cardId) as SupportDef;
-export const maxHp = (c: InPlay) => charDef(c).hp + FINISH_BONUS[c.finish].hp;
-export const hpLeft = (c: InPlay) => Math.max(0, maxHp(c) - c.damage);
 export const inPlay = (p: PlayerState): InPlay[] =>
   p.active ? [p.active, ...p.bench] : [...p.bench];
+
+/** Whether the place in play (whoever owns it) enforces this rule on both players. */
+export function placeRule(g: Game, rule: PlaceRule): boolean {
+  if (!g.place) return false;
+  const e = (getCard(g.place.cardId) as SupportDef).effect;
+  return e.k === "place" && e.rule === rule;
+}
+
+/** Owner of a character in play (null for a character that is not on the table). */
+export const ownerOf = (g: Game, c: InPlay): PlayerId | null =>
+  (["me", "ai"] as const).find((pid) => inPlay(g.players[pid]).some((x) => x.uid === c.uid)) ??
+  null;
+
+/** `blessedHp` ability: +n max HP for every other blessed character on the owner's side. */
+function blessedBonus(g: Game, c: InPlay): number {
+  const e = charDef(c).ability?.effect;
+  if (e?.k !== "blessedHp" || placeRule(g, "noAbilities")) return 0;
+  const owner = ownerOf(g, c);
+  if (!owner) return 0;
+  const others = inPlay(g.players[owner]).filter((x) => x.uid !== c.uid && isBlessed(charDef(x)));
+  return e.n * others.length;
+}
+
+export const maxHp = (g: Game, c: InPlay) =>
+  charDef(c).hp + FINISH_BONUS[c.finish].hp + blessedBonus(g, c);
+export const hpLeft = (g: Game, c: InPlay) => Math.max(0, maxHp(g, c) - c.damage);
 export const findInPlay = (p: PlayerState, uid: number) => inPlay(p).find((c) => c.uid === uid);
 export const nameOf = (c: CardInst) => getCard(c.cardId).name;
 

@@ -512,6 +512,11 @@ export const PARISH_CARDS: CardDef[] = [
         effects: [{ k: "revenge", n: 10 }],
       },
     ],
+    ability: {
+      name: "Solidarność",
+      text: "+20 wytrwałości za każdą inną błogosławioną postać w grze po Twojej stronie stołu.",
+      effect: { k: "blessedHp", n: 20 },
+    },
     flavor: "Odprawiał Msze za Ojczyznę. Uczył, że prawdy nie zwycięża się nienawiścią.",
   },
   // ── Popes through the ages (legendary, worth 2 souls) ──────────────────────

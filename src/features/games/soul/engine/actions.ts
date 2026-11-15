@@ -240,6 +240,21 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0, target?: number
 }
 
 function apply(g: Game, a: Action): boolean {
+  const ok = applyMove(g, a);
+  if (ok && g.phase === "main") midTurnKOs(g);
+  return ok;
+}
+
+/** A move during the turn can lower max HP (e.g. a place blocking `blessedHp`): knock-outs count at once. */
+function midTurnKOs(g: Game) {
+  const needs = resolveKOs(g);
+  if (needs && g.phase !== "over") {
+    g.phase = "promote";
+    g.promote = { who: needs, then: "continue" };
+  }
+}
+
+function applyMove(g: Game, a: Action): boolean {
   const pid = g.turn;
   const p = g.players[pid];
   const inHand = (uid: number) => p.hand.find((c) => c.uid === uid);
@@ -352,7 +367,7 @@ function apply(g: Game, a: Action): boolean {
       g.phase = "main";
       g.promote = null;
       if (pr.then === "endTurn") endTurn(g);
-      else startTurn(g, other(g.turn));
+      else if (pr.then === "startNext") startTurn(g, other(g.turn));
       return true;
     }
   }

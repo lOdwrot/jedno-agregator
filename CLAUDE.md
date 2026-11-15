@@ -101,6 +101,10 @@ owner's bench takes no attack spread damage) and Zuch → Harcerz (`salvageOnce`
 `kindleOnce`: attach 1 grace from the discard pile). The rare item `damaszek` (Droga do Damaszku, `skipEvolve`, like Rare
 Candy) puts a stage 2 from the hand straight on its basic — the support action's `target` is the basic in play, `with`
 the stage 2 hand uid (`skipEvolvePairs`); works for every three-stage line.
+Bł. ks. Jerzy Popiełuszko has the `blessedHp` ability (Solidarność): +20 max HP for every other blessed character
+(`isBlessed`: name starts with "Bł. ") on the owner's side — so `maxHp(g, c)` / `hpLeft(g, c)` take the game. Max HP can
+drop mid-turn (a `noAbilities` place, a blessed friend knocked out): `resolveKOs` runs after every main-phase move too
+(`midTurnKOs` in `actions.ts`, `promote.then: "continue"` keeps the turn going) and repeats until nothing more falls.
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in

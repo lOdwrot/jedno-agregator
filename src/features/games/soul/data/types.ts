@@ -60,7 +60,9 @@ export type AbilityEffect =
   /** Also from the bench: attach 1 energy card from the discard pile to one of your characters. */
   | { k: "kindleOnce" }
   /** Works from the bench too: the owner's benched characters take no damage from attacks. */
-  | { k: "benchGuard" };
+  | { k: "benchGuard" }
+  /** +n max HP for every other blessed character ("Bł.") on the owner's side of the table. */
+  | { k: "blessedHp"; n: number };
 
 /** Abilities the player activates (once per turn); the others are always on. */
 export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([

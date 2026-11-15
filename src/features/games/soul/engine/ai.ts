@@ -47,10 +47,10 @@ export function bestAttack(
     // burn hand energy only to secure a knock-out (the least needed), or when there is plenty of it
     const max = fuelMax(g, pid, atk);
     let fuel = 0;
-    while (fuel < max && previewDamage(g, pid, atk, fuel) < hpLeft(foe)) fuel++;
-    if (previewDamage(g, pid, atk, fuel) < hpLeft(foe)) fuel = spare >= 3 ? max : 0;
+    while (fuel < max && previewDamage(g, pid, atk, fuel) < hpLeft(g, foe)) fuel++;
+    if (previewDamage(g, pid, atk, fuel) < hpLeft(g, foe)) fuel = spare >= 3 ? max : 0;
     const dmg = previewDamage(g, pid, atk, fuel);
-    const ko = dmg >= hpLeft(foe);
+    const ko = dmg >= hpLeft(g, foe);
     // attacks that throw away the attacker's own energy are only worth it for a knock-out
     const selfCost = atk.effects?.some((e) => e.k === "selfDiscard") && !ko ? 25 : 0;
     const score = (ko ? 1000 : 0) + dmg + (atk.effects?.length ?? 0) * 5 - selfCost - fuel * 5;
@@ -67,7 +67,7 @@ function canKO(g: Game, pid: PlayerId, target: InPlay): boolean {
   return charDef(a).attacks.some((atk) => {
     if (a.energy < atk.cost || atk.damage <= 0) return false;
     const dmg = applyDefense(g, other(pid), a, target, atk.damage + bonusDamage(g, pid, a));
-    return dmg >= hpLeft(target);
+    return dmg >= hpLeft(g, target);
   });
 }
 
@@ -189,16 +189,16 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
         // pull out a character the active can knock out now (2-soul ones first)
         const ko = targets
           .filter((t) => canKO(g, pid, t) && !canKO(g, pid, foe.active!))
-          .sort((x, y) => charDef(y).souls - charDef(x).souls || hpLeft(x) - hpLeft(y))[0];
+          .sort((x, y) => charDef(y).souls - charDef(x).souls || hpLeft(g, x) - hpLeft(g, y))[0];
         if (ko) return play(ko.uid);
-        const t = [...targets].sort((x, y) => hpLeft(x) - hpLeft(y))[0];
-        if (t && hpLeft(t) < hpLeft(foe.active) && hpLeft(t) <= 60 && !e.coin) return play(t.uid);
-        if (t && e.coin && hpLeft(t) <= 60) return play(t.uid);
+        const t = [...targets].sort((x, y) => hpLeft(g, x) - hpLeft(g, y))[0];
+        if (t && hpLeft(g, t) < hpLeft(g, foe.active) && hpLeft(g, t) <= 60 && !e.coin) return play(t.uid);
+        if (t && e.coin && hpLeft(g, t) <= 60) return play(t.uid);
         break;
       }
       case "switch": {
-        const t = [...targets].sort((x, y) => hpLeft(y) - hpLeft(x))[0];
-        if (a && t && (a.statuses.length > 0 || hpLeft(a) <= 30) && hpLeft(t) > hpLeft(a))
+        const t = [...targets].sort((x, y) => hpLeft(g, y) - hpLeft(g, x))[0];
+        if (a && t && (a.statuses.length > 0 || hpLeft(g, a) <= 30) && hpLeft(g, t) > hpLeft(g, a))
           return play(t.uid);
         break;
       }
@@ -230,8 +230,8 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
       const ready = charDef(c).attacks.filter((x) => x.cost <= c.energy);
       const best = Math.max(0, ...ready.map((x) => x.damage));
       const ko =
-        foeA && best > 0 && applyDefense(g, other(pid), c, foeA, best) >= hpLeft(foeA) ? 200 : 0;
-      return ko + best + hpLeft(c) + c.energy * 15;
+        foeA && best > 0 && applyDefense(g, other(pid), c, foeA, best) >= hpLeft(g, foeA) ? 200 : 0;
+      return ko + best + hpLeft(g, c) + c.energy * 15;
     };
     const b = [...me.bench].sort((x, y) => score(y) - score(x))[0];
     return b ? { type: "promote", uid: b.uid } : null;
@@ -264,16 +264,16 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   const foe = g.players[other(pid)].active;
   // retreat a badly hurt character if a healthier one waits on the bench
   if (a && foe && !retreatBlock(g, pid)) {
-    const t = [...me.bench].sort((x, y) => hpLeft(y) - hpLeft(x))[0];
-    const threatened = hpLeft(a) <= 30 && charDef(a).souls >= 1;
-    if (t && threatened && hpLeft(t) >= 60 && !bestAttack(g, pid)?.ko)
+    const t = [...me.bench].sort((x, y) => hpLeft(g, y) - hpLeft(g, x))[0];
+    const threatened = hpLeft(g, a) <= 30 && charDef(a).souls >= 1;
+    if (t && threatened && hpLeft(g, t) >= 60 && !bestAttack(g, pid)?.ko)
       return { type: "retreat", target: t.uid };
     const striker = me.bench.find((b) =>
       charDef(b).attacks.some(
         (x) =>
           x.cost <= b.energy &&
           x.damage > 0 &&
-          applyDefense(g, other(pid), b, foe, x.damage) >= hpLeft(foe),
+          applyDefense(g, other(pid), b, foe, x.damage) >= hpLeft(g, foe),
       ),
     );
     if (striker && !bestAttack(g, pid)?.ko && retreatCost(g, pid, a) <= 1 && g.turnNo > 1)
@@ -286,7 +286,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
       .filter((b) => need(b) > 0)
       .sort((x, y) => charDef(y).hp - charDef(x).hp || need(x) - need(y))[0];
     // don't over-invest in an active that is about to fall without hitting back
-    const doomed = need(a) > 1 && hpLeft(a) <= 30 && benchT;
+    const doomed = need(a) > 1 && hpLeft(g, a) <= 30 && benchT;
     const target = need(a) > 0 && !doomed ? a : (benchT ?? a);
     return { type: "attach", uid: energy.uid, target: target.uid };
   }
