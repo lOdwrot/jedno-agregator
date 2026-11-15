@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/ui";
 import { SoulGame } from "./SoulGame";
 import { PACKS } from "./collection/packs";
@@ -36,6 +36,19 @@ describe("SoulGame", () => {
       "aria-pressed",
       "true",
     );
+  });
+
+  it("scrolls back to the rank after leaving a duel", async () => {
+    const scroll = vi.fn();
+    Element.prototype.scrollIntoView = scroll;
+    setup();
+    await userEvent.click(screen.getByRole("button", { name: /Stań do walki/ }));
+    scroll.mockClear();
+    await userEvent.click(screen.getByRole("button", { name: /Poddaj się i wyjdź/ }));
+    await waitFor(() => expect(scroll).toHaveBeenCalled());
+    const target = scroll.mock.contexts.at(-1) as Element;
+    expect(target.textContent).toMatch(/Ranga|ranga/);
+    expect(screen.getByRole("tab", { name: "Pojedynek" })).toHaveAttribute("aria-selected", "true");
   });
 
   it("opens the welcome booster with the animation and saves the cards", async () => {
