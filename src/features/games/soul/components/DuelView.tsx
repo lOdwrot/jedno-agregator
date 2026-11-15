@@ -173,7 +173,7 @@ export function DuelView({
           theme={infernal ? "infernal" : "default"}
         />
         {lessonCard && "lesson" in lessonCard && lessonCard.lesson && (
-          <div className="absolute top-1 left-1 max-w-[15rem] rounded-card bg-surface/95 px-3 py-2 text-ink shadow-lift sm:max-w-xs">
+          <div className="absolute top-1 left-1 z-10 max-w-[15rem] rounded-card bg-surface/95 px-3 py-2 text-ink shadow-lift sm:max-w-xs">
             <p className="text-sm font-extrabold text-navy">
               <span aria-hidden="true">{lessonCard.emoji} </span>Rozpoznaj pokusę: {lessonCard.name}
             </p>

@@ -167,7 +167,12 @@ export function BoardView({
   };
 
   return (
-    <div ref={host} className="relative size-full touch-none overflow-hidden select-none">
+    <div
+      ref={host}
+      // `isolate`: the card buttons carry their own z-index (up to 900); keep them inside the
+      // board so overlays drawn above it (lesson card, prize booster, result) get the clicks.
+      className="relative isolate size-full touch-none overflow-hidden select-none"
+    >
       {failed && (
         <p className="absolute inset-x-4 top-4 rounded-card bg-surface p-3 text-sm text-ink">
           Twoja przeglądarka nie obsługuje grafiki WebGL. Karty wciąż możesz wybierać przyciskami
