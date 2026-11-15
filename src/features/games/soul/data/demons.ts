@@ -1,4 +1,5 @@
 import { ABYSS_CARDS } from "./abyss";
+import { SLOTH_CARDS } from "./sloth";
 import type { CardDef } from "./types";
 
 /**
@@ -1005,5 +1006,5 @@ const BASE_DEMONS: CardDef[] = [
   },
 ];
 
-/** All demon cards; the apocalyptic ones (`abyss.ts`) close the bestiary. */
-export const DEMON_CARDS: CardDef[] = [...BASE_DEMONS, ...ABYSS_CARDS];
+/** All demon cards; the court of sloth (`sloth.ts`) and the apocalyptic ones (`abyss.ts`) close the bestiary. */
+export const DEMON_CARDS: CardDef[] = [...BASE_DEMONS, ...SLOTH_CARDS, ...ABYSS_CARDS];

@@ -97,7 +97,8 @@ The top level is `niepokonany` (Tron Bestii, "niepokonany": ~10× harder than `o
 apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, Legion, Jeździec na rudym koniu — `energyOnce`, Duch tego świata — the `noWeakness`
 ability: works from the bench, none of the owner's characters has a weakness —, Babilon Wielki, Ojciec kłamstwa, Złoty
 kielich), its whole deck is printed `stained` (`Opponent.finish`), it starts with 3 energy and draws 1 extra card a turn.
-The AI benches team helpers first (`bestBenchBasic` / `benchValue` in `engine/state.ts`). `Opponent.theme: "infernal"` switches
+The court of sloth (`soul/data/sloth.ts`: Duszek Marazmu → Bies Obojętności → Letarg, Duch Letniości, Belfegor) is
+played only by the harder opponents (`zastepy`, `otchlan`, `niepokonany`; `sloth.test.ts` enforces it). The AI benches team helpers first (`bestBenchBasic` / `benchValue` in `engine/state.ts`). `Opponent.theme: "infernal"` switches
 the duel to the hellish look and sound: `board/inferno.ts` (lava cracks, red glow, rising embers — static under reduced
 motion; colours `hell-*`/`ember` in a `@theme static` block so the canvas can read them) and `audio/musicInfernal.ts`
 (detuned tritone clusters, drone, heartbeat, cracked bell; no bright finale).
