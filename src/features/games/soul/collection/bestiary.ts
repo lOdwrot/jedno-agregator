@@ -78,6 +78,8 @@ export interface Discoveries {
   recognized: string[];
   /** Cards met for the first time during the duel (and not yet recognized). */
   met: string[];
+  /** Sightings of the listed cards after the duel. */
+  seen: Partial<Record<string, number>>;
 }
 
 /**
@@ -88,13 +90,15 @@ export function duelDiscoveries(
   before: Profile["bestiary"],
   during: Partial<Record<string, number>>,
 ): Discoveries {
-  const out: Discoveries = { recognized: [], met: [] };
+  const out: Discoveries = { recognized: [], met: [], seen: {} };
   for (const { id } of BESTIARY_CARDS) {
     const add = during[id] ?? 0;
     if (!add) continue;
     const was = before?.[id] ?? 0;
     if (was < RECOGNIZE_AT && was + add >= RECOGNIZE_AT) out.recognized.push(id);
     else if (was === 0) out.met.push(id);
+    else continue;
+    out.seen[id] = was + add;
   }
   return out;
 }

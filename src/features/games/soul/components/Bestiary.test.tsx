@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { BESTIARY_CARDS, RECOGNIZE_AT } from "../collection/bestiary";
 import { newProfile } from "../collection/profile";
 import { Bestiary } from "./Bestiary";
+import { DuelDiscoveries } from "./DuelDiscoveries";
 
 describe("Bestiary", () => {
   const [a, b, c] = BESTIARY_CARDS.filter((x) => x.kind === "character");
@@ -26,16 +28,28 @@ describe("Bestiary", () => {
 });
 
 describe("DuelDiscoveries", () => {
-  it("lists recognized and first-met cards, and nothing when the duel brought nothing", async () => {
-    const { DuelDiscoveries } = await import("./DuelDiscoveries");
-    const [a, b] = BESTIARY_CARDS;
-    const { container, rerender } = render(
-      <DuelDiscoveries found={{ recognized: [a!.id], met: [b!.id] }} />,
-    );
+  const [a, b] = BESTIARY_CARDS;
+  const found = { recognized: [a!.id], met: [b!.id], seen: { [a!.id]: 4, [b!.id]: 1 } };
+
+  it("lists recognized and first-met cards, and nothing when the duel brought nothing", () => {
+    const { container, rerender } = render(<DuelDiscoveries found={found} />);
     expect(screen.getByText("📖 Rozpoznane pokusy: 1")).toBeInTheDocument();
     expect(screen.getByText("👁️ Spotkane po raz pierwszy: 1")).toBeInTheDocument();
-    expect(screen.getByText(a!.name)).toBeInTheDocument();
-    rerender(<DuelDiscoveries found={{ recognized: [], met: [] }} />);
+    rerender(<DuelDiscoveries found={{ recognized: [], met: [], seen: {} }} />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("unfolds the lesson of a recognized card and the teaser of a first-met one", async () => {
+    render(<DuelDiscoveries found={found} />);
+    const read = screen.getByRole("button", { name: new RegExp(`${a!.name}.*Czytaj`) });
+    await userEvent.click(read);
+    expect(read).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByLabelText(`Karta: ${a!.name}`)).toBeInTheDocument();
+    expect(screen.getByText("Jak kusi:")).toBeInTheDocument();
+    await userEvent.click(
+      screen.getByRole("button", { name: new RegExp(`${b!.name}.*Podejrzyj`) }),
+    );
+    expect(screen.getByLabelText(`Karta jeszcze nierozpoznana: ${b!.name}`)).toBeInTheDocument();
+    expect(screen.queryByText("Jak kusi:")).not.toBeInTheDocument();
   });
 });

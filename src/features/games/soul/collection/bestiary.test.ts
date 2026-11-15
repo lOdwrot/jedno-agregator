@@ -56,13 +56,18 @@ describe("duelDiscoveries", () => {
   it("splits the duel's sightings into newly recognized and first met cards", () => {
     const before = { [a!]: 3, [b!]: 1, [d!]: RECOGNIZE_AT };
     const during = { [a!]: 1, [b!]: 1, [c!]: 2, [d!]: 3, ministrant: 2 };
-    expect(duelDiscoveries(before, during)).toEqual({ recognized: [a], met: [c] });
+    expect(duelDiscoveries(before, during)).toEqual({
+      recognized: [a],
+      met: [c],
+      seen: { [a!]: 4, [c!]: 2 },
+    });
   });
 
   it("a card met and recognized in one duel is listed only as recognized", () => {
     expect(duelDiscoveries(undefined, { [a!]: RECOGNIZE_AT })).toEqual({
       recognized: [a],
       met: [],
+      seen: { [a!]: RECOGNIZE_AT },
     });
   });
 });
