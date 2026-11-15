@@ -50,7 +50,9 @@ export type AbilityEffect =
   | { k: "drawOnce" }
   | { k: "drawUntil"; n: number }
   | { k: "healOnce"; n: number }
-  | { k: "energyOnce" };
+  | { k: "energyOnce" }
+  /** Only while active: take a copy of `cardId` from the discard pile into the hand. */
+  | { k: "recoverOnce"; cardId: string };
 
 /** Abilities the player activates (once per turn); the others are always on. */
 export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
@@ -58,6 +60,7 @@ export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
   "drawUntil",
   "healOnce",
   "energyOnce",
+  "recoverOnce",
 ]);
 
 export interface AbilityDef {
@@ -127,6 +130,8 @@ export type SupportEffect =
   | { k: "energyToHand"; n: number }
   /** Discard your hand, draw n (like Professor's Research). */
   | { k: "research"; n: number }
+  /** Needs an energy card and a pope in hand: discard the energy, bench the pope (target = its hand uid). */
+  | { k: "council" }
   /** Both players put their hand under the deck and draw one card per soul still to win (like Iono). */
   | { k: "iono" }
   | {

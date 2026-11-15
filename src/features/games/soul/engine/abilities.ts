@@ -49,6 +49,8 @@ export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
       return inPlay(p).some((x) => x.damage > 0);
     case "energyOnce":
       return energyInDeck(g, pid) >= 0;
+    case "recoverOnce":
+      return p.active?.uid === c.uid && p.discard.some((x) => x.cardId === e.cardId);
     default:
       return false;
   }
@@ -86,6 +88,18 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
       t.energy++;
       emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       log(g, `${name} — ${nameOf(t)} dostaje energię z talii.`);
+      break;
+    }
+    case "recoverOnce": {
+      // the most prestigious print comes back first
+      const rank = { stained: 2, gilded: 1, plain: 0 } as const;
+      const pick = p.discard
+        .filter((x) => x.cardId === e.cardId)
+        .sort((a, b) => rank[b.finish] - rank[a.finish])[0]!;
+      p.discard = p.discard.filter((x) => x !== pick);
+      p.hand.push(pick);
+      emit(g, { t: "draw", pid, n: 1 });
+      log(g, `${name} — z odrzuconych wraca do ręki: ${nameOf(pick)}.`);
       break;
     }
   }

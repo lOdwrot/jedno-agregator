@@ -847,6 +847,11 @@ export const PARISH_CARDS: CardDef[] = [
     retreat: 1,
     evolvesFrom: "kandydat",
     souls: 2,
+    ability: {
+      name: "Drugie konklawe",
+      text: "Raz na turę, jeśli ta postać jest aktywna: weź Kandydata na papieża z odrzuconych do ręki.",
+      effect: { k: "recoverOnce", cardId: "kandydat" },
+    },
     attacks: [
       {
         name: "Szpital polowy",
@@ -999,6 +1004,17 @@ export const PARISH_CARDS: CardDef[] = [
       "Wydawał gazetę w milionowym nakładzie. Najmocniejsze kazanie wygłosił jednak bez słów.",
   },
   // ── Items ───────────────────────────────────────────────────────────────────
+  {
+    id: "sobor",
+    kind: "item",
+    side: "parish",
+    name: "Przyspieszony Sobór Watykański",
+    emoji: "📜",
+    rarity: "legendary",
+    text: "Zagraj, jeśli masz w ręce Łaskę i papieża: odrzuć 1 Łaskę i posadź tego papieża na ławce prosto z ręki — bez kandydata.",
+    effect: { k: "council" },
+    flavor: "Ojcowie soborowi obradowali od 1962 do 1965 r. Ta wersja mieści się w jednej turze.",
+  },
   {
     id: "woda",
     kind: "item",

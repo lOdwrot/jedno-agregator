@@ -12,7 +12,13 @@ import {
   type Action,
 } from "../engine/actions";
 import { fuelMax, placeRule, previewDamage, retreatCost } from "../engine/combat";
-import { canPlaySupport, lockedBy, supportTargets, targetKind } from "../engine/support";
+import {
+  canPlaySupport,
+  councilPicks,
+  lockedBy,
+  supportTargets,
+  targetKind,
+} from "../engine/support";
 import { charDef, inPlay, nameOf, type CardInst, type Game, type InPlay } from "../engine/state";
 
 export type Selection = { zone: "hand" | "field" | "opp"; uid: number };
@@ -75,10 +81,17 @@ function handOptions(g: Game, c: CardInst): Opt[] {
             ? "Pomocnika można zagrać raz na turę."
             : s.kind === "item" && placeRule(g, "noItems")
               ? `${getCard(g.place!.cardId).name}: nikt nie może teraz zagrywać przedmiotów.`
-              : "Ta karta teraz nic by nie zmieniła.",
+              : s.effect.k === "council"
+                ? "Potrzebujesz w ręce Łaski i papieża oraz wolnego miejsca na ławce."
+                : "Ta karta teraz nic by nie zmieniła.",
       },
     ];
   }
+  if (s.effect.k === "council")
+    return councilPicks(g, "me").map((x) => ({
+      label: `Na ławkę: ${nameOf(x)} (odrzuć 1 ✨)`,
+      action: { type: "support", uid: c.uid, target: x.uid },
+    }));
   const kind = targetKind(s);
   if (!kind) return [{ label: "Zagraj kartę", action: { type: "support", uid: c.uid } }];
   return supportTargets(g, "me", s).map((x) => ({

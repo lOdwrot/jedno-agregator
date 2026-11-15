@@ -54,6 +54,17 @@ describe("booster editions", () => {
     expect(seen).toEqual(new Set(["kandydat:plain", "kandydat:gilded", "kandydat:stained"]));
   });
 
+  it("Przyspieszony Sobór Watykański is a very rare legendary pull", () => {
+    const rnd = createRng(31);
+    const pack = PACKS.find((p) => p.id === "skarbiec")!;
+    let sobor = 0;
+    const n = 4000;
+    for (let i = 0; i < n; i++) if (rollPack(pack, rnd)[4]!.startsWith("sobor:")) sobor++;
+    // 14 legendary cards, the council weighs 0.4 — about 3% even with a guaranteed legendary
+    expect(sobor).toBeGreaterThan(0);
+    expect(sobor / n).toBeLessThan(0.05);
+  });
+
   it("Skarbiec Katedry guarantees a rare and a legendary card", () => {
     const rnd = createRng(9);
     const pack = PACKS.find((p) => p.id === "skarbiec")!;

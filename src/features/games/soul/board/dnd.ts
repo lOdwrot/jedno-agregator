@@ -2,7 +2,7 @@
 import { getCard, isBasic } from "../data/cards";
 import type { SupportDef } from "../data/types";
 import { canAttach, canBench, evolveTargets, type Action } from "../engine/actions";
-import { canPlaySupport, supportTargets, targetKind } from "../engine/support";
+import { canPlaySupport, councilPicks, supportTargets, targetKind } from "../engine/support";
 import { inPlay, type CardInst, type Game } from "../engine/state";
 
 export type DropTarget = { kind: "bench" } | { kind: "board" } | { kind: "card"; uid: number };
@@ -38,6 +38,18 @@ export function dropsFor(g: Game, c: CardInst): Drop[] {
       : [];
   const s = d as SupportDef;
   if (!canPlaySupport(g, "me", c)) return [];
+  if (s.effect.k === "council") {
+    // with one pope in hand the card can be dropped on the bench; with more, tap it to choose
+    const popes = councilPicks(g, "me");
+    return popes.length === 1
+      ? [
+          {
+            target: { kind: "bench" },
+            action: { type: "support", uid: c.uid, target: popes[0]!.uid },
+          },
+        ]
+      : [];
+  }
   if (!targetKind(s))
     return [{ target: { kind: "board" }, action: { type: "support", uid: c.uid } }];
   return supportTargets(g, "me", s).map((t) => ({
@@ -46,4 +58,6 @@ export function dropsFor(g: Game, c: CardInst): Drop[] {
   }));
 }
 
-export const isPlayable = (g: Game, c: CardInst) => dropsFor(g, c).length > 0;
+export const isPlayable = (g: Game, c: CardInst) =>
+  dropsFor(g, c).length > 0 ||
+  (g.phase === "main" && g.turn === "me" && canPlaySupport(g, "me", c));

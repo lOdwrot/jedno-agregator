@@ -90,6 +90,10 @@ Every pope (legendary, 2 souls) is a stage 1 evolution of the single common basi
 none can be played straight from the hand (`popes.test.ts`); the starter deck holds 2 candidates and profile v4
 migration gives them to older saves (in place of grace when the deck already has popes). The "Papieże wieków" booster
 always opens with a candidate (`odds.first`: 15% stained, 35% gilded); in other packs it is an ordinary common.
+Franciszek's `recoverOnce` ability (only while active) takes a candidate back from the discard pile. The very rare
+legendary item `sobor` (Przyspieszony Sobór Watykański, `council` effect, `PULL_WEIGHT` 0.4 in `packs.ts`) discards a grace
+from the hand and benches a pope straight from the hand — the support action's `target` is the pope's hand uid
+(`councilPicks`). The deck builder indents rows by real evolution depth, so sibling evolutions line up.
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in
