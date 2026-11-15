@@ -199,6 +199,23 @@ export const signatureSound: Record<string, () => void> = {
     tone(n(-5), 0.5, { type: "sawtooth", gain: 0.05, delay: 0.1, slideTo: n(7), cutoff: 1600 });
     noise(0.4, { cutoff: 5000, gain: 0.12, delay: 0.85, highpass: true });
   },
+  /** Bobbing "meh": a lazy two-note slide down. */
+  shrug: () => {
+    tone(n(7), 0.25, { type: "triangle", gain: 0.06, slideTo: n(9) });
+    tone(n(4), 0.5, { type: "triangle", gain: 0.06, delay: 0.25, slideTo: n(-3) });
+    noise(0.5, { cutoff: 700, gain: 0.12, delay: 0.5 });
+  },
+  /** A slow lullaby that sinks into a deep thud. */
+  lullaby: () => {
+    [12, 7, 9, 4].forEach((s, i) => bell(s, i * 0.28, 0.045));
+    tone(70, 1.2, { type: "sine", gain: 0.28, delay: 1.15, slideTo: 32 });
+  },
+  /** A long yawn (falling filtered saw) and a soft cushion boom. */
+  yawn: () => {
+    tone(n(5), 1.1, { type: "sawtooth", gain: 0.04, slideTo: n(-14), cutoff: 900, attack: 0.2 });
+    noise(0.8, { cutoff: 400, gain: 0.3, delay: 1.0 });
+    tone(60, 0.9, { type: "sine", gain: 0.25, delay: 1.0, slideTo: 30 });
+  },
   high_c: () =>
     tone(n(15) * 2, 1.0, { type: "sine", gain: 0.07, attack: 0.1, slideTo: n(15) * 2.02 }),
 };
