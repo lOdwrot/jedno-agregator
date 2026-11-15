@@ -4,7 +4,9 @@ import { PARISH_CARDS } from "./parish";
 import { getCard, isBasic } from "./cards";
 
 describe("popes", () => {
-  const popes = PARISH_CARDS.filter((c) => c.kind === "character" && c.rarity === "legendary" && isPope(c));
+  const popes = PARISH_CARDS.filter(
+    (c) => c.kind === "character" && c.rarity === "legendary" && isPope(c),
+  );
 
   it("every pope evolves from the one papal candidate — none can be played straight from the hand", () => {
     expect(popes.length).toBeGreaterThanOrEqual(11);
