@@ -26,7 +26,7 @@ npm run e2e          # Playwright smoke + axe accessibility (against `vite previ
 **There is no backend and the browser never calls admin.jedno.net.** The Jedno API has no CORS headers and
 requires a secret `x-api-key`. So:
 
-1. GitHub Actions (`.github/workflows/deploy.yml`) runs every 30 min + on push to `main`.
+1. GitHub Actions (`.github/workflows/deploy.yml`) runs once a day (04:00 UTC ≈ 05:00 Polish time) + on push to `main`.
 2. `scripts/fetch-data.ts` pulls every source (`scripts/sources/*.ts`), normalizes and validates it against
    `src/data/schemas.ts` (zod) and writes `public/data/<name>.json`. A failing source falls back to the last
    published snapshot (downloaded from the live site), so a deploy never breaks because a source is down.

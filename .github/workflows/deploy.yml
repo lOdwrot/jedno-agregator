@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "*/30 * * * *"
+    # Once a day at 04:00 UTC = 05:00 in Poland in winter (CET), 06:00 in summer (CEST).
+    - cron: "0 4 * * *"
   workflow_dispatch:
 
 permissions:
