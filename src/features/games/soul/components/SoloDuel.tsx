@@ -53,7 +53,7 @@ export function SoloDuel({
   onForfeit,
 }: Props) {
   const [initial] = useState<Game>(() =>
-    createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.boost),
+    createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.extraDraw ?? 0),
   );
   const [over, setOver] = useState<({ g: Game; found: Discoveries } & DuelOutcome) | null>(null);
   const [prizeOpen, setPrizeOpen] = useState(true);

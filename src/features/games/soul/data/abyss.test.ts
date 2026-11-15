@@ -20,7 +20,6 @@ describe("Niepokonany (Tron Bestii)", () => {
     expect(o.theme).toBe("infernal");
     expect(o.finish).toBe("stained");
     const otchlan = OPPONENTS.find((x) => x.id === "otchlan")!;
-    expect(o.boost!.startEnergy).toBeGreaterThan(otchlan.boost!.startEnergy);
     expect(o.reward.win).toBeGreaterThan(otchlan.reward.win);
   });
 
@@ -73,10 +72,10 @@ describe("Niepokonany (Tron Bestii)", () => {
     }
   });
 
-  it("starts with 3 energy on a stained (stronger) active", () => {
-    const g = createGame(deckList(newProfile()), deck(), 11, o.boost);
+  it("starts without energy (no hidden handicap) on a stained (stronger) active", () => {
+    const g = createGame(deckList(newProfile()), deck(), 11, o.extraDraw);
     const a = g.players.ai.active!;
-    expect(a.energy).toBe(3);
+    expect(a.energy).toBe(0);
     expect(a.finish).toBe("stained");
     const def = getCard(a.cardId);
     expect(isCharacter(def) && def.hp >= 60).toBe(true);
@@ -87,7 +86,7 @@ describe("Duch tego świata — weakness off, even from the bench", () => {
   it("cancels the weakness of every demon while it is in play", async () => {
     const { toInPlay } = await import("../engine/state");
     const { applyDefense } = await import("../engine/combat");
-    const g = createGame(deckList(newProfile()), deck(), 3, o.boost);
+    const g = createGame(deckList(newProfile()), deck(), 3, o.extraDraw);
     const bestia = toInPlay({ uid: 9001, cardId: "bestia", finish: "plain" }, 0); // weak to modlitwa
     const prayer = toInPlay({ uid: 9002, cardId: "scholanka", finish: "plain" }, 0); // modlitwa
     g.players.ai.active = bestia;

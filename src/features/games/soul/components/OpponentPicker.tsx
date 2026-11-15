@@ -79,6 +79,9 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, on
                   <Badge>wygrana: {o.reward.win} talentów</Badge>
                   {o.fee ? <Badge tone="accentSolid">🪙 wpisowe {o.fee}</Badge> : null}
                   {o.prize && <Badge tone="accent">🎁 + booster</Badge>}
+                  {o.extraDraw ? (
+                    <Badge tone="danger">🃏 dobiera {1 + o.extraDraw} karty na turę</Badge>
+                  ) : null}
                   {beaten.includes(o.id) && <Badge tone="navy">pokonani ✓</Badge>}
                 </span>
               </span>

@@ -106,16 +106,20 @@ Usable activated abilities get a visible "✦ Moc" button right on the card on t
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in
 `index.css`; canvas: `board/prestige.ts`), stained prints add lead-lined glass panes, a glass reflection and — while
 active (active slot, hovered, dragged; DOM: `active` prop or hover/focus) — a rainbow aura with rising sparkles.
-Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is readable on the table without opening the card. Opponents may carry an `AiBoost` (energy on the starting active from the
-deck, extra draws per turn) — `zastepy` (Smocze Zastępy, "bardzo trudny": 2 energy on the start, no extra draw) sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
-The top level is `niepokonany` (Tron Bestii, "niepokonany": ~10× harder than `otchlan` in AI-vs-AI sims): it plays the
+Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is readable on the table without opening the card. **No hidden AI handicaps**: the
+computer never gets free energy or other perks — difficulty comes only from its deck and play. The single exception is
+openly stated: Tron Bestii draws 2 cards a turn (`Opponent.extraDraw: 1` → `Game.aiExtraDraw`, badge on the opponent
+card, said in its letter). The AI skips its draw abilities when the deck gets low (`abilityWorthIt` in `engine/ai.ts`).
+`zastepy` (Smocze Zastępy, "bardzo trudny") sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
+The top level is `niepokonany` (Tron Bestii, "niepokonany"): it plays the
 apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, Legion, Jeździec na rudym koniu — `energyOnce`, Duch tego świata — the `noWeakness`
 ability: works from the bench, none of the owner's characters has a weakness —, Babilon Wielki, Ojciec kłamstwa, Złoty
-kielich — a supporter, like Fałszywa obietnica). The extreme helpers are evolutions of weak base forms (`soul/data/abyssBasics.ts`:
+kielich — a supporter, like Fałszywa obietnica, Znamię Bestii — a `skipEvolve` item, the demons' Droga do Damaszku). The extreme helpers are evolutions of weak base forms (`soul/data/abyssBasics.ts`:
 Wilk w owczej skórze → Prorok, Iskra niezgody → Jeździec, Owczy pęd → Duch tego świata; Bies Wygody → Belfegor in `sloth.ts`;
 three-stage: Fala z otchłani → Mały róg → Bestia z morza, Tylko ten jeden raz → Kajdany nałogu → Legion;
-`abyss.test.ts` enforces it, every evolution in a deck comes with its base form). Rebalance with AI-vs-AI sims so the
-win rate keeps falling monotonically from `kanapa` to `niepokonany`; its whole deck is printed `stained` (`Opponent.finish`), it starts with 3 energy and draws 1 extra card a turn.
+`abyss.test.ts` enforces it, every evolution in a deck comes with its base form). Rebalance decks with AI-vs-AI sims (starter
+deck vs each opponent) so the win rate keeps falling monotonically from `kanapa` to `niepokonany` — `data/balance.test.ts`
+enforces it on fixed seeds (last tuning, 2000 duels each: ~46 / 33 / 12 / 7 / 3 / 1 %). Tron Bestii's whole deck is printed `stained` (`Opponent.finish`).
 The court of sloth (`soul/data/sloth.ts`: Duszek Marazmu → Bies Obojętności → Letarg, Duch Letniości, Belfegor) is
 played only by the harder opponents (`zastepy`, `otchlan`, `niepokonany`; `sloth.test.ts` enforces it). The AI benches team helpers first (`bestBenchBasic` / `benchValue` in `engine/state.ts`). `Opponent.theme: "infernal"` switches
 the duel to the hellish look and sound: `board/inferno.ts` (lava cracks, red glow, rising embers — static under reduced
