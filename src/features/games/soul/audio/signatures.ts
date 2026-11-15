@@ -199,6 +199,20 @@ export const signatureSound: Record<string, () => void> = {
     tone(n(-5), 0.5, { type: "sawtooth", gain: 0.05, delay: 0.1, slideTo: n(7), cutoff: 1600 });
     noise(0.4, { cutoff: 5000, gain: 0.12, delay: 0.85, highpass: true });
   },
+  /** A boastful horn swelling upward, then a crown-like clang. */
+  boast: () => {
+    tone(n(-12), 0.9, { type: "sawtooth", gain: 0.05, slideTo: n(0), cutoff: 1400, attack: 0.1 });
+    tone(n(-5), 0.9, { type: "sawtooth", gain: 0.035, delay: 0.1, slideTo: n(7), cutoff: 1400 });
+    noise(0.3, { cutoff: 6000, gain: 0.1, delay: 0.9, highpass: true });
+    tone(60, 0.6, { type: "sine", gain: 0.25, delay: 0.95, slideTo: 32 });
+  },
+  /** Rattling chain links tightening into a heavy clank. */
+  chains: () => {
+    for (let i = 0; i < 6; i++)
+      noise(0.07, { cutoff: 7000, gain: 0.1, delay: i * (0.16 - i * 0.015), highpass: true });
+    tone(n(-19), 0.5, { type: "square", gain: 0.03, delay: 0.75, slideTo: n(-24), cutoff: 900 });
+    drum(0.8, 0.28);
+  },
   /** Bobbing "meh": a lazy two-note slide down. */
   shrug: () => {
     tone(n(7), 0.25, { type: "triangle", gain: 0.06, slideTo: n(9) });

@@ -98,6 +98,7 @@ apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, L
 ability: works from the bench, none of the owner's characters has a weakness —, Babilon Wielki, Ojciec kłamstwa, Złoty
 kielich — a supporter, like Fałszywa obietnica). The extreme helpers are evolutions of weak base forms (`soul/data/abyssBasics.ts`:
 Wilk w owczej skórze → Prorok, Iskra niezgody → Jeździec, Owczy pęd → Duch tego świata; Bies Wygody → Belfegor in `sloth.ts`;
+three-stage: Fala z otchłani → Mały róg → Bestia z morza, Tylko ten jeden raz → Kajdany nałogu → Legion;
 `abyss.test.ts` enforces it, every evolution in a deck comes with its base form). Rebalance with AI-vs-AI sims so the
 win rate keeps falling monotonically from `kanapa` to `niepokonany`; its whole deck is printed `stained` (`Opponent.finish`), it starts with 3 energy and draws 1 extra card a turn.
 The court of sloth (`soul/data/sloth.ts`: Duszek Marazmu → Bies Obojętności → Letarg, Duch Letniości, Belfegor) is
