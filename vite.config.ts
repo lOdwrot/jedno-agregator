@@ -11,7 +11,17 @@ export default defineConfig({
   base: BASE,
   plugins: [react(), tailwindcss()],
   // vendor chunk (react-router + motion) is ~140 kB gzip; pages are code-split
-  build: { chunkSizeWarningLimit: 700 },
+  build: {
+    chunkSizeWarningLimit: 700,
+    rolldownOptions: {
+      output: {
+        // Pixi loads its renderers/extensions with dynamic import() at init time. Split into tiny
+        // chunks, they were only fetched when a duel started — after a deploy removed them from
+        // GitHub Pages, an open tab failed with "no WebGL". One chunk = fetched together, up front.
+        codeSplitting: { groups: [{ name: "pixi", test: /node_modules[\\/]pixi\.js[\\/]/ }] },
+      },
+    },
+  },
   resolve: {
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
