@@ -280,7 +280,7 @@ export function startTurn(g: Game, pid: PlayerId) {
     `Tura ${g.turnNo}: ruch pomiotów.`,
     (n) => `Tura ${g.turnNo}: ruch gracza ${n}.`,
   );
-  if (pid === "ai" && g.boost?.extraDraw) draw(g, pid, g.boost.extraDraw);
+  if (pid === "ai" && g.aiExtraDraw) draw(g, pid, g.aiExtraDraw);
   const placeDraw = placeAura(g, pid)?.extraDraw ?? 0;
   if (placeDraw && draw(g, pid, placeDraw))
     log(g, `${getCard(g.place!.cardId).name}: dodatkowa karta.`);

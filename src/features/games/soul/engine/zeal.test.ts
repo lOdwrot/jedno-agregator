@@ -45,7 +45,10 @@ describe("zeal attacks", () => {
   it("selfDiscard: the big attack empties the attacker's grace", () => {
     const g = duel("pielgrzym", 4, 0);
     const next = dispatch(g, { type: "attack", index: 1 });
-    expect(next.players.ai.active?.damage ?? 999).toBeGreaterThan(0);
+    // the attack hit: the defender is damaged or already knocked out (a soul saved)
+    expect(
+      next.players.me.souls > g.players.me.souls || (next.players.ai.active?.damage ?? 0) > 0,
+    ).toBe(true);
     const me = next.players.me.active!;
     expect(me.energy).toBe(0);
     expect(next.players.me.discard.filter((c) => c.cardId === "laska")).toHaveLength(4);

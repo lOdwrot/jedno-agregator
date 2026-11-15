@@ -266,4 +266,22 @@ export const ABYSS_CARDS: CardDef[] = [
         "Jezus daje kielich, który naprawdę syci: Eucharystię. Szukaj radości, po której nie zostaje wstyd.",
     },
   },
+  {
+    id: "znamie",
+    kind: "item",
+    side: "demons",
+    name: "Znamię Bestii",
+    emoji: "🔱",
+    rarity: "legendary",
+    text: "Połóż z ręki drugą ewolucję na swojego pomiota podstawowego (wystawionego co najmniej turę wcześniej) — z pominięciem pierwszej ewolucji. Nie w pierwszej turze gracza.",
+    effect: { k: "skipEvolve" },
+    flavor:
+      "„Aby nikt nie mógł kupić ani sprzedać, kto nie ma znamienia” (Ap 13,17). Droga na skróty — byle szybciej i byle jak.",
+    lesson: {
+      tempts:
+        "Skróty bez nawrócenia: przynależność „na pokaz”, bo tak łatwiej żyć, kupować i być akceptowanym. Kto nosi cudzy znak, przestaje wybierać sam.",
+      defend:
+        "Nosisz już znak — krzyż z chrztu (Ap 7,3). Nie wstydź się go i nie zamieniaj na wygodę; prawdziwa przemiana idzie krok po kroku, z Bogiem.",
+    },
+  },
 ];

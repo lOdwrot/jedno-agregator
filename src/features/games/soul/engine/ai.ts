@@ -257,7 +257,8 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   if (sup) return sup;
 
   for (const c of inPlay(me))
-    if (canUseAbility(g, pid, c)) return { type: "ability", target: c.uid };
+    if (canUseAbility(g, pid, c) && abilityWorthIt(g, pid, c))
+      return { type: "ability", target: c.uid };
 
   const a = me.active;
   const foe = g.players[other(pid)].active;
@@ -293,4 +294,20 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   const atk = bestAttack(g, pid);
   if (atk) return { type: "attack", index: atk.index, ...(atk.fuel ? { fuel: atk.fuel } : {}) };
   return { type: "endTurn" };
+}
+
+/** Cards the side draws at the start of each turn (Tron Bestii openly draws one more). */
+const drawsPerTurn = (g: Game, pid: PlayerId) => 1 + (pid === "ai" ? g.aiExtraDraw : 0);
+
+/**
+ * Draw abilities are skipped when the deck runs low — an empty deck at the start of a turn loses,
+ * so the computer keeps enough cards for about 8 more turns.
+ */
+function abilityWorthIt(g: Game, pid: PlayerId, c: InPlay): boolean {
+  const e = charDef(c).ability?.effect;
+  const p = g.players[pid];
+  const reserve = 8 * drawsPerTurn(g, pid);
+  if (e?.k === "drawOnce") return p.deck.length > reserve;
+  if (e?.k === "drawUntil") return p.deck.length - Math.max(0, e.n - p.hand.length) > reserve;
+  return true;
 }

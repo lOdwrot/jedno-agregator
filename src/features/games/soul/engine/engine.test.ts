@@ -106,7 +106,7 @@ describe("Walka o duszę — engine", () => {
     (i) => {
       for (const seed of [1, 2, 3, 4, 5, 6]) {
         const g = autoplay(
-          createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.boost),
+          createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.extraDraw),
         );
         expect(g.phase).toBe("over");
         expect(g.winner).not.toBeNull();

@@ -81,11 +81,13 @@ describe("50-card rules", () => {
     expect(g.players.me.deck.length).toBe(deck + Math.min(5, discard));
   });
 
-  it("the computer answers its own search and the extreme opponent starts boosted", () => {
-    const o = OPPONENTS.find((x) => x.id === "otchlan")!;
-    const g = createGame(deckList(newProfile()), oppDeck(OPPONENTS.indexOf(o)), 5, o.boost);
-    expect(g.players.ai.active!.energy).toBe(2);
-    expect(g.players.ai.deck.length + g.players.ai.hand.length).toBe(50 - 4 - inPlayCount(g) - 2);
+  it("no opponent starts with a handicap; only Tron Bestii openly draws 2 cards a turn", () => {
+    for (const o of OPPONENTS) {
+      const g = createGame(deckList(newProfile()), oppDeck(OPPONENTS.indexOf(o)), 5, o.extraDraw);
+      expect(g.players.ai.active!.energy, o.id).toBe(0);
+      expect(g.players.ai.deck.length + g.players.ai.hand.length).toBe(50 - 4 - inPlayCount(g));
+      expect(o.extraDraw ?? 0, o.id).toBe(o.id === "niepokonany" ? 1 : 0);
+    }
   });
 });
 
