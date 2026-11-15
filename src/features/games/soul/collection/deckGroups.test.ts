@@ -14,6 +14,12 @@ describe("groupDeckKeys", () => {
     expect(groups[0]!.stacks).toEqual([["leon1:plain"]]);
   });
 
+  it("the papal candidate heads the popes section with every pope stacked below it", () => {
+    const groups = groupDeckKeys(["jp2:plain", "kandydat:plain", "leon1:gilded"] as CardKey[]);
+    expect(groups.map((g) => g.id)).toEqual(["popes"]);
+    expect(groups[0]!.stacks).toEqual([["kandydat:plain", "jp2:plain", "leon1:gilded"]]);
+  });
+
   it("stacks an evolution line from the lowest stage down, finishes kept together", () => {
     const groups = groupDeckKeys([
       "proboszcz:plain",

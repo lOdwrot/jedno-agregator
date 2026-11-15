@@ -514,6 +514,33 @@ export const PARISH_CARDS: CardDef[] = [
     flavor: "Odprawiał Msze za Ojczyznę. Uczył, że prawdy nie zwycięża się nienawiścią.",
   },
   // ── Popes through the ages (legendary, worth 2 souls) ──────────────────────
+  // Every pope is an evolution of the one "Kandydat na papieża" — none can be played straight from the hand.
+  {
+    id: "kandydat",
+    kind: "character",
+    side: "parish",
+    name: "Kandydat na papieża",
+    subtitle: "kardynał — przyszły papież?",
+    emoji: "🕊️",
+    rarity: "common",
+    hp: 70,
+    element: "modlitwa",
+    weakness: "pycha",
+    retreat: 1,
+    souls: 1,
+    attacks: [
+      {
+        name: "Veni Creator",
+        cost: 1,
+        damage: 10,
+        text: "Dobierz 1 kartę.",
+        effects: [{ k: "draw", n: 1 }],
+      },
+      { name: "Głosowanie w Sykstynie", cost: 2, damage: 30 },
+    ],
+    flavor:
+      "Wszedł na konklawe jako kardynał. Mówi się, że kto wchodzi jako papież, wychodzi jako kardynał.",
+  },
   {
     id: "piotr",
     kind: "character",
@@ -522,10 +549,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "pierwszy papież, I w.",
     emoji: "🗝️",
     rarity: "legendary",
-    hp: 130,
+    hp: 140,
     element: "sluzba",
     weakness: "pycha",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     ability: {
       name: "Opoka",
@@ -552,10 +580,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, V w.",
     emoji: "🛡️",
     rarity: "legendary",
-    hp: 120,
+    hp: 130,
     element: "slowo",
     weakness: "gniew",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     attacks: [
       {
@@ -578,10 +607,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, VI w.",
     emoji: "🎼",
     rarity: "legendary",
-    hp: 120,
+    hp: 130,
     element: "modlitwa",
     weakness: "lenistwo",
     retreat: 1,
+    evolvesFrom: "kandydat",
     souls: 2,
     ability: {
       name: "Sługa sług Bożych",
@@ -607,10 +637,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XIII w.",
     emoji: "🏔️",
     rarity: "legendary",
-    hp: 120,
+    hp: 130,
     element: "modlitwa",
     weakness: "pycha",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     ability: {
       name: "Pustelnik z Morrone",
@@ -638,10 +669,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XVII w.",
     emoji: "🐎",
     rarity: "legendary",
-    hp: 120,
+    hp: 130,
     element: "sluzba",
     weakness: "pycha",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     attacks: [
       {
@@ -664,10 +696,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XIX w.",
     emoji: "🏛️",
     rarity: "legendary",
-    hp: 130,
+    hp: 140,
     element: "slowo",
     weakness: "gniew",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     ability: {
       name: "Więzień Watykanu",
@@ -695,10 +728,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XX w.",
     emoji: "🍞",
     rarity: "legendary",
-    hp: 120,
+    hp: 130,
     element: "modlitwa",
     weakness: "lenistwo",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     ability: {
       name: "Częsta Komunia",
@@ -717,10 +751,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XX w.",
     emoji: "🌙",
     rarity: "legendary",
-    hp: 130,
+    hp: 140,
     element: "slowo",
     weakness: "pycha",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     ability: {
       name: "Dobry Papież",
@@ -747,10 +782,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XX/XXI w.",
     emoji: "⛰️",
     rarity: "legendary",
-    hp: 150,
+    hp: 160,
     element: "slowo",
     weakness: "pycha",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     attacks: [
       {
@@ -772,10 +808,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XXI w.",
     emoji: "📚",
     rarity: "legendary",
-    hp: 130,
+    hp: 140,
     element: "slowo",
     weakness: "gniew",
     retreat: 2,
+    evolvesFrom: "kandydat",
     souls: 2,
     attacks: [
       {
@@ -804,10 +841,11 @@ export const PARISH_CARDS: CardDef[] = [
     subtitle: "papież, XXI w.",
     emoji: "🌍",
     rarity: "legendary",
-    hp: 130,
+    hp: 140,
     element: "sluzba",
     weakness: "pycha",
     retreat: 1,
+    evolvesFrom: "kandydat",
     souls: 2,
     attacks: [
       {

@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getCard } from "../data/cards";
+import { DECK_SIZE, getCard } from "../data/cards";
 import {
   addToDeck,
   BOOSTER_PRICE,
   canAddToDeck,
   deckProblems,
+  deckSize,
   donateSpares,
   finishDuel,
   keyOf,
@@ -32,7 +33,7 @@ describe("Walka o duszę — collection", () => {
       beaten: ["kanapa"],
     };
     const p = migrateProfile(old);
-    expect(p.version).toBe(3);
+    expect(p.version).toBe(4);
     expect(deckProblems(p)).toEqual([]);
     expect(p.deck).toContain(keyOf("jp2", "gilded"));
     expect(p.collection[keyOf("profesor", "plain")]).toBe(1);
@@ -48,16 +49,40 @@ describe("Walka o duszę — collection", () => {
     delete old.collection[keyOf("ksiega", "plain")];
     old.energy = 40 - old.deck.length;
     const p = migrateProfile(old);
-    expect(p.version).toBe(3);
+    expect(p.version).toBe(4);
     expect(p.collection[keyOf("ogloszenia", "plain")]).toBe(2);
     expect(p.deck.filter((k) => k === keyOf("ogloszenia", "plain"))).toHaveLength(2);
     expect(p.collection[keyOf("ksiega", "plain")]).toBe(1);
     expect(deckProblems(p)).toEqual([]);
   });
 
-  it("starter deck is legal and a welcome booster is ready", () => {
+  it("migrates a version 3 profile: everyone gets 2 papal candidates, pope decks get them in place of grace", () => {
+    const cand = keyOf("kandydat", "plain");
+    const plain = { ...newProfile(), version: 3 };
+    plain.deck = plain.deck.filter((k) => k !== cand);
+    delete plain.collection[cand];
+    plain.energy = DECK_SIZE - plain.deck.length;
+    const a = migrateProfile(plain);
+    expect(a.version).toBe(4);
+    expect(a.collection[cand]).toBe(2);
+    expect(a.deck).not.toContain(cand); // no popes in the deck — the deck stays as it was
+    expect(a.energy).toBe(plain.energy);
+
+    const popes = { ...plain, collection: { ...plain.collection, [keyOf("jp2", "gilded")]: 1 } };
+    popes.deck = [...plain.deck, keyOf("jp2", "gilded")];
+    popes.energy = DECK_SIZE - popes.deck.length;
+    const b = migrateProfile(popes);
+    expect(b.deck.filter((k) => k === cand)).toHaveLength(2);
+    expect(b.energy).toBe(popes.energy - 2);
+    expect(deckSize(b)).toBe(DECK_SIZE);
+    expect(deckProblems(b)).toEqual([]);
+    expect(migrateProfile(b)).toBe(b);
+  });
+
+  it("starter deck is legal, holds the papal candidate and a welcome booster is ready", () => {
     const p = newProfile();
     expect(deckProblems(p)).toEqual([]);
+    expect(p.deck.filter((k) => k === keyOf("kandydat", "plain"))).toHaveLength(2);
     expect(p.packs).toBe(1);
     expect(p.talents).toBe(BOOSTER_PRICE);
   });
