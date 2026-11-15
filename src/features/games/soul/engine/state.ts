@@ -205,9 +205,16 @@ export const benchValue = (c: CardInst) => {
   return d.hp + (d.ability && SUPPORT_ABILITIES.has(d.ability.effect.k) ? 200 : 0);
 };
 
-/** Basic to put on the bench: team supporters first, then the toughest. */
-export const bestBenchBasic = (hand: CardInst[]): CardInst | undefined =>
-  hand.filter((c) => isBasic(getCard(c.cardId))).sort((a, b) => benchValue(b) - benchValue(a))[0];
+/** Basic to put on the bench: team supporters first, then a base form whose evolution is in hand, then the toughest. */
+export function bestBenchBasic(hand: CardInst[]): CardInst | undefined {
+  const evolvable = new Set(
+    hand
+      .map((c) => getCard(c.cardId))
+      .flatMap((d) => (isCharacter(d) && d.evolvesFrom ? [d.evolvesFrom] : [])),
+  );
+  const value = (c: CardInst) => benchValue(c) + (evolvable.has(c.cardId) ? 250 : 0);
+  return hand.filter((c) => isBasic(getCard(c.cardId))).sort((a, b) => value(b) - value(a))[0];
+}
 
 export function createGame(
   me: DeckList,

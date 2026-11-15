@@ -96,7 +96,10 @@ deck, extra draws per turn) — `zastepy` (Smocze Zastępy, "bardzo trudny": 2 e
 The top level is `niepokonany` (Tron Bestii, "niepokonany": ~10× harder than `otchlan` in AI-vs-AI sims): it plays the
 apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, Legion, Jeździec na rudym koniu — `energyOnce`, Duch tego świata — the `noWeakness`
 ability: works from the bench, none of the owner's characters has a weakness —, Babilon Wielki, Ojciec kłamstwa, Złoty
-kielich), its whole deck is printed `stained` (`Opponent.finish`), it starts with 3 energy and draws 1 extra card a turn.
+kielich — a supporter, like Fałszywa obietnica). The extreme helpers are evolutions of weak base forms (`soul/data/abyssBasics.ts`:
+Wilk w owczej skórze → Prorok, Iskra niezgody → Jeździec, Owczy pęd → Duch tego świata; Bies Wygody → Belfegor in `sloth.ts`;
+`abyss.test.ts` enforces it, every evolution in a deck comes with its base form). Rebalance with AI-vs-AI sims so the
+win rate keeps falling monotonically from `kanapa` to `niepokonany`; its whole deck is printed `stained` (`Opponent.finish`), it starts with 3 energy and draws 1 extra card a turn.
 The court of sloth (`soul/data/sloth.ts`: Duszek Marazmu → Bies Obojętności → Letarg, Duch Letniości, Belfegor) is
 played only by the harder opponents (`zastepy`, `otchlan`, `niepokonany`; `sloth.test.ts` enforces it). The AI benches team helpers first (`bestBenchBasic` / `benchValue` in `engine/state.ts`). `Opponent.theme: "infernal"` switches
 the duel to the hellish look and sound: `board/inferno.ts` (lava cracks, red glow, rising embers — static under reduced
