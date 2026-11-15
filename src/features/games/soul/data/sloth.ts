@@ -2,7 +2,7 @@ import type { CardDef } from "./types";
 
 /**
  * The court of sloth — demons of the "lenistwo" domain played only by the harder opponents
- * (Smocze Zastępy, Otchłań Upadłych, Tron Bestii). Evolution line: Marazm → Obojętność → Letarg.
+ * (Smocze Zastępy, Otchłań Upadłych, Tron Bestii). Evolution lines: Marazm → Obojętność → Letarg, Bies Wygody → Belfegor.
  */
 export const SLOTH_CARDS: CardDef[] = [
   {
@@ -148,16 +148,47 @@ export const SLOTH_CARDS: CardDef[] = [
     },
   },
   {
+    id: "wygoda",
+    kind: "character",
+    side: "demons",
+    name: "Bies Wygody",
+    emoji: "🛋️",
+    rarity: "rare",
+    hp: 80,
+    element: "lenistwo",
+    weakness: "sluzba",
+    retreat: 2,
+    souls: 1,
+    attacks: [
+      { name: "Pilot w dłoni", cost: 1, damage: 20 },
+      {
+        name: "Jeszcze pięć minut",
+        cost: 2,
+        damage: 40,
+        text: "Ulecz 10 tej postaci.",
+        effects: [{ k: "heal", target: "self", n: 10 }],
+      },
+    ],
+    flavor: "Ma pilota do telewizora, do bramy, do klimatyzacji. Szuka jeszcze pilota do sumienia.",
+    lesson: {
+      tempts:
+        "Mała wygoda staje się nawykiem: zamiast przejść się do kogoś — wyślę emotkę, zamiast pomóc — „ktoś inny zrobi”. Z takich drobiazgów rośnie książę lenistwa.",
+      defend:
+        "Raz dziennie wybierz coś trudniejszego, choć mogłoby być łatwiej: schody zamiast windy, telefon zamiast SMS-a, pomoc zamiast wymówki.",
+    },
+  },
+  {
     id: "belfegor",
     kind: "character",
     side: "demons",
     name: "Belfegor, Książę Wygody",
     emoji: "🦥",
     rarity: "legendary",
-    hp: 190,
+    hp: 180,
     element: "lenistwo",
     weakness: "sluzba",
     retreat: 3,
+    evolvesFrom: "wygoda",
     souls: 2,
     ability: {
       name: "Wynalazki na skróty",
@@ -175,7 +206,7 @@ export const SLOTH_CARDS: CardDef[] = [
       {
         name: "Świat bez wysiłku",
         cost: 4,
-        damage: 150,
+        damage: 130,
         text: "Obrońca zasypia.",
         effects: [{ k: "status", s: "asleep" }],
       },

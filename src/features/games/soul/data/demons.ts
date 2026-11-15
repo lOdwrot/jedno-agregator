@@ -914,7 +914,7 @@ const BASE_DEMONS: CardDef[] = [
   },
   {
     id: "obietnica",
-    kind: "item",
+    kind: "supporter",
     side: "demons",
     name: "Fałszywa obietnica",
     emoji: "🎁",

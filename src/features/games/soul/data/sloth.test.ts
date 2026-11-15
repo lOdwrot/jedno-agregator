@@ -31,7 +31,7 @@ describe("court of sloth (lenistwo)", () => {
 
   it("every evolution in a deck comes with its previous stage", () => {
     for (const o of OPPONENTS)
-      for (const c of SLOTH_CARDS)
+      for (const c of DEMON_CARDS)
         if (o.deck[c.id] && isCharacter(c) && c.evolvesFrom)
           expect(o.deck[c.evolvesFrom], `${o.id}: ${c.id}`).toBeGreaterThan(0);
   });

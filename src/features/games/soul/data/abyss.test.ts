@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deckList, newProfile } from "../collection/profile";
 import { createGame, type DeckList } from "../engine/state";
 import { ABYSS_CARDS } from "./abyss";
+import { ABYSS_BASICS } from "./abyssBasics";
 import { DECK_SIZE, getCard, isCharacter } from "./cards";
 import { DEMON_CARDS } from "./demons";
 import { OPPONENTS } from "./opponents";
@@ -37,11 +38,29 @@ describe("Niepokonany (Tron Bestii)", () => {
     const arch = ["lucyfer", "abaddon", "acedia"].map(getCard).filter(isCharacter);
     const top = (c: (typeof arch)[number]) => Math.max(...c.attacks.map((a) => a.damage));
     const archHp = Math.min(...arch.map((c) => c.hp));
-    for (const c of ABYSS_CARDS.filter(isCharacter)) {
+    const grown = ABYSS_CARDS.filter(isCharacter).filter((c) => !ABYSS_BASICS.includes(c));
+    for (const c of grown) {
       expect(c.hp, c.id).toBeGreaterThanOrEqual(180);
       if (c.attacks.length > 1) expect(top(c), c.id).toBeGreaterThanOrEqual(130);
     }
-    expect(Math.max(...ABYSS_CARDS.filter(isCharacter).map((c) => c.hp))).toBeGreaterThan(archHp);
+    expect(Math.max(...grown.map((c) => c.hp))).toBeGreaterThan(archHp);
+  });
+
+  it("the strongest helpers enter as evolutions of a weak base form, the big boosts are supporters", () => {
+    for (const id of ["jezdziec", "duch-swiata", "prorok", "belfegor"]) {
+      const c = getCard(id);
+      expect(isCharacter(c) && c.evolvesFrom, id).toBeTruthy();
+      const base = getCard((c as { evolvesFrom: string }).evolvesFrom);
+      expect(isCharacter(base) && !base.evolvesFrom && base.hp <= 80, id).toBe(true);
+    }
+    for (const id of ["kielich", "obietnica"]) expect(getCard(id).kind, id).toBe("supporter");
+    for (const c of ABYSS_BASICS) {
+      expect(isCharacter(c) && c.hp <= 80, c.id).toBe(true);
+      expect(
+        isCharacter(c) && Math.max(...c.attacks.map((a) => a.damage)),
+        c.id,
+      ).toBeLessThanOrEqual(40);
+    }
   });
 
   it("starts with 3 energy on a stained (stronger) active", () => {
@@ -74,13 +93,16 @@ describe("Duch tego świata — weakness off, even from the bench", () => {
     expect(applyDefense(g, "me", zlosnik, scholanka, 40)).toBe(80);
   });
 
-  it("the computer benches team helpers (Duch, Jeździec) before big hitters", async () => {
+  it("the computer benches the base form of a team helper it holds before big hitters", async () => {
     const { bestBenchBasic } = await import("../engine/state");
-    const hand = ["bestia", "duch-swiata", "lucyfer"].map((cardId, i) => ({
+    const hand = ["bestia", "owczy-ped", "duch-swiata", "lucyfer"].map((cardId, i) => ({
       uid: 100 + i,
       cardId,
       finish: "plain" as const,
     }));
-    expect(bestBenchBasic(hand)?.cardId).toBe("duch-swiata");
+    expect(bestBenchBasic(hand)?.cardId).toBe("owczy-ped");
+    expect(bestBenchBasic(hand.filter((c) => c.cardId !== "duch-swiata"))?.cardId).not.toBe(
+      "owczy-ped",
+    );
   });
 });

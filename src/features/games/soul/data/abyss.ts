@@ -1,3 +1,4 @@
+import { ABYSS_BASICS } from "./abyssBasics";
 import type { CardDef } from "./types";
 
 /**
@@ -5,6 +6,7 @@ import type { CardDef } from "./types";
  * Each one still carries the lesson: how the temptation works and how to resist it.
  */
 export const ABYSS_CARDS: CardDef[] = [
+  ...ABYSS_BASICS,
   {
     id: "bestia",
     kind: "character",
@@ -59,6 +61,7 @@ export const ABYSS_CARDS: CardDef[] = [
     element: "lenistwo",
     weakness: "slowo",
     retreat: 2,
+    evolvesFrom: "wilk",
     souls: 2,
     ability: {
       name: "Wielkie znaki",
@@ -69,14 +72,14 @@ export const ABYSS_CARDS: CardDef[] = [
       {
         name: "Znamię na prawej ręce",
         cost: 2,
-        damage: 70,
+        damage: 60,
         text: "Obrońca zostaje zatrzymany.",
         effects: [{ k: "status", s: "paralyzed" }],
       },
       {
         name: "Ogień z nieba",
         cost: 4,
-        damage: 150,
+        damage: 130,
         text: "20 obrażeń każdej postaci na ławce rywala.",
         effects: [{ k: "bench", n: 20 }],
       },
@@ -181,6 +184,7 @@ export const ABYSS_CARDS: CardDef[] = [
     element: "lenistwo",
     weakness: "sluzba",
     retreat: 1,
+    evolvesFrom: "owczy-ped",
     souls: 1,
     ability: {
       name: "Wszyscy tak robią",
@@ -191,7 +195,7 @@ export const ABYSS_CARDS: CardDef[] = [
       {
         name: "Szara codzienność",
         cost: 2,
-        damage: 70,
+        damage: 60,
         text: "Obrońca popada w zwątpienie.",
         effects: [{ k: "status", s: "poisoned" }],
       },
@@ -213,10 +217,11 @@ export const ABYSS_CARDS: CardDef[] = [
     subtitle: "Ap 6,4",
     emoji: "🐎",
     rarity: "legendary",
-    hp: 210,
+    hp: 200,
     element: "gniew",
     weakness: "modlitwa",
     retreat: 2,
+    evolvesFrom: "niezgoda",
     souls: 2,
     ability: {
       name: "Ostroga",
@@ -227,7 +232,7 @@ export const ABYSS_CARDS: CardDef[] = [
       {
         name: "Miecz wielki",
         cost: 3,
-        damage: 110,
+        damage: 100,
         text: "20 obrażeń każdej postaci na ławce rywala.",
         effects: [{ k: "bench", n: 20 }],
       },
@@ -243,7 +248,7 @@ export const ABYSS_CARDS: CardDef[] = [
   },
   {
     id: "kielich",
-    kind: "item",
+    kind: "supporter",
     side: "demons",
     name: "Złoty kielich Babilonu",
     emoji: "🍷",
