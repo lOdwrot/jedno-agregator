@@ -120,6 +120,10 @@ played only by the harder opponents (`zastepy`, `otchlan`, `niepokonany`; `sloth
 the duel to the hellish look and sound: `board/inferno.ts` (lava cracks, red glow, rising embers — static under reduced
 motion; colours `hell-*`/`ember` in a `@theme static` block so the canvas can read them) and `audio/musicInfernal.ts`
 (detuned tritone clusters, drone, heartbeat, cracked bell; no bright finale).
+The **meadow of saved souls** (`board/meadow.ts`, pure geometry in `meadowPlan.ts`, colours `meadow-*`/`river*` in a
+`@theme static` block) grows on the player's half with every soul they save (`coverage(souls)`, measured from the middle of
+the hand); the last soul turns the whole board green, a river flows along the middle line and sheep run in to graze
+(`playFrame` awaits it before the result shows; static under reduced motion; on every theme).
 **Multiplayer** (tab "Multiplayer", `soul/pvp/`): two people, each with their own deck, over WebRTC (PeerJS —
 the free broker `0.peerjs.com` only introduces the browsers; `VITE_PEER_SERVER` points to another one, e.g. a local
 `peer` server for tests). The host registers `jedno-wod-<4 digits>`, the guest types the code. Lock-step sync

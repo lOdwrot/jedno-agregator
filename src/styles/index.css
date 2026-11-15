@@ -65,6 +65,16 @@
   --color-ember: #ff6a1a;
 }
 
+/* Meadow that grows on the player's half of the duel board with every saved soul (read by the canvas). */
+@theme static {
+  --color-meadow-800: #24502a;
+  --color-meadow-600: #3f8a3a;
+  --color-meadow-400: #6cbf4a;
+  --color-meadow-200: #b5e07a;
+  --color-river: #2f7fc4;
+  --color-river-light: #a9dcf5;
+}
+
 @layer base {
   html {
     color-scheme: light;

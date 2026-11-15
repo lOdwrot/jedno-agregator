@@ -75,6 +75,17 @@ export const sfx = {
       tone(note(s), 0.5, { type: "triangle", gain: 0.07, delay: i * 0.12 }),
     ),
   swap: () => noise(0.25, { cutoff: 2000, gain: 0.15 }),
+  /** A sheep's "beee": a wobbling nasal tone. */
+  bleat: () =>
+    [0, 1, 2, 3].forEach((i) =>
+      tone(i % 2 ? 330 : 350, 0.13, {
+        type: "sawtooth",
+        gain: 0.05,
+        cutoff: 1300,
+        delay: i * 0.1,
+        slideTo: i === 3 ? 260 : undefined,
+      }),
+    ),
   win: () =>
     [0, 4, 7, 12, 16, 19, 24].forEach((s, i) =>
       tone(note(s), 0.9, { type: "triangle", gain: 0.07, delay: i * 0.1 }),

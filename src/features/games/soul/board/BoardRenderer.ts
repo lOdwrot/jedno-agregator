@@ -52,6 +52,7 @@ export class BoardRenderer {
     this.tw.speed = reduced ? 0.15 : 1;
     this.fx = new Fx(this.tw, this.app.ticker);
     this.fx.reduced = reduced;
+    this.table.grow(this.app.ticker, reduced);
     this.table.setTheme(theme, this.app.ticker, reduced);
     this.cards.sortableChildren = true;
     this.stage.addChild(this.table.layer, this.cards, this.fx.layer);
