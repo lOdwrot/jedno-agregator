@@ -60,6 +60,30 @@ export function councilPicks(g: Game, pid: PlayerId): CardInst[] {
   return me.hand.filter((c) => isPopeCard(getCard(c.cardId)));
 }
 
+export interface SkipPair {
+  /** Stage 2 card in the hand. */
+  card: CardInst;
+  /** Basic in play it can be put on. */
+  target: InPlay;
+}
+
+/** "Droga do Damaszku": stage 2 cards in hand + the basics in play they could go on (same timing
+ *  rules as an ordinary evolution — not in the first turns, not on a character played this turn). */
+export function skipEvolvePairs(g: Game, pid: PlayerId): SkipPair[] {
+  if (g.turnNo < 3) return [];
+  const me = g.players[pid];
+  const out: SkipPair[] = [];
+  for (const card of me.hand) {
+    const d = getCard(card.cardId);
+    const mid = isCharacter(d) && d.evolvesFrom ? getCard(d.evolvesFrom) : undefined;
+    const base = mid && isCharacter(mid) ? mid.evolvesFrom : undefined;
+    if (!base) continue;
+    for (const target of inPlay(me))
+      if (target.cardId === base && target.playedTurn < g.turnNo) out.push({ card, target });
+  }
+  return out;
+}
+
 const deckEnergy = (g: Game, pid: PlayerId) =>
   g.players[pid].deck.filter((c) => c.cardId === ENERGY_ID[g.players[pid].side]).length;
 
@@ -128,6 +152,8 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
       return deckEnergy(g, pid) > 0;
     case "council":
       return councilPicks(g, pid).length > 0;
+    case "skipEvolve":
+      return skipEvolvePairs(g, pid).length > 0;
     case "place":
       return g.place?.cardId !== def.id;
     default:
@@ -135,7 +161,13 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
   }
 }
 
-export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: number): boolean {
+export function playSupport(
+  g: Game,
+  pid: PlayerId,
+  card: CardInst,
+  targetUid?: number,
+  withUid?: number,
+): boolean {
   if (!canPlaySupport(g, pid, card)) return false;
   const def = getCard(card.cardId) as SupportDef;
   const me = g.players[pid];
@@ -151,6 +183,11 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
   const pope =
     def.effect.k === "council" ? councilPicks(g, pid).find((c) => c.uid === targetUid) : undefined;
   if (def.effect.k === "council" && !pope) return false;
+  const skip =
+    def.effect.k === "skipEvolve"
+      ? skipEvolvePairs(g, pid).find((x) => x.target.uid === targetUid && x.card.uid === withUid)
+      : undefined;
+  if (def.effect.k === "skipEvolve" && !skip) return false;
 
   me.hand = me.hand.filter((c) => c.uid !== card.uid);
   if (def.kind === "supporter") g.flags.supporter = true;
@@ -374,6 +411,24 @@ export function playSupport(g: Game, pid: PlayerId, card: CardInst, targetUid?: 
         (n) => `${n} odrzuca Łaskę — na ławkę prosto z ręki wchodzi: ${nameOf(pope!)}.`,
       );
       emit(g, { t: "bench", pid, uid: pope!.uid });
+      break;
+    }
+    case "skipEvolve": {
+      const { card: evo, target: t } = skip!;
+      me.hand = me.hand.filter((c) => c !== evo);
+      say(
+        g,
+        pid,
+        `${nameOf(t)} od razu rozwija się w: ${nameOf(evo)}!`,
+        `Pomioty: ${nameOf(t)} od razu rozwija się w: ${nameOf(evo)}!`,
+        (n) => `${n}: ${nameOf(t)} od razu rozwija się w: ${nameOf(evo)}!`,
+      );
+      t.under.push({ uid: evo.uid, cardId: t.cardId, finish: t.finish });
+      t.cardId = evo.cardId;
+      t.finish = evo.finish;
+      t.statuses = [];
+      t.playedTurn = g.turnNo;
+      emit(g, { t: "evolve", pid, uid: t.uid });
       break;
     }
     case "place":

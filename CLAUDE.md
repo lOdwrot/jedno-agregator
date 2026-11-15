@@ -94,6 +94,12 @@ Franciszek's `recoverOnce` ability (only while active) takes a candidate back fr
 legendary item `sobor` (Przyspieszony Sobór Watykański, `council` effect, `PULL_WEIGHT` 0.4 in `packs.ts`) discards a grace
 from the hand and benches a pope straight from the hand — the support action's `target` is the pope's hand uid
 (`councilPicks`). The deck builder indents rows by real evolution depth, so sibling evolutions line up.
+Booster-only three-stage lines (`soul/data/orders.ts`, never in the starter deck; `engine/orders.test.ts`): Postulant →
+Brat cysters (`salvageOnce` item from the discard pile, also from the bench) → Opat oliwski (legendary, `benchGuard`: the
+owner's bench takes no attack spread damage) and Zuch → Harcerz (`salvageOnce` character) → Harcmistrz (legendary,
+`kindleOnce`: attach 1 grace from the discard pile). The rare item `damaszek` (Droga do Damaszku, `skipEvolve`, like Rare
+Candy) puts a stage 2 from the hand straight on its basic — the support action's `target` is the basic in play, `with`
+the stage 2 hand uid (`skipEvolvePairs`); works for every three-stage line.
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in

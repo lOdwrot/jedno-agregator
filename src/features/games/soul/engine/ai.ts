@@ -19,7 +19,7 @@ import {
   previewDamage,
   retreatCost,
 } from "./combat";
-import { canPlaySupport, councilPicks, supportTargets } from "./support";
+import { canPlaySupport, councilPicks, skipEvolvePairs, supportTargets } from "./support";
 import {
   benchValue,
   bestBasic,
@@ -98,6 +98,14 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
         };
         const pope = [...councilPicks(g, pid)].sort((x, y) => hp(y) - hp(x))[0];
         if (pope) return play(pope.uid);
+        break;
+      }
+      case "skipEvolve": {
+        const best = [...skipEvolvePairs(g, pid)].sort(
+          (x, y) => (x.target === a ? -1 : 0) - (y.target === a ? -1 : 0),
+        )[0];
+        if (best)
+          return { type: "support", uid: c.uid, target: best.target.uid, with: best.card.uid };
         break;
       }
       case "heal":

@@ -1,3 +1,4 @@
+import { ORDERS_CARDS } from "./orders";
 import type { CardDef } from "./types";
 
 /** Collectible cards of the parish side (the player's cards). */
@@ -1358,6 +1359,7 @@ export const PARISH_CARDS: CardDef[] = [
     effect: { k: "place", attackBonus: 10, armor: 10 },
     flavor: "Tu leży Biblia Gutenberga. Pomioty nie doczytały nawet pierwszej strony.",
   },
+  ...ORDERS_CARDS,
   // ── Energy (unlimited, not in boosters) ─────────────────────────────────────
   {
     id: "laska",

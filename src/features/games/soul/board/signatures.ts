@@ -176,6 +176,35 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
     sound: "high_c",
     play: async ({ r, from }) => void (await impact(r.fx, r.tw, from, P()["logo-blue"], 1.4)),
   },
+  "Organy oliwskie": {
+    sound: "abbey",
+    play: async ({ r, from, to }) => {
+      for (let i = 0; i < 4; i++)
+        void r.fx.ring(from.x, from.y, P()["logo-yellow"], 120 + i * 50, 5);
+      await both(
+        stream(r.fx, r.tw, from, to, "🎶", 10, 32, 1100),
+        pillar(r.fx, r.tw, from, P().surface, 150),
+      );
+      await both(
+        impact(r.fx, r.tw, to, P()["logo-yellow"], 1.7),
+        shake(r.tw, r.stage, 10, r.reduced),
+      );
+    },
+  },
+  "Wielka watra": {
+    sound: "bonfire",
+    play: async ({ r, from, to }) => {
+      await both(
+        pillar(r.fx, r.tw, from, P()["logo-orange"], 140),
+        stream(r.fx, r.tw, from, to, "🔥", 9, 36, 1000),
+      );
+      await both(
+        rain(r.fx, r.tw, to, "✨", 10, 28),
+        impact(r.fx, r.tw, to, P()["logo-orange"], 1.8),
+        shake(r.tw, r.stage, 12, r.reduced),
+      );
+    },
+  },
   // demons
   Rój: {
     sound: "swarm",

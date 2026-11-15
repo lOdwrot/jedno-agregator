@@ -15,6 +15,7 @@ import { fuelMax, placeRule, previewDamage, retreatCost } from "../engine/combat
 import {
   canPlaySupport,
   councilPicks,
+  skipEvolvePairs,
   lockedBy,
   supportTargets,
   targetKind,
@@ -83,7 +84,9 @@ function handOptions(g: Game, c: CardInst): Opt[] {
               ? `${getCard(g.place!.cardId).name}: nikt nie może teraz zagrywać przedmiotów.`
               : s.effect.k === "council"
                 ? "Potrzebujesz w ręce Łaski i papieża oraz wolnego miejsca na ławce."
-                : "Ta karta teraz nic by nie zmieniła.",
+                : s.effect.k === "skipEvolve"
+                  ? "Potrzebujesz w ręce drugiej ewolucji, a w grze jej postaci podstawowej wystawionej co najmniej turę wcześniej (od 2. tury każdego gracza)."
+                  : "Ta karta teraz nic by nie zmieniła.",
       },
     ];
   }
@@ -91,6 +94,11 @@ function handOptions(g: Game, c: CardInst): Opt[] {
     return councilPicks(g, "me").map((x) => ({
       label: `Na ławkę: ${nameOf(x)} (odrzuć 1 ✨)`,
       action: { type: "support", uid: c.uid, target: x.uid },
+    }));
+  if (s.effect.k === "skipEvolve")
+    return skipEvolvePairs(g, "me").map((x) => ({
+      label: `${nameOf(x.target)} (${where(g, x.target)}) → ${nameOf(x.card)}`,
+      action: { type: "support", uid: c.uid, target: x.target.uid, with: x.card.uid },
     }));
   const kind = targetKind(s);
   if (!kind) return [{ label: "Zagraj kartę", action: { type: "support", uid: c.uid } }];

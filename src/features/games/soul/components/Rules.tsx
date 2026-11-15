@@ -30,6 +30,10 @@ const RULES: [string, string][] = [
     "Talia jest duża, więc warto ją szybko przeglądać: Zbiórka ministrantów i Rada parafialna (pomocnicy) dobierają karty, Różaniec pozwala zajrzeć na wierzch talii — wziąć tę kartę albo odrzucić ją i dobrać następną, Ksiądz profesor wymienia całą rękę na 7 nowych, a Ksiądz rzecznik zmusza obu graczy do oddania ręki — dobiera ten, komu zostało więcej dusz do zdobycia. Ogłoszenia parafialne: odrzuć 2 karty z ręki i weź z talii dowolnie wybraną postać.",
   ],
   [
+    "Trzy stopnie ewolucji",
+    "Niektóre postacie rosną w dwóch krokach: podstawa → pierwsza ewolucja → druga ewolucja (np. Ministrant → Lektor → Ceremoniarz). Tylko w boosterach znajdziesz dwie rzadkie drogi: Postulant → Brat cysters → Opat oliwski oraz Zuch → Harcerz → Harcmistrz. Brat cysters (Skryptorium) i Harcerz (Nikogo nie zostawiamy) raz na turę — także z ławki — biorą z odrzuconych do ręki przedmiot albo postać. Opat oliwski chroni Twoją ławkę przed obrażeniami, a Harcmistrz dokłada Łaskę z odrzuconych. Rzadki przedmiot Droga do Damaszku pozwala położyć drugą ewolucję prosto na postać podstawową — z pominięciem pierwszej.",
+  ],
+  [
     "Pusta talia",
     "Odrzucone karty same nie wracają do talii — odzyskasz je tylko kartami: Księga parafialna bierze z odrzuconych postać do ręki, a Powrót marnotrawnego syna wtasowuje 5 kart z powrotem do talii (pomioty mają swoje odpowiedniki: Rozpamiętywanie i Stare nawyki). Jeśli na początku tury musisz dobrać kartę, a talia jest pusta — przegrywasz. Uważaj z dobieraniem pod koniec długiej walki (licznik kart pokazuje talia na planszy).",
   ],
