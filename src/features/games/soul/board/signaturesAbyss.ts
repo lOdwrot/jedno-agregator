@@ -54,4 +54,25 @@ export const ABYSS_SIG: Record<string, { sound: keyof typeof signatureSound; pla
       );
     },
   },
+  Wywyższenie: {
+    sound: "boast",
+    play: async ({ r, from, to }) => {
+      await both(
+        pillar(r.fx, r.tw, from, P()["logo-yellow"], 150),
+        rain(r.fx, r.tw, from, "👑", 4, 30),
+      );
+      await both(
+        stream(r.fx, r.tw, from, to, "🗯️", 3, 44, 600),
+        r.tw.wait(450).then(() => impact(r.fx, r.tw, to, P().danger, 1.7)),
+      );
+    },
+  },
+  "Coraz ciaśniej": {
+    sound: "chains",
+    play: async ({ r, from, to }) => {
+      await stream(r.fx, r.tw, from, to, "⛓️", 5, 40, 700);
+      shards(r.fx, to, P()["logo-dark"], 14, 1.2);
+      await both(impact(r.fx, r.tw, to, P()["logo-red"], 1.6), shake(r.tw, r.stage, 12, r.reduced));
+    },
+  },
 };

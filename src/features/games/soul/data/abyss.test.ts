@@ -3,7 +3,7 @@ import { deckList, newProfile } from "../collection/profile";
 import { createGame, type DeckList } from "../engine/state";
 import { ABYSS_CARDS } from "./abyss";
 import { ABYSS_BASICS } from "./abyssBasics";
-import { DECK_SIZE, getCard, isCharacter } from "./cards";
+import { DECK_SIZE, getCard, isBasic, isCharacter } from "./cards";
 import { DEMON_CARDS } from "./demons";
 import { OPPONENTS } from "./opponents";
 
@@ -54,12 +54,22 @@ describe("Niepokonany (Tron Bestii)", () => {
       expect(isCharacter(base) && !base.evolvesFrom && base.hp <= 80, id).toBe(true);
     }
     for (const id of ["kielich", "obietnica"]) expect(getCard(id).kind, id).toBe("supporter");
-    for (const c of ABYSS_BASICS) {
-      expect(isCharacter(c) && c.hp <= 80, c.id).toBe(true);
-      expect(
-        isCharacter(c) && Math.max(...c.attacks.map((a) => a.damage)),
-        c.id,
-      ).toBeLessThanOrEqual(40);
+    for (const c of ABYSS_BASICS.filter(isCharacter)) {
+      const top = Math.max(...c.attacks.map((a) => a.damage));
+      expect(c.hp, c.id).toBeLessThanOrEqual(c.evolvesFrom ? 130 : 80);
+      expect(top, c.id).toBeLessThanOrEqual(c.evolvesFrom ? 90 : 40);
+    }
+    // Bestia z morza and Legion are three-stage lines
+    for (const [id, line] of [
+      ["bestia", ["rog", "fala"]],
+      ["legion", ["kajdany", "raz"]],
+    ] as const) {
+      let c = getCard(id);
+      for (const prev of line) {
+        expect(isCharacter(c) && c.evolvesFrom, id).toBe(prev);
+        c = getCard(prev);
+      }
+      expect(isBasic(c), id).toBe(true);
     }
   });
 

@@ -1,8 +1,10 @@
 import type { CardDef } from "./types";
 
 /**
- * Base forms of the apocalyptic evolutions: the big ones never enter the table fully grown —
+ * Earlier stages of the apocalyptic evolutions: the big ones never enter the table fully grown —
  * they start small (a spark, a wolf in sheep's clothing, the herd) and must be evolved.
+ * Bestia z morza and Legion are three-stage lines: Fala z otchłani → Mały róg → Bestia,
+ * Tylko ten jeden raz → Kajdany nałogu → Legion.
  */
 export const ABYSS_BASICS: CardDef[] = [
   {
@@ -95,6 +97,125 @@ export const ABYSS_BASICS: CardDef[] = [
         "Robimy coś, bo „wszyscy tak robią” — i nie pytamy już, czy to dobre. Tak powoli rodzi się duch tego świata.",
       defend:
         "„Nie idź za większością, by czynić zło” (Wj 23,2). Odwaga bycia innym zaczyna się od jednego „nie, dziękuję”.",
+    },
+  },
+  {
+    id: "fala",
+    kind: "character",
+    side: "demons",
+    name: "Fala z otchłani",
+    subtitle: "Ap 13,1",
+    emoji: "🌊",
+    rarity: "rare",
+    hp: 70,
+    element: "pycha",
+    weakness: "modlitwa",
+    retreat: 1,
+    souls: 1,
+    attacks: [
+      { name: "Piana na ustach", cost: 1, damage: 20 },
+      { name: "Przypływ", cost: 2, damage: 40 },
+    ],
+    flavor: "Z daleka to tylko fala. Ale coś pod nią płynie — i rośnie.",
+    lesson: {
+      tempts:
+        "Zachwyt nad siłą zaczyna się niewinnie: podziw dla tego, kto rozpycha się łokciami, i ciche marzenie, żeby też tak móc.",
+      defend:
+        "„Kto chce być pierwszy, niech będzie sługą wszystkich” (Mk 9,35). Podziwiaj tych, którzy służą, a nie tych, którzy rządzą.",
+    },
+  },
+  {
+    id: "rog",
+    kind: "character",
+    side: "demons",
+    name: "Mały róg",
+    subtitle: "Dn 7,8",
+    emoji: "🗯️",
+    rarity: "rare",
+    hp: 130,
+    element: "pycha",
+    weakness: "modlitwa",
+    retreat: 2,
+    evolvesFrom: "fala",
+    souls: 1,
+    attacks: [
+      {
+        name: "Usta mówiące wielkie rzeczy",
+        cost: 2,
+        damage: 50,
+        text: "Odrzuć 1 Łaskę z postaci obrońcy.",
+        effects: [{ k: "discardEnergy" }],
+      },
+      { name: "Wywyższenie", cost: 3, damage: 90 },
+    ],
+    flavor: "Najmniejszy z rogów, za to z najgłośniejszymi ustami (Dn 7,8).",
+    lesson: {
+      tempts:
+        "Pycha rośnie z każdym wygranym sporem i każdym „miałem rację”. Mały róg wyrywa inne, żeby tylko on był widoczny.",
+      defend:
+        "Przyznaj się czasem do błędu na głos i ciesz się cudzym sukcesem. To łamie róg, zanim stanie się koroną Bestii.",
+    },
+  },
+  {
+    id: "raz",
+    kind: "character",
+    side: "demons",
+    name: "Tylko ten jeden raz",
+    emoji: "☝️",
+    rarity: "rare",
+    hp: 70,
+    element: "gniew",
+    weakness: "modlitwa",
+    retreat: 1,
+    souls: 1,
+    attacks: [
+      { name: "Ciekawość", cost: 1, damage: 20 },
+      {
+        name: "Jeszcze jeden",
+        cost: 2,
+        damage: 40,
+        text: "Rzuć monetą. Orzeł: obrońca zostaje zatrzymany.",
+        effects: [{ k: "status", s: "paralyzed", coin: true }],
+      },
+    ],
+    flavor: "„Raz to jak nigdy”. Powiedział to już jedenaście razy.",
+    lesson: {
+      tempts:
+        "Każdy nałóg zaczyna się od „tylko raz”, „przecież panuję nad tym”, „wszyscy próbowali”. Pierwszy raz jest najłatwiejszy do odmówienia.",
+      defend:
+        "Nie negocjuj z pokusą — po prostu odejdź. Najprościej powiedzieć „nie” na samym początku, zanim coś zacznie Cię mieć.",
+    },
+  },
+  {
+    id: "kajdany",
+    kind: "character",
+    side: "demons",
+    name: "Kajdany nałogu",
+    subtitle: "Mk 5,4",
+    emoji: "⛓️",
+    rarity: "rare",
+    hp: 130,
+    element: "gniew",
+    weakness: "modlitwa",
+    retreat: 2,
+    evolvesFrom: "raz",
+    souls: 1,
+    attacks: [
+      {
+        name: "Zaciśnięte ogniwa",
+        cost: 2,
+        damage: 50,
+        text: "Rzuć monetą. Orzeł: obrońca zostaje zatrzymany.",
+        effects: [{ k: "status", s: "paralyzed", coin: true }],
+      },
+      { name: "Coraz ciaśniej", cost: 3, damage: 90 },
+    ],
+    flavor: "Najpierw był łańcuszek, potem łańcuch. Teraz to on nosi Ciebie.",
+    lesson: {
+      tempts:
+        "Nawyk staje się przymusem: robisz to, choć już nie chcesz, i wstydzisz się komukolwiek powiedzieć. Samotność zaciska kajdany najmocniej.",
+      defend:
+        "Łańcuchy pękają w świetle: powiedz o tym spowiednikowi, rodzicom albo przyjacielowi. Proszenie o pomoc to odwaga, nie słabość.",
     },
   },
 ];

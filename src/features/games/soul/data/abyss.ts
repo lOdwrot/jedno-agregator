@@ -19,6 +19,7 @@ export const ABYSS_CARDS: CardDef[] = [
     element: "pycha",
     weakness: "modlitwa",
     retreat: 4,
+    evolvesFrom: "rog",
     souls: 2,
     ability: {
       name: "Śmiertelna rana zagojona",
@@ -105,6 +106,7 @@ export const ABYSS_CARDS: CardDef[] = [
     element: "gniew",
     weakness: "modlitwa",
     retreat: 3,
+    evolvesFrom: "kajdany",
     souls: 2,
     ability: {
       name: "Bo nas wielu",
