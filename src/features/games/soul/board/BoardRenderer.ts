@@ -37,13 +37,23 @@ export class BoardRenderer {
 
   async init(el: HTMLElement, reduced: boolean, theme: BoardTheme = "default") {
     await document.fonts?.ready;
-    await this.app.init({
+    const options = {
       resizeTo: el,
       backgroundAlpha: 0,
       antialias: true,
       resolution: Math.min(2, window.devicePixelRatio || 1),
       autoDensity: true,
-    });
+    };
+    try {
+      await this.app.init(options);
+    } catch (e) {
+      // Pixi only checks WebGL once per page; a real context can still fail later (too many
+      // contexts, GPU process restarted, blocked driver). Fall back to the 2D canvas renderer.
+      console.warn("Pixi WebGL init failed, falling back to canvas", e);
+      this.destroy();
+      this.app = new Application();
+      await this.app.init({ ...options, preference: "canvas" });
+    }
     this.app.canvas.setAttribute("aria-hidden", "true");
     this.app.canvas.style.display = "block";
     el.appendChild(this.app.canvas);

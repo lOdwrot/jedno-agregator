@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Tabs } from "@/ui";
 import { rollPack } from "./collection/packs";
 import {
@@ -28,6 +28,7 @@ import { PrizeTable } from "./components/PrizeTable";
 import { Rules } from "./components/Rules";
 import { PvpDuel } from "./pvp/PvpDuel";
 import { PvpLobby } from "./pvp/PvpLobby";
+import { preloadBoard } from "./board/loadBoard";
 import type { Session } from "./pvp/session";
 
 type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zasady";
@@ -46,6 +47,8 @@ export function SoulGame() {
   const [paying, setPaying] = useState<Opponent | null>(null);
   const [patron, setPatron] = useState<number | null>(null);
   const xp = profile.xp ?? 0;
+  // fetch the duel board while the player is still in the hub, not when the duel starts
+  useEffect(preloadBoard, []);
 
   const startDuel = (opponent: Opponent, training = false) =>
     setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary });

@@ -6,6 +6,8 @@ import { readyAbilities } from "../engine/abilities";
 import { AbilityButtons } from "./AbilityButtons";
 import type { Selection } from "../components/CardActions";
 import type { BoardRenderer } from "./BoardRenderer";
+import { BoardFailure } from "./BoardFailure";
+import { isChunkError, loadBoard } from "./loadBoard";
 import type { BoardTheme } from "./inferno";
 import { dropsFor, isPlayable, type Drop } from "./dnd";
 import { benchZone, computeSlots, inside, PLACE_KEY, slotRect, type Slot } from "./layout";
@@ -54,7 +56,7 @@ export function BoardView({
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 390, h: 640 });
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<"load" | "gfx" | null>(null);
   const drag = useRef<{
     uid: number;
     x0: number;
@@ -70,16 +72,20 @@ export function BoardView({
     if (!el) return;
     let alive = true;
     let r: BoardRenderer | null = null;
-    void import("./BoardRenderer")
+    void loadBoard()
       .then(async ({ BoardRenderer: R }) => {
         r = new R();
         await r.init(el, reduced, theme);
         if (!alive) return r.destroy();
         r.resize(el.clientWidth, el.clientHeight);
         renderer.current = r;
-        await r.reconcile(view, 520, 70);
+        // the board is up — an error while dealing the cards must not claim there is no graphics
+        await r.reconcile(view, 520, 70).catch((e: unknown) => console.error(e));
       })
-      .catch(() => alive && setFailed(true));
+      .catch((e: unknown) => {
+        console.error(e);
+        if (alive) setFailed(isChunkError(e) ? "load" : "gfx");
+      });
     return () => {
       alive = false;
       renderer.current = null;
@@ -173,12 +179,7 @@ export function BoardView({
       // board so overlays drawn above it (lesson card, prize booster, result) get the clicks.
       className="relative isolate size-full touch-none overflow-hidden select-none"
     >
-      {failed && (
-        <p className="absolute inset-x-4 top-4 rounded-card bg-surface p-3 text-sm text-ink">
-          Twoja przeglądarka nie obsługuje grafiki WebGL. Karty wciąż możesz wybierać przyciskami
-          (Tab).
-        </p>
-      )}
+      {failed && <BoardFailure kind={failed} />}
       <ul className="absolute inset-0" aria-label="Karty na stole i w Twojej ręce">
         {slots.map((s) => {
           const r = slotRect(s);
