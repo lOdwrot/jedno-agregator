@@ -72,3 +72,29 @@ export function bestiaryTally(groups: BestiaryGroup[]): Tally {
     { total: 0, met: 0, recognized: 0 },
   );
 }
+
+export interface Discoveries {
+  /** Cards that reached `RECOGNIZE_AT` sightings during the duel. */
+  recognized: string[];
+  /** Cards met for the first time during the duel (and not yet recognized). */
+  met: string[];
+}
+
+/**
+ * What a duel added to the bestiary: `before` is the bestiary at the start of the duel,
+ * `during` counts the sightings of the duel. Lists keep the bestiary order.
+ */
+export function duelDiscoveries(
+  before: Profile["bestiary"],
+  during: Partial<Record<string, number>>,
+): Discoveries {
+  const out: Discoveries = { recognized: [], met: [] };
+  for (const { id } of BESTIARY_CARDS) {
+    const add = during[id] ?? 0;
+    if (!add) continue;
+    const was = before?.[id] ?? 0;
+    if (was < RECOGNIZE_AT && was + add >= RECOGNIZE_AT) out.recognized.push(id);
+    else if (was === 0) out.met.push(id);
+  }
+  return out;
+}

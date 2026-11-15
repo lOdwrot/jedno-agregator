@@ -1,7 +1,9 @@
 import { Button, Dialog, Icon } from "@/ui";
+import type { Discoveries } from "../collection/bestiary";
 import type { PackType } from "../collection/packs";
 import type { Opponent } from "../data/opponents";
 import { RankMeter } from "../rank/RankMeter";
+import { DuelDiscoveries } from "./DuelDiscoveries";
 
 interface Props {
   won: boolean;
@@ -12,6 +14,8 @@ interface Props {
   /** Victory booster already opened (and added to the collection). */
   prize: PackType | null;
   opponent: Opponent;
+  /** Bestiary progress made in this duel. */
+  found?: Discoveries;
   /** Practice duel: nothing was earned, so no talents line and no booster button. */
   training?: boolean;
   onBooster: () => void;
@@ -27,6 +31,7 @@ export function DuelResult({
   rank,
   prize,
   opponent,
+  found,
   training = false,
   onBooster,
   onMenu,
@@ -58,6 +63,7 @@ export function DuelResult({
             już w Twojej kolekcji.
           </p>
         )}
+        {found && <DuelDiscoveries found={found} />}
         <p className="rounded-card bg-accent-soft p-3 text-left text-sm text-ink">
           <strong className="text-accent-ink">Na drogę:</strong> {opponent.moral}
         </p>

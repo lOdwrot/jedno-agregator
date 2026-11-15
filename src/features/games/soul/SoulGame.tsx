@@ -10,6 +10,7 @@ import {
   payFee,
   reward,
   rollPrize,
+  type Profile,
 } from "./collection/profile";
 import { useProfile } from "./collection/useProfile";
 import type { Opponent } from "./data/opponents";
@@ -39,6 +40,7 @@ export function SoulGame() {
     opponent: Opponent;
     training: boolean;
     key: number;
+    bestiary: Profile["bestiary"];
   } | null>(null);
   const [pvp, setPvp] = useState<Session | null>(null);
   const [paying, setPaying] = useState<Opponent | null>(null);
@@ -46,7 +48,7 @@ export function SoulGame() {
   const xp = profile.xp ?? 0;
 
   const startDuel = (opponent: Opponent, training = false) =>
-    setDuel({ opponent, training, key: Date.now() });
+    setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary });
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
@@ -88,6 +90,7 @@ export function SoulGame() {
         deck={deckList(profile)}
         onFinish={onFinish}
         onSighting={(id) => update((p) => recordSighting(p, id))}
+        bestiary={duel.bestiary}
         onForfeit={() =>
           update((p) => ({ ...p, xp: afterDuel(p.xp ?? 0, false, duel.opponent.difficulty) }))
         }

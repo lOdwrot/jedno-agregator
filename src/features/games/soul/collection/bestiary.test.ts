@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getCard } from "../data/cards";
 import {
   BESTIARY_CARDS,
+  duelDiscoveries,
   bestiaryGroups,
   bestiaryTally,
   isRecognized,
@@ -46,5 +47,22 @@ describe("bestiary", () => {
   it("groups cover every bestiary card exactly once", () => {
     const total = bestiaryGroups(newProfile()).reduce((s, g) => s + g.total, 0);
     expect(total).toBe(BESTIARY_CARDS.length);
+  });
+});
+
+describe("duelDiscoveries", () => {
+  const [a, b, c, d] = BESTIARY_CARDS.map((x) => x.id);
+
+  it("splits the duel's sightings into newly recognized and first met cards", () => {
+    const before = { [a!]: 3, [b!]: 1, [d!]: RECOGNIZE_AT };
+    const during = { [a!]: 1, [b!]: 1, [c!]: 2, [d!]: 3, ministrant: 2 };
+    expect(duelDiscoveries(before, during)).toEqual({ recognized: [a], met: [c] });
+  });
+
+  it("a card met and recognized in one duel is listed only as recognized", () => {
+    expect(duelDiscoveries(undefined, { [a!]: RECOGNIZE_AT })).toEqual({
+      recognized: [a],
+      met: [],
+    });
   });
 });

@@ -24,3 +24,18 @@ describe("Bestiary", () => {
     expect(screen.getByText(/Nie spotkałeś jeszcze żadnej pokusy/)).toBeInTheDocument();
   });
 });
+
+describe("DuelDiscoveries", () => {
+  it("lists recognized and first-met cards, and nothing when the duel brought nothing", async () => {
+    const { DuelDiscoveries } = await import("./DuelDiscoveries");
+    const [a, b] = BESTIARY_CARDS;
+    const { container, rerender } = render(
+      <DuelDiscoveries found={{ recognized: [a!.id], met: [b!.id] }} />,
+    );
+    expect(screen.getByText("📖 Rozpoznane pokusy: 1")).toBeInTheDocument();
+    expect(screen.getByText("👁️ Spotkane po raz pierwszy: 1")).toBeInTheDocument();
+    expect(screen.getByText(a!.name)).toBeInTheDocument();
+    rerender(<DuelDiscoveries found={{ recognized: [], met: [] }} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+});
