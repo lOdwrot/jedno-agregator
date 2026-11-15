@@ -7,7 +7,7 @@ Statyczna strona agregująca treści Archidiecezji Gdańskiej: **aktualności, w
 
 ## Jak to działa
 
-Brak własnego backendu. GitHub Actions co 30 minut (i przy każdym pushu na `main`) pobiera dane
+Brak własnego backendu. GitHub Actions raz na dobę ok. 05:00 czasu polskiego (i przy każdym pushu na `main`) pobiera dane
 z API Jedno i kanału RSS YouTube, zapisuje je jako pliki JSON i publikuje stronę na GitHub Pages.
 Przeglądarka czyta tylko te pliki — klucz API nigdy nie trafia do klienta.
 
