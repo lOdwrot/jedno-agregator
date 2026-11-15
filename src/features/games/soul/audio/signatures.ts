@@ -144,6 +144,23 @@ export const signatureSound: Record<string, () => void> = {
     for (let i = 0; i < 8; i++)
       tone(i % 2 ? 1500 : 1100, 0.04, { type: "square", gain: 0.04, delay: i * 0.14 });
   },
+  abbey: () => {
+    // pedal + full registers, then the abbey bells answer
+    [-24, -12, 0, 4, 7, 12, 16].forEach((x) => {
+      tone(n(x), 2.2, { type: "sawtooth", gain: 0.016, attack: 0.12 });
+      tone(n(x) * 2, 2.2, { type: "square", gain: 0.006, attack: 0.12 });
+    });
+    [12, 7, 4, 0].forEach((x, i) => bell(x, 1 + i * 0.25, 0.045));
+  },
+  bonfire: () => {
+    noise(1.6, { cutoff: 3000, gain: 0.1, highpass: true });
+    for (let i = 0; i < 8; i++)
+      noise(0.05, { cutoff: 5000, gain: 0.12, highpass: true, delay: 0.1 + i * 0.17 });
+    [0, 4, 7, 4, 7, 12].forEach((x, i) =>
+      tone(n(x), 0.4, { type: "triangle", gain: 0.06, delay: 0.3 + i * 0.2, attack: 0.03 }),
+    );
+    drum(1.5, 0.35);
+  },
   campfire: () => {
     noise(1, { cutoff: 2500, gain: 0.08, highpass: true });
     [0, 4, 7, 12].forEach((s, i) =>

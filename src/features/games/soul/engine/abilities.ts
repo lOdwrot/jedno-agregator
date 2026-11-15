@@ -1,7 +1,8 @@
 /** Activated abilities ("moce"): each character may use its ability once per turn. */
-import { ENERGY_ID } from "../data/cards";
+import { ENERGY_ID, getCard } from "../data/cards";
 import { ACTIVE_ABILITIES } from "../data/types";
 import { healAll, placeRule } from "./combat";
+import { recoverPick } from "./aiSearch";
 import { emit } from "./events";
 import {
   charDef,
@@ -10,6 +11,7 @@ import {
   inPlay,
   log,
   nameOf,
+  type CardInst,
   type Game,
   type InPlay,
   type PlayerId,
@@ -17,6 +19,20 @@ import {
 
 const energyInDeck = (g: Game, pid: PlayerId) =>
   g.players[pid].deck.findIndex((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
+const energyInDiscard = (g: Game, pid: PlayerId) =>
+  g.players[pid].discard.findLastIndex((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
+
+/** The card a "salvageOnce" ability takes back: the best character, or the latest item discarded. */
+function salvagePick(g: Game, pid: PlayerId, kind: "character" | "item"): CardInst | undefined {
+  if (kind === "character") return recoverPick(g, pid);
+  return g.players[pid].discard.findLast((c) => getCard(c.cardId).kind === "item");
+}
+
+/** Who gets the energy of an "energyOnce" / "kindleOnce" ability: the active if it still needs some. */
+const energyTarget = (p: Game["players"][PlayerId], fallback: InPlay): InPlay =>
+  p.active && energyNeed(p.active) > 0
+    ? p.active
+    : ([...inPlay(p)].sort((a, b) => energyNeed(b) - energyNeed(a))[0] ?? fallback);
 
 /** How many more energy a character needs for its strongest attack. */
 export const energyNeed = (c: InPlay) =>
@@ -51,6 +67,10 @@ export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
       return energyInDeck(g, pid) >= 0;
     case "recoverOnce":
       return p.active?.uid === c.uid && p.discard.some((x) => x.cardId === e.cardId);
+    case "salvageOnce":
+      return !!salvagePick(g, pid, e.kind);
+    case "kindleOnce":
+      return energyInDiscard(g, pid) >= 0;
     default:
       return false;
   }
@@ -81,10 +101,7 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
     }
     case "energyOnce": {
       p.deck.splice(energyInDeck(g, pid), 1);
-      const t =
-        p.active && energyNeed(p.active) > 0
-          ? p.active
-          : ([...inPlay(p)].sort((a, b) => energyNeed(b) - energyNeed(a))[0] ?? c);
+      const t = energyTarget(p, c);
       t.energy++;
       emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       log(g, `${name} — ${nameOf(t)} dostaje energię z talii.`);
@@ -100,6 +117,22 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
       p.hand.push(pick);
       emit(g, { t: "draw", pid, n: 1 });
       log(g, `${name} — z odrzuconych wraca do ręki: ${nameOf(pick)}.`);
+      break;
+    }
+    case "salvageOnce": {
+      const pick = salvagePick(g, pid, e.kind)!;
+      p.discard = p.discard.filter((x) => x !== pick);
+      p.hand.push(pick);
+      emit(g, { t: "draw", pid, n: 1 });
+      log(g, `${name} — z odrzuconych wraca do ręki: ${nameOf(pick)}.`);
+      break;
+    }
+    case "kindleOnce": {
+      p.discard.splice(energyInDiscard(g, pid), 1);
+      const t = energyTarget(p, c);
+      t.energy++;
+      emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
+      log(g, `${name} — ${nameOf(t)} dostaje energię z odrzuconych.`);
       break;
     }
   }

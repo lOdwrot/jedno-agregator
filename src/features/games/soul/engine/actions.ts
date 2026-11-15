@@ -2,6 +2,7 @@
 import { BENCH_SIZE, ENERGY_ID, getCard, isBasic } from "../data/cards";
 import type { AttackDef, CardDef } from "../data/types";
 import {
+  abilities,
   addStatus,
   applyDefense,
   bonusDamage,
@@ -44,7 +45,8 @@ export type Action =
   | { type: "playBasic"; uid: number }
   | { type: "evolve"; uid: number; target: number }
   | { type: "attach"; uid: number; target: number }
-  | { type: "support"; uid: number; target?: number }
+  /** `with`: hand uid of a second card the support uses (the stage 2 of "skipEvolve"). */
+  | { type: "support"; uid: number; target?: number; with?: number }
   | { type: "retreat"; target: number }
   | { type: "ability"; target: number }
   /** `fuel`: energy cards from hand burned by a "fuel" attack; `target`: benched character
@@ -172,6 +174,16 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0, target?: number
         } else addStatus(g, d, e.s);
         break;
       case "bench":
+        if (foe.bench.length && abilities(g, other(pid)).some((x) => x.k === "benchGuard")) {
+          say(
+            g,
+            pid,
+            "Klauzura chroni ławkę rywala.",
+            "Klauzura chroni Twoją ławkę.",
+            () => "Klauzura chroni Twoją ławkę.",
+          );
+          break;
+        }
         for (const b of foe.bench) b.damage += e.n;
         if (foe.bench.length) {
           say(
@@ -296,7 +308,7 @@ function apply(g: Game, a: Action): boolean {
     }
     case "support": {
       const c = inHand(a.uid);
-      return g.phase === "main" && !!c && playSupport(g, pid, c, a.target);
+      return g.phase === "main" && !!c && playSupport(g, pid, c, a.target, a.with);
     }
     case "retreat": {
       const t = p.bench.find((b) => b.uid === a.target);

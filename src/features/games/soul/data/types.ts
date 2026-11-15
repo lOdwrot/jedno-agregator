@@ -52,7 +52,13 @@ export type AbilityEffect =
   | { k: "healOnce"; n: number }
   | { k: "energyOnce" }
   /** Only while active: take a copy of `cardId` from the discard pile into the hand. */
-  | { k: "recoverOnce"; cardId: string };
+  | { k: "recoverOnce"; cardId: string }
+  /** Also from the bench: take one card of this kind from the discard pile into the hand. */
+  | { k: "salvageOnce"; kind: "character" | "item" }
+  /** Also from the bench: attach 1 energy card from the discard pile to one of your characters. */
+  | { k: "kindleOnce" }
+  /** Works from the bench too: the owner's benched characters take no damage from attacks. */
+  | { k: "benchGuard" };
 
 /** Abilities the player activates (once per turn); the others are always on. */
 export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
@@ -61,6 +67,8 @@ export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
   "healOnce",
   "energyOnce",
   "recoverOnce",
+  "salvageOnce",
+  "kindleOnce",
 ]);
 
 export interface AbilityDef {
@@ -132,6 +140,9 @@ export type SupportEffect =
   | { k: "research"; n: number }
   /** Needs an energy card and a pope in hand: discard the energy, bench the pope (target = its hand uid). */
   | { k: "council" }
+  /** Put a stage 2 card from the hand onto its basic in play, skipping stage 1 (like Rare Candy).
+   *  The action's `target` is the basic in play, `with` the hand uid of the stage 2 card. */
+  | { k: "skipEvolve" }
   /** Both players put their hand under the deck and draw one card per soul still to win (like Iono). */
   | { k: "iono" }
   | {

@@ -2,7 +2,13 @@
 import { getCard, isBasic } from "../data/cards";
 import type { SupportDef } from "../data/types";
 import { canAttach, canBench, evolveTargets, type Action } from "../engine/actions";
-import { canPlaySupport, councilPicks, supportTargets, targetKind } from "../engine/support";
+import {
+  canPlaySupport,
+  councilPicks,
+  skipEvolvePairs,
+  supportTargets,
+  targetKind,
+} from "../engine/support";
 import { inPlay, type CardInst, type Game } from "../engine/state";
 
 export type DropTarget = { kind: "bench" } | { kind: "board" } | { kind: "card"; uid: number };
@@ -49,6 +55,20 @@ export function dropsFor(g: Game, c: CardInst): Drop[] {
           },
         ]
       : [];
+  }
+  if (s.effect.k === "skipEvolve") {
+    // drop on the basic; a basic with two possible stage 2 cards takes the first one (tap to choose)
+    const seen = new Set<number>();
+    return skipEvolvePairs(g, "me").flatMap((p) => {
+      if (seen.has(p.target.uid)) return [];
+      seen.add(p.target.uid);
+      return [
+        {
+          target: { kind: "card", uid: p.target.uid } as const,
+          action: { type: "support", uid: c.uid, target: p.target.uid, with: p.card.uid } as const,
+        },
+      ];
+    });
   }
   if (!targetKind(s))
     return [{ target: { kind: "board" }, action: { type: "support", uid: c.uid } }];
