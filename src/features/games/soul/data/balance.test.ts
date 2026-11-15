@@ -32,11 +32,15 @@ function playerWinRate(o: Opponent, games: number): number {
 }
 
 describe("difficulty curve — decks only, no hidden handicap", () => {
-  it("the starter deck wins less and less often from Chochliki to Tron Bestii", { timeout: 60_000 }, () => {
-    const rates = OPPONENTS.map((o) => playerWinRate(o, 150));
-    for (let i = 1; i < rates.length; i++)
-      expect(rates[i], `${OPPONENTS[i - 1]!.id} → ${OPPONENTS[i]!.id}: ${rates}`).toBeLessThan(
-        rates[i - 1]!,
-      );
-  });
+  it(
+    "the starter deck wins less and less often from Chochliki to Tron Bestii",
+    { timeout: 60_000 },
+    () => {
+      const rates = OPPONENTS.map((o) => playerWinRate(o, 150));
+      for (let i = 1; i < rates.length; i++)
+        expect(rates[i], `${OPPONENTS[i - 1]!.id} → ${OPPONENTS[i]!.id}: ${rates}`).toBeLessThan(
+          rates[i - 1]!,
+        );
+    },
+  );
 });

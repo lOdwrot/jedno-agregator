@@ -125,6 +125,13 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Interior_of_Ko%C5%9Bci%C3%B3%C5%82_%C5%9Bw._Miko%C5%82aja_in_Gda%C5%84sk.jpg",
     focus: 0.4,
   },
+  moderator: {
+    title: "Witraz-foska.jpg",
+    author: "Maciles",
+    license: "CC BY-SA 3.0",
+    url: "https://commons.wikimedia.org/wiki/File:Witraz-foska.jpg",
+    focus: 0.5,
+  },
   oliwa: {
     title: "Oliwa Cathedral, great organ.jpg",
     author: "Gerda Arendt",

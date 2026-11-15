@@ -322,17 +322,22 @@ export const PARISH_CARDS: CardDef[] = [
     retreat: 2,
     evolvesFrom: "animator",
     souls: 1,
+    ability: {
+      name: "Wspólnota",
+      text: "Działa też z ławki: wszystkie ataki Twoich postaci kosztują 1 Łaskę mniej (kilku Moderatorów się nie sumuje).",
+      effect: { k: "costMinus", n: 1 },
+    },
     attacks: [
       {
         name: "Namiot Spotkania",
-        cost: 2,
+        cost: 3,
         damage: 40,
         text: "Dołącz 1 Łaskę z talii do postaci na ławce, która ma ich najmniej.",
         effects: [{ k: "searchEnergy", n: 1 }],
       },
       {
         name: "Oaza Nowego Życia",
-        cost: 4,
+        cost: 5,
         damage: 120,
         text: "Usuń stany ze wszystkich swoich postaci.",
         effects: [{ k: "cleanse" }],

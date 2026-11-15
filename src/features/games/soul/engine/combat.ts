@@ -62,6 +62,16 @@ export function retreatCost(g: Game, pid: PlayerId, c: InPlay): number {
   return Math.max(0, charDef(c).retreat - (placeAura(g, pid)?.retreatMinus ?? 0));
 }
 
+/** Energy an attack of `pid` needs right now (`costMinus` abilities — strongest one, no stacking). */
+export function attackCost(g: Game, pid: PlayerId, atk: AttackDef): number {
+  const minus = Math.max(0, ...abilities(g, pid).map((a) => (a.k === "costMinus" ? a.n : 0)));
+  return Math.max(0, atk.cost - minus);
+}
+
+/** How many more energy a character of `pid` needs for its strongest attack. */
+export const energyNeed = (g: Game, pid: PlayerId, c: InPlay) =>
+  Math.max(0, ...charDef(c).attacks.map((x) => attackCost(g, pid, x) - c.energy));
+
 /** Flat bonus damage (abilities, place, finish) — before weakness. */
 export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   const ab = abilities(g, pid).reduce((s, a) => s + (a.k === "attackBonus" ? a.n : 0), 0);

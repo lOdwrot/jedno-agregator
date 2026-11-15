@@ -5,6 +5,7 @@ import {
   abilities,
   addStatus,
   applyDefense,
+  attackCost,
   bonusDamage,
   discardEnergy,
   endTurn,
@@ -100,7 +101,8 @@ export function attackBlock(g: Game, pid: PlayerId, atk: AttackDef): string | nu
   if (g.turnNo === 1) return "W pierwszej turze gry nie można atakować.";
   if (a.statuses.includes("asleep")) return "Postać śpi.";
   if (a.statuses.includes("paralyzed")) return "Postać jest zatrzymana.";
-  if (a.energy < atk.cost) return `Potrzeba ${atk.cost} — dołączono ${a.energy}.`;
+  const cost = attackCost(g, pid, atk);
+  if (a.energy < cost) return `Potrzeba ${cost} — dołączono ${a.energy}.`;
   return null;
 }
 

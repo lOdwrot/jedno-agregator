@@ -1,12 +1,5 @@
 /** Game state of a single duel + small pure helpers shared by the engine modules. */
-import {
-  BENCH_SIZE,
-  getCard,
-  HAND_START,
-  isBasic,
-  isCharacter,
-  SOULS_TO_WIN,
-} from "../data/cards";
+import { BENCH_SIZE, getCard, HAND_START, isBasic, isCharacter, SOULS_TO_WIN } from "../data/cards";
 import type { CharacterDef, Finish, Side, Status, SupportDef } from "../data/types";
 import { FINISH_BONUS } from "../data/types";
 import { emit } from "./events";
@@ -193,7 +186,13 @@ export function bestBasic(hand: CardInst[]): CardInst | undefined {
 }
 
 /** Abilities that help the whole team from the bench — worth benching before the big hitters. */
-const SUPPORT_ABILITIES = new Set(["noWeakness", "energyOnce", "handEnergyOnce", "attackBonus"]);
+const SUPPORT_ABILITIES = new Set([
+  "noWeakness",
+  "energyOnce",
+  "handEnergyOnce",
+  "attackBonus",
+  "costMinus",
+]);
 export const benchValue = (c: CardInst) => {
   const d = charDef(c);
   return d.hp + (d.ability && SUPPORT_ABILITIES.has(d.ability.effect.k) ? 200 : 0);
