@@ -23,7 +23,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Moce",
-    "Niektóre postacie mają moc. Moce stałe działają cały czas (np. mniej obrażeń). Moce aktywne użyjesz raz na turę: stuknij przycisk „✦ Moc” na postaci na stole (albo stuknij postać i wybierz „Użyj mocy”) — np. Pani z kancelarii dobiera karty, Siostra zakonna leczy, Animatorka dokłada Łaskę. Moc można użyć także z ławki. Uwaga na papieży-strażników: dopóki Św. Celestyn V jest aktywną postacią, nikt nie zagrywa przedmiotów, a przy Bł. Piusie IX — pomocników.",
+    "Niektóre postacie mają moc. Moce stałe działają cały czas (np. mniej obrażeń). Moce aktywne użyjesz raz na turę: stuknij przycisk „✦ Moc” na postaci na stole (albo stuknij postać i wybierz „Użyj mocy”) — np. Pani z kancelarii dobiera karty, Siostra zakonna leczy, Animatorka dokłada Łaskę. Moc można użyć także z ławki. Żadnego papieża nie zagrasz prosto z ręki: każdy papież to ewolucja Kandydata na papieża (jest w podstawowej talii) — połóż kandydata, a w kolejnej turze może zostać np. św. Piotrem, św. Piusem X albo św. Janem Pawłem II. Uwaga na papieży-strażników: dopóki Św. Celestyn V jest aktywną postacią, nikt nie zagrywa przedmiotów, a przy Bł. Piusie IX — pomocników.",
   ],
   [
     "Dobieranie kart",

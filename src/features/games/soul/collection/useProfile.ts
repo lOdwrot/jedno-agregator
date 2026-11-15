@@ -7,7 +7,7 @@ function load(): Profile {
   try {
     const raw = localStorage.getItem(KEY);
     const p = raw ? (JSON.parse(raw) as Parameters<typeof migrateProfile>[0]) : null;
-    if (p && [1, 2, 3].includes(p.version) && Array.isArray(p.deck)) return migrateProfile(p);
+    if (p && [1, 2, 3, 4].includes(p.version) && Array.isArray(p.deck)) return migrateProfile(p);
   } catch {
     /* corrupted or blocked storage — start fresh */
   }

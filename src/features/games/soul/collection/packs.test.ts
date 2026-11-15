@@ -31,6 +31,29 @@ describe("booster editions", () => {
     expect(count("papieze")).toBeGreaterThan(count("wspolnota") * 1.5);
   });
 
+  it("Papieże wieków always brings Kandydat na papieża, often gilded or stained", () => {
+    const rnd = createRng(5);
+    const pack = PACKS.find((p) => p.id === "papieze")!;
+    const finishes = { plain: 0, gilded: 0, stained: 0 };
+    for (let i = 0; i < 1000; i++) {
+      const { cardId, finish } = parseKey(rollPack(pack, rnd)[0]!);
+      expect(cardId).toBe("kandydat");
+      finishes[finish]++;
+    }
+    expect(finishes.stained).toBeGreaterThan(100);
+    expect(finishes.gilded).toBeGreaterThan(250);
+    expect(finishes.plain).toBeGreaterThan(400);
+  });
+
+  it("Kandydat na papieża can come gilded and stained from the other packs too", () => {
+    const rnd = createRng(21);
+    const pack = PACKS.find((p) => p.id === "witraze")!;
+    const seen = new Set<string>();
+    for (let i = 0; i < 2000; i++)
+      for (const k of rollPack(pack, rnd)) if (k.startsWith("kandydat:")) seen.add(k);
+    expect(seen).toEqual(new Set(["kandydat:plain", "kandydat:gilded", "kandydat:stained"]));
+  });
+
   it("Skarbiec Katedry guarantees a rare and a legendary card", () => {
     const rnd = createRng(9);
     const pack = PACKS.find((p) => p.id === "skarbiec")!;

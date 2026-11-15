@@ -27,6 +27,8 @@ export interface PackType {
     finish?: { stained: number; gilded: number };
     /** At least this many cards come in the stained-glass finish. */
     minStained?: number;
+    /** The first card is always this one, with its own (usually better) finish odds. */
+    first?: { id: string; finish: { stained: number; gilded: number } };
   };
 }
 
@@ -64,7 +66,12 @@ export const PACKS: readonly PackType[] = [
     art: "leon1",
     emoji: "👑",
     foil: "from-logo-yellow via-surface to-logo-yellow",
-    odds: { legendary: 0.4, rareInUncommonSlot: 0.25 },
+    odds: {
+      legendary: 0.4,
+      rareInUncommonSlot: 0.25,
+      // every pope evolves from the candidate — this pack always brings one, often gilded or stained
+      first: { id: "kandydat", finish: { stained: 0.15, gilded: 0.35 } },
+    },
   },
   {
     id: "zakrystia",
@@ -131,6 +138,7 @@ function pick<T>(pool: readonly T[], rnd: () => number): T {
  * Skarbiec Katedry: the 4th card is always rare and the last one always legendary.
  * Zakrystia i sanktuaria: only items and places (`odds.only`).
  * Witraże Katedry: plain/gilded cards are turned into stained glass until `minStained` is reached.
+ * Papieże wieków: the first card is always Kandydat na papieża (`odds.first`), often gilded or stained.
  */
 export function rollPack(pack: PackType, rnd: () => number = Math.random): CardKey[] {
   const of = (r: Rarity) => {
@@ -149,7 +157,9 @@ export function rollPack(pack: PackType, rnd: () => number = Math.random): CardK
       const special = pack.odds.pool ? COLLECTIBLE.filter(pack.odds.pool) : [];
       card = special.length && rnd() < 0.7 ? pick(special, rnd) : pick(of("rare"), rnd);
     }
-    out.push({ id: card.id, finish: pickFinish(rnd(), pack.odds.finish) });
+    const first = slot === 0 ? pack.odds.first : undefined;
+    if (first) out.push({ id: first.id, finish: pickFinish(rnd(), first.finish) });
+    else out.push({ id: card.id, finish: pickFinish(rnd(), pack.odds.finish) });
   }
   let missing = (pack.odds.minStained ?? 0) - out.filter((c) => c.finish === "stained").length;
   while (missing-- > 0) {

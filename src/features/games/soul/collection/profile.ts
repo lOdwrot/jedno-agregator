@@ -1,5 +1,5 @@
 /** Player's collection, deck, currency ("talenty") and boosters — pure functions + storage. */
-import { DECK_SIZE, ENERGY_ID, getCard, isBasic, MAX_COPIES } from "../data/cards";
+import { DECK_SIZE, ENERGY_ID, getCard, isBasic, isCharacter, MAX_COPIES } from "../data/cards";
 import type { Finish, Rarity } from "../data/types";
 import type { DeckList } from "../engine/state";
 import type { PrizeChance } from "../data/opponents";
@@ -14,7 +14,7 @@ export function parseKey(k: CardKey): { cardId: string; finish: Finish } {
 }
 
 export interface Profile {
-  version: 3;
+  version: 4;
   talents: number;
   /** Booster openings earned by finished duels (one per duel). */
   packs: number;
@@ -35,7 +35,7 @@ export interface Profile {
 export const BOOSTER_PRICE = 100;
 export const BOOSTER_SIZE = 5;
 
-/** Base deck: 20 characters, 15 supports (with a small draw engine) and 15 grace = 50. */
+/** Base deck: 21 characters (2 papal candidates), 15 supports (with a small draw engine) and 14 grace = 50. */
 const STARTER: [string, number][] = [
   ["ministrant", 3],
   ["lektor", 3],
@@ -43,7 +43,8 @@ const STARTER: [string, number][] = [
   ["wikariusz", 1],
   ["scholanka", 2],
   ["babcia", 3],
-  ["oazowicz", 3],
+  ["oazowicz", 2],
+  ["kandydat", 2],
   ["kancelaria", 2],
   ["rozaniec", 2],
   ["ogloszenia", 2],
@@ -66,7 +67,7 @@ export function newProfile(): Profile {
   }
   // a welcome booster is waiting
   return {
-    version: 3,
+    version: 4,
     talents: BOOSTER_PRICE,
     packs: 1,
     collection,
@@ -90,9 +91,14 @@ type SavedProfile = Omit<Profile, "version"> & { version: number };
 /**
  * Older saves: version 1 (24 cards) gets the whole base set, version 2 (40 cards) the new
  * Ogłoszenia parafialne. New cards go into the deck and grace fills it up to DECK_SIZE.
+ * Version 3 → 4: every pope evolves from "Kandydat na papieża" (see `giveCandidates`).
  */
 export function migrateProfile(old: SavedProfile): Profile {
-  if (old.version === 3) return old as Profile;
+  if (old.version === 4) return old as Profile;
+  return giveCandidates(old.version === 3 ? old : toV3(old));
+}
+
+function toV3(old: SavedProfile): SavedProfile {
   const collection = { ...old.collection };
   const deck = [...old.deck];
   const gift = old.version === 1 ? STARTER : V3_GIFT;
@@ -106,6 +112,37 @@ export function migrateProfile(old: SavedProfile): Profile {
     for (let i = inDeck; i < n && deck.length < DECK_SIZE - 10; i++) deck.push(k);
   }
   return { ...old, version: 3, collection, deck, energy: DECK_SIZE - deck.length };
+}
+
+export const CANDIDATE_ID = "kandydat";
+const CANDIDATE_GIFT = 2;
+const MIN_ENERGY = 4;
+
+/**
+ * Popes became evolutions of "Kandydat na papieża": everyone gets 2 candidates, and a deck that
+ * already holds popes gets them in place of grace (so the popes can still be played).
+ */
+function giveCandidates(old: SavedProfile): Profile {
+  const k = keyOf(CANDIDATE_ID, "plain");
+  const collection = { ...old.collection };
+  const have = Object.entries(collection)
+    .filter(([key]) => parseKey(key as CardKey).cardId === CANDIDATE_ID)
+    .reduce((s, [, c]) => s + (c ?? 0), 0);
+  if (have < CANDIDATE_GIFT) collection[k] = (collection[k] ?? 0) + CANDIDATE_GIFT - have;
+  const deck = [...old.deck];
+  let energy = old.energy;
+  const hasPopes = deck.some((x) => {
+    const c = getCard(parseKey(x).cardId);
+    return isCharacter(c) && c.evolvesFrom === CANDIDATE_ID;
+  });
+  if (hasPopes) {
+    const inDeck = deck.filter((x) => parseKey(x).cardId === CANDIDATE_ID).length;
+    for (let i = inDeck; i < CANDIDATE_GIFT && energy > MIN_ENERGY; i++) {
+      deck.push(k);
+      energy--;
+    }
+  }
+  return { ...old, version: 4, collection, deck, energy };
 }
 
 export const owned = (p: Profile, k: CardKey) => p.collection[k] ?? 0;
