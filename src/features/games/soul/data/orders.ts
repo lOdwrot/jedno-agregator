@@ -48,7 +48,7 @@ export const ORDERS_CARDS: CardDef[] = [
     souls: 1,
     ability: {
       name: "Skryptorium",
-      text: "Raz na turę (także z ławki): weź z odrzuconych do ręki 1 przedmiot.",
+      text: "Raz na turę (także z ławki): weź z odrzuconych do ręki ostatnio odrzucony przedmiot.",
       effect: { k: "salvageOnce", kind: "item" },
     },
     attacks: [
@@ -140,7 +140,7 @@ export const ORDERS_CARDS: CardDef[] = [
     souls: 1,
     ability: {
       name: "Nikogo nie zostawiamy",
-      text: "Raz na turę (także z ławki): weź z odrzuconych do ręki 1 postać.",
+      text: "Raz na turę (także z ławki): weź z odrzuconych do ręki 1 postać — najpierw ewolucję postaci w grze, potem podstawową (gdy jest miejsce na ławce), a w ostatniej kolejności tę z największą wytrwałością.",
       effect: { k: "salvageOnce", kind: "character" },
     },
     attacks: [
@@ -170,7 +170,7 @@ export const ORDERS_CARDS: CardDef[] = [
     souls: 2,
     ability: {
       name: "Ognisko",
-      text: "Raz na turę (także z ławki): dołącz do jednej ze swoich postaci 1 Łaskę z odrzuconych.",
+      text: "Raz na turę (także z ławki): dołącz 1 Łaskę z odrzuconych do aktywnej postaci, jeśli brakuje jej energii do najmocniejszego ataku, a w przeciwnym razie do postaci, której brakuje najwięcej.",
       effect: { k: "kindleOnce" },
     },
     attacks: [
