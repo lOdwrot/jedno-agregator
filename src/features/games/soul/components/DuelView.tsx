@@ -23,6 +23,8 @@ interface Props {
   /** Two-player duel: the screen shows this seat and moves go through the WebRTC sync. */
   net?: { role: Role; link: Link };
   onOver: (g: Game) => void;
+  /** A demon card was seen for the first time in this duel (one call per card on the table) — bestiary. */
+  onSighting?: (cardId: string) => void;
   /** End-of-duel dialog, shown once the last animation finished. */
   result: ReactNode;
   /** Extra notice over the board (e.g. the other player disconnected). */
@@ -39,6 +41,7 @@ export function DuelView({
   opponent,
   net,
   onOver,
+  onSighting,
   result,
   notice,
   exitLabel,
@@ -55,9 +58,18 @@ export function DuelView({
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [full, setFull] = useState(false);
   const seen = useRef(new Set<string>());
+  const sighted = useRef(new Set<string>());
+  const sight = useRef(onSighting);
+  useEffect(() => {
+    sight.current = onSighting;
+  });
   const infernal = opponent.theme === "infernal";
 
-  const onDemon = useCallback((id: string) => {
+  const onDemon = useCallback((id: string, key: string) => {
+    if (!sighted.current.has(key)) {
+      sighted.current.add(key);
+      sight.current?.(id);
+    }
     if (seen.current.has(id)) return;
     seen.current.add(id);
     setLesson(id);

@@ -9,7 +9,8 @@ import { frameAs, viewAs } from "../pvp/flip";
 
 export interface DuelPlayerOpts {
   onOver: (g: Game) => void;
-  onDemon?: (cardId: string) => void;
+  /** A demon card showed up on the table; `key` is the same for one card instance (counted once). */
+  onDemon?: (cardId: string, key: string) => void;
   /** The computer plays the "ai" seat (solo). Off in a two-player duel. */
   ai?: boolean;
   /** Whose eyes the screen shows: "me" (solo, host) or "ai" (guest of a two-player duel). */
@@ -33,6 +34,7 @@ export function useDuelPlayer(initial: Game, opts: DuelPlayerOpts) {
   const viewRef = useRef(viewAs(initial, pov));
   const pending = useRef(0);
   const reported = useRef(false);
+  const places = useRef(0);
   const o = useRef(opts);
   useEffect(() => {
     o.current = opts;
@@ -58,12 +60,13 @@ export function useDuelPlayer(initial: Game, opts: DuelPlayerOpts) {
         const ev = f.ev;
         const onDemon = o.current.onDemon;
         if (!onDemon) continue;
-        if ((ev.t === "bench" || ev.t === "toActive") && ev.pid === "ai") {
+        if ((ev.t === "bench" || ev.t === "toActive" || ev.t === "evolve") && ev.pid === "ai") {
           const p = f.state.players.ai;
           const c = [p.active, ...p.bench].find((x) => x?.uid === ev.uid);
-          if (c) onDemon(c.cardId);
+          if (c) onDemon(c.cardId, `c${c.uid}:${c.cardId}`);
         }
-        if ((ev.t === "support" || ev.t === "place") && ev.pid === "ai") onDemon(ev.cardId);
+        if (ev.t === "support" && ev.pid === "ai") onDemon(ev.cardId, `s${ev.uid}`);
+        if (ev.t === "place" && ev.pid === "ai") onDemon(ev.cardId, `p${++places.current}`);
       }
       viewRef.current = final;
       setView(final);

@@ -24,7 +24,10 @@ export const SLOTH_SIG: Record<string, { sound: keyof typeof signatureSound; pla
         rain(r.fx, r.tw, to, "❄️", 12, 30),
         stream(r.fx, r.tw, from, to, "🌙", 3, 48, 1000),
       );
-      await both(impact(r.fx, r.tw, to, P()["logo-blue"], 2.2), shake(r.tw, r.stage, 14, r.reduced));
+      await both(
+        impact(r.fx, r.tw, to, P()["logo-blue"], 2.2),
+        shake(r.tw, r.stage, 14, r.reduced),
+      );
     },
   },
   "Świat bez wysiłku": {
@@ -32,7 +35,10 @@ export const SLOTH_SIG: Record<string, { sound: keyof typeof signatureSound; pla
     play: async ({ r, to }) => {
       await sweep(r.fx, r.tw, r.w, to.y, "🛋️", 90, false, 1000);
       r.fx.emojis(to.x, to.y, "💤", 8, true, 40);
-      await both(impact(r.fx, r.tw, to, P()["logo-dark"], 2.2), shake(r.tw, r.stage, 16, r.reduced));
+      await both(
+        impact(r.fx, r.tw, to, P()["logo-dark"], 2.2),
+        shake(r.tw, r.stage, 16, r.reduced),
+      );
     },
   },
 };

@@ -21,6 +21,8 @@ interface Props {
   training?: boolean;
   deck: DeckList;
   onFinish: (won: boolean, souls: number) => DuelOutcome;
+  /** A demon card showed up on the table (bestiary progress, practice duels count too). */
+  onSighting?: (cardId: string) => void;
   onExit: (openBooster: boolean) => void;
   /** Leaving before the end: counts as a defeat for the rank. */
   onForfeit: () => void;
@@ -36,7 +38,15 @@ const opponentDeck = (o: Opponent): DeckList =>
  * A prize booster (harder opponents) is opened first, then the result dialog follows.
  * A practice duel (`training`) is the same fight without any reward.
  */
-export function SoloDuel({ opponent, training = false, deck, onFinish, onExit, onForfeit }: Props) {
+export function SoloDuel({
+  opponent,
+  training = false,
+  deck,
+  onFinish,
+  onSighting,
+  onExit,
+  onForfeit,
+}: Props) {
   const [initial] = useState<Game>(() =>
     createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.boost),
   );
@@ -51,6 +61,7 @@ export function SoloDuel({ opponent, training = false, deck, onFinish, onExit, o
       initial={initial}
       opponent={training ? { ...opponent, name: `${opponent.name} (trening)` } : opponent}
       onOver={onOver}
+      onSighting={onSighting}
       exitLabel={
         training ? "Zakończ trening" : "Poddaj się i wyjdź (bez nagrody, tracisz punkty rangi)"
       }

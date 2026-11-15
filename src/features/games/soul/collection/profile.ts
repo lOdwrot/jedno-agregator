@@ -28,6 +28,8 @@ export interface Profile {
   beaten: string[];
   /** Rank points (see `rank/xp.ts`); missing in older saves = 0. */
   xp?: number;
+  /** Bestiary: how many times each demon card was seen in duels (see `bestiary.ts`). */
+  bestiary?: Partial<Record<string, number>>;
 }
 
 export const BOOSTER_PRICE = 100;

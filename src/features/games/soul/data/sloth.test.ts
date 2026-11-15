@@ -22,7 +22,11 @@ describe("court of sloth (lenistwo)", () => {
       if ((HARD as readonly string[]).includes(o.id)) expect(used.length, o.id).toBeGreaterThan(0);
       else expect(used, o.id).toEqual([]);
     }
-    for (const id of ids) expect(OPPONENTS.some((o) => o.deck[id]), id).toBe(true);
+    for (const id of ids)
+      expect(
+        OPPONENTS.some((o) => o.deck[id]),
+        id,
+      ).toBe(true);
   });
 
   it("every evolution in a deck comes with its previous stage", () => {

@@ -17,6 +17,7 @@ import { PatronDialog } from "./rank/PatronDialog";
 import { RankMeter } from "./rank/RankMeter";
 import { afterDuel, rankIndex } from "./rank/xp";
 import { Bestiary } from "./components/Bestiary";
+import { recordSighting } from "./collection/bestiary";
 import { BoosterShop } from "./components/BoosterShop";
 import { DeckBuilder } from "./components/DeckBuilder";
 import { SoloDuel, type DuelOutcome } from "./components/SoloDuel";
@@ -86,6 +87,7 @@ export function SoulGame() {
         training={duel.training}
         deck={deckList(profile)}
         onFinish={onFinish}
+        onSighting={(id) => update((p) => recordSighting(p, id))}
         onForfeit={() =>
           update((p) => ({ ...p, xp: afterDuel(p.xp ?? 0, false, duel.opponent.difficulty) }))
         }
@@ -154,7 +156,7 @@ export function SoulGame() {
             label: `Boostery${profile.packs ? ` (${profile.packs})` : ""}`,
             content: <BoosterShop profile={profile} update={update} />,
           },
-          { value: "bestiariusz", label: "Bestiariusz", content: <Bestiary /> },
+          { value: "bestiariusz", label: "Bestiariusz", content: <Bestiary profile={profile} /> },
           { value: "zasady", label: "Zasady", content: <Rules /> },
         ]}
       />
