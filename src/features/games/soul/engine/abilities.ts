@@ -19,6 +19,8 @@ import {
 
 const energyInDeck = (g: Game, pid: PlayerId) =>
   g.players[pid].deck.findIndex((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
+const energyInHand = (g: Game, pid: PlayerId) =>
+  g.players[pid].hand.findIndex((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
 const energyInDiscard = (g: Game, pid: PlayerId) =>
   g.players[pid].discard.findLastIndex((c) => c.cardId === ENERGY_ID[g.players[pid].side]);
 
@@ -28,7 +30,7 @@ function salvagePick(g: Game, pid: PlayerId, kind: "character" | "item"): CardIn
   return g.players[pid].discard.findLast((c) => getCard(c.cardId).kind === "item");
 }
 
-/** Who gets the energy of an "energyOnce" / "kindleOnce" ability: the active if it still needs some. */
+/** Who gets the energy of an "energyOnce" / "handEnergyOnce" / "kindleOnce" ability: the active if it still needs some. */
 const energyTarget = (p: Game["players"][PlayerId], fallback: InPlay): InPlay =>
   p.active && energyNeed(p.active) > 0
     ? p.active
@@ -65,6 +67,8 @@ export function canUseAbility(g: Game, pid: PlayerId, c: InPlay): boolean {
       return inPlay(p).some((x) => x.damage > 0);
     case "energyOnce":
       return energyInDeck(g, pid) >= 0;
+    case "handEnergyOnce":
+      return energyInHand(g, pid) >= 0;
     case "recoverOnce":
       return p.active?.uid === c.uid && p.discard.some((x) => x.cardId === e.cardId);
     case "salvageOnce":
@@ -105,6 +109,14 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
       t.energy++;
       emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       log(g, `${name} — ${nameOf(t)} dostaje energię z talii.`);
+      break;
+    }
+    case "handEnergyOnce": {
+      p.hand.splice(energyInHand(g, pid), 1);
+      const t = energyTarget(p, c);
+      t.energy++;
+      emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
+      log(g, `${name} — ${nameOf(t)} dostaje energię z ręki.`);
       break;
     }
     case "recoverOnce": {

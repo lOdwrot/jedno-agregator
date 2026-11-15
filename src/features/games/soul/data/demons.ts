@@ -441,8 +441,8 @@ const BASE_DEMONS: CardDef[] = [
     souls: 1,
     ability: {
       name: "Kredyt na raty",
-      text: "Raz na turę: dołącz 1 Pokusę z talii do swojego pomiota, który jej najbardziej potrzebuje.",
-      effect: { k: "energyOnce" },
+      text: "Raz na turę: dołącz 1 Pokusę z ręki do swojego pomiota, który jej najbardziej potrzebuje.",
+      effect: { k: "handEnergyOnce" },
     },
     attacks: [
       {

@@ -51,6 +51,8 @@ export type AbilityEffect =
   | { k: "drawUntil"; n: number }
   | { k: "healOnce"; n: number }
   | { k: "energyOnce" }
+  /** Also from the bench: attach 1 energy card from the hand to one of your characters. */
+  | { k: "handEnergyOnce" }
   /** Only while active: take a copy of `cardId` from the discard pile into the hand. */
   | { k: "recoverOnce"; cardId: string }
   /** Also from the bench: take one card of this kind from the discard pile into the hand. */
@@ -66,6 +68,7 @@ export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
   "drawUntil",
   "healOnce",
   "energyOnce",
+  "handEnergyOnce",
   "recoverOnce",
   "salvageOnce",
   "kindleOnce",
