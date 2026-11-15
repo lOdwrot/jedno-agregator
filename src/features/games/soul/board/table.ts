@@ -4,6 +4,7 @@ import { BENCH_SIZE, SOULS_TO_WIN } from "../data/cards";
 import type { Game, PlayerId } from "../engine/state";
 import { text } from "./CardSprite";
 import { Inferno, type BoardTheme } from "./inferno";
+import { Meadow } from "./meadow";
 import { anchors, CARD_H, CARD_W, type Anchors } from "./layout";
 import { FONT_DISPLAY, palette } from "./palette";
 
@@ -16,6 +17,7 @@ export class Table {
   readonly thinking: Text;
   readonly benchGlow = new Graphics();
   private inferno: Inferno | null = null;
+  meadow: Meadow | null = null;
   theme: BoardTheme = "default";
   a!: Anchors;
   w = 0;
@@ -39,6 +41,13 @@ export class Table {
       this.labels,
       this.thinking,
     );
+  }
+
+  /** The meadow that grows on the player's half with every saved soul. */
+  grow(ticker: Ticker, reduced: boolean) {
+    if (this.meadow) return;
+    this.meadow = new Meadow(ticker, reduced);
+    this.layer.addChildAt(this.meadow.layer, 1);
   }
 
   /** The infernal look: red-black felt, lava cracks and rising embers (static under reduced motion). */
@@ -93,6 +102,7 @@ export class Table {
       .fill({ color: line, alpha: hell ? 0.8 : 0.45 });
     if (hell) this.felt.rect(0, mid - 9, w, 18).fill({ color: p.ember, alpha: 0.1 });
     this.inferno?.resize(w, h, mid);
+    this.meadow?.resize(w, h, this.a);
     const u = this.a.unit;
     const slot = (x: number, y: number, s: number) =>
       this.slots
@@ -138,6 +148,7 @@ export class Table {
       if (!pl.discard.length) this.label("odrzucone", dc.x, dc.y, 11, p.line);
       this.souls(pid, pl.souls, !!g.pvp);
     }
+    void this.meadow?.set(g.players.me.souls);
     if (!g.place) this.label("miejsce", this.a.place.x, this.a.place.y, 11, p.line);
   }
 

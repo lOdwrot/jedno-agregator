@@ -1,4 +1,5 @@
 /** One animation (and sound) per engine event — this is what makes the duel readable move by move. */
+import { SOULS_TO_WIN } from "../data/cards";
 import { ENERGY_LABEL, STATUS_INFO } from "../data/types";
 import { music } from "../audio/music";
 import { sfx } from "../audio/sfx";
@@ -303,6 +304,14 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       }
       music.setSouls(Math.max(state.players.me.souls, state.players.ai.souls));
       await r.reconcile(state, 420, 80);
+      // every saved soul makes the meadow grow; the last one brings the river and the flock
+      if (taker === "me") {
+        const bloom = r.table.meadow?.set(state.players.me.souls);
+        if (state.players.me.souls >= SOULS_TO_WIN && bloom) {
+          setTimeout(sfx.bleat, 1500);
+          await bloom;
+        }
+      }
       return;
     }
     case "peek": {
