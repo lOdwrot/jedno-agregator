@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent, type RefObject } from "react";
 import { getCard } from "../data/cards";
 import type { Action } from "../engine/actions";
-import { hpLeft, maxHp, type Game } from "../engine/state";
+import { hpLeft, maxHp, type Game, type PlayerId } from "../engine/state";
 import { readyAbilities } from "../engine/abilities";
 import { AbilityButtons } from "./AbilityButtons";
 import type { Selection } from "../components/CardActions";
@@ -20,6 +20,8 @@ interface Props {
   renderer: RefObject<BoardRenderer | null>;
   onSelect: (s: Selection | { zone: "place" }) => void;
   onAction: (a: Action) => void;
+  /** A discard pile was tapped: open the list of its cards. */
+  onDiscard?: (pid: PlayerId) => void;
   /** Infernal look of the hardest level. */
   theme?: BoardTheme;
 }
@@ -35,6 +37,11 @@ const ZONE_LABEL = {
 function label(g: Game, s: Slot): string {
   if (s.key === PLACE_KEY) return `Miejsce: ${g.place ? getCard(g.place.cardId).name : ""}`;
   const p = g.players[s.pid];
+  if (s.zone === "discard") {
+    const top = p.discard.at(-1);
+    const whose = s.pid === "me" ? "Twój stos" : g.pvp ? "Stos rywala" : "Stos pomiotów";
+    return `${whose} odrzuconych: ${p.discard.length}, na wierzchu ${top ? getCard(top.cardId).name : "nic"} — pokaż wszystkie`;
+  }
   const play = [p.active, ...p.bench].find((c) => c?.uid === s.key);
   const c = play ?? [...p.hand, ...p.discard].find((x) => x.uid === s.key);
   if (!c) return "Karta";
@@ -54,6 +61,7 @@ export function BoardView({
   renderer,
   onSelect,
   onAction,
+  onDiscard,
   theme = "default",
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
@@ -202,6 +210,7 @@ export function BoardView({
                     return;
                   }
                   if (s.key === PLACE_KEY) onSelect({ zone: "place" });
+                  else if (s.zone === "discard" && onDiscard) onDiscard(s.pid);
                   else
                     onSelect({
                       zone: s.zone === "hand" ? "hand" : s.pid === "me" ? "field" : "opp",

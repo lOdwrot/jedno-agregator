@@ -131,6 +131,10 @@ takes 20 off every attack hit on a saint (`isSaint`: name starts with "Św. "; `
 Ksiądz proboszcz has `teamBonus` (Dobry pasterz, works from the bench): the owner's OTHER Kleryk / Wikariusz / Proboszcz deal
 +30 (strongest one, no stacking; `engine/teamBonus.test.ts`). While a choice is pending (`SearchDialog`, the peek dialog) every
 card tile has an "i" badge with the full card (`components/CardPreview.tsx`) and "Spójrz na rękę" opens the hand (`HandDialog`).
+Tapping a discard pile on the table opens `DiscardDialog` (both sides): the pile from the top, identical cards (same card + print)
+merged as "×N" at their newest copy (`groupDiscard` in `components/discardGroups.ts`); tap a tile for the full card.
+The "Rozpoznaj pokusę" corner hint is not shown for demon cards already recognized in the bestiary before the duel
+(`DuelView` prop `recognized`, filled by `SoloDuel`).
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in

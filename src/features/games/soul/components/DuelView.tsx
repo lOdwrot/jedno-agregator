@@ -12,6 +12,7 @@ import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
 import { CardFace } from "./CardFace";
 import { HandDialog } from "./CardPreview";
+import { DiscardDialog } from "./DiscardDialog";
 import { InPlayStatus } from "./InPlayStatus";
 import { DuelBars, DuelTopBar } from "./DuelBars";
 import { DuelSidebar } from "./DuelSidebar";
@@ -30,6 +31,8 @@ interface Props {
   onOver: (g: Game) => void;
   /** A demon card was seen for the first time in this duel (one call per card on the table) — bestiary. */
   onSighting?: (cardId: string) => void;
+  /** The player already recognized this temptation (bestiary): no "Rozpoznaj pokusę" hint for it. */
+  recognized?: (cardId: string) => boolean;
   /** End-of-duel dialog, shown once the last animation finished. */
   result: ReactNode;
   /** Extra notice over the board (e.g. the other player disconnected). */
@@ -49,6 +52,7 @@ export function DuelView({
   net,
   onOver,
   onSighting,
+  recognized,
   result,
   notice,
   exitLabel,
@@ -64,13 +68,16 @@ export function DuelView({
   const [lastLesson, setLastLesson] = useState<string | null>(null);
   const [showLog, setShowLog] = useState(false);
   const [handOpen, setHandOpen] = useState(false);
+  const [pile, setPile] = useState<PlayerId | null>(null);
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [full, setFull] = useState(false);
   const seen = useRef(new Set<string>());
   const sighted = useRef(new Set<string>());
   const sight = useRef(onSighting);
+  const known = useRef(recognized);
   useEffect(() => {
     sight.current = onSighting;
+    known.current = recognized;
   });
   const infernal = opponent.theme === "infernal";
 
@@ -81,6 +88,7 @@ export function DuelView({
     }
     if (seen.current.has(id)) return;
     seen.current.add(id);
+    if (known.current?.(id)) return;
     setLesson(id);
     setLastLesson(id);
   }, []);
@@ -204,6 +212,7 @@ export function DuelView({
           renderer={renderer}
           onSelect={onSelect}
           onAction={act}
+          onDiscard={setPile}
           theme={infernal ? "infernal" : "default"}
         />
         {lessonCard && "lesson" in lessonCard && lessonCard.lesson && (
@@ -284,6 +293,19 @@ export function DuelView({
         hand={me.hand}
         open={!!peeked && !busy && handOpen}
         onClose={() => setHandOpen(false)}
+      />
+      <DiscardDialog
+        open={!!pile}
+        pile={pile ? live.players[pile].discard : []}
+        title={
+          pile === "me"
+            ? "Twoje odrzucone karty"
+            : live.pvp
+              ? "Odrzucone karty rywala"
+              : "Odrzucone karty pomiotów"
+        }
+        lessons={pile === "ai" && !live.pvp}
+        onClose={() => setPile(null)}
       />
       <SearchDialog g={live} open={live.search?.pid === "me" && !busy} onAction={act} />
       <Dialog open={showLog} onClose={() => setShowLog(false)} title="Przebieg walki" size="sm">
