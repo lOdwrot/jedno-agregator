@@ -14,13 +14,9 @@ import {
   type Profile,
 } from "./collection/profile";
 import { useProfile } from "./collection/useProfile";
-import {
-  completeTale,
-  pendingTale,
-  settleStreak,
-  stakeStreak,
-} from "./collection/streak";
+import { completeTale, pendingTale, settleStreak, stakeStreak } from "./collection/streak";
 import { LazyTaleBook } from "./tales/LazyTaleBook";
+import { TaleShelf } from "./tales/TaleShelf";
 import { TaleWaiting } from "./tales/TaleWaiting";
 import type { Opponent } from "./data/opponents";
 import { PatronDialog } from "./rank/PatronDialog";
@@ -43,7 +39,15 @@ import type { Session } from "./pvp/session";
 import { TutorialCard } from "./tutorial/TutorialCard";
 import { TutorialDuel } from "./tutorial/TutorialDuel";
 
-type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zasady" | "ustawienia";
+type Tab =
+  | "walka"
+  | "opowiesci"
+  | "multiplayer"
+  | "talia"
+  | "boostery"
+  | "bestiariusz"
+  | "zasady"
+  | "ustawienia";
 /** Where the hub scrolls after leaving a duel: the rank (new duel) or the menu tabs (boosters, multiplayer). */
 type ScrollTarget = "rank" | "tabs";
 
@@ -62,9 +66,10 @@ export function SoulGame() {
   const [tutorial, setTutorial] = useState<number | null>(null);
   const [paying, setPaying] = useState<Opponent | null>(null);
   const [patron, setPatron] = useState<number | null>(null);
-  /** The waiting saint's tale is open from the hub. */
-  const [reading, setReading] = useState(false);
+  /** A saint's tale open from the hub: the waiting one, or a finished one read again (no card). */
+  const [reading, setReading] = useState<{ cardId: string; replay: boolean } | null>(null);
   const waiting = pendingTale(profile);
+  const saints = profile.saints ?? [];
   const scrollTo = useRef<ScrollTarget | null>(null);
   const rankRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -100,9 +105,7 @@ export function SoulGame() {
       const prize = pack ? { pack, cards, fresh: freshFlags(profile, cards) } : null;
       const rank = { from: xp, to: afterDuel(xp, won, duel.opponent.difficulty) };
       const settled = settleStreak(profile, won);
-      const tale = settled.tale
-        ? { cardId: settled.tale }
-        : null;
+      const tale = settled.tale ? { cardId: settled.tale } : null;
       update((p) => {
         const next = {
           ...finishDuel(settleStreak(p, won).profile, duel.opponent.id, won, t),
@@ -203,7 +206,9 @@ export function SoulGame() {
               label: "Pojedynek",
               content: (
                 <div className="flex flex-col gap-6">
-                  {waiting && <TaleWaiting onOpen={() => setReading(true)} />}
+                  {waiting && (
+                    <TaleWaiting onOpen={() => setReading({ cardId: waiting, replay: false })} />
+                  )}
                   {!profile.tutorial && tutorialCard}
                   <OpponentPicker
                     beaten={profile.beaten}
@@ -222,6 +227,21 @@ export function SoulGame() {
                 </div>
               ),
             },
+            ...(saints.length
+              ? [
+                  {
+                    value: "opowiesci",
+                    label: "Opowieści",
+                    content: (
+                      <TaleShelf
+                        saints={saints}
+                        waiting={waiting}
+                        onOpen={(cardId, replay) => setReading({ cardId, replay })}
+                      />
+                    ),
+                  },
+                ]
+              : []),
             {
               value: "multiplayer",
               label: "Multiplayer",
@@ -253,11 +273,13 @@ export function SoulGame() {
       {patron !== null && (
         <PatronDialog xp={xp} index={patron} onSelect={setPatron} onClose={() => setPatron(null)} />
       )}
-      {reading && waiting && (
+      {reading && (
         <LazyTaleBook
-          cardId={waiting}
-          onWin={() => update((p) => completeTale(p, waiting))}
-          onClose={() => setReading(false)}
+          key={reading.cardId}
+          cardId={reading.cardId}
+          replay={reading.replay}
+          onWin={() => update((p) => completeTale(p, reading.cardId))}
+          onClose={() => setReading(null)}
         />
       )}
       {paying && (

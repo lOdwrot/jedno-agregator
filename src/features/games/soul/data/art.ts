@@ -19,6 +19,20 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Benedykt_XVI_(2010-10-17)_4.jpg",
     focus: 0.62,
   },
+  bernadetta: {
+    title: "Bernadette Soubirous.jpg",
+    author: "abbé P. Bernadou",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:Bernadette_Soubirous.jpg",
+    focus: 0.25,
+  },
+  biedaczyna: {
+    title: "Francis of Assisi - Cimabue.jpg",
+    author: "Cimabue",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:Francis_of_Assisi_-_Cimabue.jpg",
+    focus: 0.2,
+  },
   brygida: {
     title: "Gdansk Kosciol Brygidy1.jpg",
     author: "Pankrzysztoff",
@@ -53,6 +67,13 @@ export const ART: Record<string, ArtCredit> = {
     author: "Jacob Ferdinand Voet",
     license: "domena publiczna",
     url: "https://commons.wikimedia.org/wiki/File:Portrait_of_Pope_Innocent_XI_Odescalchi_(by_Jacob_Ferdinand_Voet).jpg",
+    focus: 0.2,
+  },
+  izydor: {
+    title: "\"San Isidro labrador\".jpg",
+    author: "Claudio Coello",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:%22San_Isidro_labrador%22.jpg",
     focus: 0.2,
   },
   jan23: {

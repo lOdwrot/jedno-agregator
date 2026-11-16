@@ -184,6 +184,11 @@ predictable `scriptedAi` (paused during explanations). The guide covers the firs
 supporter, evolution, ability, weakness, KO + souls, retreat, place); the last 2 are free play with the normal AI.
 `tutorial.test.ts` replays the whole script through the engine — when changing cards, the engine or the AI, keep it green.
 **Saints' tales** (`collection/streak.ts`): unlocked by 5/10/15 wins in a row OR (alternative) 100/300/800 rewarded duels played in total (`Profile.duels`, counted when a duel starts; wins or defeats; older saves: wins+losses; practice/tutorial/PvP don't count).
+The tale book (`soul/tales/TaleBook`) ends in `TaleResult`: all answers right the first time → "Zdobyto kartę!" with a big
+card close-up (`TaleCardWon`, the card is won only once — `completeTale`); a wrong answer → the "Niestety…" screen listing
+the missed questions + "Spróbuj jeszcze raz". Once at least one tale is finished the hub gets the "Opowieści" tab
+(`TaleShelf`): every finished tale can be replayed (`TaleBook replay`) — same quiz, never a card. Tale saints have real
+pictures (`bernadetta`, `biedaczyna`, `izydor` in `data/art.ts`).
 A won tutorial pays `TUTORIAL_REWARD` (150) talents once per device (`Profile.tutorial`, `finishTutorial`); no rank/record.
 **Multiplayer** (tab "Multiplayer", `soul/pvp/`): two people, each with their own deck, over WebRTC (PeerJS —
 the free broker `0.peerjs.com` only introduces the browsers; `VITE_PEER_SERVER` points to another one, e.g. a local

@@ -18,6 +18,26 @@ const setup = () =>
 describe("SoulGame", () => {
   beforeEach(() => localStorage.clear());
 
+  it("has no 'Opowieści' tab before any tale is finished", () => {
+    setup();
+    expect(screen.queryByRole("tab", { name: "Opowieści" })).toBeNull();
+  });
+
+  it("lets a finished tale be read again from the 'Opowieści' tab", async () => {
+    const { newProfile } = await import("./collection/profile");
+    localStorage.setItem(
+      "jedno-walka-o-dusze:v1",
+      JSON.stringify({ ...newProfile(), tales: 1, saints: ["bernadetta"] }),
+    );
+    setup();
+    await userEvent.click(screen.getByRole("tab", { name: "Opowieści" }));
+    expect(screen.getByText("✓ Karta zdobyta")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Przeżyj ponownie/ }));
+    expect(
+      await screen.findByRole("button", { name: /Przeżyj opowieść ponownie/ }),
+    ).toBeInTheDocument();
+  });
+
   it("shows the hub with a starter deck and a welcome booster", () => {
     setup();
     expect(screen.getByRole("tab", { name: /Boostery \(1\)/ })).toBeInTheDocument();

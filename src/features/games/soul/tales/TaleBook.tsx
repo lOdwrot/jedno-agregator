@@ -16,16 +16,19 @@ type Step =
 
 interface Props {
   cardId: string;
-  /** All answers right: give the card (called once). */
-  onWin: () => void;
+  /** All answers right: give the card (called once; never on a replay). */
+  onWin?: () => void;
+  /** Reading again a tale whose card was already won: no card at the end. */
+  replay?: boolean;
   onClose: () => void;
 }
 
 /**
  * "Opowieści o świętych": a cover, 5–6 animated pages (with a lullaby and a soundscape per page,
- * `useTaleSound`), a 3-question quiz and the saint's card.
+ * `useTaleSound`), a 3-question quiz and the saint's card (only the first time — a replay ends
+ * without one).
  */
-export default function TaleBook({ cardId, onWin, onClose }: Props) {
+export default function TaleBook({ cardId, onWin, replay = false, onClose }: Props) {
   const tale = taleOf(cardId);
   const [step, setStep] = useState<Step>({ k: "cover" });
   const scene = tale && step.k === "page" ? tale.pages[step.i]!.scene : null;
@@ -44,14 +47,26 @@ export default function TaleBook({ cardId, onWin, onClose }: Props) {
             <span className="soul-foil soul-foil--stained" />
             <span className="relative">📖</span>
           </div>
-          <p className="font-serif text-2xl text-accent-ink italic">Nowa opowieść o świętym!</p>
-          <p className="max-w-prose text-lg text-ink">
-            Twoja wytrwałość otworzyła starą księgę. Na jej kartach czeka opowieść o pewnym świętym.
-            Przeczytaj ją uważnie — na końcu są trzy pytania, a kto odpowie dobrze na wszystkie,
-            otrzyma wyjątkową kartę, której nie ma w żadnym boosterze.
-          </p>
+          {replay ? (
+            <>
+              <p className="font-serif text-2xl text-accent-ink italic">{tale.title}</p>
+              <p className="max-w-prose text-lg text-ink">
+                Otwórz księgę jeszcze raz i przeżyj tę opowieść od nowa. Na końcu znów czekają trzy
+                pytania — tym razem bez karty, bo kartę świętego masz już w kolekcji.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-serif text-2xl text-accent-ink italic">Nowa opowieść o świętym!</p>
+              <p className="max-w-prose text-lg text-ink">
+                Twoja wytrwałość otworzyła starą księgę. Na jej kartach czeka opowieść o pewnym
+                świętym. Przeczytaj ją uważnie — na końcu są trzy pytania, a kto odpowie dobrze na
+                wszystkie, otrzyma wyjątkową kartę, której nie ma w żadnym boosterze.
+              </p>
+            </>
+          )}
           <Button size="lg" onClick={() => setStep({ k: "page", i: 0 })}>
-            📖 Poznaj świętego
+            {replay ? "📖 Przeżyj opowieść ponownie" : "📖 Poznaj świętego"}
           </Button>
           <Button variant="ghost" onClick={onClose}>
             Później
@@ -133,7 +148,7 @@ export default function TaleBook({ cardId, onWin, onClose }: Props) {
             const picks = [...step.picks, pick];
             if (step.i + 1 < tale.quiz.length) setStep({ k: "quiz", i: step.i + 1, picks });
             else {
-              if (score(tale, picks) === tale.quiz.length) onWin();
+              if (!replay && score(tale, picks) === tale.quiz.length) onWin?.();
               setStep({ k: "result", picks });
             }
           }}
@@ -143,8 +158,9 @@ export default function TaleBook({ cardId, onWin, onClose }: Props) {
       {step.k === "result" && (
         <TaleResult
           cardId={tale.id}
-          right={score(tale, step.picks)}
-          total={tale.quiz.length}
+          quiz={tale.quiz}
+          picks={step.picks}
+          reward={!replay}
           onReread={() => setStep({ k: "page", i: 0 })}
           onRetry={() => setStep({ k: "quiz", i: 0, picks: [] })}
           onClose={onClose}
