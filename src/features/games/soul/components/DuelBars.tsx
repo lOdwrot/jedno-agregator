@@ -3,7 +3,7 @@ import { Button, Icon } from "@/ui";
 import type { Opponent } from "../data/opponents";
 import type { AudioPrefs } from "../audio/context";
 import { attackBlock, benchEnergyTargets, type Action } from "../engine/actions";
-import { fuelMax, previewDamage } from "../engine/combat";
+import { attackCost, fuelMax, previewDamage } from "../engine/combat";
 import { charDef, nameOf, type Game } from "../engine/state";
 
 const btn =
@@ -191,7 +191,8 @@ export function DuelBars({
                     <span aria-hidden="true">+🔥{fuel}</span>
                   ) : (
                     <>
-                      <span aria-hidden="true">{"✨".repeat(atk.cost)}</span> {atk.name}
+                      <span aria-hidden="true">{"✨".repeat(attackCost(g, "me", atk))}</span>{" "}
+                      {atk.name}
                     </>
                   )}
                   {atk.damage > 0 && (

@@ -13,7 +13,9 @@ import {
 import { aiSearch, searchPick } from "./aiSearch";
 import {
   applyDefense,
+  attackCost,
   bonusDamage,
+  energyNeed,
   fuelMax,
   handEnergy,
   previewDamage,
@@ -65,15 +67,11 @@ function canKO(g: Game, pid: PlayerId, target: InPlay): boolean {
   const a = g.players[pid].active;
   if (!a || g.turnNo === 1) return false;
   return charDef(a).attacks.some((atk) => {
-    if (a.energy < atk.cost || atk.damage <= 0) return false;
+    if (a.energy < attackCost(g, pid, atk) || atk.damage <= 0) return false;
     const dmg = applyDefense(g, other(pid), a, target, atk.damage + bonusDamage(g, pid, a));
     return dmg >= hpLeft(g, target);
   });
 }
-
-/** How many more energy the character needs for its strongest attack. */
-const need = (c: InPlay) =>
-  Math.max(0, Math.max(...charDef(c).attacks.map((x) => x.cost)) - c.energy);
 
 function pickSupport(g: Game, pid: PlayerId): Action | null {
   const me = g.players[pid];
@@ -180,8 +178,8 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
         if (foe.hand.length >= 5 && me.hand.length <= 5) return play();
         break;
       case "energyFromDeck": {
-        const t = [...targets].sort((x, y) => need(y) - need(x))[0];
-        if (t && need(t) > 0) return play(t.uid);
+        const t = [...targets].sort((x, y) => energyNeed(g, pid, y) - energyNeed(g, pid, x))[0];
+        if (t && energyNeed(g, pid, t) > 0) return play(t.uid);
         break;
       }
       case "gust": {
@@ -227,7 +225,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     if (g.promote?.who !== pid) return null;
     const foeA = g.players[other(pid)].active;
     const score = (c: InPlay) => {
-      const ready = charDef(c).attacks.filter((x) => x.cost <= c.energy);
+      const ready = charDef(c).attacks.filter((x) => attackCost(g, pid, x) <= c.energy);
       const best = Math.max(0, ...ready.map((x) => x.damage));
       const ko =
         foeA && best > 0 && applyDefense(g, other(pid), c, foeA, best) >= hpLeft(g, foeA) ? 200 : 0;
@@ -271,7 +269,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     const striker = me.bench.find((b) =>
       charDef(b).attacks.some(
         (x) =>
-          x.cost <= b.energy &&
+          attackCost(g, pid, x) <= b.energy &&
           x.damage > 0 &&
           applyDefense(g, other(pid), b, foe, x.damage) >= hpLeft(g, foe),
       ),
@@ -283,11 +281,13 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
   const energy = me.hand.find((c) => canAttach(g, pid, c));
   if (energy && a) {
     const benchT = [...me.bench]
-      .filter((b) => need(b) > 0)
-      .sort((x, y) => charDef(y).hp - charDef(x).hp || need(x) - need(y))[0];
+      .filter((b) => energyNeed(g, pid, b) > 0)
+      .sort(
+        (x, y) => charDef(y).hp - charDef(x).hp || energyNeed(g, pid, x) - energyNeed(g, pid, y),
+      )[0];
     // don't over-invest in an active that is about to fall without hitting back
-    const doomed = need(a) > 1 && hpLeft(g, a) <= 30 && benchT;
-    const target = need(a) > 0 && !doomed ? a : (benchT ?? a);
+    const doomed = energyNeed(g, pid, a) > 1 && hpLeft(g, a) <= 30 && benchT;
+    const target = energyNeed(g, pid, a) > 0 && !doomed ? a : (benchT ?? a);
     return { type: "attach", uid: energy.uid, target: target.uid };
   }
 

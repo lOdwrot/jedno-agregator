@@ -1,7 +1,7 @@
 /** Activated abilities ("moce"): each character may use its ability once per turn. */
 import { ENERGY_ID, getCard } from "../data/cards";
 import { ACTIVE_ABILITIES } from "../data/types";
-import { healAll, placeRule } from "./combat";
+import { energyNeed, healAll, placeRule } from "./combat";
 import { recoverPick } from "./aiSearch";
 import { emit } from "./events";
 import {
@@ -31,14 +31,13 @@ function salvagePick(g: Game, pid: PlayerId, kind: "character" | "item"): CardIn
 }
 
 /** Who gets the energy of an "energyOnce" / "handEnergyOnce" / "kindleOnce" ability: the active if it still needs some. */
-const energyTarget = (p: Game["players"][PlayerId], fallback: InPlay): InPlay =>
-  p.active && energyNeed(p.active) > 0
+function energyTarget(g: Game, pid: PlayerId, fallback: InPlay): InPlay {
+  const p = g.players[pid];
+  const need = (c: InPlay) => energyNeed(g, pid, c);
+  return p.active && need(p.active) > 0
     ? p.active
-    : ([...inPlay(p)].sort((a, b) => energyNeed(b) - energyNeed(a))[0] ?? fallback);
-
-/** How many more energy a character needs for its strongest attack. */
-export const energyNeed = (c: InPlay) =>
-  Math.max(0, Math.max(...charDef(c).attacks.map((x) => x.cost)) - c.energy);
+    : ([...inPlay(p)].sort((a, b) => need(b) - need(a))[0] ?? fallback);
+}
 
 /** Characters in play of `pid` whose activated ability can be used right now. */
 export function readyAbilities(g: Game, pid: PlayerId): InPlay[] {
@@ -105,7 +104,7 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
     }
     case "energyOnce": {
       p.deck.splice(energyInDeck(g, pid), 1);
-      const t = energyTarget(p, c);
+      const t = energyTarget(g, pid, c);
       t.energy++;
       emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       log(g, `${name} — ${nameOf(t)} dostaje energię z talii.`);
@@ -113,7 +112,7 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
     }
     case "handEnergyOnce": {
       p.hand.splice(energyInHand(g, pid), 1);
-      const t = energyTarget(p, c);
+      const t = energyTarget(g, pid, c);
       t.energy++;
       emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       log(g, `${name} — ${nameOf(t)} dostaje energię z ręki.`);
@@ -141,7 +140,7 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
     }
     case "kindleOnce": {
       p.discard.splice(energyInDiscard(g, pid), 1);
-      const t = energyTarget(p, c);
+      const t = energyTarget(g, pid, c);
       t.energy++;
       emit(g, { t: "attach", pid, uid: t.uid, n: 1 });
       log(g, `${name} — ${nameOf(t)} dostaje energię z odrzuconych.`);

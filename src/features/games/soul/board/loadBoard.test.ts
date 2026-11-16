@@ -39,8 +39,12 @@ describe("loadBoard", () => {
 
 describe("isChunkError", () => {
   it("tells code-loading errors from renderer errors", () => {
-    expect(isChunkError(new TypeError("Failed to fetch dynamically imported module: x.js"))).toBe(true);
+    expect(isChunkError(new TypeError("Failed to fetch dynamically imported module: x.js"))).toBe(
+      true,
+    );
     expect(isChunkError(new TypeError("Importing a module script failed."))).toBe(true);
-    expect(isChunkError(new Error("No available renderer for the current environment"))).toBe(false);
+    expect(isChunkError(new Error("No available renderer for the current environment"))).toBe(
+      false,
+    );
   });
 });
