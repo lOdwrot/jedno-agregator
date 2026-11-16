@@ -145,6 +145,10 @@ export type SupportEffect =
   | { k: "drawUntil"; n: number }
   | { k: "benchBasic" }
   | { k: "energyToHand"; n: number }
+  /** Attach n energy cards from your discard pile to one of your characters (target = its uid). */
+  | { k: "kindle"; n: number }
+  /** Take up to n energy cards from your discard pile into your hand. */
+  | { k: "energyFromDiscard"; n: number }
   /** Discard your hand, draw n (like Professor's Research). */
   | { k: "research"; n: number }
   /** Needs an energy card and a pope in hand: discard the energy, bench the pope (target = its hand uid). */

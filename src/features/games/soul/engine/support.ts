@@ -28,7 +28,8 @@ export type TargetKind = "own" | "ownBench" | "oppBench" | "oppAny" | null;
 
 export function targetKind(def: SupportDef): TargetKind {
   const e = def.effect;
-  if ((e.k === "heal" && e.target === "own") || e.k === "energyFromDeck") return "own";
+  if ((e.k === "heal" && e.target === "own") || e.k === "energyFromDeck" || e.k === "kindle")
+    return "own";
   if (e.k === "switch") return "ownBench";
   if (e.k === "gust") return "oppBench";
   if (e.k === "discardOppEnergy" && e.any) return "oppAny";
@@ -86,6 +87,17 @@ export function skipEvolvePairs(g: Game, pid: PlayerId): SkipPair[] {
 
 const deckEnergy = (g: Game, pid: PlayerId) =>
   g.players[pid].deck.filter((c) => c.cardId === ENERGY_ID[g.players[pid].side]).length;
+
+const discardEnergyCount = (g: Game, pid: PlayerId) =>
+  g.players[pid].discard.filter((c) => c.cardId === ENERGY_ID[g.players[pid].side]).length;
+
+/** Moves up to n energy cards (the latest discarded first) out of the discard pile. */
+function takeDiscardEnergy(g: Game, pid: PlayerId, n: number): CardInst[] {
+  const p = g.players[pid];
+  const taken = p.discard.filter((c) => c.cardId === ENERGY_ID[p.side]).slice(-n);
+  p.discard = p.discard.filter((c) => !taken.includes(c));
+  return taken;
+}
 
 /** The active character (of either player) whose ability forbids playing cards of this kind. */
 export function lockedBy(g: Game, kind: SupportDef["kind"]): InPlay | null {
@@ -150,6 +162,9 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
       return foe.hand.length > 0 || me.deck.length > 0;
     case "energyFromDeck":
       return deckEnergy(g, pid) > 0;
+    case "kindle":
+    case "energyFromDiscard":
+      return discardEnergyCount(g, pid) > 0;
     case "council":
       return councilPicks(g, pid).length > 0;
     case "skipEvolve":
@@ -396,6 +411,27 @@ export function playSupport(
       target!.energy += k;
       shuffle(g, me.deck);
       if (k) emit(g, { t: "attach", pid, uid: target!.uid, n: k });
+      break;
+    }
+    case "kindle": {
+      const k = takeDiscardEnergy(g, pid, e.n).length;
+      target!.energy += k;
+      emit(g, { t: "attach", pid, uid: target!.uid, n: k });
+      log(g, `${nameOf(target!)} dostaje energię z odrzuconych.`);
+      break;
+    }
+    case "energyFromDiscard": {
+      const taken = takeDiscardEnergy(g, pid, e.n);
+      me.hand.push(...taken);
+      emit(g, { t: "draw", pid, n: taken.length });
+      const cards = taken.length === 1 ? "1 kartę" : `${taken.length} karty`;
+      say(
+        g,
+        pid,
+        `Z odrzuconych bierzesz do ręki ${cards} energii.`,
+        `Pomioty biorą z odrzuconych do ręki ${cards} Pokusy.`,
+        (n) => `${n} bierze z odrzuconych do ręki ${cards} energii.`,
+      );
       break;
     }
     case "council": {
