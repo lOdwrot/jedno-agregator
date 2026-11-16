@@ -62,12 +62,26 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Pope_John_XXIII_-_1959_(cropped).jpg",
     focus: 0.25,
   },
+  jerzy: {
+    title: "Raphael - Saint George and the Dragon - Google Art Project.jpg",
+    author: "Rafael Santi",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:Raphael_-_Saint_George_and_the_Dragon_-_Google_Art_Project.jpg",
+    focus: 0.3,
+  },
   jp2: {
     title: "Jan Paweł II portret Z. Kotyłło.jpg",
     author: "Zbigniew Kotyłło",
     license: "CC BY-SA 3.0",
     url: "https://commons.wikimedia.org/wiki/File:Jan_Pawe%C5%82_II_portret_Z._Koty%C5%82%C5%82o.jpg",
     focus: 0.2,
+  },
+  jur: {
+    title: "Lviv - Cathedral of Saint George 01.JPG",
+    author: "Lestat (Jan Mehlich)",
+    license: "CC BY-SA 3.0",
+    url: "https://commons.wikimedia.org/wiki/File:Lviv_-_Cathedral_of_Saint_George_01.JPG",
+    focus: 0.35,
   },
   kalwaria: {
     title: "Kalwaria Wejherowska - Wniebowstąpienie 1.jpg",

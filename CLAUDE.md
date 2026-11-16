@@ -115,6 +115,9 @@ drop mid-turn (a `noAbilities` place, a blessed friend knocked out): `resolveKOs
 The rare place `paradyz` (Seminarium w Paradyżu, `guard: { ids, over }` on the place effect, for BOTH players) cancels any
 attack hit above 100 on a Kleryk na praktykach / Kandydat na papieża — checked after weakness/armor (`placeGuards` in
 `combat.ts`, `engine/seminary.test.ts`).
+The rare place `jur` (Archikatedralny Sobór św. Jura we Lwowie, `saintArmor: 20` on the place effect, for BOTH players)
+takes 20 off every attack hit on a saint (`isSaint`: name starts with "Św. "; `saintArmor` in `combat.ts`,
+`engine/saintArmor.test.ts`). Św. Jerzy (`jerzy`, rare basic) is the knight saint who goes with it.
 Ksiądz proboszcz has `teamBonus` (Dobry pasterz, works from the bench): the owner's OTHER Kleryk / Wikariusz / Proboszcz deal
 +30 (strongest one, no stacking; `engine/teamBonus.test.ts`). While a choice is pending (`SearchDialog`, the peek dialog) every
 card tile has an "i" badge with the full card (`components/CardPreview.tsx`) and "Spójrz na rękę" opens the hand (`HandDialog`).
