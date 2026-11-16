@@ -112,6 +112,9 @@ Bł. ks. Jerzy Popiełuszko has the `blessedHp` ability (Solidarność): +20 max
 (`isBlessed`: name starts with "Bł. ") on the owner's side — so `maxHp(g, c)` / `hpLeft(g, c)` take the game. Max HP can
 drop mid-turn (a `noAbilities` place, a blessed friend knocked out): `resolveKOs` runs after every main-phase move too
 (`midTurnKOs` in `actions.ts`, `promote.then: "continue"` keeps the turn going) and repeats until nothing more falls.
+Ksiądz proboszcz has `teamBonus` (Dobry pasterz, works from the bench): the owner's OTHER Kleryk / Wikariusz / Proboszcz deal
++30 (strongest one, no stacking; `engine/teamBonus.test.ts`). While a choice is pending (`SearchDialog`, the peek dialog) every
+card tile has an "i" badge with the full card (`components/CardPreview.tsx`) and "Spójrz na rękę" opens the hand (`HandDialog`).
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in

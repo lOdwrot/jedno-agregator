@@ -140,6 +140,11 @@ export const PARISH_CARDS: CardDef[] = [
     retreat: 2,
     evolvesFrom: "wikariusz",
     souls: 1,
+    ability: {
+      name: "Dobry pasterz",
+      text: "Działa też z ławki: Twoi klerycy na praktykach, wikariusze i inni proboszczowie zadają +30 obrażeń (nie sumuje się).",
+      effect: { k: "teamBonus", ids: ["kleryk", "wikariusz", "proboszcz"], n: 30 },
+    },
     attacks: [
       {
         name: "Ogłoszenia duszpasterskie",

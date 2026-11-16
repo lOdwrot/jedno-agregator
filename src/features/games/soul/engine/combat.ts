@@ -69,10 +69,27 @@ export function attackCost(g: Game, pid: PlayerId, atk: AttackDef): number {
 export const energyNeed = (g: Game, pid: PlayerId, c: InPlay) =>
   Math.max(0, ...charDef(c).attacks.map((x) => attackCost(g, pid, x) - c.energy));
 
+/** `teamBonus` abilities of the attacker's teammates (not its own) — strongest one, no stacking. */
+function teamBonus(g: Game, pid: PlayerId, attacker: InPlay): number {
+  if (placeRule(g, "noAbilities")) return 0;
+  let best = 0;
+  for (const c of inPlay(g.players[pid])) {
+    const a = charDef(c).ability?.effect;
+    if (c.uid !== attacker.uid && a?.k === "teamBonus" && a.ids.includes(attacker.cardId))
+      best = Math.max(best, a.n);
+  }
+  return best;
+}
+
 /** Flat bonus damage (abilities, place, finish) — before weakness. */
 export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   const ab = abilities(g, pid).reduce((s, a) => s + (a.k === "attackBonus" ? a.n : 0), 0);
-  return ab + (placeAura(g, pid)?.attackBonus ?? 0) + FINISH_BONUS[attacker.finish].damage;
+  return (
+    ab +
+    teamBonus(g, pid, attacker) +
+    (placeAura(g, pid)?.attackBonus ?? 0) +
+    FINISH_BONUS[attacker.finish].damage
+  );
 }
 
 /** Whether the defender's weakness applies to this attacker (places and `noWeakness` abilities —

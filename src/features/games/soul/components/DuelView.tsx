@@ -11,6 +11,7 @@ import type { Role } from "../pvp/sync";
 import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
 import { CardFace } from "./CardFace";
+import { HandDialog } from "./CardPreview";
 import { DuelBars, DuelTopBar } from "./DuelBars";
 import { DuelSidebar } from "./DuelSidebar";
 import { SearchDialog } from "./SearchDialog";
@@ -55,6 +56,7 @@ export function DuelView({
   const [lesson, setLesson] = useState<string | null>(null);
   const [lastLesson, setLastLesson] = useState<string | null>(null);
   const [showLog, setShowLog] = useState(false);
+  const [handOpen, setHandOpen] = useState(false);
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [full, setFull] = useState(false);
   const seen = useRef(new Set<string>());
@@ -227,7 +229,7 @@ export function DuelView({
         )}
       </Dialog>
       <Dialog
-        open={!!peeked && !busy}
+        open={!!peeked && !busy && !handOpen}
         onClose={() => act({ type: "peek", keep: true })}
         title="Wierzchnia karta talii"
         description="Weź ją do ręki albo odrzuć i dobierz w ciemno kolejną kartę."
@@ -242,9 +244,17 @@ export function DuelView({
             <Button variant="navy" fullWidth onClick={() => act({ type: "peek", keep: false })}>
               Odrzuć i dobierz następną
             </Button>
+            <Button variant="link" onClick={() => setHandOpen(true)}>
+              Spójrz na rękę ({me.hand.length})
+            </Button>
           </div>
         )}
       </Dialog>
+      <HandDialog
+        hand={me.hand}
+        open={!!peeked && !busy && handOpen}
+        onClose={() => setHandOpen(false)}
+      />
       <SearchDialog g={live} open={live.search?.pid === "me" && !busy} onAction={act} />
       <Dialog open={showLog} onClose={() => setShowLog(false)} title="Przebieg walki" size="sm">
         <DuelSidebar g={live} lesson={lesson ?? lastLesson} />

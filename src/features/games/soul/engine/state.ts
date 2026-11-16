@@ -235,6 +235,7 @@ const SUPPORT_ABILITIES = new Set([
   "handEnergyOnce",
   "attackBonus",
   "costMinus",
+  "teamBonus",
 ]);
 export const benchValue = (c: CardInst) => {
   const d = charDef(c);

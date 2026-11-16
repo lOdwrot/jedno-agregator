@@ -64,7 +64,9 @@ export type AbilityEffect =
   /** Works from the bench too: the owner's benched characters take no damage from attacks. */
   | { k: "benchGuard" }
   /** +n max HP for every other blessed character ("Bł.") on the owner's side of the table. */
-  | { k: "blessedHp"; n: number };
+  | { k: "blessedHp"; n: number }
+  /** Works from the bench too: the owner's OTHER characters with one of these card ids deal +n damage (no stacking). */
+  | { k: "teamBonus"; ids: string[]; n: number };
 
 /** Abilities the player activates (once per turn); the others are always on. */
 export const ACTIVE_ABILITIES = new Set<AbilityEffect["k"]>([
