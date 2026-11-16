@@ -149,6 +149,14 @@ The **meadow of saved souls** (`board/meadow.ts`, pure geometry in `meadowPlan.t
 `@theme static` block) grows on the player's half with every soul they save (`coverage(souls)`, measured from the middle of
 the hand); the last soul turns the whole board green, a river flows along the middle line and sheep run in to graze
 (`playFrame` awaits it before the result shows; static under reduced motion; on every theme).
+**Tutorial** (`soul/tutorial/`, card on the "Pojedynek" tab): fixed, stacked decks (`game.ts`, no shuffle, the player goes
+first, the opening is skipped) and a guide in `steps.ts` — each step either waits for one exact move (`expect` + `todo`),
+for the demons' turn (`until`) or is an explanation closed with "Dalej". `useCoach` limits moves to the current step
+(`DuelView` prop `tutorial`; `CardActions` / `DuelBars` grey out the rest), and while it is on the demons play the
+predictable `scriptedAi` (paused during explanations). The guide covers the first 2 souls (setup, bench, energy, item,
+supporter, evolution, ability, weakness, KO + souls, retreat, place); the last 2 are free play with the normal AI.
+`tutorial.test.ts` replays the whole script through the engine — when changing cards, the engine or the AI, keep it green.
+A won tutorial pays `TUTORIAL_REWARD` (150) talents once per device (`Profile.tutorial`, `finishTutorial`); no rank/record.
 **Multiplayer** (tab "Multiplayer", `soul/pvp/`): two people, each with their own deck, over WebRTC (PeerJS —
 the free broker `0.peerjs.com` only introduces the browsers; `VITE_PEER_SERVER` points to another one, e.g. a local
 `peer` server for tests). The host registers `jedno-wod-<4 digits>`, the guest types the code. Lock-step sync

@@ -38,9 +38,22 @@ export interface Profile {
   xp?: number;
   /** Bestiary: how many times each demon card was seen in duels (see `bestiary.ts`). */
   bestiary?: Partial<Record<string, number>>;
+  /** The tutorial was finished on this device (its one-time talents were paid out). */
+  tutorial?: boolean;
 }
 
 export const BOOSTER_PRICE = 100;
+/** Talents for finishing the tutorial — only the first time on this device. */
+export const TUTORIAL_REWARD = 150;
+
+/** A won tutorial duel: the reward the first time, nothing after that. */
+export function finishTutorial(p: Profile): { profile: Profile; earned: number } {
+  if (p.tutorial) return { profile: p, earned: 0 };
+  return {
+    profile: { ...p, tutorial: true, talents: p.talents + TUTORIAL_REWARD },
+    earned: TUTORIAL_REWARD,
+  };
+}
 export const BOOSTER_SIZE = 5;
 
 /** Base deck: 21 characters (2 papal candidates), 15 supports (with a small draw engine) and 14 grace = 50. */

@@ -15,6 +15,10 @@ export interface DuelPlayerOpts {
   ai?: boolean;
   /** Whose eyes the screen shows: "me" (solo, host) or "ai" (guest of a two-player duel). */
   pov?: PlayerId;
+  /** Replaces the computer's move choice (the tutorial's scripted demons). */
+  aiMove?: (g: Game) => Action | null;
+  /** The computer waits (e.g. while the tutorial explains something). */
+  aiPaused?: boolean;
 }
 
 /**
@@ -25,6 +29,7 @@ export interface DuelPlayerOpts {
 export function useDuelPlayer(initial: Game, opts: DuelPlayerOpts) {
   const pov = opts.pov ?? "me";
   const ai = opts.ai ?? true;
+  const aiPaused = opts.aiPaused ?? false;
   const [live, setLive] = useState(() => viewAs(initial, pov));
   const [view, setView] = useState(() => viewAs(initial, pov));
   const [busy, setBusy] = useState(false);
@@ -120,14 +125,14 @@ export function useDuelPlayer(initial: Game, opts: DuelPlayerOpts) {
   useEffect(() => {
     const theirs = live.phase === "main" && live.turn === "ai";
     renderer.current?.setThinking(theirs, live);
-    if (!ai || busy || !theirs) return;
+    if (!ai || busy || !theirs || aiPaused) return;
     const t = setTimeout(() => {
       const g = canon.current;
-      const a = aiAction(g, "ai");
+      const a = (o.current.aiMove ?? ((x: Game) => aiAction(x, "ai")))(g);
       if (!(a && push(a))) push({ type: "endTurn" });
     }, 420);
     return () => clearTimeout(t);
-  }, [ai, busy, live, push]);
+  }, [ai, aiPaused, busy, live, push]);
 
   const canonical = useCallback(() => canon.current, []);
 
