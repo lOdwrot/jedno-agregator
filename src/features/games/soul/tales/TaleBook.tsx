@@ -15,15 +15,13 @@ type Step =
 
 interface Props {
   cardId: string;
-  /** Wins in a row that opened the book (shown on the cover). */
-  streak: number;
   /** All answers right: give the card (called once). */
   onWin: () => void;
   onClose: () => void;
 }
 
 /** "Opowieści o świętych": a cover, 5–6 animated pages, a 3-question quiz and the saint's card. */
-export default function TaleBook({ cardId, streak, onWin, onClose }: Props) {
+export default function TaleBook({ cardId, onWin, onClose }: Props) {
   const tale = taleOf(cardId);
   const [step, setStep] = useState<Step>({ k: "cover" });
   if (!tale) return null;
@@ -40,7 +38,7 @@ export default function TaleBook({ cardId, streak, onWin, onClose }: Props) {
             <span className="soul-foil soul-foil--stained" />
             <span className="relative">📖</span>
           </div>
-          <p className="font-serif text-2xl text-accent-ink italic">{streak} zwycięstw z rzędu!</p>
+          <p className="font-serif text-2xl text-accent-ink italic">Nowa opowieść o świętym!</p>
           <p className="max-w-prose text-lg text-ink">
             Twoja wytrwałość otworzyła starą księgę. Na jej kartach czeka opowieść o pewnym świętym.
             Przeczytaj ją uważnie — na końcu są trzy pytania, a kto odpowie dobrze na wszystkie,

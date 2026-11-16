@@ -19,8 +19,6 @@ import {
   pendingTale,
   settleStreak,
   stakeStreak,
-  streakNeeded,
-  TALE_ORDER,
 } from "./collection/streak";
 import { LazyTaleBook } from "./tales/LazyTaleBook";
 import { TaleWaiting } from "./tales/TaleWaiting";
@@ -103,7 +101,7 @@ export function SoulGame() {
       const rank = { from: xp, to: afterDuel(xp, won, duel.opponent.difficulty) };
       const settled = settleStreak(profile, won);
       const tale = settled.tale
-        ? { cardId: settled.tale, streak: streakNeeded(TALE_ORDER.indexOf(settled.tale)) }
+        ? { cardId: settled.tale }
         : null;
       update((p) => {
         const next = {
@@ -258,7 +256,6 @@ export function SoulGame() {
       {reading && waiting && (
         <LazyTaleBook
           cardId={waiting}
-          streak={streakNeeded(TALE_ORDER.indexOf(waiting))}
           onWin={() => update((p) => completeTale(p, waiting))}
           onClose={() => setReading(false)}
         />

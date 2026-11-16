@@ -183,6 +183,7 @@ for the demons' turn (`until`) or is an explanation closed with "Dalej". `useCoa
 predictable `scriptedAi` (paused during explanations). The guide covers the first 2 souls (setup, bench, energy, item,
 supporter, evolution, ability, weakness, KO + souls, retreat, place); the last 2 are free play with the normal AI.
 `tutorial.test.ts` replays the whole script through the engine — when changing cards, the engine or the AI, keep it green.
+**Saints' tales** (`collection/streak.ts`): unlocked by 5/10/15 wins in a row OR (alternative) 100/300/800 rewarded duels played in total (`Profile.duels`, counted when a duel starts; wins or defeats; older saves: wins+losses; practice/tutorial/PvP don't count).
 A won tutorial pays `TUTORIAL_REWARD` (150) talents once per device (`Profile.tutorial`, `finishTutorial`); no rank/record.
 **Multiplayer** (tab "Multiplayer", `soul/pvp/`): two people, each with their own deck, over WebRTC (PeerJS —
 the free broker `0.peerjs.com` only introduces the browsers; `VITE_PEER_SERVER` points to another one, e.g. a local

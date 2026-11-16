@@ -42,6 +42,8 @@ export interface Profile {
   tutorial?: boolean;
   /** Wins in a row against the computer (see `streak.ts`). */
   streak?: number;
+  /** Rewarded duels played in total (see `streak.ts`); missing in older saves = wins + losses. */
+  duels?: number;
   /** The streak put at stake by a duel that is still running (a reload mid-duel loses it). */
   staked?: number;
   /** Saints' tales unlocked so far (0–3). */

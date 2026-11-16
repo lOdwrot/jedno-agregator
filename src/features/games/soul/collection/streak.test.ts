@@ -4,6 +4,8 @@ import { PACKS, rollPack } from "./packs";
 import { newProfile, owned, parseKey, type Profile } from "./profile";
 import {
   completeTale,
+  DUELS_NEEDED,
+  duelsPlayed,
   pendingTale,
   settleStreak,
   stakeStreak,
@@ -40,6 +42,27 @@ describe("win streak and saints' tales", () => {
     ({ p, tale } = wins(p, 40));
     expect(tale).toBeNull();
     expect(p.saints).toEqual(TALE_ORDER);
+  });
+
+  it("also unlocks tales after 100, 300 and 800 rewarded duels, wins or not", () => {
+    expect(DUELS_NEEDED).toEqual([100, 300, 800]);
+    let p = newProfile();
+    let tale: string | null = null;
+    for (let i = 0; i < 99; i++) ({ profile: p, tale } = duel(p, false));
+    expect(tale).toBeNull();
+    ({ profile: p, tale } = duel(p, false));
+    expect(tale).toBe(TALE_ORDER[0]);
+    expect(duelsPlayed(p)).toBe(100);
+    p = completeTale(p, tale!);
+    for (let i = 0; i < 199; i++) ({ profile: p, tale } = duel(p, false));
+    expect(tale).toBeNull();
+    ({ profile: p, tale } = duel(p, false));
+    expect(tale).toBe(TALE_ORDER[1]);
+  });
+
+  it("older saves count wins + losses as duels played", () => {
+    const p = { ...newProfile(), wins: 60, losses: 39 };
+    expect(duel(p, false).tale).toBe(TALE_ORDER[0]);
   });
 
   it("a defeat, a forfeit or a reload mid-duel breaks the streak", () => {

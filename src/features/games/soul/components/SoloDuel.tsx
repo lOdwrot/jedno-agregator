@@ -17,7 +17,7 @@ export interface DuelOutcome {
   rank: { from: number; to: number };
   prize: { pack: PackType; cards: CardKey[]; fresh: boolean[] } | null;
   /** A saint's tale this win unlocked (its book opens instead of going back to the menu). */
-  tale?: { cardId: string; streak: number } | null;
+  tale?: { cardId: string } | null;
 }
 
 interface Props {
@@ -103,7 +103,6 @@ export function SoloDuel({
         (book && over.tale ? (
           <LazyTaleBook
             cardId={over.tale.cardId}
-            streak={over.tale.streak}
             onWin={() => onTaleWin?.(over.tale!.cardId)}
             onClose={() => onExit(book.booster)}
           />

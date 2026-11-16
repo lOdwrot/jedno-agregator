@@ -6,8 +6,8 @@ import { taleOf } from "./stories";
 function readAndAnswer(right: boolean) {
   const tale = taleOf("biedaczyna")!;
   const onWin = vi.fn();
-  render(<TaleBook cardId={tale.id} streak={10} onWin={onWin} onClose={() => {}} />);
-  expect(screen.getByText("10 zwycięstw z rzędu!")).toBeTruthy();
+  render(<TaleBook cardId={tale.id} onWin={onWin} onClose={() => {}} />);
+  expect(screen.getByText("Nowa opowieść o świętym!")).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: /Poznaj świętego/ }));
   for (let i = 0; i < tale.pages.length; i++)
     fireEvent.click(screen.getByRole("button", { name: /Dalej →|Do quizu/ }));
