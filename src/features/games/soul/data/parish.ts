@@ -1425,7 +1425,8 @@ export const PARISH_CARDS: CardDef[] = [
     rarity: "rare",
     text: "Wszyscy święci na stole (także rywala) otrzymują o 20 mniej obrażeń.",
     effect: { k: "place", saintArmor: 20 },
-    flavor: "Barokowa katedra na wzgórzu nad Lwowem. Na szczycie fasady św. Jerzy wciąż dobija smoka.",
+    flavor:
+      "Barokowa katedra na wzgórzu nad Lwowem. Na szczycie fasady św. Jerzy wciąż dobija smoka.",
   },
   ...ORDERS_CARDS,
   // ── Energy (unlimited, not in boosters) ─────────────────────────────────────

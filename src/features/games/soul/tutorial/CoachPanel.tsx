@@ -36,7 +36,7 @@ export function CoachPanel({ coach, g, busy }: { coach: Coach; g: Game; busy: bo
       aria-label="Samouczek"
       className="pointer-events-none absolute inset-x-1 top-1 z-10 flex justify-center md:justify-start"
     >
-      <div className="pointer-events-auto max-h-[46dvh] w-full max-w-md overflow-y-auto md:max-h-[80%] md:max-w-[19rem] rounded-card bg-surface/95 px-3 py-2 text-ink shadow-lift">
+      <div className="pointer-events-auto max-h-[46dvh] w-full max-w-md overflow-y-auto rounded-card bg-surface/95 px-3 py-2 text-ink shadow-lift md:max-h-[80%] md:max-w-[19rem]">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-bold text-ink-muted">
             <span aria-hidden="true">🎓 </span>Samouczek · krok {coach.index + 1} z {coach.total}

@@ -154,6 +154,7 @@ export class BoardRenderer {
       sp.updateInPlay(info.play, info.play ? maxHp(g, info.play) : 0);
       sp.zIndex = this.drag?.key === s.key ? 1000 : s.z;
       sp.setGlow(this.glowFor(s));
+      sp.playable = this.playableFor(s);
       sp.active = s.zone === "active" || this.hover === s.key || this.drag?.key === s.key;
       if (this.drag?.key === s.key) continue;
       const lift =
@@ -164,6 +165,13 @@ export class BoardRenderer {
       jobs.push(this.moveTo(sp, s, ms, delay, lift));
     }
     await Promise.all(jobs);
+  }
+
+  /** Own hand cards: playable now → true, the rest dimmed while something else is playable. */
+  private playableFor(s: Slot): boolean | null {
+    if (s.zone !== "hand" || s.pid !== "me" || this.drag) return null;
+    if (this.hl.playable.includes(s.key)) return true;
+    return this.hl.playable.length ? false : null;
   }
 
   private glowFor(s: Slot): string | null {
@@ -212,8 +220,11 @@ export class BoardRenderer {
     this.hl = h;
     this.table.setBenchGlow(h.bench);
     if (this.state)
-      for (const s of computeSlots(this.state, this.w, this.h))
-        this.sprites.get(s.key)?.setGlow(this.glowFor(s));
+      for (const s of computeSlots(this.state, this.w, this.h)) {
+        const sp = this.sprites.get(s.key);
+        sp?.setGlow(this.glowFor(s));
+        if (sp) sp.playable = this.playableFor(s);
+      }
   }
 
   dragMove(key: number, x: number, y: number) {

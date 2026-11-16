@@ -8,7 +8,8 @@ describe("cardType", () => {
     const pope = ALL_CARDS.find((c) => c.kind === "character" && c.evolvesFrom === POPE_CANDIDATE)!;
     expect(cardType(pope)).toBe("stage1");
     const stage2 = ALL_CARDS.find(
-      (c) => c.kind === "character" && c.evolvesFrom && cardType(getCard(c.evolvesFrom)) === "stage1",
+      (c) =>
+        c.kind === "character" && c.evolvesFrom && cardType(getCard(c.evolvesFrom)) === "stage1",
     )!;
     expect(cardType(stage2)).toBe("stage2");
   });

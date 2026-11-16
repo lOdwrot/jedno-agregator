@@ -11,7 +11,6 @@ import {
 } from "pixi.js";
 import { ART as ARTWORK, artSrc } from "../data/art";
 import { getCard } from "../data/cards";
-import { cardTypeBadge } from "../data/cardType";
 import {
   ELEMENT_INFO,
   ENERGY_LABEL,
@@ -22,8 +21,10 @@ import {
   type Finish,
 } from "../data/types";
 import type { InPlay } from "../engine/state";
+import { drawEnergy, drawEvolvesFrom, drawTypeIcon, drawWeakness } from "./cardBadges";
 import { CARD_H, CARD_W } from "./layout";
 import { FONT_DISPLAY, FONT_SANS, palette, type Token } from "./palette";
+import { PlayableFx } from "./playableFx";
 import { PrestigeFx } from "./prestige";
 
 const W = CARD_W;
@@ -91,11 +92,14 @@ export class CardSprite extends Container {
   finish: Finish = "plain";
   faceUp = true;
   glowColor: string | null = null;
+  /** Hand card: true = can be played now (bobs + sparkles), false = can't (dimmed), null = neutral. */
+  playable: boolean | null = null;
+  private playFx = new PlayableFx();
   private t = Math.random() * 6;
 
   constructor() {
     super();
-    this.addChild(this.glowG, this.body, this.sparkLayer);
+    this.addChild(this.glowG, this.playFx.layer, this.body, this.sparkLayer);
     this.body.addChild(this.back, this.front, this.overlay);
     this.drawBack();
   }
@@ -128,6 +132,9 @@ export class CardSprite extends Container {
       this.shine.x = ((this.t * 160) % 900) - 450;
     }
     this.prestige?.tick(dt, this.t, reduced, this.active && this.faceUp && this.visible);
+    const on = this.playable === true && this.faceUp && this.visible;
+    this.playFx.tick(dt, this.t, reduced, on, this.body);
+    this.body.alpha = this.playable === false ? 0.68 : 1;
   }
 
   setGlow(color: string | null) {
@@ -208,7 +215,11 @@ export class CardSprite extends Container {
     name.position.set(-58, -134);
     fit(name, isChar ? 86 : 146);
     this.front.addChild(art, name);
-    this.drawTypeIcon(dark);
+    drawTypeIcon(this.front, this.cardId, dark);
+    if (c.kind === "character" && c.evolvesFrom) {
+      const id = this.cardId;
+      drawEvolvesFrom(this.front, c.evolvesFrom, dark, () => !this.destroyed && this.cardId === id);
+    }
 
     if (c.kind === "character") {
       const hp = text(`${c.hp + FINISH_BONUS[this.finish].hp}`, {
@@ -234,7 +245,7 @@ export class CardSprite extends Container {
       atk.position.set(86, 36);
       fit(atk, 120);
       this.front.addChild(hp, line, atk);
-      if (c.weakness) this.drawWeakness(c.weakness, dark);
+      if (c.weakness) drawWeakness(this.front, c.weakness, dark);
     } else {
       const kind = text(KIND[c.kind].toUpperCase(), {
         fontFamily: FONT_DISPLAY,
@@ -277,54 +288,6 @@ export class CardSprite extends Container {
       this.front.addChild(holder);
       this.shine = shine;
     }
-  }
-
-  /** Type badge in the top-left corner (basic / evolution / item / supporter / place / energy). */
-  private drawTypeIcon(dark: boolean) {
-    const p = palette();
-    const { icon } = cardTypeBadge(getCard(this.cardId));
-    const x = -78;
-    const y = -118;
-    const disc = new Graphics()
-      .circle(x, y, 17)
-      .fill(dark ? p["navy-600"] : p.surface)
-      .circle(x, y, 17)
-      .stroke({ width: 3, color: dark ? p["logo-red"] : p["logo-yellow"] });
-    const t = text(icon, { fontSize: 20 });
-    t.anchor.set(0.5);
-    t.position.set(x, y + 1);
-    this.front.addChild(disc, t);
-  }
-
-  /** Weakness badge ("słabość 💢 ×2") — readable on the table without opening the card. */
-  private drawWeakness(w: Element, dark: boolean) {
-    const p = palette();
-    const pill = new Graphics()
-      .roundRect(-88, 68, 176, 28, 14)
-      .fill({ color: p.danger, alpha: dark ? 0.35 : 0.14 })
-      .roundRect(-88, 68, 176, 28, 14)
-      .stroke({ width: 2, color: p.danger, alpha: 0.8 });
-    const label = text("SŁABOŚĆ", {
-      fontFamily: FONT_DISPLAY,
-      fontSize: 14,
-      fontWeight: "800",
-      fill: dark ? p.surface : p.navy,
-      letterSpacing: 1,
-    });
-    label.anchor.set(0, 0.5);
-    label.position.set(-78, 82);
-    const icon = text(ELEMENT_INFO[w].emoji, { fontSize: 22 });
-    icon.anchor.set(0.5);
-    icon.position.set(36, 82);
-    const x2 = text("×2", {
-      fontFamily: FONT_DISPLAY,
-      fontSize: 20,
-      fontWeight: "800",
-      fill: dark ? p.surface : p.danger,
-    });
-    x2.anchor.set(1, 0.5);
-    x2.position.set(82, 82);
-    this.front.addChild(pill, label, icon, x2);
   }
 
   /** Swaps the emoji for the card's picture once it is loaded (cover-fit into the art window). */
@@ -374,17 +337,7 @@ export class CardSprite extends Container {
     hp.position.set(-86, 106);
     this.overlay.addChild(bar, hp);
     const side = getCard(c.cardId).side;
-    if (c.energy > 0) {
-      const en = text(`${ENERGY_LABEL[side].emoji}×${c.energy}`, {
-        fontFamily: FONT_DISPLAY,
-        fontSize: 21,
-        fontWeight: "800",
-        fill: p["logo-yellow"],
-      });
-      en.anchor.set(1, 0);
-      en.position.set(88, 106);
-      this.overlay.addChild(en);
-    }
+    if (c.energy > 0) drawEnergy(this.overlay, ENERGY_LABEL[side].emoji, c.energy);
     c.statuses.forEach((s, i) => {
       const b = new Graphics()
         .circle(-66 + i * 40, -78, 19)

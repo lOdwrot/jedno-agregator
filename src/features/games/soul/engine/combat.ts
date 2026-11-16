@@ -105,7 +105,9 @@ export function isWeak(g: Game, attacker: InPlay, defender: InPlay): boolean {
 export function placeGuards(g: Game, defender: InPlay, dmg: number): boolean {
   if (!g.place) return false;
   const e = (getCard(g.place.cardId) as SupportDef).effect;
-  return e.k === "place" && !!e.guard && dmg > e.guard.over && e.guard.ids.includes(defender.cardId);
+  return (
+    e.k === "place" && !!e.guard && dmg > e.guard.over && e.guard.ids.includes(defender.cardId)
+  );
 }
 
 /** `saintArmor` of the place in play (for BOTH players) — only for saints ("Św."). */

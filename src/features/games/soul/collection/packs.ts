@@ -3,7 +3,8 @@ import { COLLECTIBLE } from "../data/cards";
 import type { CardDef, Finish, Rarity } from "../data/types";
 import { keyOf, type CardKey } from "./profile";
 
-export type PackId = "wspolnota" | "swieci" | "papieze" | "zakrystia" | "witraze" | "skarbiec" | "rozeta";
+export type PackId =
+  "wspolnota" | "swieci" | "papieze" | "zakrystia" | "witraze" | "skarbiec" | "rozeta";
 
 export interface PackType {
   id: PackId;

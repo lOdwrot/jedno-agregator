@@ -127,7 +127,10 @@ Gilded / stained prints look prestigious: a drifting foil background (DOM: `Pres
 `index.css`; canvas: `board/prestige.ts`), stained prints add lead-lined glass panes, a glass reflection and — while
 active (active slot, hovered, dragged; DOM: `active` prop or hover/focus) — a rainbow aura with rising sparkles.
 Every card shows a type icon in its top-left corner (`data/cardType.ts`: 🌱 basic, 🌿 stage 1, 🌳 stage 2, 🎒 item, 🤝 supporter,
-🏛️ place, ✨/🔥 energy) — DOM `CardTypeIcon` (CardFace, CardMini, DeckRow) and canvas `drawTypeIcon` in `CardSprite.ts`.
+🏛️ place, ✨/🔥 energy) — DOM `CardTypeIcon` (CardFace, CardMini, DeckRow) and canvas `drawTypeIcon` in `board/cardBadges.ts`.
+Evolutions show a round picture of their base card on the art (`EvolvesFromThumb` / `drawEvolvesFrom`); attached energy is a big
+badge on the table card (`drawEnergy`) and the details dialog of a card in play starts with `InPlayStatus` (energy, HP, statuses,
+cards underneath). Hand cards playable right now bob and shed sparkles (`board/playableFx.ts`), the rest are dimmed.
 Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is readable on the table without opening the card. **No hidden AI handicaps**: the
 computer never gets free energy or other perks — difficulty comes only from its deck and play. The single exception is
 openly stated: Tron Bestii draws 2 cards a turn (`Opponent.extraDraw: 1` → `Game.aiExtraDraw`, badge on the opponent

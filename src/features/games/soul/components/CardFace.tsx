@@ -20,6 +20,25 @@ import { PrestigeLayers } from "./PrestigeLayers";
 const kindLine = (c: CardDef) =>
   c.kind === "supporter" ? "Pomocnik (1 na turę)" : cardTypeBadge(c).label;
 
+/** Round picture of the card this one evolves from, in the corner of the art. */
+function EvolvesFromThumb({ cardId, dark }: { cardId: string; dark: boolean }) {
+  return (
+    <span className="absolute top-2 right-2">
+      <span
+        className={cn(
+          "relative grid size-12 place-items-center overflow-hidden rounded-full shadow-card ring-3",
+          dark ? "bg-navy-600 ring-logo-red" : "bg-surface ring-logo-yellow",
+        )}
+      >
+        <CardArt cardId={cardId} emojiClass="text-2xl" />
+      </span>
+      <span className="absolute -bottom-1 -left-1 grid size-5 place-items-center rounded-full bg-navy text-xs font-extrabold text-white ring-2 ring-surface">
+        ↑
+      </span>
+    </span>
+  );
+}
+
 /** Full face of a card: art, HP, attacks, weakness, retreat, rarity and print finish. */
 export function CardFace({
   cardId,
@@ -102,6 +121,9 @@ export function CardFace({
         >
           <CardArt cardId={cardId} emojiClass="text-6xl" />
           {finish !== "plain" && <span className="soul-shine absolute inset-0" />}
+          {c.kind === "character" && c.evolvesFrom && (
+            <EvolvesFromThumb cardId={c.evolvesFrom} dark={dark} />
+          )}
         </div>
 
         {c.kind === "character" ? (

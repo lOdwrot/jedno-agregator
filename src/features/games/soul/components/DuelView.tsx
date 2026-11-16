@@ -12,6 +12,7 @@ import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
 import { CardFace } from "./CardFace";
 import { HandDialog } from "./CardPreview";
+import { InPlayStatus } from "./InPlayStatus";
 import { DuelBars, DuelTopBar } from "./DuelBars";
 import { DuelSidebar } from "./DuelSidebar";
 import { SearchDialog } from "./SearchDialog";
@@ -147,6 +148,12 @@ export function DuelView({
             const p = live.players[sel.zone === "opp" ? "ai" : "me"];
             return [p.active, ...p.bench, ...p.discard].find((c) => c?.uid === sel.uid);
           })());
+  const selPlay =
+    sel && (sel.zone === "field" || sel.zone === "opp")
+      ? ([me.active, ...me.bench, live.players.ai.active, ...live.players.ai.bench].find(
+          (c) => c?.uid === sel.uid,
+        ) ?? null)
+      : null;
   const selActive =
     !!sel &&
     "uid" in sel &&
@@ -233,6 +240,7 @@ export function DuelView({
       >
         {selCard && sel && (
           <div className="flex flex-col gap-4 pt-10">
+            {selPlay && <InPlayStatus g={live} c={selPlay} />}
             <CardFace
               cardId={selCard.cardId}
               finish={selCard.finish}

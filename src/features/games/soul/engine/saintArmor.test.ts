@@ -23,7 +23,8 @@ function myTurn(): Game {
   next.place = null;
   return next;
 }
-const card = (g: Game, cardId: string) => toInPlay({ uid: g.nextUid++, cardId, finish: "plain" }, 0);
+const card = (g: Game, cardId: string) =>
+  toInPlay({ uid: g.nextUid++, cardId, finish: "plain" }, 0);
 const hit = (damage: number) => ({ name: "test", cost: 0, damage });
 
 describe("Sobór św. Jura (saintArmor place)", () => {
