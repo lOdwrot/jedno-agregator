@@ -4,7 +4,8 @@ import type { AttackDef, CardDef } from "../data/types";
 import {
   abilities,
   addStatus,
-  applyDefense,
+  defendedDamage,
+  placeGuards,
   attackCost,
   bonusDamage,
   discardEnergy,
@@ -164,7 +165,10 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0, target?: number
     }
     if (e.k === "revenge") raw += Math.floor(a.damage / 10) * e.n;
   }
-  const dmg = applyDefense(g, other(pid), a, d, raw);
+  const full = defendedDamage(g, other(pid), a, d, raw);
+  const guarded = placeGuards(g, d, full);
+  const dmg = guarded ? 0 : full;
+  if (guarded) log(g, `Seminarium w Paradyżu: ${nameOf(d)} nie ulega ciosowi za ${full}.`);
   hurt(g, d, dmg, dmg > 0 && isWeak(g, a, d));
   if (atk.damage > 0) log(g, `${nameOf(d)} otrzymuje ${dmg} obrażeń.`);
   for (const e of atk.effects ?? []) {

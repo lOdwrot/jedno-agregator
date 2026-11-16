@@ -165,6 +165,9 @@ export type SupportEffect =
       extraDraw?: number;
       /** A rule for BOTH players while the place is in play. */
       rule?: PlaceRule;
+      /** For BOTH players: an attack that would deal more than `over` damage to one of these
+       *  characters (card ids) deals none at all. */
+      guard?: { ids: readonly string[]; over: number };
     };
 
 export interface SupportDef extends BaseDef {

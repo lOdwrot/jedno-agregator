@@ -1374,6 +1374,17 @@ export const PARISH_CARDS: CardDef[] = [
     effect: { k: "place", attackBonus: 10, armor: 10 },
     flavor: "Tu leży Biblia Gutenberga. Pomioty nie doczytały nawet pierwszej strony.",
   },
+  {
+    id: "paradyz",
+    kind: "place",
+    side: "parish",
+    name: "Seminarium w Paradyżu",
+    emoji: "🎓",
+    rarity: "rare",
+    text: "Wszyscy Klerycy na praktykach i Kandydaci na papieża (także rywala) są odporni na ataki, które zadałyby im ponad 100 obrażeń.",
+    effect: { k: "place", guard: { ids: ["kleryk", "kandydat"], over: 100 } },
+    flavor: "Dawne opactwo cystersów w Gościkowie. Kto tu się formuje, tego byle cios nie złamie.",
+  },
   ...ORDERS_CARDS,
   // ── Energy (unlimited, not in boosters) ─────────────────────────────────────
   {

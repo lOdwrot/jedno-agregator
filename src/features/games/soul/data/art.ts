@@ -139,6 +139,13 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Oliwa_Cathedral,_great_organ.jpg",
     focus: 0.4,
   },
+  paradyz: {
+    title: "Gościkowo-Paradyż. Dawny klasztor cystersów; dzisiaj seminarium duchowne.jpg",
+    author: "Gliwi",
+    license: "CC BY-SA 3.0 pl",
+    url: "https://commons.wikimedia.org/wiki/File:Go%C5%9Bcikowo-Parady%C5%BC._Dawny_klasztor_cysters%C3%B3w%3B_dzisiaj_seminarium_duchowne.jpg",
+    focus: 0.62,
+  },
   pelplin: {
     title: "2010.10.02 PELPLIN (17).jpg",
     author: "Kozak1410",

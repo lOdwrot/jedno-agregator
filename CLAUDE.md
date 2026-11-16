@@ -112,6 +112,9 @@ Bł. ks. Jerzy Popiełuszko has the `blessedHp` ability (Solidarność): +20 max
 (`isBlessed`: name starts with "Bł. ") on the owner's side — so `maxHp(g, c)` / `hpLeft(g, c)` take the game. Max HP can
 drop mid-turn (a `noAbilities` place, a blessed friend knocked out): `resolveKOs` runs after every main-phase move too
 (`midTurnKOs` in `actions.ts`, `promote.then: "continue"` keeps the turn going) and repeats until nothing more falls.
+The rare place `paradyz` (Seminarium w Paradyżu, `guard: { ids, over }` on the place effect, for BOTH players) cancels any
+attack hit above 100 on a Kleryk na praktykach / Kandydat na papieża — checked after weakness/armor (`placeGuards` in
+`combat.ts`, `engine/seminary.test.ts`).
 Ksiądz proboszcz has `teamBonus` (Dobry pasterz, works from the bench): the owner's OTHER Kleryk / Wikariusz / Proboszcz deal
 +30 (strongest one, no stacking; `engine/teamBonus.test.ts`). While a choice is pending (`SearchDialog`, the peek dialog) every
 card tile has an "i" badge with the full card (`components/CardPreview.tsx`) and "Spójrz na rękę" opens the hand (`HandDialog`).
