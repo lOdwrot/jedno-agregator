@@ -3,6 +3,7 @@ import { SOULS_TO_WIN } from "../data/cards";
 import { ENERGY_LABEL, STATUS_INFO } from "../data/types";
 import { music } from "../audio/music";
 import { sfx } from "../audio/sfx";
+import { haptic } from "../audio/haptics";
 import type { Frame } from "../engine/events";
 import { other, type Game } from "../engine/state";
 import type { BoardRenderer } from "./BoardRenderer";
@@ -63,6 +64,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       await r.reconcile(state, 460);
       const s = at(ev.uid);
       sfx.place();
+      haptic.place();
       void fx.ring(s.x, s.y, p.surface, 80 * a.unit * 3, 5);
       fx.burst(s.x, s.y + 40 * a.unit * 2, [p.line, p.surface], 14, 220, 400);
       const sp = r.sprite(ev.uid);
@@ -76,6 +78,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
     case "evolve": {
       const s = at(ev.uid);
       sfx.evolve();
+      haptic.evolve();
       void fx.rays(s.x, s.y, p["logo-yellow"]);
       const sp = r.sprite(ev.uid);
       if (sp) {
@@ -94,6 +97,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       const to = at(ev.uid);
       sfx.energy(side === "demons");
       await fx.fly(a.hand[ev.pid], to, ENERGY_LABEL[side].emoji, 44);
+      haptic.energy();
       await r.reconcile(state, 250);
       return;
     }
@@ -114,6 +118,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
           tw.to(sp, { x: r.w / 2, y: a.mid, rotation: 0 }, 360),
           tw.to(sp.scale, { x: a.unit * 1.25, y: a.unit * 1.25 }, 360, ease.back),
         ]);
+        haptic.play();
         if (!sp.faceUp) {
           await tw.to(sp.body.scale, { x: 0 }, 120, ease.in);
           sp.setFace(true);
@@ -149,6 +154,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       const dmg = atkDef?.damage ?? 0;
       if (sp) {
         sfx.windup();
+        haptic.windup();
         const k = sp.scale.x;
         sp.setGlow(attacker ? elementStyle(attacker.def.element).core : color);
         await Promise.all([
@@ -177,6 +183,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       const s = at(ev.uid);
       const hit = r.charAt(prev, ev.uid);
       sfx.hit(ev.amount);
+      haptic.hit(ev.amount);
       const spark = hit ? p[ELEMENT_SPARK[hit.def.element] as "logo-blue"] : p.danger;
       const foe = prev.players[hit && prev.players.me.active?.uid === ev.uid ? "ai" : "me"].active;
       const atkStyle = foe ? elementStyle(r.charAt(prev, foe.uid)!.def.element) : null;
@@ -213,6 +220,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
     }
     case "benchDamage": {
       sfx.hit(20);
+      haptic.benchHit();
       for (const uid of ev.uids) {
         const s = at(uid);
         fx.burst(s.x, s.y, [p.danger, p.surface], 10, 220);
@@ -298,6 +306,7 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       const sp = r.sprite(ev.uid);
       const s = at(ev.uid);
       sfx.ko();
+      haptic.ko();
       if (sp) {
         await shake(tw, sp, 16, r.reduced);
         fx.emojis(s.x, s.y, ev.pid === "ai" ? "💨" : "💔", 10, true, 30);

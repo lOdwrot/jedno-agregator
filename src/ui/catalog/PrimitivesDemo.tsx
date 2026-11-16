@@ -17,6 +17,7 @@ import {
   Skeleton,
   SkeletonCard,
   SmartImage,
+  Switch,
   Text,
   iconNames,
   JednoLogo,
@@ -28,6 +29,7 @@ const IMG = "https://admin.jedno.net/media/does-not-exist.jpg";
 export function PrimitivesDemo() {
   const [author, setAuthor] = useState<string | null>("a");
   const [pressed, setPressed] = useState(false);
+  const [switched, setSwitched] = useState(true);
   return (
     <Group id="primitives" title="Prymitywy">
       <Demo name="Button">
@@ -116,6 +118,16 @@ export function PrimitivesDemo() {
             { value: "c", label: "Caritas" },
           ]}
         />
+      </Demo>
+      <Demo name="Switch">
+        <div className="max-w-sm">
+          <Switch
+            checked={switched}
+            onChange={setSwitched}
+            label="Wibracje"
+            description="Krótkie drgania przy ważnych ruchach"
+          />
+        </div>
       </Demo>
       <Demo name="Card (interactive / tilt / link) + SmartImage">
         <div className="grid gap-4 sm:grid-cols-3">

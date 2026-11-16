@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Icon } from "@/ui";
 import type { Opponent } from "../data/opponents";
 import type { AudioPrefs } from "../audio/context";
+import { canVibrate, useHaptics } from "../audio/haptics";
 import { attackBlock, benchEnergyTargets, type Action } from "../engine/actions";
 import { attackCost, fuelMax, previewDamage } from "../engine/combat";
 import { setupTurn } from "../engine/opening";
@@ -35,6 +36,7 @@ export function DuelTopBar({
   onFull,
   onLog,
 }: TopProps) {
+  const [haptics, setHaptics] = useHaptics();
   return (
     <div className="flex items-center gap-1 border-b border-white/10 px-2 pt-[env(safe-area-inset-top)]">
       <button
@@ -72,6 +74,19 @@ export function DuelTopBar({
           🎵
         </span>
       </button>
+      {canVibrate() && (
+        <button
+          type="button"
+          className={btn}
+          onClick={() => setHaptics(!haptics)}
+          aria-pressed={haptics}
+          aria-label="Wibracje"
+        >
+          <span aria-hidden="true" className={haptics ? "" : "opacity-40"}>
+            📳
+          </span>
+        </button>
+      )}
       <button
         type="button"
         className={btn}

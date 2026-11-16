@@ -15,6 +15,7 @@ import { CardTypeIcon } from "./CardTypeIcon";
 import { cardTypeBadge } from "../data/cardType";
 import { ELEMENT_ART, FINISH_FRAME } from "./styles";
 import { PrestigeLayers } from "./PrestigeLayers";
+import { PopeInfoButton } from "../popes/PopeInfoButton";
 
 /** Header line: the type badge label, plus the supporter rule. */
 const kindLine = (c: CardDef) =>
@@ -46,6 +47,7 @@ export function CardFace({
   active = false,
   className,
   showLesson = false,
+  stories = true,
 }: {
   cardId: string;
   finish?: Finish;
@@ -53,6 +55,8 @@ export function CardFace({
   active?: boolean;
   className?: string;
   showLesson?: boolean;
+  /** Pope cards get an "i Historia" button with the pope's story. */
+  stories?: boolean;
 }) {
   const c = getCard(cardId);
   const dark = c.side === "demons";
@@ -112,18 +116,21 @@ export function CardFace({
           )}
         </header>
 
-        <div
-          aria-hidden="true"
-          className={cn(
-            "relative grid h-32 place-items-center overflow-hidden rounded-xl bg-gradient-to-br",
-            art,
-          )}
-        >
-          <CardArt cardId={cardId} emojiClass="text-6xl" />
-          {finish !== "plain" && <span className="soul-shine absolute inset-0" />}
-          {c.kind === "character" && c.evolvesFrom && (
-            <EvolvesFromThumb cardId={c.evolvesFrom} dark={dark} />
-          )}
+        <div className="relative">
+          <div
+            aria-hidden="true"
+            className={cn(
+              "relative grid h-32 place-items-center overflow-hidden rounded-xl bg-gradient-to-br",
+              art,
+            )}
+          >
+            <CardArt cardId={cardId} emojiClass="text-6xl" />
+            {finish !== "plain" && <span className="soul-shine absolute inset-0" />}
+            {c.kind === "character" && c.evolvesFrom && (
+              <EvolvesFromThumb cardId={c.evolvesFrom} dark={dark} />
+            )}
+          </div>
+          {stories && <PopeInfoButton cardId={cardId} className="absolute right-2 bottom-2" />}
         </div>
 
         {c.kind === "character" ? (

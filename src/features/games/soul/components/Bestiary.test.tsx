@@ -44,8 +44,10 @@ describe("DuelDiscoveries", () => {
     const read = screen.getByRole("button", { name: new RegExp(`${a!.name}.*Czytaj`) });
     await userEvent.click(read);
     expect(read).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByLabelText(`Karta: ${a!.name}`)).toBeInTheDocument();
+    const card = screen.getByLabelText(`Karta: ${a!.name}`);
     expect(screen.getByText("Jak kusi:")).toBeInTheDocument();
+    // the card unfolds directly under its own badge
+    expect(read.closest("li")!.nextElementSibling).toContainElement(card);
     await userEvent.click(
       screen.getByRole("button", { name: new RegExp(`${b!.name}.*Podejrzyj`) }),
     );
