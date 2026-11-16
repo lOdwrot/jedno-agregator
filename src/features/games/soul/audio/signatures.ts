@@ -247,6 +247,29 @@ export const signatureSound: Record<string, () => void> = {
     noise(0.8, { cutoff: 400, gain: 0.3, delay: 1.0 });
     tone(60, 0.9, { type: "sine", gain: 0.25, delay: 1.0, slideTo: 30 });
   },
+  /** Bubbling spring water under a calm major chord (Bernadetta). */
+  spring: () => {
+    for (let i = 0; i < 9; i++)
+      tone(n(12 + ((i * 5) % 12)), 0.12, {
+        type: "sine",
+        gain: 0.05,
+        delay: i * 0.07,
+        slideTo: n(19),
+      });
+    noise(1.0, { cutoff: 2400, gain: 0.08, delay: 0.1 });
+    choir([0, 4, 7, 12], 0.5, 1.6);
+  },
+  /** A wolf's howl that softens into a lullaby (Franciszek). */
+  howl: () => {
+    tone(n(0), 1.2, { type: "triangle", gain: 0.05, slideTo: n(7), attack: 0.3 });
+    tone(n(7), 0.8, { type: "triangle", gain: 0.04, delay: 1.1, slideTo: n(2) });
+    [12, 9, 7].forEach((s, i) => bell(s, 1.4 + i * 0.25, 0.04));
+  },
+  /** Heavy ploughing steps and an angelic chord (Izydor). */
+  plough: () => {
+    [0, 0.35, 0.7].forEach((d) => drum(d, 0.22));
+    choir([0, 7, 12, 16], 0.9, 1.6);
+  },
   high_c: () =>
     tone(n(15) * 2, 1.0, { type: "sine", gain: 0.07, attack: 0.1, slideTo: n(15) * 2.02 }),
 };

@@ -8,6 +8,7 @@ import { createGame, type DeckList, type Game } from "../engine/state";
 import { BoosterOpening } from "./BoosterOpening";
 import { DuelResult } from "./DuelResult";
 import { DuelView } from "./DuelView";
+import { LazyTaleBook } from "../tales/LazyTaleBook";
 
 /** What a finished duel brought: talents and, for a victory over a harder opponent, a booster. */
 export interface DuelOutcome {
@@ -15,6 +16,8 @@ export interface DuelOutcome {
   /** Rank points before and after the duel. */
   rank: { from: number; to: number };
   prize: { pack: PackType; cards: CardKey[]; fresh: boolean[] } | null;
+  /** A saint's tale this win unlocked (its book opens instead of going back to the menu). */
+  tale?: { cardId: string; streak: number } | null;
 }
 
 interface Props {
@@ -28,6 +31,8 @@ interface Props {
   /** The bestiary at the start of the duel — the result lists what this duel added to it. */
   bestiary?: Profile["bestiary"];
   onExit: (openBooster: boolean) => void;
+  /** Every quiz answer of the unlocked tale was right. */
+  onTaleWin?: (cardId: string) => void;
   /** Leaving before the end: counts as a defeat for the rank. */
   onForfeit: () => void;
 }
@@ -50,6 +55,7 @@ export function SoloDuel({
   onSighting,
   bestiary,
   onExit,
+  onTaleWin,
   onForfeit,
 }: Props) {
   const [initial] = useState<Game>(() =>
@@ -57,6 +63,9 @@ export function SoloDuel({
   );
   const [over, setOver] = useState<({ g: Game; found: Discoveries } & DuelOutcome) | null>(null);
   const [prizeOpen, setPrizeOpen] = useState(true);
+  /** The result was closed while a tale waits: the book opens, then `onExit(booster)`. */
+  const [book, setBook] = useState<{ booster: boolean } | null>(null);
+  const leave = (booster: boolean) => (over?.tale ? setBook({ booster }) : onExit(booster));
   const [before] = useState(bestiary);
   const sighted = useRef<Partial<Record<string, number>>>({});
   const sight = useCallback(
@@ -91,14 +100,21 @@ export function SoloDuel({
       }}
       result={
         over &&
-        (over.prize && prizeOpen ? (
+        (book && over.tale ? (
+          <LazyTaleBook
+            cardId={over.tale.cardId}
+            streak={over.tale.streak}
+            onWin={() => onTaleWin?.(over.tale!.cardId)}
+            onClose={() => onExit(book.booster)}
+          />
+        ) : over.prize && prizeOpen ? (
           <BoosterOpening
             pack={over.prize.pack}
             cards={over.prize.cards}
             fresh={over.prize.fresh}
             onClose={() => setPrizeOpen(false)}
             onAgain={null}
-            onMenu={() => onExit(false)}
+            onMenu={() => leave(false)}
           />
         ) : (
           <DuelResult
@@ -111,8 +127,9 @@ export function SoloDuel({
             opponent={opponent}
             found={over.found}
             training={training}
-            onBooster={() => onExit(true)}
-            onMenu={() => onExit(false)}
+            tale={!!over.tale}
+            onBooster={() => leave(true)}
+            onMenu={() => leave(false)}
           />
         ))
       }

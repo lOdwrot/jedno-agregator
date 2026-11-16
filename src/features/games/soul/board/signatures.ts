@@ -6,6 +6,7 @@ import { shake } from "./fx";
 import { palette } from "./palette";
 import { ABYSS_SIG } from "./signaturesAbyss";
 import { SLOTH_SIG } from "./signaturesSloth";
+import { TALES_SIG } from "./signaturesTales";
 
 export interface Ctx {
   r: BoardRenderer;
@@ -350,7 +351,7 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
   },
 };
 
-Object.assign(SIG, ABYSS_SIG, SLOTH_SIG);
+Object.assign(SIG, ABYSS_SIG, SLOTH_SIG, TALES_SIG);
 
 export function signatureFor(name: string) {
   return SIG[name] ?? null;

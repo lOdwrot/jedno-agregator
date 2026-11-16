@@ -1,0 +1,226 @@
+/* Animations of the saints' tales scenes. Only transform/opacity; everything stops under reduced motion
+   (the resting positions are the final ones). */
+.tale-scene .tb {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.tale-scene .tb-bottom {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+@keyframes tale-drift {
+  from {
+    transform: translateX(-24px);
+  }
+  to {
+    transform: translateX(24px);
+  }
+}
+@keyframes tale-walk-in {
+  from {
+    transform: translateX(-260px);
+  }
+}
+@keyframes tale-walk-in-right {
+  from {
+    transform: translateX(260px);
+  }
+}
+@keyframes tale-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+@keyframes tale-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes tale-gust {
+  from {
+    transform: translate(-260px, 20px) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(520px, -40px) rotate(540deg);
+    opacity: 0;
+  }
+}
+@keyframes tale-streak {
+  from {
+    transform: translateX(-300px);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(500px);
+    opacity: 0;
+  }
+}
+@keyframes tale-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+@keyframes tale-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+@keyframes tale-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes tale-gush {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes tale-drop {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx, 10px), -60px);
+    opacity: 0;
+  }
+}
+@keyframes tale-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(0.85, 1.15);
+    opacity: 0.85;
+  }
+  60% {
+    transform: scale(1.1, 0.9);
+    opacity: 1;
+  }
+}
+@keyframes tale-march {
+  from {
+    transform: translateX(-80px);
+  }
+  to {
+    transform: translateX(80px);
+  }
+}
+@keyframes tale-fly-in {
+  from {
+    transform: translate(320px, -90px);
+  }
+}
+@keyframes tale-flap {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(-0.6);
+  }
+}
+@keyframes tale-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes tale-fall {
+  from {
+    transform: translateY(-40px);
+  }
+  to {
+    transform: translateY(330px);
+  }
+}
+@keyframes tale-drop-in {
+  from {
+    transform: translateY(-220px);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes tale-sway {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+@keyframes tale-plough {
+  from {
+    transform: translateX(-120px);
+  }
+  to {
+    transform: translateX(120px);
+  }
+}
+@keyframes tale-run-in {
+  0% {
+    transform: translateX(-320px);
+  }
+  70% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes tale-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes tale-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tale-scene *,
+  .tale-scene {
+    animation: none !important;
+  }
+}

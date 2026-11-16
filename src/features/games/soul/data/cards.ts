@@ -1,8 +1,9 @@
 import { DEMON_CARDS } from "./demons";
 import { PARISH_CARDS } from "./parish";
+import { TALE_CARDS } from "./tales";
 import type { CardDef, CharacterDef } from "./types";
 
-export const ALL_CARDS: readonly CardDef[] = [...PARISH_CARDS, ...DEMON_CARDS];
+export const ALL_CARDS: readonly CardDef[] = [...PARISH_CARDS, ...TALE_CARDS, ...DEMON_CARDS];
 const BY_ID = new Map(ALL_CARDS.map((c) => [c.id, c]));
 
 export function getCard(id: string): CardDef {

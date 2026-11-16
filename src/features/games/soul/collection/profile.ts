@@ -40,6 +40,14 @@ export interface Profile {
   bestiary?: Partial<Record<string, number>>;
   /** The tutorial was finished on this device (its one-time talents were paid out). */
   tutorial?: boolean;
+  /** Wins in a row against the computer (see `streak.ts`). */
+  streak?: number;
+  /** The streak put at stake by a duel that is still running (a reload mid-duel loses it). */
+  staked?: number;
+  /** Saints' tales unlocked so far (0–3). */
+  tales?: number;
+  /** Saints won in the tales' quizzes, in order. */
+  saints?: string[];
 }
 
 export const BOOSTER_PRICE = 100;

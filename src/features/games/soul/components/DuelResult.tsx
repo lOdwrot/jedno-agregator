@@ -18,6 +18,8 @@ interface Props {
   found?: Discoveries;
   /** Practice duel: nothing was earned, so no talents line and no booster button. */
   training?: boolean;
+  /** A surprise waits after this screen: the menu button leads there. */
+  tale?: boolean;
   onBooster: () => void;
   onMenu: () => void;
 }
@@ -33,6 +35,7 @@ export function DuelResult({
   opponent,
   found,
   training = false,
+  tale = false,
   onBooster,
   onMenu,
 }: Props) {
@@ -83,9 +86,15 @@ export function DuelResult({
             Otwórz booster
           </Button>
         )}
-        <Button variant="ghost" onClick={onMenu}>
-          Wróć do menu
-        </Button>
+        {tale ? (
+          <Button variant="navy" size="lg" onClick={onMenu}>
+            ✨ Dalej
+          </Button>
+        ) : (
+          <Button variant="ghost" onClick={onMenu}>
+            Wróć do menu
+          </Button>
+        )}
       </div>
     </Dialog>
   );
