@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Button, Dialog } from "@/ui";
+import { Button, Dialog, IconButton } from "@/ui";
 import { cn } from "@/lib/cn";
 import { score, taleOf } from "./stories";
 import { TalePage } from "./TalePage";
 import { TaleQuiz } from "./TaleQuiz";
 import { TaleResult } from "./TaleResult";
+import { useTaleSound } from "./useTaleSound";
 import "./tales.css";
 
 type Step =
@@ -20,10 +21,15 @@ interface Props {
   onClose: () => void;
 }
 
-/** "Opowieści o świętych": a cover, 5–6 animated pages, a 3-question quiz and the saint's card. */
+/**
+ * "Opowieści o świętych": a cover, 5–6 animated pages (with a lullaby and a soundscape per page,
+ * `useTaleSound`), a 3-question quiz and the saint's card.
+ */
 export default function TaleBook({ cardId, onWin, onClose }: Props) {
   const tale = taleOf(cardId);
   const [step, setStep] = useState<Step>({ k: "cover" });
+  const scene = tale && step.k === "page" ? tale.pages[step.i]!.scene : null;
+  const sound = useTaleSound(cardId, scene, step.k !== "cover");
   if (!tale) return null;
   const pages = tale.pages.length;
 
@@ -55,7 +61,29 @@ export default function TaleBook({ cardId, onWin, onClose }: Props) {
 
       {step.k === "page" && (
         <div className="flex flex-col gap-3">
-          <h3 className="font-display text-xl font-extrabold text-navy">{tale.title}</h3>
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-display text-xl font-extrabold text-navy">{tale.title}</h3>
+            <div className="flex gap-1">
+              <IconButton
+                variant="soft"
+                label="Muzyka w tle"
+                aria-pressed={sound.prefs.music}
+                onClick={() => sound.toggle("music")}
+              >
+                <span aria-hidden="true" className={cn(!sound.prefs.music && "opacity-40")}>
+                  🎵
+                </span>
+              </IconButton>
+              <IconButton
+                variant="soft"
+                label="Odgłosy opowieści"
+                aria-pressed={sound.prefs.sfx}
+                onClick={() => sound.toggle("sfx")}
+              >
+                <span aria-hidden="true">{sound.prefs.sfx ? "🔊" : "🔇"}</span>
+              </IconButton>
+            </div>
+          </div>
           <TalePage tale={tale.id} page={tale.pages[step.i]!} index={step.i} />
           <div className="flex items-center justify-between gap-2">
             <Button
