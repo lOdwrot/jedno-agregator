@@ -76,6 +76,13 @@ export class BoardRenderer {
     if (w === this.w && h === this.h) return;
     this.w = w;
     this.h = h;
+    // `resizeTo` only follows window resizes — the board also changes size when the bars below it
+    // grow or shrink (e.g. the taller opening bar), so the canvas is resized here too
+    try {
+      this.app.renderer?.resize(w, h);
+    } catch {
+      /* not initialised yet */
+    }
     this.table.resize(w, h);
     if (this.state) void this.reconcile(this.state, 0);
   }
