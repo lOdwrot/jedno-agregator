@@ -1,12 +1,13 @@
 /** Messages exchanged by the two browsers of a two-player duel (WebRTC data channel, JSON). */
 import { DECK_SIZE, ENERGY_ID, isBasic, MAX_COPIES, MIN_BASICS } from "../data/cards";
 import { PARISH_CARDS } from "../data/parish";
+import { TALE_CARDS } from "../data/tales";
 import { FINISH_BONUS } from "../data/types";
 import type { Action } from "../engine/actions";
 import type { DeckList, Game } from "../engine/state";
 
 /** Bump when the engine or the messages change — older clients are turned away politely. */
-export const PROTOCOL = 12;
+export const PROTOCOL = 13;
 
 export type Msg =
   /** guest → host, right after connecting */
@@ -48,7 +49,7 @@ export function asMsg(x: unknown): Msg | null {
   return x as Msg;
 }
 
-const PARISH = new Map(PARISH_CARDS.map((c) => [c.id, c]));
+const PARISH = new Map([...PARISH_CARDS, ...TALE_CARDS].map((c) => [c.id, c]));
 
 /** A deck sent by the guest — same rules as the deck builder (50 cards, ≤3 copies, ≥5 basics). */
 export function validDeck(deck: unknown): deck is DeckList {

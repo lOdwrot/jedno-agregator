@@ -14,6 +14,16 @@ import {
   type Profile,
 } from "./collection/profile";
 import { useProfile } from "./collection/useProfile";
+import {
+  completeTale,
+  pendingTale,
+  settleStreak,
+  stakeStreak,
+  streakNeeded,
+  TALE_ORDER,
+} from "./collection/streak";
+import { LazyTaleBook } from "./tales/LazyTaleBook";
+import { TaleWaiting } from "./tales/TaleWaiting";
 import type { Opponent } from "./data/opponents";
 import { PatronDialog } from "./rank/PatronDialog";
 import { RankMeter } from "./rank/RankMeter";
@@ -54,6 +64,9 @@ export function SoulGame() {
   const [tutorial, setTutorial] = useState<number | null>(null);
   const [paying, setPaying] = useState<Opponent | null>(null);
   const [patron, setPatron] = useState<number | null>(null);
+  /** The waiting saint's tale is open from the hub. */
+  const [reading, setReading] = useState(false);
+  const waiting = pendingTale(profile);
   const scrollTo = useRef<ScrollTarget | null>(null);
   const rankRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -71,8 +84,11 @@ export function SoulGame() {
     el?.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
   }, [duel, pvp, reduced, tutorial]);
 
-  const startDuel = (opponent: Opponent, training = false) =>
+  const startDuel = (opponent: Opponent, training = false) => {
+    // a rewarded duel puts the win streak at stake: only a win gives it back (+1)
+    if (!training) update(stakeStreak);
     setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary });
+  };
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
@@ -85,11 +101,18 @@ export function SoulGame() {
       const cards = pack ? rollPack(pack) : [];
       const prize = pack ? { pack, cards, fresh: freshFlags(profile, cards) } : null;
       const rank = { from: xp, to: afterDuel(xp, won, duel.opponent.difficulty) };
+      const settled = settleStreak(profile, won);
+      const tale = settled.tale
+        ? { cardId: settled.tale, streak: streakNeeded(TALE_ORDER.indexOf(settled.tale)) }
+        : null;
       update((p) => {
-        const next = { ...finishDuel(p, duel.opponent.id, won, t), xp: rank.to };
+        const next = {
+          ...finishDuel(settleStreak(p, won).profile, duel.opponent.id, won, t),
+          xp: rank.to,
+        };
         return prize ? grantBooster(next, prize.cards) : next;
       });
-      return { earned: t, prize, rank };
+      return { earned: t, prize, rank, tale };
     },
     [duel, profile, update, xp],
   );
@@ -145,8 +168,12 @@ export function SoulGame() {
         onSighting={(id) => update((p) => recordSighting(p, id))}
         bestiary={duel.bestiary}
         onForfeit={() =>
-          update((p) => ({ ...p, xp: afterDuel(p.xp ?? 0, false, duel.opponent.difficulty) }))
+          update((p) => ({
+            ...settleStreak(p, false).profile,
+            xp: afterDuel(p.xp ?? 0, false, duel.opponent.difficulty),
+          }))
         }
+        onTaleWin={(id) => update((p) => completeTale(p, id))}
         onExit={(booster) => {
           setDuel(null);
           setTab(booster ? "boostery" : "walka");
@@ -178,6 +205,7 @@ export function SoulGame() {
               label: "Pojedynek",
               content: (
                 <div className="flex flex-col gap-6">
+                  {waiting && <TaleWaiting onOpen={() => setReading(true)} />}
                   {!profile.tutorial && tutorialCard}
                   <OpponentPicker
                     beaten={profile.beaten}
@@ -226,6 +254,14 @@ export function SoulGame() {
       </div>
       {patron !== null && (
         <PatronDialog xp={xp} index={patron} onSelect={setPatron} onClose={() => setPatron(null)} />
+      )}
+      {reading && waiting && (
+        <LazyTaleBook
+          cardId={waiting}
+          streak={streakNeeded(TALE_ORDER.indexOf(waiting))}
+          onWin={() => update((p) => completeTale(p, waiting))}
+          onClose={() => setReading(false)}
+        />
       )}
       {paying && (
         <FeePayment

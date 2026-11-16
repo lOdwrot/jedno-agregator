@@ -75,6 +75,19 @@
   --color-river-light: #a9dcf5;
 }
 
+/* Scenes of the saints' tales in Walka o duszę (SVG fills). */
+@theme {
+  --color-tale-sky: #bfe3f5;
+  --color-tale-dawn: #f9d9a8;
+  --color-tale-night: #1d2550;
+  --color-tale-rock: #8f8577;
+  --color-tale-rock-dark: #5f574d;
+  --color-tale-earth: #9a6a3f;
+  --color-tale-wheat: #e8c15a;
+  --color-tale-snow: #f4f8fb;
+  --color-tale-robe: #7a5233;
+}
+
 /* Metals of the 3D coin toss in the duel (read by the canvas). */
 @theme static {
   --color-gold-100: #fff6cf;
