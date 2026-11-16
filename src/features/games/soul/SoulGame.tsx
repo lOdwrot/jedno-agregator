@@ -5,6 +5,7 @@ import {
   deckList,
   deckProblems,
   finishDuel,
+  finishTutorial,
   freshFlags,
   grantBooster,
   payFee,
@@ -30,6 +31,8 @@ import { PvpDuel } from "./pvp/PvpDuel";
 import { PvpLobby } from "./pvp/PvpLobby";
 import { preloadBoard } from "./board/loadBoard";
 import type { Session } from "./pvp/session";
+import { TutorialCard } from "./tutorial/TutorialCard";
+import { TutorialDuel } from "./tutorial/TutorialDuel";
 
 type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zasady";
 /** Where the hub scrolls after leaving a duel: the rank (new duel) or the menu tabs (boosters, multiplayer). */
@@ -46,6 +49,8 @@ export function SoulGame() {
     bestiary: Profile["bestiary"];
   } | null>(null);
   const [pvp, setPvp] = useState<Session | null>(null);
+  /** Key of the running tutorial duel (a new key = a fresh start). */
+  const [tutorial, setTutorial] = useState<number | null>(null);
   const [paying, setPaying] = useState<Opponent | null>(null);
   const [patron, setPatron] = useState<number | null>(null);
   const scrollTo = useRef<ScrollTarget | null>(null);
@@ -59,11 +64,11 @@ export function SoulGame() {
   // Back from a duel the page would stay scrolled where the fight button was — bring the rank
   // (result of the duel, next opponent below) or the boosters / multiplayer tab into view.
   useEffect(() => {
-    if (!scrollTo.current || duel || pvp) return;
+    if (!scrollTo.current || duel || pvp || tutorial) return;
     const el = (scrollTo.current === "rank" ? rankRef : tabsRef).current;
     scrollTo.current = null;
     el?.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
-  }, [duel, pvp, reduced]);
+  }, [duel, pvp, reduced, tutorial]);
 
   const startDuel = (opponent: Opponent, training = false) =>
     setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary });
@@ -87,6 +92,34 @@ export function SoulGame() {
     },
     [duel, profile, update, xp],
   );
+
+  const onTutorial = useCallback(
+    (won: boolean) => {
+      if (!won) return 0;
+      const { earned } = finishTutorial(profile);
+      update((p) => finishTutorial(p).profile);
+      return earned;
+    },
+    [profile, update],
+  );
+
+  const tutorialCard = (
+    <TutorialCard done={!!profile.tutorial} onStart={() => setTutorial(Date.now())} />
+  );
+
+  if (tutorial !== null)
+    return (
+      <TutorialDuel
+        key={tutorial}
+        onFinish={onTutorial}
+        onAgain={() => setTutorial(Date.now())}
+        onExit={() => {
+          setTutorial(null);
+          setTab("walka");
+          scrollTo.current = "rank";
+        }}
+      />
+    );
 
   if (pvp)
     return (
@@ -144,6 +177,7 @@ export function SoulGame() {
               label: "Pojedynek",
               content: (
                 <div className="flex flex-col gap-6">
+                  {!profile.tutorial && tutorialCard}
                   <OpponentPicker
                     beaten={profile.beaten}
                     talents={profile.talents}
@@ -157,6 +191,7 @@ export function SoulGame() {
                     onEditDeck={() => setTab("talia")}
                   />
                   <PrizeTable />
+                  {profile.tutorial && tutorialCard}
                 </div>
               ),
             },

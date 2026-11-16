@@ -143,3 +143,18 @@ describe("Walka o duszę — collection", () => {
     expect(profile.collection[keyOf("jp2", "stained")]).toBe(3);
   });
 });
+
+describe("Walka o duszę — tutorial reward", () => {
+  it("pays 150 talents only for the first finished tutorial", async () => {
+    const { finishTutorial, newProfile, TUTORIAL_REWARD } = await import("./profile");
+    const p = newProfile();
+    const first = finishTutorial(p);
+    expect(TUTORIAL_REWARD).toBe(150);
+    expect(first.earned).toBe(150);
+    expect(first.profile.talents).toBe(p.talents + 150);
+    expect(first.profile.tutorial).toBe(true);
+    const again = finishTutorial(first.profile);
+    expect(again.earned).toBe(0);
+    expect(again.profile).toBe(first.profile);
+  });
+});

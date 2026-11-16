@@ -15,6 +15,9 @@ import { HandDialog } from "./CardPreview";
 import { DuelBars, DuelTopBar } from "./DuelBars";
 import { DuelSidebar } from "./DuelSidebar";
 import { SearchDialog } from "./SearchDialog";
+import { CoachPanel } from "../tutorial/CoachPanel";
+import { useCoach, type TutorialScript } from "../tutorial/useCoach";
+import type { Action } from "../engine/actions";
 import { useDuelPlayer } from "./useDuelPlayer";
 
 interface Props {
@@ -34,6 +37,8 @@ interface Props {
   frozen?: boolean;
   exitLabel: string;
   onExit: () => void;
+  /** Tutorial: moves are limited to the current step of the guide. */
+  tutorial?: TutorialScript;
 }
 
 /** Full-screen duel: Pixi board in the middle, slim bars on top and bottom, no page scrolling. */
@@ -48,6 +53,7 @@ export function DuelView({
   exitLabel,
   onExit,
   frozen,
+  tutorial,
 }: Props) {
   const reduced = usePrefersReducedMotion();
   const root = useRef<HTMLElement>(null);
@@ -77,15 +83,25 @@ export function DuelView({
     setLesson(id);
     setLastLesson(id);
   }, []);
+  const coach = useCoach(tutorial);
   const player = useDuelPlayer(initial, {
     onOver,
-    onDemon: net ? undefined : onDemon,
+    onDemon: net || tutorial ? undefined : onDemon,
     ai: !net,
     pov,
+    aiMove: coach.aiMove,
+    aiPaused: coach.aiPaused,
   });
   const { live, view, busy, renderer } = player;
   const move = usePvpSync(net, player);
-  const act = frozen ? () => undefined : (move ?? player.act);
+  const allowed = coach.active ? (a: Action) => !coach.check(live, a) : undefined;
+  const coached = (a: Action) => {
+    if (busy) return;
+    const why = coach.check(live, a);
+    if (why) coach.reject(why);
+    else if (player.push(a)) coach.moved();
+  };
+  const act = frozen ? () => undefined : coach.active ? coached : (move ?? player.act);
 
   usePageScrollLock();
   // start the music (the duel starts from a click, so audio is allowed)
@@ -200,8 +216,9 @@ export function DuelView({
           </div>
         )}
         {notice}
+        {coach.active && <CoachPanel coach={coach} g={live} busy={busy} />}
       </div>
-      <DuelBars g={live} view={view} busy={busy} onAction={act} />
+      <DuelBars g={live} view={view} busy={busy} onAction={act} allowed={allowed} />
 
       <p role="status" aria-live="polite" className="sr-only">
         {view.log.at(-1)}
@@ -223,7 +240,12 @@ export function DuelView({
               showLesson={sel.zone === "opp"}
             />
             {sel.zone !== "place" && !busy && (
-              <CardActions g={live} sel={sel} onAction={(a) => (setSel(null), act(a))} />
+              <CardActions
+                g={live}
+                sel={sel}
+                allowed={allowed}
+                onAction={(a) => (setSel(null), act(a))}
+              />
             )}
           </div>
         )}

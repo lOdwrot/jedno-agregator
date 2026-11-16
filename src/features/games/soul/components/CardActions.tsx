@@ -181,10 +181,13 @@ export function CardActions({
   g,
   sel,
   onAction,
+  allowed = () => true,
 }: {
   g: Game;
   sel: Selection;
   onAction: (a: Action) => void;
+  /** Moves the tutorial lets through right now (others are shown disabled). */
+  allowed?: (a: Action) => boolean;
 }) {
   let opts: Opt[] = [];
   if (sel.zone === "hand") {
@@ -203,6 +206,7 @@ export function CardActions({
             key={i}
             variant={o.action.type === "attack" ? "solid" : "navy"}
             fullWidth
+            disabled={!allowed(o.action)}
             onClick={() => onAction(o.action!)}
           >
             {o.label}

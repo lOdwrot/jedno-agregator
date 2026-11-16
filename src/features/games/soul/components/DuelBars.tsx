@@ -109,11 +109,14 @@ export function DuelBars({
   view,
   busy,
   onAction,
+  allowed = () => true,
 }: {
   view: Game;
   g: Game;
   busy: boolean;
   onAction: (a: Action) => void;
+  /** Moves the tutorial lets through right now (others are shown disabled). */
+  allowed?: (a: Action) => boolean;
 }) {
   const a = g.players.me.active;
   const myTurn = g.phase === "main" && g.turn === "me" && !busy;
@@ -179,7 +182,11 @@ export function DuelBars({
                 <Button
                   key={`${atk.name}-${fuel}`}
                   size="sm"
-                  disabled={!!block || !myTurn}
+                  disabled={
+                    !!block ||
+                    !myTurn ||
+                    !allowed(fuel ? { type: "attack", index, fuel } : { type: "attack", index })
+                  }
                   title={block ?? undefined}
                   aria-label={
                     fuel
@@ -211,7 +218,7 @@ export function DuelBars({
         <Button
           size="sm"
           variant="outline"
-          disabled={!myTurn}
+          disabled={!myTurn || !allowed({ type: "endTurn" })}
           onClick={() => onAction({ type: "endTurn" })}
           className="shrink-0 border-white/40 text-white"
         >
