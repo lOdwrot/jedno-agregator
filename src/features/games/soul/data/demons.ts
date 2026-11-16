@@ -1,4 +1,5 @@
 import { ABYSS_CARDS } from "./abyss";
+import { RELAPSE_CARDS } from "./relapse";
 import { SLOTH_CARDS } from "./sloth";
 import type { CardDef } from "./types";
 
@@ -1006,5 +1007,11 @@ const BASE_DEMONS: CardDef[] = [
   },
 ];
 
-/** All demon cards; the court of sloth (`sloth.ts`) and the apocalyptic ones (`abyss.ts`) close the bestiary. */
-export const DEMON_CARDS: CardDef[] = [...BASE_DEMONS, ...SLOTH_CARDS, ...ABYSS_CARDS];
+/** All demon cards; the court of sloth (`sloth.ts`), the apocalyptic ones (`abyss.ts`) and the
+ *  energy recovery items of the top opponents (`relapse.ts`) close the bestiary. */
+export const DEMON_CARDS: CardDef[] = [
+  ...BASE_DEMONS,
+  ...SLOTH_CARDS,
+  ...ABYSS_CARDS,
+  ...RELAPSE_CARDS,
+];

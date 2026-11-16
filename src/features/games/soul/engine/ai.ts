@@ -177,6 +177,10 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
       case "disrupt":
         if (foe.hand.length >= 5 && me.hand.length <= 5) return play();
         break;
+      case "energyFromDiscard":
+        if (me.hand.filter((x) => getCard(x.cardId).kind === "energy").length === 0) return play();
+        break;
+      case "kindle":
       case "energyFromDeck": {
         const t = [...targets].sort((x, y) => energyNeed(g, pid, y) - energyNeed(g, pid, x))[0];
         if (t && energyNeed(g, pid, t) > 0) return play(t.uid);

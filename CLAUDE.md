@@ -145,6 +145,9 @@ Character faces show the weakness badge (`SŁABOŚĆ <emoji> ×2`) so it is read
 computer never gets free energy or other perks — difficulty comes only from its deck and play. The single exception is
 openly stated: Tron Bestii draws 2 cards a turn (`Opponent.extraDraw: 1` → `Game.aiExtraDraw`, badge on the opponent
 card, said in its letter). The AI skips its draw abilities when the deck gets low (`abilityWorthIt` in `engine/ai.ts`).
+Energy recovery items (`soul/data/relapse.ts`, `relapse.test.ts`), only in the decks of `otchlan` and `niepokonany` so the strongest
+demons don't run dry: Odgrzewany grzech (`kindle`: attach 1 Pokusa from the discard pile to a chosen demon, the manual attach stays free)
+and Nawrót starego nałogu (`energyFromDiscard`: 2 Pokusy from the discard pile to the hand).
 `zastepy` (Smocze Zastępy, "bardzo trudny") sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
 The top level is `niepokonany` (Tron Bestii, "niepokonany"): it plays the
 apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, Legion, Jeździec na rudym koniu — `energyOnce`, Duch tego świata — the `noWeakness`
