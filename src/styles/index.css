@@ -75,6 +75,18 @@
   --color-river-light: #a9dcf5;
 }
 
+/* Metals of the 3D coin toss in the duel (read by the canvas). */
+@theme static {
+  --color-gold-100: #fff6cf;
+  --color-gold-300: #f6d36a;
+  --color-gold-500: #dfa433;
+  --color-gold-700: #9c6514;
+  --color-silver-100: #f7f9fc;
+  --color-silver-300: #d5dbe4;
+  --color-silver-500: #9aa4b2;
+  --color-silver-700: #5d6776;
+}
+
 @layer base {
   html {
     color-scheme: light;

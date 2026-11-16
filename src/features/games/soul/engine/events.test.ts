@@ -3,7 +3,8 @@ import { deckList, newProfile } from "../collection/profile";
 import { OPPONENTS } from "../data/opponents";
 import { dispatch, dispatchFrames } from "./actions";
 import { aiAction } from "./ai";
-import { createGame, type DeckList, type Game } from "./state";
+import { type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -11,7 +12,7 @@ const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
 
 describe("animation frames", () => {
   it("records every step with a snapshot, ending in the returned state", () => {
-    let g: Game = createGame(deckList(newProfile()), ai, 5);
+    let g: Game = startedGame(deckList(newProfile()), ai, 5);
     const kinds = new Set<string>();
     for (let i = 0; i < 1500 && g.phase !== "over"; i++) {
       const who = g.phase === "promote" ? g.promote!.who : g.phase === "setup" ? "me" : g.turn;
@@ -43,14 +44,14 @@ describe("animation frames", () => {
   });
 
   it("an illegal move produces no frames and keeps the state", () => {
-    const g = createGame(deckList(newProfile()), ai, 1);
+    const g = startedGame(deckList(newProfile()), ai, 1);
     const res = dispatchFrames(g, { type: "attack", index: 0 });
     expect(res.state).toBe(g);
     expect(res.frames).toEqual([]);
   });
 
   it("plain dispatch still works without recording", () => {
-    const g = createGame(deckList(newProfile()), ai, 2);
+    const g = startedGame(deckList(newProfile()), ai, 2);
     const next = dispatch(g, aiAction(g, "me")!);
     expect(next.phase).toBe("main");
   });

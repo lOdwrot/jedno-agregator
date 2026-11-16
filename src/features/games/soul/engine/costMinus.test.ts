@@ -5,14 +5,15 @@ import { OPPONENTS } from "../data/opponents";
 import { attackBlock, dispatch } from "./actions";
 import { aiAction } from "./ai";
 import { attackCost } from "./combat";
-import { charDef, createGame, toInPlay, type DeckList, type Game } from "./state";
+import { charDef, toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
 );
 
 function myTurn(): Game {
-  let g = createGame(deckList(newProfile()), ai, 1);
+  let g = startedGame(deckList(newProfile()), ai, 1);
   g = dispatch(g, aiAction(g, "me")!);
   const next = structuredClone(g);
   next.turn = "me";

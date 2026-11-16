@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { deckList, newProfile } from "../collection/profile";
 import { dispatch } from "../engine/actions";
 import { aiAction } from "../engine/ai";
-import { createGame, type DeckList, type Game } from "../engine/state";
+import { type DeckList, type Game } from "../engine/state";
+import { startedGame } from "../engine/testGame";
 import { OPPONENTS, type Opponent } from "./opponents";
 
 function autoplay(g: Game, limit = 3000): Game {
@@ -25,7 +26,7 @@ function playerWinRate(o: Opponent, games: number): number {
   const deck = deckOf(o);
   let wins = 0;
   for (let s = 1; s <= games; s++) {
-    const g = autoplay(createGame(deckList(newProfile()), deck, s * 7919, o.extraDraw ?? 0));
+    const g = autoplay(startedGame(deckList(newProfile()), deck, s * 7919, o.extraDraw ?? 0));
     if (g.winner === "me") wins++;
   }
   return wins / games;

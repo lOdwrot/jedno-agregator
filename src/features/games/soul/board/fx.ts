@@ -2,6 +2,7 @@
 import { Container, Graphics, type Ticker } from "pixi.js";
 import { text } from "./CardSprite";
 import { FONT_DISPLAY, palette } from "./palette";
+import { tossCoin, type TossOpts } from "./coinToss";
 import { ease, type Tweener } from "./tween";
 
 interface Particle {
@@ -231,39 +232,9 @@ export class Fx {
     t.destroy();
   }
 
-  /** Spinning coin in the middle of the table. */
-  async coin(x: number, y: number, heads: boolean) {
-    const p = palette();
-    const c = new Container();
-    const face = new Graphics()
-      .circle(0, 0, 40)
-      .fill(p["logo-yellow"])
-      .circle(0, 0, 40)
-      .stroke({ width: 5, color: p["logo-orange"] });
-    const t = text("✝", {
-      fontFamily: FONT_DISPLAY,
-      fontSize: 36,
-      fontWeight: "800",
-      fill: p.navy,
-    });
-    t.anchor.set(0.5);
-    c.addChild(face, t);
-    c.position.set(x, y);
-    this.layer.addChild(c);
-    const spin = { a: 0 };
-    const upd = () => {
-      c.scale.x = Math.cos(spin.a);
-      c.y = y - Math.sin((spin.a / (Math.PI * 8)) * Math.PI) * 90;
-      t.text = Math.cos(spin.a) >= 0 ? "✝" : "★";
-    };
-    const iv = setInterval(upd, 16);
-    await this.tw.to(spin, { a: Math.PI * 8 + (heads ? 0 : Math.PI) }, 900, ease.out);
-    clearInterval(iv);
-    upd();
-    c.scale.x = 1;
-    t.text = heads ? "✝" : "★";
-    await this.float(x, y - 70, heads ? "Orzeł!" : "Reszka", heads ? p["logo-yellow"] : p.line, 30);
-    c.destroy({ children: true });
+  /** 3D coin toss in the middle of the table (see `coinToss.ts`). */
+  coin(x: number, y: number, heads: boolean, o?: TossOpts) {
+    return tossCoin(this, this.tw, x, y, heads, o);
   }
 
   /** Whole-screen tinted flash. */

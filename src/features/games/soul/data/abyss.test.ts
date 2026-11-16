@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { deckList, newProfile } from "../collection/profile";
-import { createGame, type DeckList } from "../engine/state";
+import { type DeckList } from "../engine/state";
+import { startedGame } from "../engine/testGame";
 import { ABYSS_CARDS } from "./abyss";
 import { ABYSS_BASICS } from "./abyssBasics";
 import { DECK_SIZE, getCard, isBasic, isCharacter } from "./cards";
@@ -73,7 +74,7 @@ describe("Niepokonany (Tron Bestii)", () => {
   });
 
   it("starts without energy (no hidden handicap) on a stained (stronger) active", () => {
-    const g = createGame(deckList(newProfile()), deck(), 11, o.extraDraw);
+    const g = startedGame(deckList(newProfile()), deck(), 11, o.extraDraw);
     const a = g.players.ai.active!;
     expect(a.energy).toBe(0);
     expect(a.finish).toBe("stained");
@@ -86,7 +87,7 @@ describe("Duch tego świata — weakness off, even from the bench", () => {
   it("cancels the weakness of every demon while it is in play", async () => {
     const { toInPlay } = await import("../engine/state");
     const { applyDefense } = await import("../engine/combat");
-    const g = createGame(deckList(newProfile()), deck(), 3, o.extraDraw);
+    const g = startedGame(deckList(newProfile()), deck(), 3, o.extraDraw);
     const bestia = toInPlay({ uid: 9001, cardId: "bestia", finish: "plain" }, 0); // weak to modlitwa
     const prayer = toInPlay({ uid: 9002, cardId: "scholanka", finish: "plain" }, 0); // modlitwa
     g.players.ai.active = bestia;

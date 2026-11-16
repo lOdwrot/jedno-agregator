@@ -5,7 +5,8 @@ import { OPPONENTS } from "../data/opponents";
 import { dispatch } from "./actions";
 import { aiAction } from "./ai";
 import { canPlaySupport } from "./support";
-import { createGame, toInPlay, type DeckList, type Game } from "./state";
+import { toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const oppDeck = (i: number): DeckList =>
   Object.entries(OPPONENTS[i]!.deck).flatMap(([cardId, n]) =>
@@ -14,7 +15,7 @@ const oppDeck = (i: number): DeckList =>
 
 /** The player's turn 3 with a basic on the bench. */
 function myTurn(seed = 1): Game {
-  let g = createGame(deckList(newProfile()), oppDeck(2), seed);
+  let g = startedGame(deckList(newProfile()), oppDeck(2), seed);
   g = dispatch(g, aiAction(g, "me")!);
   const n = structuredClone(g);
   n.turn = "me";
@@ -83,7 +84,7 @@ describe("50-card rules", () => {
 
   it("no opponent starts with a handicap; only Tron Bestii openly draws 2 cards a turn", () => {
     for (const o of OPPONENTS) {
-      const g = createGame(deckList(newProfile()), oppDeck(OPPONENTS.indexOf(o)), 5, o.extraDraw);
+      const g = startedGame(deckList(newProfile()), oppDeck(OPPONENTS.indexOf(o)), 5, o.extraDraw);
       expect(g.players.ai.active!.energy, o.id).toBe(0);
       expect(g.players.ai.deck.length + g.players.ai.hand.length).toBe(50 - 4 - inPlayCount(g));
       expect(o.extraDraw ?? 0, o.id).toBe(o.id === "niepokonany" ? 1 : 0);

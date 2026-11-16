@@ -5,7 +5,8 @@ import { OPPONENTS } from "../data/opponents";
 import { dispatch } from "./actions";
 import { aiAction } from "./ai";
 import { resolveKOs } from "./combat";
-import { createGame, hpLeft, maxHp, toInPlay, type DeckList, type Game } from "./state";
+import { hpLeft, maxHp, toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -16,7 +17,7 @@ const card = (cardId: string) => toInPlay({ uid: uid++, cardId, finish: "plain" 
 
 /** A table with Popiełuszko active and the given cards on my bench. */
 function table(...bench: string[]): Game {
-  const g = createGame(deckList(newProfile()), ai, 1);
+  const g = startedGame(deckList(newProfile()), ai, 1);
   g.place = null;
   g.players.me.active = card("popieluszko");
   g.players.me.bench = bench.map(card);
@@ -63,7 +64,7 @@ describe("Bł. ks. Jerzy Popiełuszko — Solidarność (blessedHp)", () => {
   });
 
   it("falls at once when a place blocking abilities is played — the rival takes a soul", () => {
-    let g = createGame(deckList(newProfile()), ai, 1);
+    let g = startedGame(deckList(newProfile()), ai, 1);
     g = dispatch(g, aiAction(g, "me")!);
     g = structuredClone(g);
     Object.assign(g, { turn: "me", turnNo: 3, phase: "main", place: null });

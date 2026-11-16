@@ -4,7 +4,8 @@ import { OPPONENTS } from "../data/opponents";
 import { canUseAbility } from "./abilities";
 import { dispatch } from "./actions";
 import { aiAction } from "./ai";
-import { createGame, toInPlay, type DeckList, type Game } from "./state";
+import { toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -12,7 +13,7 @@ const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
 
 /** A game on the player's turn (turn 3 so everything is allowed). */
 function myTurn(seed = 1): Game {
-  let g = createGame(deckList(newProfile()), ai, seed);
+  let g = startedGame(deckList(newProfile()), ai, seed);
   g = dispatch(g, aiAction(g, "me")!);
   const next = structuredClone(g);
   next.turn = "me";

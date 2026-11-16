@@ -1,13 +1,5 @@
 /** Game state of a single duel + small pure helpers shared by the engine modules. */
-import {
-  BENCH_SIZE,
-  getCard,
-  HAND_START,
-  isBasic,
-  isBlessed,
-  isCharacter,
-  SOULS_TO_WIN,
-} from "../data/cards";
+import { getCard, HAND_START, isBasic, isBlessed, isCharacter, SOULS_TO_WIN } from "../data/cards";
 import type { CharacterDef, Finish, PlaceRule, Side, Status, SupportDef } from "../data/types";
 import { FINISH_BONUS } from "../data/types";
 import { emit } from "./events";
@@ -50,7 +42,10 @@ export interface Game {
   players: Record<PlayerId, PlayerState>;
   turn: PlayerId;
   turnNo: number;
-  phase: "setup" | "main" | "promote" | "over";
+  /** "opening": hands are dealt, each player may redraw once, then the coin decides who goes first. */
+  phase: "opening" | "setup" | "main" | "promote" | "over";
+  /** Opening hand decisions (phase "opening"): who already kept the hand, who used the one redraw. */
+  opening: { ready: Record<PlayerId, boolean>; redrawn: Record<PlayerId, boolean> } | null;
   /** After the pick: end the turn, start the next one, or go on with the current turn (mid-turn knock-out). */
   promote: { who: PlayerId; then: "endTurn" | "startNext" | "continue" } | null;
   flags: { energy: boolean; supporter: boolean; retreated: boolean };
@@ -200,15 +195,30 @@ function makePlayer(g: Game, side: Side, list: DeckList): PlayerState {
     bench: [],
     souls: 0,
   };
-  // mulligan: reshuffle until the opening hand has a basic character
+  dealHand(g, p);
+  p.prizes = p.deck.splice(0, SOULS_TO_WIN);
+  return p;
+}
+
+const basicCard = (c: CardInst) => isBasic(getCard(c.cardId));
+
+/**
+ * Shuffles the hand back and deals a new one — always with a basic character for the active spot:
+ * reshuffles until one shows up and, as a last resort, swaps one in from the deck or the prizes.
+ */
+export function dealHand(g: Game, p: PlayerState) {
   for (let tries = 0; tries < 50; tries++) {
     p.deck.push(...p.hand.splice(0));
     shuffle(g, p.deck);
     p.hand = p.deck.splice(0, HAND_START);
-    if (p.hand.some((c) => isBasic(getCard(c.cardId)))) break;
+    if (p.hand.some(basicCard)) return;
   }
-  p.prizes = p.deck.splice(0, SOULS_TO_WIN);
-  return p;
+  for (const pile of [p.deck, p.prizes]) {
+    const i = pile.findIndex(basicCard);
+    if (i < 0 || !p.hand.length) continue;
+    [pile[i], p.hand[0]] = [p.hand[0]!, pile[i]!];
+    return;
+  }
 }
 
 /** Best basic in hand by HP (used for AI setup and auto-promotion). */
@@ -253,7 +263,8 @@ export function createGame(
     players: {} as Game["players"],
     turn: "me",
     turnNo: 0,
-    phase: "setup",
+    phase: "opening",
+    opening: { ready: { me: false, ai: !pvp }, redrawn: { me: false, ai: false } },
     promote: null,
     flags: { energy: false, supporter: false, retreated: false },
     place: null,
@@ -272,27 +283,10 @@ export function createGame(
   if (pvp) g.pvp = { names: { ...pvp.names }, log: [], reason: "" };
   g.players.me = makePlayer(g, "parish", me);
   g.players.ai = makePlayer(g, pvp ? "parish" : "demons", ai);
-  if (pvp) {
-    // two people: each one picks the first character on their own
-    g.first = coin(g) ? "me" : "ai";
-    say(g, g.first, "Rzut monetą: zaczynasz Ty!", "", (n) => `Rzut monetą: zaczyna ${n}.`);
-    log(g, "Wybierz postać, która stanie do walki jako pierwsza.");
-    return g;
-  }
-  // the computer sets up right away: strongest basic active, up to two more on the pew (bench)
-  const p = g.players.ai;
-  const act = bestBasic(p.hand)!;
-  p.hand = p.hand.filter((c) => c !== act);
-  p.active = toInPlay(act, 0);
-  for (let i = 0; i < 2 && p.bench.length < BENCH_SIZE; i++) {
-    const b = bestBenchBasic(p.hand);
-    if (!b) break;
-    p.hand = p.hand.filter((c) => c !== b);
-    p.bench.push(toInPlay(b, 0));
-  }
-  g.first = coin(g) ? "me" : "ai";
-  log(g, g.first === "me" ? "Rzut monetą: zaczynasz Ty!" : "Rzut monetą: zaczynają pomioty.");
-  log(g, "Wybierz postać, która stanie do walki jako pierwsza.");
+  log(
+    g,
+    "Twoja ręka startowa. Możesz raz przetasować talię i dobrać nowe karty — potem rzut monetą.",
+  );
   return g;
 }
 

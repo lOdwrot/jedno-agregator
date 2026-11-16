@@ -190,7 +190,8 @@ function pickSupport(g: Game, pid: PlayerId): Action | null {
           .sort((x, y) => charDef(y).souls - charDef(x).souls || hpLeft(g, x) - hpLeft(g, y))[0];
         if (ko) return play(ko.uid);
         const t = [...targets].sort((x, y) => hpLeft(g, x) - hpLeft(g, y))[0];
-        if (t && hpLeft(g, t) < hpLeft(g, foe.active) && hpLeft(g, t) <= 60 && !e.coin) return play(t.uid);
+        if (t && hpLeft(g, t) < hpLeft(g, foe.active) && hpLeft(g, t) <= 60 && !e.coin)
+          return play(t.uid);
         if (t && e.coin && hpLeft(g, t) <= 60) return play(t.uid);
         break;
       }
@@ -234,6 +235,7 @@ export function aiAction(g: Game, pid: PlayerId): Action | null {
     const b = [...me.bench].sort((x, y) => score(y) - score(x))[0];
     return b ? { type: "promote", uid: b.uid } : null;
   }
+  if (g.phase === "opening") return g.opening?.ready[pid] ? null : { type: "ready", pid };
   if (g.phase === "setup") {
     const b = (pid === "me" || g.pvp) && !me.active ? bestBasic(me.hand) : undefined;
     return b ? { type: "chooseActive", uid: b.uid } : null;

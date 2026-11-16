@@ -1,5 +1,13 @@
 /** Player's collection, deck, currency ("talenty") and boosters — pure functions + storage. */
-import { DECK_SIZE, ENERGY_ID, getCard, isBasic, isCharacter, MAX_COPIES } from "../data/cards";
+import {
+  DECK_SIZE,
+  ENERGY_ID,
+  getCard,
+  isBasic,
+  isCharacter,
+  MAX_COPIES,
+  MIN_BASICS,
+} from "../data/cards";
 import type { Finish, Rarity } from "../data/types";
 import type { DeckList } from "../engine/state";
 import type { PrizeChance } from "../data/opponents";
@@ -154,8 +162,9 @@ export function deckProblems(p: Profile): string[] {
   const out: string[] = [];
   if (deckSize(p) !== DECK_SIZE)
     out.push(`Talia musi mieć dokładnie ${DECK_SIZE} kart (teraz: ${deckSize(p)}).`);
-  if (!p.deck.some((k) => isBasic(getCard(parseKey(k).cardId))))
-    out.push("Talia potrzebuje co najmniej jednej postaci podstawowej.");
+  const basics = p.deck.filter((k) => isBasic(getCard(parseKey(k).cardId))).length;
+  if (basics < MIN_BASICS)
+    out.push(`Talia potrzebuje co najmniej ${MIN_BASICS} postaci podstawowych (teraz: ${basics}).`);
   if (p.energy < 4) out.push("Dodaj co najmniej 4 Łaski — bez nich postacie nie zaatakują.");
   return out;
 }

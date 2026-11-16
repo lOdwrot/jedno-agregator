@@ -7,7 +7,7 @@ const RULES: [string, string][] = [
   ],
   [
     "Start",
-    "Talia ma 50 kart. Dobierasz 7, a 4 karty odkładasz jako dusze. Wybierasz postać podstawową do walki. Monetą losuje się, kto zaczyna — w pierwszej turze gry nie można atakować.",
+    "Talia ma 50 kart, w tym co najmniej 5 postaci podstawowych. Dobierasz 7 (zawsze z postacią na start), a 4 karty odkładasz jako dusze. Raz możesz przetasować talię i dobrać nową rękę. Potem rzut monetą: orzeł — idziesz pierwszy i pierwszy się rozstawiasz, reszka — drugi. Wybierasz postać podstawową do walki — w pierwszej turze gry nie można atakować.",
   ],
   [
     "Twoja tura",

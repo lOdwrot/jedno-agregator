@@ -4,7 +4,8 @@ import { OPPONENTS } from "../data/opponents";
 import { dispatch } from "./actions";
 import { aiAction, bestAttack } from "./ai";
 import { fuelMax, previewDamage } from "./combat";
-import { charDef, createGame, toInPlay, type DeckList, type Game } from "./state";
+import { charDef, toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -12,7 +13,7 @@ const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
 
 /** The player's turn 3 with `cardId` active (energy attached) against a fresh demon. */
 function duel(cardId: string, energy: number, handEnergy: number): Game {
-  let g = createGame(deckList(newProfile()), ai, 4);
+  let g = startedGame(deckList(newProfile()), ai, 4);
   g = dispatch(g, aiAction(g, "me")!);
   const n = structuredClone(g);
   n.turn = "me";

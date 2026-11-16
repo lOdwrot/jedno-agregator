@@ -3,7 +3,7 @@ import { deckList, newProfile } from "../collection/profile";
 import { OPPONENTS } from "../data/opponents";
 import { dispatch } from "../engine/actions";
 import { aiAction } from "../engine/ai";
-import { createGame } from "../engine/state";
+import { startedGame } from "../engine/testGame";
 import { dropsFor } from "./dnd";
 import { anchors, computeSlots, slotRect } from "./layout";
 
@@ -17,7 +17,7 @@ describe("board layout", () => {
     [768, 900],
     [1440, 800],
   ])("keeps the table cards inside a %ix%i board", (w, h) => {
-    let g = createGame(deckList(newProfile()), ai, 9);
+    let g = startedGame(deckList(newProfile()), ai, 9);
     for (let i = 0; i < 40 && g.phase !== "over"; i++) {
       const who = g.phase === "setup" ? "me" : g.phase === "promote" ? g.promote!.who : g.turn;
       g = dispatch(g, aiAction(g, who) ?? { type: "endTurn" });
@@ -37,7 +37,7 @@ describe("board layout", () => {
   });
 
   it("offers drop targets only for playable cards", () => {
-    const g = createGame(deckList(newProfile()), ai, 4);
+    const g = startedGame(deckList(newProfile()), ai, 4);
     for (const c of g.players.me.hand) {
       const drops = dropsFor(g, c);
       expect(drops.every((d) => d.action.type === "chooseActive")).toBe(true);

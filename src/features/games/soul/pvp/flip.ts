@@ -15,6 +15,10 @@ export function flipGame(g: Game): Game {
     turn: other(g.turn),
     first: other(g.first),
     winner: g.winner && other(g.winner),
+    opening: g.opening && {
+      ready: swap(g.opening.ready),
+      redrawn: swap(g.opening.redrawn),
+    },
     promote: g.promote && { ...g.promote, who: other(g.promote.who) },
     place: g.place && { ...g.place, owner: other(g.place.owner) },
     peek: g.peek && { ...g.peek, pid: other(g.peek.pid) },

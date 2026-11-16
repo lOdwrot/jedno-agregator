@@ -72,10 +72,19 @@ describe("multiplayer", () => {
     // each one sees their own 7 cards and only the backs of the other hand
     expect(hostDuel.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(7);
     expect(guestDuel.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(7);
-    expect(guestDuel.getByText(/postać podstawową z ręki/)).toBeInTheDocument();
+    // both keep their hands; the coin decides who sets up first
+    await userEvent.click(guestDuel.getByRole("button", { name: /Gram tymi kartami/ }));
+    expect(await guestDuel.findByText(/Czekaj, aż rywal zdecyduje/)).toBeInTheDocument();
+    await userEvent.click(hostDuel.getByRole("button", { name: /Gram tymi kartami/ }));
+    expect(
+      await hostDuel.findByText(/Idziesz (pierwszy|drugi)|Rywal wygrał rzut/),
+    ).toBeInTheDocument();
+    const first = hostDuel.queryByText(/Idziesz pierwszy/) ? hostDuel : guestDuel;
+    const second = first === hostDuel ? guestDuel : hostDuel;
+    expect(await second.findByText(/Rywal wygrał rzut monetą/)).toBeInTheDocument();
 
-    // the guest picks a first character: tap a basic card → "Wystaw do walki"
-    for (const b of guestDuel.getAllByRole("button", { name: /Twoja karta w ręce/ })) {
+    // the winner of the toss picks a first character: tap a basic card → "Wystaw do walki"
+    for (const b of first.getAllByRole("button", { name: /Twoja karta w ręce/ })) {
       await userEvent.click(b);
       const put = screen.queryByRole("button", { name: "Wystaw do walki" });
       if (put) {
@@ -84,9 +93,8 @@ describe("multiplayer", () => {
       }
       await userEvent.keyboard("{Escape}");
     }
-    expect(await guestDuel.findByText("Czekaj, aż rywal wystawi postać…")).toBeInTheDocument();
-    expect(
-      await hostDuel.findByRole("button", { name: /Karta rywala aktywna/ }),
-    ).toBeInTheDocument();
+    expect(await first.findByText("Czekaj, aż rywal wystawi postać…")).toBeInTheDocument();
+    expect(await second.findByRole("button", { name: /Karta rywala aktywna/ })).toBeInTheDocument();
+    expect(await second.findByText(/Idziesz drugi — wystaw postać/)).toBeInTheDocument();
   });
 });

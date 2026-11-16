@@ -1,12 +1,12 @@
 /** Messages exchanged by the two browsers of a two-player duel (WebRTC data channel, JSON). */
-import { DECK_SIZE, ENERGY_ID, isBasic, MAX_COPIES } from "../data/cards";
+import { DECK_SIZE, ENERGY_ID, isBasic, MAX_COPIES, MIN_BASICS } from "../data/cards";
 import { PARISH_CARDS } from "../data/parish";
 import { FINISH_BONUS } from "../data/types";
 import type { Action } from "../engine/actions";
 import type { DeckList, Game } from "../engine/state";
 
 /** Bump when the engine or the messages change — older clients are turned away politely. */
-export const PROTOCOL = 8;
+export const PROTOCOL = 9;
 
 export type Msg =
   /** guest → host, right after connecting */
@@ -50,24 +50,24 @@ export function asMsg(x: unknown): Msg | null {
 
 const PARISH = new Map(PARISH_CARDS.map((c) => [c.id, c]));
 
-/** A deck sent by the guest — same rules as the deck builder (50 cards, ≤3 copies, a basic). */
+/** A deck sent by the guest — same rules as the deck builder (50 cards, ≤3 copies, ≥5 basics). */
 export function validDeck(deck: unknown): deck is DeckList {
   if (!Array.isArray(deck) || deck.length !== DECK_SIZE) return false;
   const copies = new Map<string, number>();
-  let basic = false;
+  let basics = 0;
   for (const c of deck as unknown[]) {
     if (!c || typeof c !== "object") return false;
     const { cardId, finish } = c as { cardId?: unknown; finish?: unknown };
     if (typeof cardId !== "string" || typeof finish !== "string") return false;
     const def = PARISH.get(cardId);
     if (!def || !(finish in FINISH_BONUS)) return false;
-    if (isBasic(def)) basic = true;
+    if (isBasic(def)) basics++;
     if (cardId === ENERGY_ID.parish) continue;
     const n = (copies.get(cardId) ?? 0) + 1;
     if (n > MAX_COPIES) return false;
     copies.set(cardId, n);
   }
-  return basic;
+  return basics >= MIN_BASICS;
 }
 
 export const cleanName = (s: unknown, fallback: string) =>

@@ -4,7 +4,9 @@ import type { Opponent } from "../data/opponents";
 import type { AudioPrefs } from "../audio/context";
 import { attackBlock, benchEnergyTargets, type Action } from "../engine/actions";
 import { attackCost, fuelMax, previewDamage } from "../engine/combat";
+import { setupTurn } from "../engine/opening";
 import { charDef, nameOf, type Game } from "../engine/state";
+import { OpeningBar } from "./OpeningBar";
 
 const btn =
   "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-2 text-lg hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-logo-yellow";
@@ -84,9 +86,12 @@ export function DuelTopBar({
 }
 
 function hint(g: Game): string {
+  if (g.phase === "opening") return "Rzut monetą…";
   if (g.phase === "setup" && g.players.me.active) return "Czekaj, aż rywal wystawi postać…";
+  if (g.phase === "setup" && setupTurn(g) !== "me")
+    return "Rywal wygrał rzut monetą i rozstawia się pierwszy…";
   if (g.phase === "setup")
-    return "Przeciągnij (albo stuknij) postać podstawową z ręki, żeby stanęła do walki.";
+    return `${g.first === "me" ? "Idziesz pierwszy" : "Idziesz drugi"} — wystaw postać podstawową z ręki do walki.`;
   if (g.phase === "promote" && g.promote?.who === "me")
     return "Twoja postać zeszła z pola — stuknij postać na ławce.";
   if (g.phase === "over") return "Koniec pojedynku.";
@@ -118,6 +123,7 @@ export function DuelBars({
   const targets =
     pickAtk && !attackBlock(g, "me", pickAtk) ? benchEnergyTargets(g, "me", pickAtk) : [];
   if (pick !== null && !targets.length) setPick(null);
+  if (g.phase === "opening") return <OpeningBar g={g} busy={busy} onAction={onAction} />;
   if (pickAtk && targets.length)
     return (
       <div className="border-t border-white/10 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">

@@ -9,6 +9,7 @@ import {
   supportTargets,
   targetKind,
 } from "../engine/support";
+import { setupTurn } from "../engine/opening";
 import { inPlay, type CardInst, type Game } from "../engine/state";
 
 export type DropTarget = { kind: "bench" } | { kind: "board" } | { kind: "card"; uid: number };
@@ -21,7 +22,7 @@ export interface Drop {
 export function dropsFor(g: Game, c: CardInst): Drop[] {
   const d = getCard(c.cardId);
   if (g.phase === "setup")
-    return isBasic(d) && !g.players.me.active
+    return isBasic(d) && setupTurn(g) === "me"
       ? [{ target: { kind: "board" }, action: { type: "chooseActive", uid: c.uid } }]
       : [];
   if (g.phase !== "main" || g.turn !== "me") return [];

@@ -5,7 +5,8 @@ import { OPPONENTS } from "../data/opponents";
 import type { CharacterDef } from "../data/types";
 import { benchEnergyTargets, dispatch } from "./actions";
 import { aiAction } from "./ai";
-import { createGame, toInPlay, type DeckList, type Game } from "./state";
+import { toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[2]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -15,7 +16,7 @@ const atk = (getCard(ATTACKER) as CharacterDef).attacks[0]!;
 
 /** My turn 3, an active with a "searchEnergy" attack ready, two benched characters. */
 function setup(): Game {
-  let g = createGame(deckList(newProfile()), ai, 3);
+  let g = startedGame(deckList(newProfile()), ai, 3);
   g = dispatch(g, aiAction(g, "me")!);
   const n = structuredClone(g);
   n.turn = "me";

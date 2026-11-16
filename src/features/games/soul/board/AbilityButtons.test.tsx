@@ -2,7 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { deckList, newProfile } from "../collection/profile";
 import { OPPONENTS } from "../data/opponents";
-import { createGame, toInPlay, type DeckList } from "../engine/state";
+import { toInPlay, type DeckList } from "../engine/state";
+import { startedGame } from "../engine/testGame";
 import { AbilityButtons } from "./AbilityButtons";
 
 const opp: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
@@ -10,7 +11,7 @@ const opp: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =
 );
 
 function game() {
-  const g = createGame(deckList(newProfile()), opp, 2);
+  const g = startedGame(deckList(newProfile()), opp, 2);
   g.phase = "main";
   g.turn = "me";
   g.players.me.active = toInPlay({ uid: 900, cardId: "ministrant", finish: "plain" }, 0);

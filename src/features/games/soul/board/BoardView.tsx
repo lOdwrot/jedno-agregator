@@ -39,7 +39,9 @@ function label(g: Game, s: Slot): string {
   const c = play ?? [...p.hand, ...p.discard].find((x) => x.uid === s.key);
   if (!c) return "Karta";
   const who = s.pid === "me" ? "Twoja karta" : g.pvp ? "Karta rywala" : "Pomiot";
-  const hp = play ? `, wytrwałość ${hpLeft(g, play)} z ${maxHp(g, play)}, energia ${play.energy}` : "";
+  const hp = play
+    ? `, wytrwałość ${hpLeft(g, play)} z ${maxHp(g, play)}, energia ${play.energy}`
+    : "";
   return `${getCard(c.cardId).name} — ${who} ${ZONE_LABEL[s.zone]}${hp}`;
 }
 

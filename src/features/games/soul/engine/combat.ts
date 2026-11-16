@@ -75,7 +75,6 @@ export function bonusDamage(g: Game, pid: PlayerId, attacker: InPlay): number {
   return ab + (placeAura(g, pid)?.attackBonus ?? 0) + FINISH_BONUS[attacker.finish].damage;
 }
 
-
 /** Whether the defender's weakness applies to this attacker (places and `noWeakness` abilities —
  *  also from the bench — may switch weakness off). */
 export function isWeak(g: Game, attacker: InPlay, defender: InPlay): boolean {
@@ -185,7 +184,7 @@ function knockOut(g: Game, owner: PlayerId, c: InPlay) {
 export function resolveKOs(g: Game): PlayerId | null {
   for (const pid of ["me", "ai"] as const)
     // Repeat: a knock-out can lower another character's max HP (`blessedHp`).
-    for (let found = true; found; ) {
+    for (let found = true; found;) {
       found = false;
       for (const c of inPlay(g.players[pid]))
         if (c.damage >= maxHp(g, c)) {

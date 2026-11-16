@@ -29,29 +29,39 @@ function target(g: Game): SyncTarget & { g: Game } {
 }
 
 describe("two-player engine", () => {
-  it("lets both people pick their first character, then starts", () => {
+  it("both keep (or redraw) the hand, then the coin winner picks first", () => {
     let g = newGame();
-    expect(g.players.ai.active).toBeNull();
+    expect(g.phase).toBe("opening");
     expect(g.players.ai.side).toBe("parish");
-    const pick = (pid: "me" | "ai") => aiAction(g, pid)!;
-    const a = pick("ai");
-    expect(actorOf(g, a)).toBe("ai");
-    g = dispatch(g, a);
+    expect(actorOf(g, { type: "redraw", pid: "ai" })).toBe("ai");
+    g = dispatch(g, { type: "redraw", pid: "ai" });
+    expect(g.players.ai.hand).toHaveLength(7);
+    g = dispatch(g, { type: "ready", pid: "ai" });
+    expect(g.phase).toBe("opening");
+    g = dispatch(g, { type: "ready", pid: "me" });
     expect(g.phase).toBe("setup");
-    // the same seat cannot pick twice
-    expect(aiAction(g, "ai")).toBeNull();
-    g = dispatch(g, pick("me"));
+    const second = g.first === "me" ? "ai" : "me";
+    // the second player waits for the winner of the toss
+    expect(aiAction(g, second)).not.toBeNull();
+    expect(actorOf(g, aiAction(g, second)!)).toBeNull();
+    g = dispatch(g, aiAction(g, g.first)!);
+    expect(g.phase).toBe("setup");
+    expect(aiAction(g, g.first)).toBeNull();
+    g = dispatch(g, aiAction(g, second)!);
     expect(g.phase).toBe("main");
     expect(g.turn).toBe(g.first);
   });
 
   it("flips the game for the guest (and back)", () => {
-    const g = dispatch(newGame(), aiAction(newGame(), "me")!);
+    let g = dispatch(newGame(), { type: "ready", pid: "me" });
+    g = dispatch(g, { type: "ready", pid: "ai" });
+    g = dispatch(g, aiAction(g, g.first)!);
     const f = flipGame(g);
     expect(f.players.me).toBe(g.players.ai);
     expect(f.pvp?.names.me).toBe("Bartek");
     expect(f.log).toEqual(g.pvp?.log);
-    expect(f.log.join(" ")).toContain("Ania wystawia do walki");
+    const name = g.first === "me" ? "Ania" : "Bartek";
+    expect((g.first === "me" ? f : g).log.join(" ")).toContain(`${name} wystawia do walki`);
     expect(flipGame(f)).toEqual(g);
   });
 

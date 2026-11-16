@@ -82,7 +82,14 @@ state transitions in `use*Reactions` hooks; everything decorative is skipped und
 accessible and handles drag & drop.
 Trainer rules: items never just draw N cards (drawing is for supporters); Różaniec/Powiadomienie are Trekking
 Shoes-like `peek` cards — they set `g.peek` and every move except `{ type: "peek", keep }` is rejected until it is answered.
-Decks have 50 cards (`DECK_SIZE`); the discard pile is never reshuffled — a player who must draw at the start of
+**Opening** (`engine/opening.ts`, phase `"opening"`, `g.opening`): every hand is dealt with a basic character (`dealHand` reshuffles,
+last resort swaps one in from the deck/prizes); each player may `{ type: "redraw" }` once, then `{ type: "ready" }`. When both are
+ready the coin is thrown (`opening` event: big 3D toss + "Idziesz pierwszy/drugi" banner) — the winner goes first AND sets up first
+(`setupTurn`; solo: the computer sets up right after the toss if it won, otherwise after the player). Opening actions carry `pid`
+(filled in by `DuelSync.move`). Tests start past the opening with `startedGame` (`engine/testGame.ts`). The coin is drawn in
+`board/coin3d.ts` (projected faces + reeded edge, colours `gold-*`/`silver-*` in a `@theme static` block), tossed in `board/coinToss.ts`
+with `audio/coinSfx.ts` + `audio/haptics.ts` (`navigator.vibrate`, off together with the sound effects).
+Decks have 50 cards (`DECK_SIZE`) with at least 5 basic characters (`MIN_BASICS`, deck builder + PvP `validDeck`); the discard pile is never reshuffled — a player who must draw at the start of
 their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Algorytm, like Ultra Ball) set `g.search`
 and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
 `recycle` take cards back from the discard pile. `searchEnergy` attacks take an optional `target` (benched uid) on the

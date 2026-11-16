@@ -30,7 +30,8 @@ export async function hostHandshake(link: Link, name: string, deck: DeckList): P
   };
   if (hello.v !== PROTOCOL)
     throw refuse("Rywal ma inną wersję gry — odświeżcie oboje stronę i spróbujcie ponownie.");
-  if (!validDeck(hello.deck)) throw refuse("Talia rywala nie spełnia zasad (50 kart, postać).");
+  if (!validDeck(hello.deck))
+    throw refuse("Talia rywala nie spełnia zasad (50 kart, co najmniej 5 postaci podstawowych).");
   const names = { me: cleanName(name, "Gospodarz"), ai: cleanName(hello.name, "Gość") };
   const decks = { me: deck, ai: hello.deck };
   const game = newPvpGame(decks, names);

@@ -8,7 +8,8 @@ import { dispatch } from "./actions";
 import { aiAction } from "./ai";
 import { canUseAbility } from "./abilities";
 import { canPlaySupport, skipEvolvePairs } from "./support";
-import { createGame, toInPlay, type DeckList, type Game } from "./state";
+import { toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -16,7 +17,7 @@ const ai: DeckList = Object.entries(OPPONENTS[0]!.deck).flatMap(([cardId, n]) =>
 
 /** My turn 3 with an empty hand, an empty bench and an empty discard pile. */
 function myTurn(): Game {
-  let g = createGame(deckList(newProfile()), ai, 1);
+  let g = startedGame(deckList(newProfile()), ai, 1);
   g = dispatch(g, aiAction(g, "me")!);
   const next = structuredClone(g);
   next.turn = "me";

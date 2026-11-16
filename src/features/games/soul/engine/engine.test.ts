@@ -7,7 +7,8 @@ import { aiAction } from "./ai";
 import { applyDefense, placeArmor, previewDamage, startTurn } from "./combat";
 import { canUseAbility } from "./abilities";
 import { canPlaySupport } from "./support";
-import { createGame, toInPlay, type DeckList, type Game } from "./state";
+import { toInPlay, type DeckList, type Game } from "./state";
+import { startedGame } from "./testGame";
 
 const opponentDeck = (i: number): DeckList =>
   Object.entries(OPPONENTS[i]!.deck).flatMap(([cardId, n]) =>
@@ -33,7 +34,7 @@ describe("Walka o duszę — engine", () => {
   });
 
   it("sets up hands, souls and the computer's active character", () => {
-    const g = createGame(deckList(newProfile()), opponentDeck(0), 7);
+    const g = startedGame(deckList(newProfile()), opponentDeck(0), 7);
     expect(g.phase).toBe("setup");
     for (const p of Object.values(g.players)) expect(p.prizes).toHaveLength(4);
     expect(g.players.me.hand).toHaveLength(7);
@@ -44,7 +45,7 @@ describe("Walka o duszę — engine", () => {
     const att = toInPlay({ uid: 1, cardId: "zlosnik", finish: "plain" }, 0); // gniew
     const scholanka = toInPlay({ uid: 2, cardId: "scholanka", finish: "plain" }, 0); // weak to gniew
     const piotr = toInPlay({ uid: 3, cardId: "piotr", finish: "plain" }, 0); // Opoka −20
-    const g = createGame(deckList(newProfile()), opponentDeck(0), 1);
+    const g = startedGame(deckList(newProfile()), opponentDeck(0), 1);
     expect(applyDefense(g, "me", att, scholanka, 40)).toBe(80);
     expect(applyDefense(g, "me", att, piotr, 40)).toBe(20);
     g.place = { cardId: "matemblewo", owner: "me" }; // no weakness
@@ -54,7 +55,7 @@ describe("Walka o duszę — engine", () => {
   });
 
   it("places: armor reduces damage taken, extra draw adds a card each turn", () => {
-    const g = createGame(deckList(newProfile()), opponentDeck(0), 5);
+    const g = startedGame(deckList(newProfile()), opponentDeck(0), 5);
     g.players.me.active = toInPlay({ uid: 900, cardId: "scholanka", finish: "plain" }, 0);
     const atk = { name: "test", cost: 0, damage: 30 };
     const before = previewDamage(g, "ai", atk);
@@ -75,7 +76,7 @@ describe("Walka o duszę — engine", () => {
   });
 
   it("place rules block items and abilities for both players", () => {
-    const g = createGame(deckList(newProfile()), opponentDeck(0), 2);
+    const g = startedGame(deckList(newProfile()), opponentDeck(0), 2);
     g.phase = "main";
     g.turn = "me";
     const woda = { uid: 901, cardId: "rozaniec", finish: "plain" as const };
@@ -95,7 +96,7 @@ describe("Walka o duszę — engine", () => {
   });
 
   it("evolution is not allowed in the first turns", () => {
-    let g = createGame(deckList(newProfile()), opponentDeck(0), 3);
+    let g = startedGame(deckList(newProfile()), opponentDeck(0), 3);
     g = dispatch(g, aiAction(g, "me")!);
     const kleryk = { uid: 999, cardId: "wikariusz", finish: "plain" as const };
     expect(evolveTargets(g, g.turn, kleryk)).toEqual([]);
@@ -106,7 +107,7 @@ describe("Walka o duszę — engine", () => {
     (i) => {
       for (const seed of [1, 2, 3, 4, 5, 6]) {
         const g = autoplay(
-          createGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.extraDraw),
+          startedGame(deckList(newProfile()), opponentDeck(i), seed, OPPONENTS[i]!.extraDraw),
         );
         expect(g.phase).toBe("over");
         expect(g.winner).not.toBeNull();
@@ -121,7 +122,7 @@ describe("Walka o duszę — engine", () => {
   );
 
   it("never loses or duplicates cards", () => {
-    const g = autoplay(createGame(deckList(newProfile()), opponentDeck(1), 11));
+    const g = autoplay(startedGame(deckList(newProfile()), opponentDeck(1), 11));
     for (const p of Object.values(g.players)) {
       const field = [p.active, ...p.bench].filter(Boolean).flatMap((c) => [c!, ...c!.under]);
       const energy = [p.active, ...p.bench].reduce((s, c) => s + (c?.energy ?? 0), 0);

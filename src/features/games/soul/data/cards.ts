@@ -27,6 +27,8 @@ export const DEMON_CHARACTERS = DEMON_CARDS.filter(isCharacter);
 
 export const ENERGY_ID = { parish: "laska", demons: "pokusa" } as const;
 export const DECK_SIZE = 50;
+/** A deck needs at least this many basic characters (so an opening hand is never stuck). */
+export const MIN_BASICS = 5;
 export const MAX_COPIES = 3;
 export const SOULS_TO_WIN = 4;
 export const BENCH_SIZE = 3;

@@ -23,6 +23,8 @@ export type GameEvent =
   | { t: "cleanse"; uids: number[] }
   | { t: "shield"; uid: number }
   | { t: "coin"; heads: boolean }
+  /** The opening coin toss: `pid` goes first (and sets up first); heads = the host / solo player. */
+  | { t: "opening"; pid: PlayerId; heads: boolean }
   | { t: "peek"; pid: PlayerId; uid: number; kept: boolean | null }
   | { t: "ko"; pid: PlayerId; uid: number }
   | { t: "souls"; pid: PlayerId; n: number }

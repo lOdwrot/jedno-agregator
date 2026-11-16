@@ -21,6 +21,7 @@ import {
 } from "./combat";
 import { canUseAbility, activateAbility } from "./abilities";
 import { emit, recordFrames, type Frame } from "./events";
+import { aiSetup, ready, redraw, setupTurn } from "./opening";
 import { resolvePeek, resolveSearch } from "./peek";
 import { playSupport } from "./support";
 import {
@@ -42,6 +43,10 @@ import {
 } from "./state";
 
 export type Action =
+  /** Opening: shuffle the hand back and draw a new one (once). `pid` defaults to "me". */
+  | { type: "redraw"; pid?: PlayerId }
+  /** Opening: keep the hand; when both players are ready the coin is thrown. */
+  | { type: "ready"; pid?: PlayerId }
   | { type: "chooseActive"; uid: number }
   | { type: "playBasic"; uid: number }
   | { type: "evolve"; uid: number; target: number }
@@ -260,6 +265,10 @@ function applyMove(g: Game, a: Action): boolean {
   const pid = g.turn;
   const p = g.players[pid];
   const inHand = (uid: number) => p.hand.find((c) => c.uid === uid);
+  if (g.phase === "opening") {
+    if (a.type === "redraw") return redraw(g, a.pid ?? "me");
+    return a.type === "ready" && ready(g, a.pid ?? "me");
+  }
   // a revealed peek card must be answered before anything else happens
   if (g.peek) return a.type === "peek" && resolvePeek(g, pid, a.keep);
   if (g.search) return a.type === "search" && resolveSearch(g, pid, a.discard, a.pick);
@@ -269,7 +278,7 @@ function applyMove(g: Game, a: Action): boolean {
       const who = setupOwner(g, a.uid);
       const me = who && g.players[who];
       const c = me?.hand.find((x) => x.uid === a.uid);
-      if (g.phase !== "setup" || !who || !me || me.active || !c || !isBasic(def(c))) return false;
+      if (setupTurn(g) !== who || !who || !me || !c || !isBasic(def(c))) return false;
       me.hand = me.hand.filter((x) => x !== c);
       me.active = toInPlay(c, 0);
       say(
@@ -280,6 +289,7 @@ function applyMove(g: Game, a: Action): boolean {
         (n) => `${n} wystawia do walki: ${nameOf(c)}.`,
       );
       emit(g, { t: "toActive", pid: who, uid: c.uid });
+      if (!g.pvp) aiSetup(g);
       if (g.players.me.active && g.players.ai.active) startTurn(g, g.first);
       return true;
     }
@@ -354,6 +364,8 @@ function applyMove(g: Game, a: Action): boolean {
       return true;
     case "peek":
     case "search":
+    case "redraw":
+    case "ready":
       return false;
     case "promote": {
       const pr = g.promote;
@@ -386,7 +398,12 @@ function setupOwner(g: Game, uid: number): PlayerId | null {
 /** Who may make this move now — used by the two-player sync to reject moves out of turn. */
 export function actorOf(g: Game, a: Action): PlayerId | null {
   if (g.phase === "over") return null;
-  if (g.phase === "setup") return a.type === "chooseActive" ? setupOwner(g, a.uid) : null;
+  if (g.phase === "opening")
+    return a.type === "redraw" || a.type === "ready" ? (a.pid ?? "me") : null;
+  if (g.phase === "setup") {
+    const who = a.type === "chooseActive" ? setupOwner(g, a.uid) : null;
+    return who && who === setupTurn(g) ? who : null;
+  }
   if (g.phase === "promote") return a.type === "promote" ? (g.promote?.who ?? null) : null;
   return g.turn;
 }

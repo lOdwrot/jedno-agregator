@@ -30,8 +30,13 @@ describe("SoulGame", () => {
     await userEvent.click(screen.getByRole("button", { name: /Stań do walki/ }));
     const duel = screen.getByRole("region", { name: /Pojedynek z: Chochliki z kanapy/ });
     expect(duel).toBeInTheDocument();
-    expect(screen.getByText(/postać podstawową z ręki/)).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(7);
+    // the opening: one redraw, then keep the hand and toss the coin
+    await userEvent.click(screen.getByRole("button", { name: /Przetasuj i dobierz/ }));
+    expect(await screen.findByRole("button", { name: /Przetasowano/ })).toBeDisabled();
+    expect(screen.getAllByRole("button", { name: /Twoja karta w ręce/ })).toHaveLength(7);
+    await userEvent.click(screen.getByRole("button", { name: /Gram tymi kartami/ }));
+    expect(await screen.findByText(/Idziesz (pierwszy|drugi) — wystaw postać/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Muzyka w tle" })).toHaveAttribute(
       "aria-pressed",
       "true",

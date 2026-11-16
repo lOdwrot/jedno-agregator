@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DECK_SIZE, getCard } from "../data/cards";
+import { DECK_SIZE, getCard, isBasic, MIN_BASICS } from "../data/cards";
 import {
   addToDeck,
   BOOSTER_PRICE,
@@ -20,6 +20,19 @@ import {
 import { createRng } from "../../useGameLoop";
 
 describe("Walka o duszę — collection", () => {
+  it("needs at least 5 basic characters in the deck", () => {
+    const p = newProfile();
+    const basics = p.deck.filter((k) => isBasic(getCard(k.split(":")[0]!)));
+    expect(basics.length).toBeGreaterThanOrEqual(MIN_BASICS);
+    // keep only 4 basics, fill the rest up with grace
+    let n = 0;
+    const deck = p.deck.filter((k) => !isBasic(getCard(k.split(":")[0]!)) || ++n <= 4);
+    const thin = { ...p, deck, energy: p.energy + p.deck.length - deck.length };
+    expect(deckProblems(thin)).toEqual([
+      "Talia potrzebuje co najmniej 5 postaci podstawowych (teraz: 4).",
+    ]);
+  });
+
   it("migrates a saved 24-card profile to the 50-card rules", () => {
     const old = {
       version: 1,

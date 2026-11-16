@@ -40,6 +40,8 @@ export class DuelSync {
 
   /** A move made on this screen. */
   move(a: Action) {
+    // opening moves name their player: on the guest's screen "me" is the guest
+    if (a.type === "redraw" || a.type === "ready") a = { ...a, pid: seatOf(this.role) };
     if (actorOf(this.target.canonical(), a) !== seatOf(this.role)) return;
     if (this.role === "host") this.commit(a);
     else this.link.send({ t: "act", a });

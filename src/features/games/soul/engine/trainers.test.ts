@@ -5,7 +5,8 @@ import { OPPONENTS } from "../data/opponents";
 import { dispatch } from "./actions";
 import { aiAction } from "./ai";
 import { canPlaySupport } from "./support";
-import { createGame, toInPlay, type DeckList, type Game, type PlayerId } from "./state";
+import { toInPlay, type DeckList, type Game, type PlayerId } from "./state";
+import { startedGame } from "./testGame";
 
 const ai: DeckList = Object.entries(OPPONENTS[2]!.deck).flatMap(([cardId, n]) =>
   Array.from({ length: n }, () => ({ cardId, finish: "plain" as const })),
@@ -13,7 +14,7 @@ const ai: DeckList = Object.entries(OPPONENTS[2]!.deck).flatMap(([cardId, n]) =>
 
 /** A game on `pid`'s turn 3, the player has a bench of two. */
 function turnOf(pid: PlayerId, seed = 1): Game {
-  let g = createGame(deckList(newProfile()), ai, seed);
+  let g = startedGame(deckList(newProfile()), ai, seed);
   g = dispatch(g, aiAction(g, "me")!);
   const next = structuredClone(g);
   next.turn = pid;

@@ -270,9 +270,29 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
       return;
     }
     case "coin":
-      sfx.coin();
       await fx.coin(r.w / 2, a.mid, ev.heads);
       return;
+    case "opening": {
+      // the opening toss: heads — the host (or the solo player) goes first
+      const mine = ev.pid === "me";
+      const big = Math.min(70, Math.max(46, r.w * 0.07));
+      await fx.coin(r.w / 2, a.mid, ev.heads, {
+        r: big,
+        height: Math.min(180, a.mid * 0.45),
+      });
+      await fx.banner(
+        a.mid,
+        r.w,
+        mine ? "Idziesz pierwszy!" : "Idziesz drugi",
+        mine
+          ? "Rozstawiasz się pierwszy"
+          : state.pvp
+            ? "Rywal rozstawia się pierwszy"
+            : "Pomioty rozstawiają się pierwsze",
+        mine ? p["logo-yellow"] : p.surface,
+      );
+      return;
+    }
     case "ko": {
       const sp = r.sprite(ev.uid);
       const s = at(ev.uid);

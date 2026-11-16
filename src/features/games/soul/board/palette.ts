@@ -29,6 +29,14 @@ const TOKENS = [
   "meadow-200",
   "river",
   "river-light",
+  "gold-100",
+  "gold-300",
+  "gold-500",
+  "gold-700",
+  "silver-100",
+  "silver-300",
+  "silver-500",
+  "silver-700",
 ] as const;
 
 export type Token = (typeof TOKENS)[number];

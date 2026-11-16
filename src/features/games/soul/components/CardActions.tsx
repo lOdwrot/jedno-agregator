@@ -20,6 +20,7 @@ import {
   supportTargets,
   targetKind,
 } from "../engine/support";
+import { setupTurn } from "../engine/opening";
 import { charDef, inPlay, nameOf, type CardInst, type Game, type InPlay } from "../engine/state";
 
 export type Selection = { zone: "hand" | "field" | "opp"; uid: number };
@@ -35,7 +36,9 @@ const where = (g: Game, c: InPlay) => (g.players.me.active?.uid === c.uid ? "akt
 function handOptions(g: Game, c: CardInst): Opt[] {
   const d = getCard(c.cardId);
   const me = g.players.me;
-  if (g.phase === "setup" && me.active)
+  if (g.phase === "opening")
+    return [{ label: "", note: "Najpierw zatrzymaj rękę albo przetasuj talię (pasek na dole)." }];
+  if (g.phase === "setup" && (me.active || setupTurn(g) !== "me"))
     return [{ label: "", note: "Czekaj, aż rywal wystawi postać." }];
   if (g.phase === "setup") {
     return isBasic(d)
