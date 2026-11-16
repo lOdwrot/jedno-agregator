@@ -3,7 +3,7 @@ import { COLLECTIBLE } from "../data/cards";
 import type { CardDef, Finish, Rarity } from "../data/types";
 import { keyOf, type CardKey } from "./profile";
 
-export type PackId = "wspolnota" | "swieci" | "papieze" | "zakrystia" | "witraze" | "skarbiec";
+export type PackId = "wspolnota" | "swieci" | "papieze" | "zakrystia" | "witraze" | "skarbiec" | "rozeta";
 
 export interface PackType {
   id: PackId;
@@ -119,6 +119,21 @@ export const PACKS: readonly PackType[] = [
       finish: { stained: 0.12, gilded: 0.35 },
     },
   },
+  {
+    id: "rozeta",
+    name: "Rozeta Pelplińska",
+    subtitle: "Wszystkie karty w szkle witraża",
+    sticker: "Same witraże + pewna legenda!",
+    price: 6000,
+    art: "pelplin",
+    emoji: "🌟",
+    foil: "from-logo-red via-logo-blue to-logo-yellow",
+    odds: {
+      legendary: 1,
+      rareInUncommonSlot: 0.5,
+      finish: { stained: 1, gilded: 0 },
+    },
+  },
 ];
 
 export const findPack = (id: string) => PACKS.find((p) => p.id === id) ?? PACKS[0]!;
@@ -148,6 +163,7 @@ function pickCard(pool: readonly CardDef[], rnd: () => number): CardDef {
  * Skarbiec Katedry: the 4th card is always rare and the last one always legendary.
  * Zakrystia i sanktuaria: only items and places (`odds.only`).
  * Witraże Katedry: plain/gilded cards are turned into stained glass until `minStained` is reached.
+ * Rozeta Pelplińska: every card is stained glass and the last one is always legendary.
  * Papieże wieków: the first card is always Kandydat na papieża (`odds.first`), often gilded or stained.
  */
 export function rollPack(pack: PackType, rnd: () => number = Math.random): CardKey[] {

@@ -79,6 +79,17 @@ describe("booster editions", () => {
     expect(special / 1000).toBeGreaterThan(0.35);
   });
 
+  it("Rozeta Pelplińska costs 6000 and gives only stained glass with a legendary card", () => {
+    const rnd = createRng(19);
+    const pack = PACKS.find((p) => p.id === "rozeta")!;
+    expect(pack.price).toBe(6000);
+    for (let i = 0; i < 300; i++) {
+      const cards = rollPack(pack, rnd);
+      expect(cards.every((k) => k.endsWith(":stained"))).toBe(true);
+      expect(cards.some((k) => rarityOf(k) === "legendary")).toBe(true);
+    }
+  });
+
   it("Zakrystia i sanktuaria gives only items and places", () => {
     const rnd = createRng(17);
     const pack = PACKS.find((p) => p.id === "zakrystia")!;

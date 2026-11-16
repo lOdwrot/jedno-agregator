@@ -57,7 +57,8 @@ export function BoosterShop({
           często złoconego albo witrażowego. Zakrystia i sanktuaria ma same przedmioty i miejsca.
           Witraże Katedry za 600 talentów gwarantują co najmniej 2 karty witrażowe ❖. Skarbiec
           Katedry za 1000 talentów gwarantuje kartę rzadką i legendarną oraz daje dużo większą
-          szansę na złocenia i witraże.
+          szansę na złocenia i witraże. Rozeta Pelplińska za 6000 talentów ma wyłącznie karty
+          witrażowe ❖ i zawsze co najmniej jedną legendarną.
         </p>
       </div>
       <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
