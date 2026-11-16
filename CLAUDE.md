@@ -153,7 +153,12 @@ motion; colours `hell-*`/`ember` in a `@theme static` block so the canvas can re
 The **meadow of saved souls** (`board/meadow.ts`, pure geometry in `meadowPlan.ts`, colours `meadow-*`/`river*` in a
 `@theme static` block) grows on the player's half with every soul they save (`coverage(souls)`, measured from the middle of
 the hand); the last soul turns the whole board green, a river flows along the middle line and sheep run in to graze
-(`playFrame` awaits it before the result shows; static under reduced motion; on every theme).
+(`playFrame` awaits it before the result shows; static under reduced motion; on every theme). Tufts spring up with an
+elastic pop and flowers open after the grass (`tuft.ts`), leaves/pollen fly from the growing front and butterflies come
+with the flock (`meadowFx.ts`); sheep are drawn (`sheep.ts`: trotting legs, grazing head, wagging tail), no emoji.
+Mirror image for the demons: every soul they take sets more of their half on fire (`board/blaze.ts`, pure geometry
+`blazePlan.ts`: glow, scorch marks, flickering flames, embers, a flare-up + `sfx.ignite`); none in PvP (`fireSouls`), and
+it goes out in smoke when the player saves the last soul.
 **Tutorial** (`soul/tutorial/`, card on the "Pojedynek" tab): fixed, stacked decks (`game.ts`, no shuffle, the player goes
 first, the opening is skipped) and a guide in `steps.ts` — each step either waits for one exact move (`expect` + `todo`),
 for the demons' turn (`until`) or is an explanation closed with "Dalej". `useCoach` limits moves to the current step

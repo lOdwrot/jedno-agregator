@@ -75,6 +75,13 @@ export const sfx = {
       tone(note(s), 0.5, { type: "triangle", gain: 0.07, delay: i * 0.12 }),
     ),
   swap: () => noise(0.25, { cutoff: 2000, gain: 0.15 }),
+  /** Fire catching: a soft whoosh and a few crackles. */
+  ignite: () => {
+    noise(0.7, { cutoff: 900, gain: 0.14 });
+    [0.15, 0.32, 0.41, 0.6, 0.78].forEach((d) =>
+      noise(0.04, { cutoff: 6000, gain: 0.08, highpass: true, delay: d }),
+    );
+  },
   /** A sheep's "beee": a wobbling nasal tone. */
   bleat: () =>
     [0, 1, 2, 3].forEach((i) =>

@@ -3,6 +3,7 @@ import { Container, FillGradient, Graphics, Text, type Ticker } from "pixi.js";
 import { BENCH_SIZE, SOULS_TO_WIN } from "../data/cards";
 import type { Game, PlayerId } from "../engine/state";
 import { text } from "./CardSprite";
+import { Blaze } from "./blaze";
 import { Inferno, type BoardTheme } from "./inferno";
 import { Meadow } from "./meadow";
 import { anchors, CARD_H, CARD_W, type Anchors } from "./layout";
@@ -18,6 +19,7 @@ export class Table {
   readonly benchGlow = new Graphics();
   private inferno: Inferno | null = null;
   meadow: Meadow | null = null;
+  blaze: Blaze | null = null;
   theme: BoardTheme = "default";
   a!: Anchors;
   w = 0;
@@ -43,11 +45,13 @@ export class Table {
     );
   }
 
-  /** The meadow that grows on the player's half with every saved soul. */
+  /** The meadow that grows on the player's half with every saved soul (and the fire on the demons'). */
   grow(ticker: Ticker, reduced: boolean) {
     if (this.meadow) return;
+    this.blaze = new Blaze(ticker, reduced);
     this.meadow = new Meadow(ticker, reduced);
-    this.layer.addChildAt(this.meadow.layer, 1);
+    this.layer.addChildAt(this.blaze.layer, 1);
+    this.layer.addChildAt(this.meadow.layer, 2);
   }
 
   /** The infernal look: red-black felt, lava cracks and rising embers (static under reduced motion). */
@@ -102,6 +106,7 @@ export class Table {
       .fill({ color: line, alpha: hell ? 0.8 : 0.45 });
     if (hell) this.felt.rect(0, mid - 9, w, 18).fill({ color: p.ember, alpha: 0.1 });
     this.inferno?.resize(w, h, mid);
+    this.blaze?.resize(w, h, this.a);
     this.meadow?.resize(w, h, this.a);
     const u = this.a.unit;
     const slot = (x: number, y: number, s: number) =>
@@ -149,6 +154,7 @@ export class Table {
       this.souls(pid, pl.souls, !!g.pvp);
     }
     void this.meadow?.set(g.players.me.souls);
+    void this.blaze?.set(fireSouls(g));
     if (!g.place) this.label("miejsce", this.a.place.x, this.a.place.y, 11, p.line);
   }
 
@@ -192,4 +198,9 @@ export class Table {
       .fill({ color: p["logo-yellow"], alpha: 0.12 })
       .stroke({ width: 3, color: p["logo-yellow"], alpha: 0.8 });
   }
+}
+
+/** Souls that set the demons' half on fire: none in PvP (no demons) or once the meadow covers it all. */
+export function fireSouls(g: Game): number {
+  return g.pvp || g.players.me.souls >= SOULS_TO_WIN ? 0 : g.players.ai.souls;
 }
