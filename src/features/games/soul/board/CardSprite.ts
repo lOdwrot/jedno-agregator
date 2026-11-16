@@ -340,30 +340,30 @@ export class CardSprite extends Container {
     const left = Math.max(0, maxHp - c.damage);
     const ratio = maxHp ? left / maxHp : 0;
     const bar = new Graphics()
-      .roundRect(-90, 98, 180, 34, 12)
-      .fill({ color: p.navy, alpha: 0.88 })
-      .roundRect(-84, 104, 168, 10, 5)
+      .roundRect(-92, 88, 184, 46, 12)
+      .fill({ color: p.navy, alpha: 0.9 })
+      .roundRect(-86, 94, 172, 11, 5)
       .fill({ color: p.line, alpha: 0.35 });
     if (ratio > 0)
-      bar.roundRect(-84, 104, 168 * ratio, 10, 5).fill(ratio > 0.35 ? p.success : p.danger);
+      bar.roundRect(-86, 94, 172 * ratio, 11, 5).fill(ratio > 0.35 ? p.success : p.danger);
     const hp = text(`${left}/${maxHp}`, {
       fontFamily: FONT_DISPLAY,
-      fontSize: 15,
+      fontSize: 21,
       fontWeight: "800",
       fill: p.surface,
     });
-    hp.position.set(-84, 114);
+    hp.position.set(-86, 106);
     this.overlay.addChild(bar, hp);
     const side = getCard(c.cardId).side;
     if (c.energy > 0) {
       const en = text(`${ENERGY_LABEL[side].emoji}×${c.energy}`, {
         fontFamily: FONT_DISPLAY,
-        fontSize: 15,
+        fontSize: 21,
         fontWeight: "800",
         fill: p["logo-yellow"],
       });
       en.anchor.set(1, 0);
-      en.position.set(86, 114);
+      en.position.set(88, 106);
       this.overlay.addChild(en);
     }
     c.statuses.forEach((s, i) => {
