@@ -101,8 +101,15 @@ export function isWeak(g: Game, attacker: InPlay, defender: InPlay): boolean {
   return !owner || !abilities(g, owner).some((a) => a.k === "noWeakness");
 }
 
-/** Final damage to the defending character of `defPid` (weakness ×2, armor, place armor, shield). */
-export function applyDefense(
+/** Whether a `guard` place (for both players) cancels a hit of `dmg` on this character. */
+export function placeGuards(g: Game, defender: InPlay, dmg: number): boolean {
+  if (!g.place) return false;
+  const e = (getCard(g.place.cardId) as SupportDef).effect;
+  return e.k === "place" && !!e.guard && dmg > e.guard.over && e.guard.ids.includes(defender.cardId);
+}
+
+/** Damage after weakness ×2, armor, place armor and shield (before a `guard` place). */
+export function defendedDamage(
   g: Game,
   defPid: PlayerId,
   attacker: InPlay,
@@ -116,6 +123,18 @@ export function applyDefense(
   if (ab?.k === "armor") d -= ab.n;
   d -= placeArmor(g, defPid) + defender.shield;
   return Math.max(0, d);
+}
+
+/** Final damage to the defending character of `defPid` — a `guard` place cancels a too-big hit. */
+export function applyDefense(
+  g: Game,
+  defPid: PlayerId,
+  attacker: InPlay,
+  defender: InPlay,
+  raw: number,
+): number {
+  const d = defendedDamage(g, defPid, attacker, defender, raw);
+  return placeGuards(g, defender, d) ? 0 : d;
 }
 
 /** Damage an attack would deal now (coin flips counted as tails) — used by AI and UI preview. */
