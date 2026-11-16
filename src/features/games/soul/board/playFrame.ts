@@ -8,6 +8,7 @@ import { other, type Game } from "../engine/state";
 import type { BoardRenderer } from "./BoardRenderer";
 import { elementStyle, impact, projectile, shards } from "./attackFx";
 import { shake } from "./fx";
+import { fireSouls } from "./table";
 import { playSignature } from "./signatures";
 import { powerSound } from "../audio/signatures";
 import { palette } from "./palette";
@@ -323,11 +324,17 @@ export async function playFrame(r: BoardRenderer, f: Frame, prev: Game) {
         await fx.fly(from, a.souls[taker], "🕊️", 52, 750);
       }
       music.setSouls(Math.max(state.players.me.souls, state.players.ai.souls));
+      // every soul the demons take sets more of their half on fire
+      const fire = taker === "ai" && fireSouls(state) > 0;
+      if (fire) sfx.ignite();
+      const flare = fire ? r.table.blaze?.set(fireSouls(state)) : undefined;
       await r.reconcile(state, 420, 80);
+      await flare;
       // every saved soul makes the meadow grow; the last one brings the river and the flock
       if (taker === "me") {
         const bloom = r.table.meadow?.set(state.players.me.souls);
         if (state.players.me.souls >= SOULS_TO_WIN && bloom) {
+          void r.table.blaze?.set(0);
           setTimeout(sfx.bleat, 1500);
           await bloom;
         }
