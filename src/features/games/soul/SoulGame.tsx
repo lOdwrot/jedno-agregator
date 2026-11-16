@@ -27,6 +27,7 @@ import { FeePayment } from "./components/FeePayment";
 import { OpponentPicker } from "./components/OpponentPicker";
 import { PrizeTable } from "./components/PrizeTable";
 import { Rules } from "./components/Rules";
+import { Settings } from "./components/Settings";
 import { PvpDuel } from "./pvp/PvpDuel";
 import { PvpLobby } from "./pvp/PvpLobby";
 import { preloadBoard } from "./board/loadBoard";
@@ -34,7 +35,7 @@ import type { Session } from "./pvp/session";
 import { TutorialCard } from "./tutorial/TutorialCard";
 import { TutorialDuel } from "./tutorial/TutorialDuel";
 
-type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zasady";
+type Tab = "walka" | "multiplayer" | "talia" | "boostery" | "bestiariusz" | "zasady" | "ustawienia";
 /** Where the hub scrolls after leaving a duel: the rank (new duel) or the menu tabs (boosters, multiplayer). */
 type ScrollTarget = "rank" | "tabs";
 
@@ -219,6 +220,7 @@ export function SoulGame() {
             },
             { value: "bestiariusz", label: "Bestiariusz", content: <Bestiary profile={profile} /> },
             { value: "zasady", label: "Zasady", content: <Rules /> },
+            { value: "ustawienia", label: "Ustawienia", content: <Settings /> },
           ]}
         />
       </div>

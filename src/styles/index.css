@@ -201,6 +201,13 @@
     transform: scale(1);
   }
 }
+/* a card unfolding below its badge / button */
+@keyframes soul-unfold {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+}
 @keyframes game-bob {
   0%,
   100% {

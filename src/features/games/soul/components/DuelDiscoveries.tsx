@@ -1,18 +1,37 @@
-import { useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
-import { Icon } from "@/ui";
+import { Icon, usePrefersReducedMotion } from "@/ui";
 import type { Discoveries } from "../collection/bestiary";
 import { getCard } from "../data/cards";
 import { BestiaryTeaser } from "./BestiaryTeaser";
 import { CardFace } from "./CardFace";
 
-const DETAILS_ID = "duel-discovery-details";
+const detailsId = (id: string) => `duel-discovery-${id}`;
+
+/** The unfolded card, right under its badge; scrolled into view when it opens. */
+function Details({ id, recognized, seen }: { id: string; recognized: boolean; seen: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = usePrefersReducedMotion();
+  useEffect(() => {
+    ref.current?.scrollIntoView?.({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
+  }, [id, reduced]);
+  return (
+    <div ref={ref} id={detailsId(id)} className="motion-safe:animate-[soul-unfold_0.25s_ease-out]">
+      {recognized ? (
+        <CardFace cardId={id} showLesson />
+      ) : (
+        <BestiaryTeaser card={getCard(id)} seen={seen} />
+      )}
+    </div>
+  );
+}
 
 function Badges({
   ids,
   recognized,
   open,
   read,
+  seen,
   onToggle,
 }: {
   ids: string[];
@@ -20,6 +39,7 @@ function Badges({
   open: string | null;
   /** Cards already unfolded once — no more "NOWE" tag. */
   read: ReadonlySet<string>;
+  seen: Discoveries["seen"];
   onToggle: (id: string) => void;
 }) {
   return (
@@ -28,37 +48,45 @@ function Badges({
         const c = getCard(id);
         const isOpen = open === id;
         return (
-          <li key={id}>
-            <button
-              type="button"
-              aria-expanded={isOpen}
-              aria-controls={DETAILS_ID}
-              onClick={() => onToggle(id)}
-              className={cn(
-                "relative inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold transition-transform motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-95",
-                recognized
-                  ? "bg-accent-strong text-white shadow-lift"
-                  : "bg-white/10 text-white ring-1 ring-white/30 hover:bg-white/20",
-                isOpen && "ring-2 ring-white",
-              )}
-            >
-              {recognized && !isOpen && !read.has(id) && (
-                <span className="absolute -top-2 -right-1 rounded-full bg-logo-yellow px-1.5 text-[0.65rem] leading-4 font-extrabold text-navy motion-safe:animate-pulse">
-                  NOWE
+          <Fragment key={id}>
+            <li>
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={isOpen ? detailsId(id) : undefined}
+                onClick={() => onToggle(id)}
+                className={cn(
+                  "relative inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold transition-transform motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-95",
+                  recognized
+                    ? "bg-accent-strong text-white shadow-lift"
+                    : "bg-white/10 text-white ring-1 ring-white/30 hover:bg-white/20",
+                  isOpen && "ring-2 ring-white",
+                )}
+              >
+                {recognized && !isOpen && !read.has(id) && (
+                  <span className="absolute -top-2 -right-1 rounded-full bg-logo-yellow px-1.5 text-[0.65rem] leading-4 font-extrabold text-navy motion-safe:animate-pulse">
+                    NOWE
+                  </span>
+                )}
+                <span aria-hidden="true">{c.emoji}</span>
+                {c.name}
+                <span className="flex items-center gap-0.5 text-xs font-extrabold uppercase opacity-90">
+                  {recognized ? "Czytaj" : "Podejrzyj"}
+                  <Icon
+                    name="chevronDown"
+                    size={14}
+                    className={cn("transition-transform", isOpen && "rotate-180")}
+                  />
                 </span>
-              )}
-              <span aria-hidden="true">{c.emoji}</span>
-              {c.name}
-              <span className="flex items-center gap-0.5 text-xs font-extrabold uppercase opacity-90">
-                {recognized ? "Czytaj" : "Podejrzyj"}
-                <Icon
-                  name="chevronDown"
-                  size={14}
-                  className={cn("transition-transform", isOpen && "rotate-180")}
-                />
-              </span>
-            </button>
-          </li>
+              </button>
+            </li>
+            {/* a full-width row right after the opened badge: the card unfolds directly below it */}
+            {isOpen && (
+              <li className="basis-full">
+                <Details id={id} recognized={recognized} seen={seen[id] ?? 1} />
+              </li>
+            )}
+          </Fragment>
         );
       })}
     </ul>
@@ -67,8 +95,8 @@ function Badges({
 
 /**
  * After a duel: demon cards recognized in it (4th sighting) and cards met for the first time.
- * Every badge is a button that unfolds the card below the list: the full face with the lesson
- * for a recognized card, the greyed-out teaser (sightings so far) for a card met for the first time.
+ * Every badge is a button that unfolds the card directly below itself: the full face with the
+ * lesson for a recognized card, the greyed-out teaser (sightings so far) for a card met for the first time.
  */
 export function DuelDiscoveries({ found }: { found: Discoveries }) {
   const [open, setOpen] = useState<string | null>(null);
@@ -78,7 +106,7 @@ export function DuelDiscoveries({ found }: { found: Discoveries }) {
     setOpen((o) => (o === id ? null : id));
     setRead((r) => new Set(r).add(id));
   };
-  const isRecognized = open !== null && found.recognized.includes(open);
+  const props = { open, read, seen: found.seen, onToggle: toggle };
   return (
     <section
       aria-label="Bestiariusz — nowe odkrycia"
@@ -93,7 +121,7 @@ export function DuelDiscoveries({ found }: { found: Discoveries }) {
             Odkryłeś ich sekret! <strong>Stuknij kartę</strong> i przeczytaj, jak kusi i jak się
             przed nią bronić — to najcenniejsza nagroda tej walki.
           </p>
-          <Badges ids={found.recognized} recognized open={open} read={read} onToggle={toggle} />
+          <Badges ids={found.recognized} recognized {...props} />
         </div>
       )}
       {found.met.length > 0 && (
@@ -104,17 +132,9 @@ export function DuelDiscoveries({ found }: { found: Discoveries }) {
           <p className="text-sm text-white/85">
             Stuknij, by podejrzeć. Szczegóły odsłonią się, gdy spotkasz kartę 4 razy.
           </p>
-          <Badges ids={found.met} recognized={false} open={open} read={read} onToggle={toggle} />
+          <Badges ids={found.met} recognized={false} {...props} />
         </div>
       )}
-      <div id={DETAILS_ID} aria-live="polite">
-        {open &&
-          (isRecognized ? (
-            <CardFace cardId={open} showLesson />
-          ) : (
-            <BestiaryTeaser card={getCard(open)} seen={found.seen[open] ?? 1} />
-          ))}
-      </div>
     </section>
   );
 }

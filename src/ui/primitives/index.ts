@@ -5,6 +5,7 @@ export { Heading, Text, Eyebrow, type HeadingProps, type TextProps } from "./Typ
 export { Badge, type BadgeProps } from "./Badge";
 export { Chip, type ChipProps } from "./Chip";
 export { ChipGroup, type ChipGroupProps, type ChipOption } from "./ChipGroup";
+export { Switch, type SwitchProps } from "./Switch";
 export { DatePill } from "./DatePill";
 export { Card, type CardProps } from "./Card";
 export { SmartImage, type SmartImageProps } from "./SmartImage";

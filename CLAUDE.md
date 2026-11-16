@@ -88,7 +88,17 @@ ready the coin is thrown (`opening` event: big 3D toss + "Idziesz pierwszy/drugi
 (`setupTurn`; solo: the computer sets up right after the toss if it won, otherwise after the player). Opening actions carry `pid`
 (filled in by `DuelSync.move`). Tests start past the opening with `startedGame` (`engine/testGame.ts`). The coin is drawn in
 `board/coin3d.ts` (projected faces + reeded edge, colours `gold-*`/`silver-*` in a `@theme static` block), tossed in `board/coinToss.ts`
-with `audio/coinSfx.ts` + `audio/haptics.ts` (`navigator.vibrate`, off together with the sound effects).
+with `audio/coinSfx.ts` + `audio/haptics.ts`.
+**Haptics** (`audio/haptics.ts`): `navigator.vibrate` patterns in `haptic.*` (card placed, item/supporter/place played,
+evolve, energy, attack windup, hit scaled by damage, KO) fired from `playFrame.ts`; their own persisted switch
+(`useHaptics`, ON by default, independent from the sound) — 📳 in the duel top bar (only where vibration exists) and
+the hub's "Ustawienia" tab (`components/Settings.tsx`: sound effects, music, vibrations via `Switch` from `@/ui`).
+**Pope stories** (`soul/popes/`): every pope card face has an "i Historia" pill (`PopeInfoButton`, rendered by `CardFace`)
+opening `PopeStoryDialog` — portrait hero with St Peter's keys, numbers, "Czy wiesz, że…" facts, a quote, "Twój krok
+na dziś" and a bead timeline of all popes (`PopeTimeline`, also the navigation; read ones get ✓, `readStories.ts`).
+Texts in `popes/stories.ts` — a new pope card needs a story (`stories.test.ts`). The dialog stops click/Esc propagation
+because it can open inside another dialog.
+After a duel, `DuelDiscoveries` unfolds a demon card directly under its badge (a full-width row in the badge list).
 Decks have 50 cards (`DECK_SIZE`) with at least 5 basic characters (`MIN_BASICS`, deck builder + PvP `validDeck`); the discard pile is never reshuffled — a player who must draw at the start of
 their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Algorytm, like Ultra Ball) set `g.search`
 and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
