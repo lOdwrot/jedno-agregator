@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { duelDiscoveries, type Discoveries } from "../collection/bestiary";
+import { duelDiscoveries, RECOGNIZE_AT, type Discoveries } from "../collection/bestiary";
 import type { PackType } from "../collection/packs";
 import type { Profile } from "../collection/profile";
 import type { CardKey } from "../collection/profile";
@@ -81,6 +81,7 @@ export function SoloDuel({
       opponent={training ? { ...opponent, name: `${opponent.name} (trening)` } : opponent}
       onOver={onOver}
       onSighting={sight}
+      recognized={(id) => (before?.[id] ?? 0) >= RECOGNIZE_AT}
       exitLabel={
         training ? "Zakończ trening" : "Poddaj się i wyjdź (bez nagrody, tracisz punkty rangi)"
       }
