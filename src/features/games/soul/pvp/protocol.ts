@@ -6,7 +6,7 @@ import type { Action } from "../engine/actions";
 import type { DeckList, Game } from "../engine/state";
 
 /** Bump when the engine or the messages change — older clients are turned away politely. */
-export const PROTOCOL = 11;
+export const PROTOCOL = 12;
 
 export type Msg =
   /** guest → host, right after connecting */

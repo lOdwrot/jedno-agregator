@@ -9,7 +9,7 @@ export function fuelMax(g: Game, pid: PlayerId, atk: AttackDef): number {
 }
 
 /** Damage, knock-outs (souls), checkup between turns and turn order. */
-import { ENERGY_ID, getCard, SOULS_TO_WIN } from "../data/cards";
+import { ENERGY_ID, getCard, isSaint, SOULS_TO_WIN } from "../data/cards";
 import type { AbilityEffect, AttackDef, SupportDef } from "../data/types";
 import { FINISH_BONUS, STATUS_INFO } from "../data/types";
 import { emit } from "./events";
@@ -108,6 +108,13 @@ export function placeGuards(g: Game, defender: InPlay, dmg: number): boolean {
   return e.k === "place" && !!e.guard && dmg > e.guard.over && e.guard.ids.includes(defender.cardId);
 }
 
+/** `saintArmor` of the place in play (for BOTH players) — only for saints ("Św."). */
+export function saintArmor(g: Game, defender: InPlay): number {
+  if (!g.place) return 0;
+  const e = (getCard(g.place.cardId) as SupportDef).effect;
+  return e.k === "place" && e.saintArmor && isSaint(charDef(defender)) ? e.saintArmor : 0;
+}
+
 /** Damage after weakness ×2, armor, place armor and shield (before a `guard` place). */
 export function defendedDamage(
   g: Game,
@@ -121,7 +128,7 @@ export function defendedDamage(
   if (isWeak(g, attacker, defender)) d *= 2;
   const ab = own(g, defender);
   if (ab?.k === "armor") d -= ab.n;
-  d -= placeArmor(g, defPid) + defender.shield;
+  d -= placeArmor(g, defPid) + saintArmor(g, defender) + defender.shield;
   return Math.max(0, d);
 }
 

@@ -168,6 +168,8 @@ export type SupportEffect =
       /** For BOTH players: an attack that would deal more than `over` damage to one of these
        *  characters (card ids) deals none at all. */
       guard?: { ids: readonly string[]; over: number };
+      /** For BOTH players: damage taken by every saint ("Św.") in play is reduced by n. */
+      saintArmor?: number;
     };
 
 export interface SupportDef extends BaseDef {
