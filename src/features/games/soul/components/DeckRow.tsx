@@ -12,6 +12,7 @@ import {
   type Profile,
 } from "../collection/profile";
 import { CardArt } from "./CardArt";
+import { CardTypeIcon } from "./CardTypeIcon";
 
 /** One owned card version in the deck builder: preview button + −/+ deck counter. */
 export function DeckRow({
@@ -42,6 +43,7 @@ export function DeckRow({
           className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-muted"
         >
           <CardArt cardId={cardId} emojiClass="text-2xl" />
+          <CardTypeIcon cardId={cardId} size="sm" className="absolute top-0.5 left-0.5 size-[1.15rem] text-[0.6rem] ring-1" />
         </span>
         <span className="min-w-0">
           <span className="block truncate font-bold text-navy">

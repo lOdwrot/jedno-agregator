@@ -11,6 +11,7 @@ import {
 } from "pixi.js";
 import { ART as ARTWORK, artSrc } from "../data/art";
 import { getCard } from "../data/cards";
+import { cardTypeBadge } from "../data/cardType";
 import {
   ELEMENT_INFO,
   ENERGY_LABEL,
@@ -204,9 +205,10 @@ export class CardSprite extends Container {
       fill: ink,
       lineHeight: 24,
     });
-    name.position.set(-86, -134);
-    fit(name, isChar ? 112 : 172);
+    name.position.set(-58, -134);
+    fit(name, isChar ? 86 : 146);
     this.front.addChild(art, name);
+    this.drawTypeIcon(dark);
 
     if (c.kind === "character") {
       const hp = text(`${c.hp + FINISH_BONUS[this.finish].hp}`, {
@@ -275,6 +277,23 @@ export class CardSprite extends Container {
       this.front.addChild(holder);
       this.shine = shine;
     }
+  }
+
+  /** Type badge in the top-left corner (basic / evolution / item / supporter / place / energy). */
+  private drawTypeIcon(dark: boolean) {
+    const p = palette();
+    const { icon } = cardTypeBadge(getCard(this.cardId));
+    const x = -78;
+    const y = -118;
+    const disc = new Graphics()
+      .circle(x, y, 17)
+      .fill(dark ? p["navy-600"] : p.surface)
+      .circle(x, y, 17)
+      .stroke({ width: 3, color: dark ? p["logo-red"] : p["logo-yellow"] });
+    const t = text(icon, { fontSize: 20 });
+    t.anchor.set(0.5);
+    t.position.set(x, y + 1);
+    this.front.addChild(disc, t);
   }
 
   /** Weakness badge ("słabość 💢 ×2") — readable on the table without opening the card. */

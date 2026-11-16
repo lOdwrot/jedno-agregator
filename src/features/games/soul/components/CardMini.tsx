@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { getCard } from "../data/cards";
 import { CardArt } from "./CardArt";
 import { PrestigeLayers } from "./PrestigeLayers";
+import { CardTypeIcon } from "./CardTypeIcon";
 import { FINISH_LABEL, RARITY_LABEL, RARITY_SYMBOL, type Finish } from "../data/types";
 
 /** Compact card front (booster reveal, small grids): art, name, rarity and print. */
@@ -36,6 +37,7 @@ export function CardMini({
         <PrestigeLayers finish={finish} />
         <span className="relative grid flex-1 place-items-center overflow-hidden rounded-lg bg-gradient-to-b from-logo-blue/40 to-surface-muted">
           <CardArt cardId={cardId} emojiClass="text-4xl" />
+          <CardTypeIcon cardId={cardId} size="sm" className="absolute top-1 left-1" />
         </span>
         <span className="line-clamp-2 text-xs leading-tight font-extrabold text-navy sm:text-sm">
           {c.name}
@@ -46,7 +48,7 @@ export function CardMini({
           {finish !== "plain" && ` · ${FINISH_LABEL[finish]}`}
         </span>
         {fresh && (
-          <span className="absolute top-1 left-1 rounded-full bg-navy px-2 py-0.5 text-[0.65rem] font-extrabold text-white">
+          <span className="absolute top-1 right-1 rounded-full bg-navy px-2 py-0.5 text-[0.65rem] font-extrabold text-white">
             nowa!
           </span>
         )}

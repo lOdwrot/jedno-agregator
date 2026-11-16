@@ -11,16 +11,14 @@ import {
   type Finish,
 } from "../data/types";
 import { CardArt } from "./CardArt";
+import { CardTypeIcon } from "./CardTypeIcon";
+import { cardTypeBadge } from "../data/cardType";
 import { ELEMENT_ART, FINISH_FRAME } from "./styles";
 import { PrestigeLayers } from "./PrestigeLayers";
 
-const KIND_LABEL: Record<CardDef["kind"], string> = {
-  character: "Postać",
-  item: "Przedmiot",
-  supporter: "Pomocnik (1 na turę)",
-  place: "Miejsce",
-  energy: "Energia",
-};
+/** Header line: the type badge label, plus the supporter rule. */
+const kindLine = (c: CardDef) =>
+  c.kind === "supporter" ? "Pomocnik (1 na turę)" : cardTypeBadge(c).label;
 
 /** Full face of a card: art, HP, attacks, weakness, retreat, rarity and print finish. */
 export function CardFace({
@@ -63,9 +61,10 @@ export function CardFace({
       >
         <PrestigeLayers finish={finish} dark={dark} />
         <header className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
+          <CardTypeIcon cardId={cardId} className="-mt-0.5 -ml-0.5" />
+          <div className="min-w-0 flex-1">
             <p className={cn("text-xs font-bold tracking-wide uppercase", muted)}>
-              {KIND_LABEL[c.kind]}
+              {kindLine(c)}
               {c.kind === "character" &&
                 c.evolvesFrom &&
                 ` · rozwój z: ${getCard(c.evolvesFrom).name}`}

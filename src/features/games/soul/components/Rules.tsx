@@ -10,6 +10,10 @@ const RULES: [string, string][] = [
     "Talia ma 50 kart, w tym co najmniej 5 postaci podstawowych. Dobierasz 7 (zawsze z postacią na start), a 4 karty odkładasz jako dusze. Raz możesz przetasować talię i dobrać nową rękę. Potem rzut monetą: orzeł — idziesz pierwszy i pierwszy się rozstawiasz, reszka — drugi. Wybierasz postać podstawową do walki — w pierwszej turze gry nie można atakować.",
   ],
   [
+    "Rodzaje kart",
+    "Ikonka w lewym górnym rogu karty mówi, czym ona jest: 🌱 postać podstawowa, 🌿 pierwsza ewolucja, 🌳 druga ewolucja, 🎒 przedmiot, 🤝 pomocnik, 🏛️ miejsce, ✨ Łaska (u pomiotów 🔥 Pokusa).",
+  ],
+  [
     "Twoja tura",
     "Dobierz kartę. Potem w dowolnej kolejności: posadź postacie na ławce (3 miejsca), rozwijaj je (np. Ministrant → Lektor → Ceremoniarz), dołącz 1 Łaskę ✨, zagraj dowolnie przedmiotów, 1 pomocnika i miejsce, raz wycofaj aktywną postać. Atak kończy turę.",
   ],
