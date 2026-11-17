@@ -17,6 +17,7 @@ import { InPlayStatus } from "./InPlayStatus";
 import { DuelBars, DuelTopBar } from "./DuelBars";
 import { DuelSidebar } from "./DuelSidebar";
 import { SearchDialog } from "./SearchDialog";
+import { TargetDialog } from "./TargetDialog";
 import { CoachPanel } from "../tutorial/CoachPanel";
 import { useCoach, type TutorialScript } from "../tutorial/useCoach";
 import type { Action } from "../engine/actions";
@@ -69,6 +70,7 @@ export function DuelView({
   const [showLog, setShowLog] = useState(false);
   const [handOpen, setHandOpen] = useState(false);
   const [pile, setPile] = useState<PlayerId | null>(null);
+  const [choosing, setChoosing] = useState<number | null>(null);
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [full, setFull] = useState(false);
   const seen = useRef(new Set<string>());
@@ -213,6 +215,7 @@ export function DuelView({
           onSelect={onSelect}
           onAction={act}
           onDiscard={setPile}
+          onChooseTarget={setChoosing}
           theme={infernal ? "infernal" : "default"}
         />
         {lessonCard && "lesson" in lessonCard && lessonCard.lesson && (
@@ -306,6 +309,13 @@ export function DuelView({
         }
         lessons={pile === "ai" && !live.pvp}
         onClose={() => setPile(null)}
+      />
+      <TargetDialog
+        g={live}
+        uid={busy ? null : choosing}
+        allowed={allowed}
+        onAction={act}
+        onClose={() => setChoosing(null)}
       />
       <SearchDialog g={live} open={live.search?.pid === "me" && !busy} onAction={act} />
       <Dialog open={showLog} onClose={() => setShowLog(false)} title="Przebieg walki" size="sm">

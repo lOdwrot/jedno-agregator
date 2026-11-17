@@ -142,6 +142,8 @@ Tapping a discard pile on the table opens `DiscardDialog` (both sides): the pile
 merged as "×N" at their newest copy (`groupDiscard` in `components/discardGroups.ts`); tap a tile for the full card.
 The "Rozpoznaj pokusę" corner hint is not shown for demon cards already recognized in the bestiary before the duel
 (`DuelView` prop `recognized`, filled by `SoloDuel`).
+A card that needs a target (evolution, energy, Sobór, Droga do Damaszku, Zaproszenie na rekolekcje, …) dropped on the
+table instead of on a card opens `TargetDialog` with the possible targets as card tiles (`board/dropChoices.ts`).
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in

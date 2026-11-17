@@ -10,6 +10,7 @@ import { BoardFailure } from "./BoardFailure";
 import { isChunkError, loadBoard } from "./loadBoard";
 import type { BoardTheme } from "./inferno";
 import { dropsFor, isPlayable, type Drop } from "./dnd";
+import { dropChoices } from "./dropChoices";
 import { benchZone, computeSlots, inside, PLACE_KEY, slotRect, type Slot } from "./layout";
 
 interface Props {
@@ -24,6 +25,8 @@ interface Props {
   onDiscard?: (pid: PlayerId) => void;
   /** Infernal look of the hardest level. */
   theme?: BoardTheme;
+  /** A card that needs a target was dropped on the table, not on a card: let the player pick one. */
+  onChooseTarget?: (uid: number) => void;
 }
 
 const ZONE_LABEL = {
@@ -63,6 +66,7 @@ export function BoardView({
   onAction,
   onDiscard,
   theme = "default",
+  onChooseTarget,
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 390, h: 640 });
@@ -179,7 +183,10 @@ export function BoardView({
           : y < size.h * 0.8,
     );
     void renderer.current?.dragEnd();
-    if (drop) onAction(drop.action);
+    if (drop) return onAction(drop.action);
+    const c = live.players.me.hand.find((h) => h.uid === d.uid);
+    if (onChooseTarget && c && y < size.h * 0.8 && dropChoices(live, c).length)
+      onChooseTarget(d.uid);
   };
 
   return (
