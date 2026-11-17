@@ -42,6 +42,9 @@ jobs:
           JEDNO_API_KEY: ${{ secrets.JEDNO_API_KEY }}
 
       - run: npm run build
+        env:
+          # Umami website id (public, not a secret) — repository variable; empty = no statistics.
+          VITE_UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID }}
 
       # Smoke + axe accessibility tests against the built site (pushes only).
       - name: E2E (Playwright + axe)

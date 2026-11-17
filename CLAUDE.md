@@ -34,6 +34,12 @@ requires a secret `x-api-key`. So:
 
 Secrets: `JEDNO_API_KEY` (GitHub repository secret). Never commit keys. Never put keys in `VITE_*` vars.
 
+**Statistics:** Umami Cloud (free, cookieless — no consent banner), `src/lib/analytics.ts`. The build reads the public
+website id from the repository *variable* `UMAMI_WEBSITE_ID` (→ `VITE_UMAMI_WEBSITE_ID`); unset = no script. Reports
+only from `lodwrot.github.io` (dev/preview/e2e send nothing). Pageviews are automatic; custom events via `track()`:
+`duel_start` / `duel_end` / `duel_forfeit` (opponent, difficulty, mode, rank; end adds result + souls), `tutorial_start` /
+`tutorial_end`, `pvp_start` (role), `booster_open` (pack). Never send personal data (names, PvP codes).
+
 ### Data flow in the app
 
 ```

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tabs, usePrefersReducedMotion } from "@/ui";
+import { track } from "@/lib/analytics";
 import { rollPack } from "./collection/packs";
 import {
   deckList,
@@ -38,6 +39,14 @@ import { preloadBoard } from "./board/loadBoard";
 import type { Session } from "./pvp/session";
 import { TutorialCard } from "./tutorial/TutorialCard";
 import { TutorialDuel } from "./tutorial/TutorialDuel";
+
+/** Statistics props shared by every solo-duel event (see `@/lib/analytics`). */
+const duelStats = (opponent: Opponent, training: boolean, xp: number) => ({
+  opponent: opponent.id,
+  difficulty: opponent.difficulty,
+  mode: training ? "trening" : "nagroda",
+  rank: rankIndex(xp) + 1,
+});
 
 type Tab =
   | "walka"
@@ -90,11 +99,18 @@ export function SoulGame() {
   const startDuel = (opponent: Opponent, training = false) => {
     // a rewarded duel puts the win streak at stake: only a win gives it back (+1)
     if (!training) update(stakeStreak);
+    track("duel_start", duelStats(opponent, training, xp));
     setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary });
   };
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
+      if (duel)
+        track("duel_end", {
+          ...duelStats(duel.opponent, duel.training, xp),
+          result: won ? "wygrana" : "przegrana",
+          souls,
+        });
       // a practice duel changes nothing in the profile: no talents, booster, record or rank
       if (!duel || duel.training) return { earned: 0, prize: null, rank: { from: xp, to: xp } };
       const t = reward(duel.opponent.reward, won, souls);
@@ -120,6 +136,7 @@ export function SoulGame() {
 
   const onTutorial = useCallback(
     (won: boolean) => {
+      track("tutorial_end", { result: won ? "wygrana" : "przegrana" });
       if (!won) return 0;
       const { earned } = finishTutorial(profile);
       update((p) => finishTutorial(p).profile);
@@ -129,7 +146,13 @@ export function SoulGame() {
   );
 
   const tutorialCard = (
-    <TutorialCard done={!!profile.tutorial} onStart={() => setTutorial(Date.now())} />
+    <TutorialCard
+      done={!!profile.tutorial}
+      onStart={() => {
+        track("tutorial_start");
+        setTutorial(Date.now());
+      }}
+    />
   );
 
   if (tutorial !== null)
@@ -168,12 +191,13 @@ export function SoulGame() {
         onFinish={onFinish}
         onSighting={(id) => update((p) => recordSighting(p, id))}
         bestiary={duel.bestiary}
-        onForfeit={() =>
+        onForfeit={() => {
+          track("duel_forfeit", duelStats(duel.opponent, duel.training, xp));
           update((p) => ({
             ...settleStreak(p, false).profile,
             xp: afterDuel(p.xp ?? 0, false, duel.opponent.difficulty),
-          }))
-        }
+          }));
+        }}
         onTaleWin={(id) => update((p) => completeTale(p, id))}
         onExit={(booster) => {
           setDuel(null);
@@ -250,7 +274,10 @@ export function SoulGame() {
                   deck={deckList(profile)}
                   problems={deckProblems(profile)}
                   onEditDeck={() => setTab("talia")}
-                  onStart={setPvp}
+                  onStart={(session) => {
+                    track("pvp_start", { role: session.role });
+                    setPvp(session);
+                  }}
                 />
               ),
             },

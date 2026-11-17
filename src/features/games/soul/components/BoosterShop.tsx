@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Badge, Button, Heading, Icon } from "@/ui";
+import { track } from "@/lib/analytics";
 import { PACKS, rollPack, type PackType } from "../collection/packs";
 import {
   canOpenBooster,
@@ -34,6 +35,7 @@ export function BoosterShop({
     const cards = rollPack(pack);
     const fresh = freshFlags(p, cards);
     update((x) => openBooster(x, cards, pack.price));
+    track("booster_open", { pack: pack.id });
     setOpening({ pack, cards, fresh, key: ++seq.current });
   };
 
