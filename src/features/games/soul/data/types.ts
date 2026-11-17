@@ -129,8 +129,9 @@ export type SupportEffect =
   | { k: "switch" }
   /** Bring an opponent's benched character to the front (like Boss's Orders; with `coin` — Catcher). */
   | { k: "gust"; coin?: boolean }
-  /** Discard 1 energy from the opponent's active (`any`: from a chosen character; `coin`: on heads). */
-  | { k: "discardOppEnergy"; coin?: boolean; any?: boolean }
+  /** Discard 1 energy from the opponent's active (`any`: from a chosen character; `coin`: on heads;
+   *  `tailsHeal`: on tails heal that much from the owner's most damaged character instead). */
+  | { k: "discardOppEnergy"; coin?: boolean; any?: boolean; tailsHeal?: number }
   /** Look at the top card of the deck: keep it, or discard it and draw (like Trekking Shoes). */
   | { k: "peek" }
   /** Discard `discard` cards from your hand, then take any character from your deck (like Ultra Ball). */

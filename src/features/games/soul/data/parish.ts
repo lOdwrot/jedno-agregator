@@ -1146,8 +1146,8 @@ export const PARISH_CARDS: CardDef[] = [
     name: "Gromnica",
     emoji: "🕯️",
     rarity: "uncommon",
-    text: "Odrzuć 1 Pokusę z aktywnego pomiotu rywala.",
-    effect: { k: "discardOppEnergy" },
+    text: "Rzuć monetą. Orzeł: odrzuć 1 Pokusę z aktywnego pomiotu rywala. Reszka: ulecz 20 najbardziej zranionej swojej postaci.",
+    effect: { k: "discardOppEnergy", coin: true, tailsHeal: 20 },
     flavor: "Matka Boża Gromniczna przegania wilki. I pokusy.",
   },
   // ── Supporters (one per turn) ───────────────────────────────────────────────

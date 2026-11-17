@@ -22,6 +22,7 @@ import {
   type Game,
   type InPlay,
   type PlayerId,
+  type PlayerState,
 } from "./state";
 
 export type TargetKind = "own" | "ownBench" | "oppBench" | "oppAny" | null;
@@ -147,6 +148,7 @@ export function canPlaySupport(g: Game, pid: PlayerId, card: CardInst): boolean 
     case "shield":
       return !!a;
     case "discardOppEnergy":
+      if (e.tailsHeal && inPlay(me).some((c) => c.damage > 0)) return true;
       return e.any ? true : (foe.active?.energy ?? 0) > 0;
     case "peek":
       return me.deck.length > 0;
@@ -323,7 +325,23 @@ export function playSupport(
       break;
     }
     case "discardOppEnergy":
-      if (e.coin && !flip(g)) break;
+      if (e.coin && e.tailsHeal) {
+        const h = coin(g);
+        emit(g, { t: "coin", heads: h });
+        if (!h) {
+          const hurt = mostHurt(me);
+          log(
+            g,
+            hurt
+              ? `Reszka — ${nameOf(hurt)} odzyskuje ${e.tailsHeal}.`
+              : "Reszka — nikt nie jest ranny.",
+          );
+          if (hurt) healAll(g, [hurt], e.tailsHeal);
+          break;
+        }
+        log(g, "Orzeł!");
+      } else if (e.coin && !flip(g)) break;
+      if (!(e.any ? target : foe.active)?.energy) break;
       discardEnergy(g, other(pid), e.any ? target! : foe.active!, 1);
       break;
     case "peek": {
@@ -479,6 +497,16 @@ export function playSupport(
       break;
   }
   return true;
+}
+
+/** The owner's character with the most damage (the active wins ties). */
+function mostHurt(p: PlayerState): InPlay | undefined {
+  return inPlay(p)
+    .filter((c) => c.damage > 0)
+    .reduce<InPlay | undefined>(
+      (best, c) => (!best || c.damage > best.damage ? c : best),
+      undefined,
+    );
 }
 
 /** Coin flip of a trainer card (logged + animated). Returns heads. */

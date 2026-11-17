@@ -32,6 +32,41 @@ function give(g: Game, pid: PlayerId, cardId: string) {
 }
 
 describe("trainer cards", () => {
+  it("Gromnica: heads discards a temptation, tails heals 20 from the most damaged own character", () => {
+    const seen = { heads: 0, tails: 0 };
+    for (let seed = 1; seed <= 20; seed++) {
+      const g = turnOf("me", seed);
+      const foe = g.players.ai.active!;
+      foe.energy = 2;
+      const me = g.players.me;
+      me.active!.damage = 10;
+      me.bench[1]!.damage = 40;
+      const card = give(g, "me", "gromnica");
+      const after = dispatch(g, { type: "support", uid: card.uid });
+      expect(after).not.toBe(g);
+      const [a, b] = [after.players.me.active!, after.players.me.bench[1]!];
+      if (after.players.ai.active!.energy === 1) {
+        seen.heads++;
+        expect([a.damage, b.damage]).toEqual([10, 40]);
+      } else {
+        seen.tails++;
+        expect(after.players.ai.active!.energy).toBe(2);
+        expect([a.damage, b.damage]).toEqual([10, 20]);
+      }
+    }
+    expect(seen.heads).toBeGreaterThan(0);
+    expect(seen.tails).toBeGreaterThan(0);
+  });
+
+  it("Gromnica can be played to heal when the rival has no temptation", () => {
+    const g = turnOf("me");
+    g.players.ai.active!.energy = 0;
+    const card = give(g, "me", "gromnica");
+    expect(canPlaySupport(g, "me", card)).toBe(false);
+    g.players.me.active!.damage = 30;
+    expect(canPlaySupport(g, "me", card)).toBe(true);
+  });
+
   it("no item just draws cards — drawing is the job of supporters", () => {
     for (const c of ALL_CARDS)
       if (c.kind === "item")
