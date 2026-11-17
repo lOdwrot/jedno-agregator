@@ -37,6 +37,7 @@ import { PvpDuel } from "./pvp/PvpDuel";
 import { PvpLobby } from "./pvp/PvpLobby";
 import { preloadBoard } from "./board/loadBoard";
 import type { Session } from "./pvp/session";
+import { deckStats } from "./stats/deckStats";
 import { TutorialCard } from "./tutorial/TutorialCard";
 import { TutorialDuel } from "./tutorial/TutorialDuel";
 
@@ -105,12 +106,19 @@ export function SoulGame() {
 
   const onFinish = useCallback(
     (won: boolean, souls: number): DuelOutcome => {
-      if (duel)
+      if (duel) {
         track("duel_end", {
           ...duelStats(duel.opponent, duel.training, xp),
           result: won ? "wygrana" : "przegrana",
           souls,
         });
+        // which cards the winning (and losing) decks play — one event per duel, card name → copies
+        track(won ? "deck_win" : "deck_loss", {
+          difficulty: duel.opponent.difficulty,
+          mode: duel.training ? "trening" : "nagroda",
+          ...deckStats(deckList(profile)),
+        });
+      }
       // a practice duel changes nothing in the profile: no talents, booster, record or rank
       if (!duel || duel.training) return { earned: 0, prize: null, rank: { from: xp, to: xp } };
       const t = reward(duel.opponent.reward, won, souls);
