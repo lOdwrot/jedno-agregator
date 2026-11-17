@@ -99,9 +99,9 @@ export function DeckBuilder({
               ({g.stacks.reduce((n, s) => n + s.length, 0)})
             </span>
           </h3>
-          <ul className="grid items-start gap-2 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 items-start gap-2 sm:grid-cols-2">
             {g.stacks.map((stack) => (
-              <li key={stack[0]} className="rounded-card bg-surface shadow-card">
+              <li key={stack[0]} className="min-w-0 rounded-card bg-surface shadow-card">
                 {stack.length === 1 ? (
                   <DeckRow
                     cardKey={stack[0]!}
