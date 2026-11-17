@@ -158,7 +158,7 @@ apocalyptic cards from `soul/data/abyss.ts` (Bestia z morza, Fałszywy Prorok, L
 ability: works from the bench, none of the owner's characters has a weakness —, Babilon Wielki, Ojciec kłamstwa, Złoty
 kielich — a supporter, like Fałszywa obietnica, Znamię Bestii — a `skipEvolve` item, the demons' Droga do Damaszku). The extreme helpers are evolutions of weak base forms (`soul/data/abyssBasics.ts`:
 Wilk w owczej skórze → Prorok, Iskra niezgody → Jeździec, Owczy pęd → Duch tego świata; Bies Wygody → Belfegor in `sloth.ts`;
-three-stage: Fala z otchłani → Mały róg → Bestia z morza, Tylko ten jeden raz → Kajdany nałogu → Legion;
+three-stage: Fala z otchłani (`retreatMinus` 2: works from the bench, the owner's retreats cost 2 less, no stacking; `engine/retreatMinus.test.ts`) → Mały róg → Bestia z morza, Tylko ten jeden raz → Kajdany nałogu → Legion;
 `abyss.test.ts` enforces it, every evolution in a deck comes with its base form). Rebalance decks with AI-vs-AI sims (starter
 deck vs each opponent) so the win rate keeps falling monotonically from `kanapa` to `niepokonany` — `data/balance.test.ts`
 enforces it on fixed seeds (last tuning, 2000 duels each: ~46 / 33 / 12 / 7 / 3 / 1 %). Tron Bestii's whole deck is printed `stained` (`Opponent.finish`).

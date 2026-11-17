@@ -55,8 +55,10 @@ export function placeAura(g: Game, pid: PlayerId) {
 export const placeArmor = (g: Game, pid: PlayerId) => placeAura(g, pid)?.armor ?? 0;
 
 export function retreatCost(g: Game, pid: PlayerId, c: InPlay): number {
-  if (abilities(g, pid).some((a) => a.k === "freeRetreat")) return 0;
-  return Math.max(0, charDef(c).retreat - (placeAura(g, pid)?.retreatMinus ?? 0));
+  const own = abilities(g, pid);
+  if (own.some((a) => a.k === "freeRetreat")) return 0;
+  const minus = Math.max(0, ...own.map((a) => (a.k === "retreatMinus" ? a.n : 0)));
+  return Math.max(0, charDef(c).retreat - (placeAura(g, pid)?.retreatMinus ?? 0) - minus);
 }
 
 /** Energy an attack of `pid` needs right now (`costMinus` abilities — strongest one, no stacking). */

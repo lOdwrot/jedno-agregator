@@ -606,9 +606,9 @@ export const PARISH_CARDS: CardDef[] = [
       {
         name: "Zatrzymanie Attyli",
         cost: 2,
-        damage: 40,
-        text: "Obrońca zostaje zatrzymany.",
-        effects: [{ k: "status", s: "paralyzed" }],
+        damage: 60,
+        text: "Rzuć monetą. Orzeł: obrońca zostaje zatrzymany.",
+        effects: [{ k: "status", s: "paralyzed", coin: true }],
       },
       { name: "List do Flawiana", cost: 4, damage: 110 },
     ],

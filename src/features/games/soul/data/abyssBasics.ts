@@ -112,6 +112,11 @@ export const ABYSS_BASICS: CardDef[] = [
     weakness: "modlitwa",
     retreat: 1,
     souls: 1,
+    ability: {
+      name: "Odpływ",
+      text: "Działa też z ławki: wycofanie każdej Twojej postaci kosztuje o 2 mniej (kilka Fal się nie sumuje).",
+      effect: { k: "retreatMinus", n: 2 },
+    },
     attacks: [
       { name: "Piana na ustach", cost: 1, damage: 20 },
       { name: "Przypływ", cost: 2, damage: 40 },

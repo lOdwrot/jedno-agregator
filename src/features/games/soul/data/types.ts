@@ -44,6 +44,8 @@ export type AbilityEffect =
   | { k: "attackBonus"; n: number }
   /** Works from the bench too: the owner's attacks cost `n` energy less (does not stack). */
   | { k: "costMinus"; n: number }
+  /** Works from the bench too: the owner's characters retreat for `n` energy less (does not stack). */
+  | { k: "retreatMinus"; n: number }
   /** Works from the bench too: none of the owner's characters has a weakness. */
   | { k: "noWeakness" }
   /** While this character is active, neither player may play cards of this kind. */
