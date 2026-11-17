@@ -88,7 +88,8 @@ describe("abilities (once per turn)", () => {
     g.players.me.bench.push(s, a);
     g.players.me.active!.damage = 30;
     g = dispatch(g, { type: "ability", target: s.uid });
-    expect(g.players.me.active!.damage).toBe(10);
+    const heads = g.log.some((l) => l.startsWith("Orzeł!"));
+    expect(g.players.me.active!.damage).toBe(heads ? 10 : 20);
     const energyBefore = [g.players.me.active!, ...g.players.me.bench].reduce(
       (x, c) => x + c.energy,
       0,

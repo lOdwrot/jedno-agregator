@@ -365,8 +365,8 @@ export const PARISH_CARDS: CardDef[] = [
     souls: 1,
     ability: {
       name: "Opatrunek",
-      text: "Raz na turę: ulecz 20 swojej najbardziej rannej postaci.",
-      effect: { k: "healOnce", n: 20 },
+      text: "Raz na turę: ulecz 10 swojej najbardziej rannej postaci, potem rzuć monetą. Orzeł: ulecz jeszcze 10.",
+      effect: { k: "healOnce", n: 10, coin: 10 },
     },
     attacks: [
       {

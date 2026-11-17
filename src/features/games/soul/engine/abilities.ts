@@ -7,6 +7,7 @@ import { emit } from "./events";
 import {
   charDef,
   choicePending,
+  coin,
   draw,
   inPlay,
   log,
@@ -98,8 +99,15 @@ export function activateAbility(g: Game, pid: PlayerId, c: InPlay) {
     }
     case "healOnce": {
       const t = [...inPlay(p)].sort((a, b) => b.damage - a.damage)[0]!;
-      healAll(g, [t], e.n);
-      log(g, `${name} — ${nameOf(t)} odzyskuje ${e.n}.`);
+      let n = e.n;
+      if (e.coin) {
+        const heads = coin(g);
+        emit(g, { t: "coin", heads });
+        if (heads) n += e.coin;
+        log(g, heads ? `Orzeł! +${e.coin} leczenia.` : "Reszka — bez dodatkowego leczenia.");
+      }
+      healAll(g, [t], n);
+      log(g, `${name} — ${nameOf(t)} odzyskuje ${n}.`);
       break;
     }
     case "energyOnce": {

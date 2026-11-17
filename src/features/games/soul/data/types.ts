@@ -53,7 +53,8 @@ export type AbilityEffect =
   /* activated once per turn (like Pokémon TCG Abilities) */
   | { k: "drawOnce" }
   | { k: "drawUntil"; n: number }
-  | { k: "healOnce"; n: number }
+  /** Heals n; with `coin` a coin flip follows — heads heals `coin` more. */
+  | { k: "healOnce"; n: number; coin?: number }
   | { k: "energyOnce" }
   /** Also from the bench: attach 1 energy card from the hand to one of your characters. */
   | { k: "handEnergyOnce" }
