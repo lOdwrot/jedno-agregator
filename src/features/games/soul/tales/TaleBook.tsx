@@ -2,11 +2,15 @@ import { useState } from "react";
 import { Button, Dialog, IconButton } from "@/ui";
 import { cn } from "@/lib/cn";
 import { score, taleOf } from "./stories";
+import { PageTurn } from "./PageTurn";
+import { ParchmentSwap } from "./ParchmentSwap";
+import { TaleCover } from "./TaleCover";
 import { TalePage } from "./TalePage";
 import { TaleQuiz } from "./TaleQuiz";
 import { TaleResult } from "./TaleResult";
 import { useTaleSound } from "./useTaleSound";
 import "./tales.css";
+import "./book.css";
 
 type Step =
   | { k: "cover" }
@@ -24,7 +28,9 @@ interface Props {
 }
 
 /**
- * "Opowieści o świętych": a cover, 5–6 animated pages (with a lullaby and a soundscape per page,
+ * "Opowieści o świętych", drawn as an old book: a leather cover that opens like a page, 5–6
+ * parchment leaves turned with a 3D page flip (`PageTurn`), the quiz and the result on scrolls that
+ * fly in and out (`ParchmentSwap`). A cover, 5–6 animated pages (with a lullaby and a soundscape per page,
  * `useTaleSound`), a 3-question quiz and the saint's card (only the first time — a replay ends
  * without one).
  */
@@ -36,136 +42,139 @@ export default function TaleBook({ cardId, onWin, replay = false, onClose }: Pro
   if (!tale) return null;
   const pages = tale.pages.length;
 
+  const sheet = step.k === "quiz" ? `quiz-${step.i}` : step.k === "result" ? "result" : "book";
+  const leaf = step.k === "cover" ? 0 : step.k === "page" ? step.i + 1 : 0;
+
   return (
-    <Dialog open onClose={onClose} title="Opowieści o świętych" size="lg">
-      {step.k === "cover" && (
-        <div className="flex flex-col items-center gap-5 text-center">
-          <div
-            aria-hidden="true"
-            className="relative isolate grid size-40 place-items-center overflow-hidden rounded-full bg-navy text-7xl shadow-lift"
-          >
-            <span className="soul-foil soul-foil--stained" />
-            <span className="relative">📖</span>
-          </div>
-          {replay ? (
-            <>
-              <p className="font-serif text-2xl text-accent-ink italic">{tale.title}</p>
-              <p className="max-w-prose text-lg text-ink">
-                Otwórz księgę jeszcze raz i przeżyj tę opowieść od nowa. Na końcu znów czekają trzy
-                pytania — tym razem bez karty, bo kartę świętego masz już w kolekcji.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="font-serif text-2xl text-accent-ink italic">Nowa opowieść o świętym!</p>
-              <p className="max-w-prose text-lg text-ink">
-                Twoja wytrwałość otworzyła starą księgę. Na jej kartach czeka opowieść o pewnym
-                świętym. Przeczytaj ją uważnie — na końcu są trzy pytania, a kto odpowie dobrze na
-                wszystkie, otrzyma wyjątkową kartę, której nie ma w żadnym boosterze.
-              </p>
-            </>
-          )}
-          <Button size="lg" onClick={() => setStep({ k: "page", i: 0 })}>
-            {replay ? "📖 Przeżyj opowieść ponownie" : "📖 Poznaj świętego"}
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Później
-          </Button>
-        </div>
-      )}
-
-      {step.k === "page" && (
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="font-display text-xl font-extrabold text-navy">{tale.title}</h3>
-            <div className="flex gap-1">
-              <IconButton
-                variant="soft"
-                label="Muzyka w tle"
-                aria-pressed={sound.prefs.music}
-                onClick={() => sound.toggle("music")}
-              >
-                <span aria-hidden="true" className={cn(!sound.prefs.music && "opacity-40")}>
-                  🎵
-                </span>
-              </IconButton>
-              <IconButton
-                variant="soft"
-                label="Odgłosy opowieści"
-                aria-pressed={sound.prefs.sfx}
-                onClick={() => sound.toggle("sfx")}
-              >
-                <span aria-hidden="true">{sound.prefs.sfx ? "🔊" : "🔇"}</span>
-              </IconButton>
+    <Dialog
+      open
+      onClose={onClose}
+      title="Opowieści o świętych"
+      size="lg"
+      panelClassName="tale-book"
+    >
+      <ParchmentSwap id={sheet} sound={sound.prefs.sfx}>
+        {(step.k === "cover" || step.k === "page") && (
+          <div className="flex flex-col gap-4">
+            {step.k === "page" && (
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="font-serif text-2xl text-sepia italic">{tale.title}</h3>
+                <div className="flex gap-1">
+                  <IconButton
+                    variant="soft"
+                    label="Muzyka w tle"
+                    aria-pressed={sound.prefs.music}
+                    onClick={() => sound.toggle("music")}
+                  >
+                    <span aria-hidden="true" className={cn(!sound.prefs.music && "opacity-40")}>
+                      🎵
+                    </span>
+                  </IconButton>
+                  <IconButton
+                    variant="soft"
+                    label="Odgłosy opowieści"
+                    aria-pressed={sound.prefs.sfx}
+                    onClick={() => sound.toggle("sfx")}
+                  >
+                    <span aria-hidden="true">{sound.prefs.sfx ? "🔊" : "🔇"}</span>
+                  </IconButton>
+                </div>
+              </div>
+            )}
+            <div className="sm:px-2">
+              <PageTurn
+                index={leaf}
+                sound={sound.prefs.sfx}
+                render={(i) =>
+                  i === 0 ? (
+                    <TaleCover
+                      title={tale.title}
+                      replay={replay}
+                      onOpen={() => setStep({ k: "page", i: 0 })}
+                    />
+                  ) : (
+                    <TalePage
+                      tale={tale.id}
+                      page={tale.pages[i - 1]!}
+                      index={i - 1}
+                      total={pages}
+                    />
+                  )
+                }
+              />
             </div>
+            {step.k === "cover" ? (
+              <Button variant="ghost" className="self-center" onClick={onClose}>
+                Później
+              </Button>
+            ) : (
+              <div className="flex items-center justify-between gap-2">
+                <Button
+                  variant="ghost"
+                  disabled={step.i === 0}
+                  onClick={() => setStep({ k: "page", i: step.i - 1 })}
+                >
+                  ← Wstecz
+                </Button>
+                <p className="flex items-center gap-1.5" aria-live="polite">
+                  <span className="sr-only">
+                    Strona {step.i + 1} z {pages}
+                  </span>
+                  {tale.pages.map((_, i) => (
+                    <span
+                      key={i}
+                      aria-hidden="true"
+                      className={cn(
+                        "size-2.5 rotate-45 rounded-[2px] transition-transform",
+                        i === step.i ? "scale-125 bg-accent" : "bg-parchment-edge/50",
+                      )}
+                    />
+                  ))}
+                </p>
+                <Button
+                  onClick={() =>
+                    setStep(
+                      step.i + 1 < pages
+                        ? { k: "page", i: step.i + 1 }
+                        : { k: "quiz", i: 0, picks: [] },
+                    )
+                  }
+                >
+                  {step.i + 1 < pages ? "Dalej →" : "Do quizu ✍️"}
+                </Button>
+              </div>
+            )}
           </div>
-          <TalePage tale={tale.id} page={tale.pages[step.i]!} index={step.i} />
-          <div className="flex items-center justify-between gap-2">
-            <Button
-              variant="ghost"
-              disabled={step.i === 0}
-              onClick={() => setStep({ k: "page", i: step.i - 1 })}
-            >
-              ← Wstecz
-            </Button>
-            <p className="flex items-center gap-1.5" aria-live="polite">
-              <span className="sr-only">
-                Strona {step.i + 1} z {pages}
-              </span>
-              {tale.pages.map((_, i) => (
-                <span
-                  key={i}
-                  aria-hidden="true"
-                  className={cn(
-                    "size-2.5 rounded-full transition-transform",
-                    i === step.i ? "scale-125 bg-accent" : "bg-pill",
-                  )}
-                />
-              ))}
-            </p>
-            <Button
-              onClick={() =>
-                setStep(
-                  step.i + 1 < pages
-                    ? { k: "page", i: step.i + 1 }
-                    : { k: "quiz", i: 0, picks: [] },
-                )
+        )}
+
+        {step.k === "quiz" && (
+          <TaleQuiz
+            question={tale.quiz[step.i]!}
+            index={step.i}
+            total={tale.quiz.length}
+            onAnswer={(pick) => {
+              const picks = [...step.picks, pick];
+              if (step.i + 1 < tale.quiz.length) setStep({ k: "quiz", i: step.i + 1, picks });
+              else {
+                if (!replay && score(tale, picks) === tale.quiz.length) onWin?.();
+                setStep({ k: "result", picks });
               }
-            >
-              {step.i + 1 < pages ? "Dalej →" : "Do quizu ✍️"}
-            </Button>
-          </div>
-        </div>
-      )}
+            }}
+          />
+        )}
 
-      {step.k === "quiz" && (
-        <TaleQuiz
-          key={step.i}
-          question={tale.quiz[step.i]!}
-          index={step.i}
-          total={tale.quiz.length}
-          onAnswer={(pick) => {
-            const picks = [...step.picks, pick];
-            if (step.i + 1 < tale.quiz.length) setStep({ k: "quiz", i: step.i + 1, picks });
-            else {
-              if (!replay && score(tale, picks) === tale.quiz.length) onWin?.();
-              setStep({ k: "result", picks });
-            }
-          }}
-        />
-      )}
-
-      {step.k === "result" && (
-        <TaleResult
-          cardId={tale.id}
-          quiz={tale.quiz}
-          picks={step.picks}
-          reward={!replay}
-          onReread={() => setStep({ k: "page", i: 0 })}
-          onRetry={() => setStep({ k: "quiz", i: 0, picks: [] })}
-          onClose={onClose}
-        />
-      )}
+        {step.k === "result" && (
+          <TaleResult
+            cardId={tale.id}
+            quiz={tale.quiz}
+            picks={step.picks}
+            reward={!replay}
+            onReread={() => setStep({ k: "page", i: 0 })}
+            onRetry={() => setStep({ k: "quiz", i: 0, picks: [] })}
+            onClose={onClose}
+          />
+        )}
+      </ParchmentSwap>
     </Dialog>
   );
 }

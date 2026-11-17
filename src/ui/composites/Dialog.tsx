@@ -10,9 +10,11 @@ const SIZES = {
 
 export interface DialogProps extends ModalBaseProps {
   size?: keyof typeof SIZES;
+  /** Extra classes for the panel (e.g. a themed background). */
+  panelClassName?: string;
 }
 
 /** Modal dialog (native <dialog>): focus trap, Esc/backdrop closes, focus restored, scroll locked. */
-export function Dialog({ size = "md", ...rest }: DialogProps) {
-  return <Modal kind="dialog" panelClassName={cn(SIZES[size])} {...rest} />;
+export function Dialog({ size = "md", panelClassName, ...rest }: DialogProps) {
+  return <Modal kind="dialog" panelClassName={cn(SIZES[size], panelClassName)} {...rest} />;
 }

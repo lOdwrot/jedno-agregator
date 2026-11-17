@@ -29,9 +29,10 @@ describe("TaleBook", () => {
     const onWin = readAndAnswer(false);
     expect(onWin).not.toHaveBeenCalled();
     expect(screen.getByText("Niestety…")).toBeTruthy();
-    expect(screen.getByText(taleOf("biedaczyna")!.quiz[2].q)).toBeTruthy();
+    // The flown-out quiz sheet is aria-hidden: role queries see only the result scroll.
+    expect(screen.getByRole("listitem")).toHaveTextContent(taleOf("biedaczyna")!.quiz[2].q);
     fireEvent.click(screen.getByRole("button", { name: "Spróbuj jeszcze raz" }));
-    expect(screen.getByText("Pytanie 1 z 3")).toBeTruthy();
+    expect(screen.getByRole("group", { name: /Pytanie 1 z 3/ })).toBeTruthy();
   });
 
   it("a replay ends without a card", () => {

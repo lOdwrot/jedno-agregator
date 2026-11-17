@@ -88,6 +88,21 @@
   --color-tale-robe: #7a5233;
 }
 
+/* The book of the saints' tales: parchment pages, leather cover with gilt, sepia ink.
+   sepia on parchment >= 9:1, sepia-muted >= 5:1, gilt-light on leather >= 7:1. */
+@theme {
+  --color-parchment: #f3e6c8;
+  --color-parchment-light: #fbf4e2;
+  --color-parchment-deep: #e3cd9f;
+  --color-parchment-edge: #b48a52;
+  --color-sepia: #3f2a19;
+  --color-sepia-muted: #6b4f33;
+  --color-leather: #4a2416;
+  --color-leather-dark: #2e140b;
+  --color-gilt: #c9a24a;
+  --color-gilt-light: #f0d88f;
+}
+
 /* Metals of the 3D coin toss in the duel (read by the canvas). */
 @theme static {
   --color-gold-100: #fff6cf;

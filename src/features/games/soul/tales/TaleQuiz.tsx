@@ -19,7 +19,7 @@ export function TaleQuiz({
   const name = useId();
   return (
     <form
-      className="flex flex-col gap-4"
+      className="tale-scroll flex flex-col gap-4 sm:px-8"
       onSubmit={(e) => {
         e.preventDefault();
         if (pick !== null) onAnswer(pick);
@@ -27,21 +27,19 @@ export function TaleQuiz({
     >
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-3">
-          <span className="block text-sm font-bold tracking-wide text-ink-muted uppercase">
+          <span className="block font-serif text-lg text-sepia-muted italic">
             Pytanie {index + 1} z {total}
           </span>
-          <span className="mt-1 block font-display text-2xl font-extrabold text-navy">
-            {question.q}
-          </span>
+          <span className="mt-1 block font-serif text-3xl text-sepia">{question.q}</span>
         </legend>
         {question.options.map((o, i) => (
           <label
             key={o}
             className={cn(
-              "flex min-h-14 cursor-pointer items-center gap-3 rounded-card border-2 bg-surface px-4 py-3 text-lg text-ink transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent-ink",
+              "flex min-h-14 cursor-pointer items-center gap-3 rounded-card border-2 bg-parchment-light/70 px-4 py-3 text-lg text-sepia transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent-ink",
               pick === i
                 ? "border-accent-strong bg-accent-soft"
-                : "border-line hover:border-navy/40",
+                : "border-parchment-edge/50 hover:border-parchment-edge",
             )}
           >
             <input

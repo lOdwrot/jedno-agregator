@@ -1,0 +1,156 @@
+/* The book look of the saints' tales: parchment, leather cover, page turns, rolled scrolls.
+   Only colours from the theme tokens; the motion itself lives in PageTurn / ParchmentSwap. */
+
+/* The dialog panel: an aged parchment sheet with stains, fibres and a darker rim. */
+.tale-book {
+  background-color: var(--color-parchment);
+  background-image:
+    radial-gradient(ellipse at 18% 12%, rgb(255 255 255 / 0.45), transparent 45%),
+    radial-gradient(ellipse at 85% 90%, rgb(140 95 40 / 0.16), transparent 50%),
+    radial-gradient(circle at 70% 25%, rgb(140 95 40 / 0.08), transparent 18%),
+    repeating-linear-gradient(97deg, rgb(120 80 30 / 0.025) 0 2px, transparent 2px 7px);
+  box-shadow:
+    inset 0 0 60px rgb(110 70 25 / 0.28),
+    0 18px 40px -12px rgb(14 35 53 / 0.45);
+  color: var(--color-sepia);
+}
+.tale-book h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--color-sepia);
+}
+
+/* One leaf of the book: lighter paper, the spine shadow on the left, stacked page edges on the right. */
+.tale-paper {
+  background-color: var(--color-parchment-light);
+  background-image:
+    linear-gradient(to right, rgb(60 35 10 / 0.22), rgb(60 35 10 / 0.06) 4%, transparent 9%),
+    radial-gradient(ellipse at 80% 15%, rgb(255 255 255 / 0.6), transparent 55%),
+    radial-gradient(ellipse at 30% 95%, rgb(150 100 45 / 0.14), transparent 55%),
+    repeating-linear-gradient(93deg, rgb(120 80 30 / 0.02) 0 1px, transparent 1px 5px);
+  box-shadow:
+    1px 1px 0 var(--color-parchment-deep),
+    3px 3px 0 var(--color-parchment),
+    4px 4px 0 var(--color-parchment-deep),
+    6px 6px 0 var(--color-parchment),
+    7px 7px 0 var(--color-parchment-edge),
+    10px 12px 24px -8px rgb(60 35 10 / 0.35);
+  border-radius: 0.25rem 0.75rem 0.75rem 0.25rem;
+  color: var(--color-sepia);
+}
+/* The back of a turning leaf. */
+.tale-paper-back {
+  background-color: var(--color-parchment);
+  background-image:
+    linear-gradient(to left, rgb(60 35 10 / 0.25), transparent 10%),
+    radial-gradient(ellipse at 40% 40%, rgb(150 100 45 / 0.12), transparent 60%);
+  border-radius: 0.75rem 0.25rem 0.25rem 0.75rem;
+}
+
+/* Leather book cover with a gilt frame. */
+.tale-cover {
+  background-color: var(--color-leather);
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgb(255 220 170 / 0.12), transparent 55%),
+    radial-gradient(ellipse at 75% 85%, rgb(0 0 0 / 0.35), transparent 60%),
+    linear-gradient(to right, var(--color-leather-dark), transparent 7%);
+  box-shadow:
+    inset 0 0 0 10px var(--color-leather),
+    inset 0 0 0 12px var(--color-gilt),
+    inset 0 0 0 16px var(--color-leather),
+    inset 0 0 0 17px var(--color-gilt),
+    inset 0 0 40px rgb(0 0 0 / 0.5),
+    5px 6px 0 var(--color-parchment-deep),
+    7px 8px 0 var(--color-leather-dark),
+    12px 16px 28px -8px rgb(30 15 5 / 0.55);
+  border-radius: 0.35rem 0.9rem 0.9rem 0.35rem;
+  color: var(--color-gilt-light);
+}
+.tale-cover-title {
+  color: var(--color-gilt-light);
+  text-shadow:
+    0 1px 0 var(--color-leather-dark),
+    0 0 14px rgb(240 216 143 / 0.35);
+}
+
+/* A rolled parchment scroll (quiz and result): rods at the top and bottom. */
+.tale-scroll {
+  position: relative;
+  margin-block: 0.9rem;
+  padding: 1.75rem 1.25rem;
+  background-color: var(--color-parchment-light);
+  background-image:
+    radial-gradient(ellipse at 20% 30%, rgb(255 255 255 / 0.55), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgb(150 100 45 / 0.14), transparent 55%),
+    linear-gradient(
+      to right,
+      rgb(110 70 25 / 0.16),
+      transparent 6%,
+      transparent 94%,
+      rgb(110 70 25 / 0.16)
+    );
+  box-shadow: 0 10px 24px -10px rgb(60 35 10 / 0.45);
+  color: var(--color-sepia);
+}
+.tale-scroll::before,
+.tale-scroll::after {
+  content: "";
+  position: absolute;
+  left: -0.6rem;
+  right: -0.6rem;
+  height: 1.1rem;
+  border-radius: 9999px;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-parchment-edge),
+    var(--color-parchment-deep) 35%,
+    var(--color-parchment-light) 55%,
+    var(--color-parchment-edge)
+  );
+  box-shadow: 0 3px 6px rgb(60 35 10 / 0.35);
+}
+.tale-scroll::before {
+  top: -0.55rem;
+}
+.tale-scroll::after {
+  bottom: -0.55rem;
+}
+
+/* Illustration framed like an engraving plate, with a faint vignette. */
+.tale-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.2rem;
+  box-shadow:
+    0 0 0 2px var(--color-sepia-muted),
+    0 0 0 5px var(--color-parchment-light),
+    0 0 0 6px var(--color-parchment-edge);
+}
+.tale-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgb(90 55 20 / 0.35));
+  mix-blend-mode: multiply;
+}
+
+/* Illuminated first letter of the page. */
+.tale-dropcap::first-letter {
+  float: left;
+  margin: 0.08em 0.12em 0 0;
+  font-family: var(--font-serif);
+  font-size: 3.4em;
+  line-height: 0.78;
+  color: var(--color-accent-ink);
+}
+
+/* Shade on a leaf while it turns (darkest when it stands upright). */
+.tale-leaf-shade {
+  background: linear-gradient(to left, rgb(40 20 5 / 0.45), transparent 70%);
+}
+.tale-under-shade {
+  background: linear-gradient(to right, rgb(40 20 5 / 0.35), transparent 45%);
+}

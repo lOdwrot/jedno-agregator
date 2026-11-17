@@ -32,14 +32,14 @@ export function TaleResult({
 
   if (!wrong.length)
     return (
-      <div className="flex flex-col items-center gap-4 text-center">
+      <div className="tale-scroll flex flex-col items-center gap-4 text-center sm:px-8">
         <span aria-hidden="true" className="text-7xl">
           🌟
         </span>
-        <p className="font-display text-2xl font-extrabold text-navy" aria-live="polite">
+        <p className="font-serif text-3xl text-sepia" aria-live="polite">
           Brawo! Wszystkie odpowiedzi dobre ({total} / {total})
         </p>
-        <p className="max-w-prose text-lg text-ink">
+        <p className="max-w-prose text-lg text-sepia">
           Pięknie pamiętasz tę opowieść. Kartę <strong>{getCard(cardId).name}</strong> masz już w
           swojej kolekcji — każdą kartę z opowieści można zdobyć tylko raz.
         </p>
@@ -50,32 +50,35 @@ export function TaleResult({
     );
 
   return (
-    <div className="flex flex-col items-center gap-4 text-center">
+    <div className="tale-scroll flex flex-col items-center gap-4 text-center sm:px-8">
       <span aria-hidden="true" className="animate-[game-pop-in_0.5s_ease-out_both] text-7xl">
         😔
       </span>
       <div aria-live="polite">
-        <p className="font-display text-3xl font-extrabold text-navy">Niestety…</p>
-        <p className="mt-1 text-lg font-bold text-ink">
+        <p className="font-serif text-4xl text-sepia italic">Niestety…</p>
+        <p className="mt-1 text-lg font-bold text-sepia">
           {wrong.length === 1
             ? "Jedna odpowiedź jest błędna."
             : `Błędne odpowiedzi: ${wrong.length} z ${total}.`}
         </p>
-        <p className="text-ink-muted">
+        <p className="text-sepia-muted">
           Poprawne: {total - wrong.length} / {total}
         </p>
       </div>
       <ul className="flex w-full max-w-prose flex-col gap-2 text-left">
         {wrong.map((i) => (
-          <li key={i} className="rounded-card border-2 border-line bg-surface px-4 py-3 text-ink">
-            <span className="block text-sm font-bold tracking-wide text-ink-muted uppercase">
+          <li
+            key={i}
+            className="rounded-card border-2 border-parchment-edge/50 bg-parchment-light/70 px-4 py-3 text-sepia"
+          >
+            <span className="block text-sm font-bold tracking-wide text-sepia-muted uppercase">
               ✗ Pytanie {i + 1}
             </span>
             {quiz[i]!.q}
           </li>
         ))}
       </ul>
-      <p className="max-w-prose text-lg text-ink">
+      <p className="max-w-prose text-lg text-sepia">
         {reward
           ? "Spróbuj jeszcze raz! Karta świętego czeka na tego, kto odpowie dobrze na wszystkie pytania."
           : "Spróbuj jeszcze raz — na pewno się uda!"}

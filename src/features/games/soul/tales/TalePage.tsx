@@ -1,30 +1,32 @@
-import { AnimatePresence, motion } from "motion/react";
 import type { TalePage as Page } from "./stories";
-import { cn } from "@/lib/cn";
 import { Scene } from "./scenes";
-import { groundOf } from "./scenes/ground";
 
-/** One page of the tale: the animated scene fills the card, the text panel overlaps its lower edge. */
-export function TalePage({ tale, page, index }: { tale: string; page: Page; index: number }) {
+/** One leaf of the book: the animated scene as a framed plate, the text with an illuminated initial. */
+export function TalePage({
+  tale,
+  page,
+  index,
+  total,
+}: {
+  tale: string;
+  page: Page;
+  index: number;
+  total: number;
+}) {
   return (
-    <div className="relative overflow-hidden rounded-card bg-navy shadow-lift [perspective:1200px]">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, rotateY: 35, x: 60 }}
-          animate={{ opacity: 1, rotateY: 0, x: 0 }}
-          exit={{ opacity: 0, rotateY: -35, x: -60 }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className={cn("relative flex flex-col", groundOf(page.scene, tale))}
-        >
-          <div className="relative aspect-[4/3] sm:aspect-[16/9]">
-            <Scene id={page.scene} tale={tale} />
-          </div>
-          <p className="relative mx-3 -mt-12 mb-3 rounded-card bg-surface/90 p-4 font-sans text-xl leading-relaxed text-ink shadow-card backdrop-blur-sm sm:mx-4 sm:mb-4 sm:p-5 sm:text-2xl sm:leading-relaxed">
-            {page.text}
-          </p>
-        </motion.div>
-      </AnimatePresence>
-    </div>
+    <article className="tale-paper flex h-full flex-col gap-4 py-5 pr-5 pl-7 sm:gap-5 sm:py-7 sm:pr-8 sm:pl-10">
+      <div className="tale-frame relative aspect-[4/3] shrink-0 sm:aspect-[16/9]">
+        <Scene id={page.scene} tale={tale} />
+      </div>
+      <p className="tale-dropcap text-xl leading-relaxed text-sepia sm:text-2xl sm:leading-relaxed">
+        {page.text}
+      </p>
+      <p
+        aria-hidden="true"
+        className="mt-auto text-center font-serif text-lg text-sepia-muted italic"
+      >
+        ❦ {index + 1} / {total} ❦
+      </p>
+    </article>
   );
 }
