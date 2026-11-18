@@ -1,0 +1,602 @@
+{
+  "abaddon": {
+    "side": "demons",
+    "seed": 1000,
+    "prompt": "a colossal horned destroyer demon with burning eyes rising from a volcano, smashing a stone house apart, lava and smoke"
+  },
+  "acedia": {
+    "side": "demons",
+    "seed": 1001,
+    "prompt": "a pale gaunt demon with heavy drooping eyelids hovering over a dark pit at noon, harsh midday sun, an empty hourglass, dry cracked earth"
+  },
+  "adoracja": {
+    "side": "parish",
+    "seed": 1002,
+    "prompt": "a quiet candlelit chapel with a golden monstrance on the altar, people kneeling in silent prayer, rays of soft light, rows of candles"
+  },
+  "algorytm": {
+    "side": "demons",
+    "seed": 1003,
+    "prompt": "a glowing mechanical eye made of circuits aiming a red target reticle at a small person, floating screens, digital web of cables"
+  },
+  "animator": {
+    "side": "parish",
+    "seed": 1004,
+    "prompt": "a cheerful young woman youth leader with a guitar on her back holding a cooking pot and a smartphone, leading a group of teenagers, summer camp"
+  },
+  "antypapiez": {
+    "side": "demons",
+    "seed": 1005,
+    "prompt": "a sinister false pope in white and gold vestments holding a theatre mask in front of his face, shadowy throne, crooked tiara"
+  },
+  "babcia": {
+    "side": "parish",
+    "seed": 1006,
+    "prompt": "a kind smiling elderly polish grandmother in a headscarf praying with a wooden rosary, sitting in a church pew, soft candlelight"
+  },
+  "babilon": {
+    "side": "demons",
+    "seed": 1007,
+    "prompt": "a decadent golden city of towers and ziggurats at dusk, markets overflowing with gold and jewels, a proud queen on a throne above the city"
+  },
+  "banka": {
+    "side": "demons",
+    "seed": 1008,
+    "prompt": "a giant iridescent soap bubble trapping a crowd of identical people inside, all looking the same way, dark void around it"
+  },
+  "belfegor": {
+    "side": "demons",
+    "seed": 1009,
+    "prompt": "a fat lazy horned demon prince lounging on a velvet sofa, a strange contraption of levers doing everything for him, half closed eyes"
+  },
+  "belzebub": {
+    "side": "demons",
+    "seed": 1010,
+    "prompt": "a monstrous demon lord with fly wings and a crown, surrounded by a swirling swarm of black flies, buzzing chaos"
+  },
+  "bestia": {
+    "side": "demons",
+    "seed": 1011,
+    "prompt": "a seven headed beast with ten horns rising from a stormy sea, crowns on the horns, waves crashing, crowd on the shore"
+  },
+  "ceremoniarz": {
+    "side": "parish",
+    "seed": 1012,
+    "prompt": "a serious young altar server master of ceremonies in white surplice holding a book and pointing directions, straightening a candle on the altar"
+  },
+  "chor": {
+    "side": "parish",
+    "seed": 1013,
+    "prompt": "a large cathedral choir in white robes singing together, gothic arches, organ pipes behind, golden light"
+  },
+  "ciche-dni": {
+    "side": "demons",
+    "seed": 1014,
+    "prompt": "two people sitting back to back in a cold grey room, not speaking, a zipper over a mouth, frost on the window"
+  },
+  "cysters": {
+    "side": "parish",
+    "seed": 1015,
+    "prompt": "a cistercian monk in white habit and black scapular writing a manuscript with a goose quill at a desk, monastery scriptorium, candle"
+  },
+  "czat": {
+    "side": "demons",
+    "seed": 1016,
+    "prompt": "a smartphone floating in the dark exploding with hundreds of speech bubbles and stickers, notification badges, chaotic swirl"
+  },
+  "damaszek": {
+    "side": "parish",
+    "seed": 1017,
+    "prompt": "saint paul falling from his horse on the road to damascus, blinding light from the sky, lightning, dusty desert road"
+  },
+  "dorota": {
+    "side": "parish",
+    "seed": 1018,
+    "prompt": "a medieval blessed woman mystic in a simple grey veil praying in a small stone cell beside a gothic cathedral, a red rose, halo of light"
+  },
+  "drzemka": {
+    "side": "demons",
+    "seed": 1019,
+    "prompt": "a small mischievous sleepy imp in a nightcap switching off an alarm clock beside a sleeping person in bed, sunday morning"
+  },
+  "duch-swiata": {
+    "side": "demons",
+    "seed": 1020,
+    "prompt": "a faceless grey misty spirit drifting through a modern city street, fog swallowing the colors, people walking blindly"
+  },
+  "dyrygentka": {
+    "side": "parish",
+    "seed": 1021,
+    "prompt": "a confident woman conductor with a baton silencing a children's choir with one look, music sheets, church interior"
+  },
+  "ewangelizator": {
+    "side": "parish",
+    "seed": 1022,
+    "prompt": "a young street evangelist with a megaphone and a bible preaching on a busy city square, passersby walking around him"
+  },
+  "fala": {
+    "side": "demons",
+    "seed": 1023,
+    "prompt": "a huge dark ocean wave rising from the abyss with a shadowy sea monster swimming beneath it, stormy sky"
+  },
+  "falszywy": {
+    "side": "demons",
+    "seed": 5024,
+    "prompt": "a sly young man in dark sunglasses and a hoodie smiling and beckoning with his finger, dark alley at night with purple party lights"
+  },
+  "galeria": {
+    "side": "demons",
+    "seed": 1025,
+    "prompt": "a huge shiny shopping mall interior full of sale signs and shopping bags, crowds of shoppers, cold neon lights"
+  },
+  "gromnica": {
+    "side": "parish",
+    "seed": 1026,
+    "prompt": "a tall decorated blessed candle burning brightly in a winter night, wolves retreating into the dark forest, snow"
+  },
+  "harcerz": {
+    "side": "parish",
+    "seed": 1027,
+    "prompt": "a polish boy scout in green uniform with a scarf lighting a campfire with a single match in a forest at dusk"
+  },
+  "harcmistrz": {
+    "side": "parish",
+    "seed": 1028,
+    "prompt": "an experienced scoutmaster with a beard in green uniform leading a song around a big campfire, scouts in a circle, starry forest night"
+  },
+  "hejt": {
+    "side": "demons",
+    "seed": 1029,
+    "prompt": "a dark hooded figure typing furiously on a glowing keyboard at 2 am, angry red symbols flying from the screen"
+  },
+  "impreza": {
+    "side": "demons",
+    "seed": 1030,
+    "prompt": "a loud nightclub party with a disco ball, flashing lasers, thumping speakers, crowd dancing in the dark"
+  },
+  "influencer": {
+    "side": "demons",
+    "seed": 1031,
+    "prompt": "a demonic influencer with small horns posing with a smartphone selfie stick, ring light, devil tail, glamorous fake smile"
+  },
+  "jezdziec": {
+    "side": "demons",
+    "seed": 1032,
+    "prompt": "a fierce horseman with a great sword riding a fiery red horse at full gallop, battlefield smoke, apocalyptic sky"
+  },
+  "kabaret": {
+    "side": "demons",
+    "seed": 1033,
+    "prompt": "a mocking cabaret stage with a grinning masked jester, a laughing shadowy audience, red curtains and spotlights"
+  },
+  "kadzidlo": {
+    "side": "parish",
+    "seed": 1034,
+    "prompt": "a swinging silver thurible censer releasing thick clouds of white incense smoke in a church, altar boys in background"
+  },
+  "kajdany": {
+    "side": "demons",
+    "seed": 1035,
+    "prompt": "a living mass of heavy black iron chains wrapping around a struggling person, chains shaped like a monster"
+  },
+  "kancelaria": {
+    "side": "parish",
+    "seed": 1036,
+    "prompt": "a friendly middle aged parish office lady behind a wooden desk full of files and stamps, opening hours board, warm office"
+  },
+  "kandydat": {
+    "side": "parish",
+    "seed": 1037,
+    "prompt": "a cardinal in red cassock and zucchetto walking into the sistine chapel for the conclave, a white dove above him"
+  },
+  "katechetka": {
+    "side": "parish",
+    "seed": 1038,
+    "prompt": "a kind religion teacher woman standing in a school classroom in front of a blackboard, students' notebooks on desks"
+  },
+  "kaznodzieja": {
+    "side": "parish",
+    "seed": 1039,
+    "prompt": "a passionate preacher priest speaking from a carved pulpit, fiery light, a crowded church listening intently"
+  },
+  "kielich": {
+    "side": "demons",
+    "seed": 1040,
+    "prompt": "an ornate golden goblet overflowing with dark poisonous wine, jewels on its rim, sinister glow"
+  },
+  "kleryk": {
+    "side": "parish",
+    "seed": 1041,
+    "prompt": "a young seminarian in a black cassock blessing a ginger cat sitting on a windowsill, seminary corridor"
+  },
+  "kolo": {
+    "side": "parish",
+    "seed": 1042,
+    "prompt": "a circle of praying elderly and young people holding rosaries together, roses around them, warm church light"
+  },
+  "kompleksy": {
+    "side": "demons",
+    "seed": 1043,
+    "prompt": "a sad girl looking into a cracked mirror that shows a distorted filtered reflection, dark purple shadows"
+  },
+  "koscielny": {
+    "side": "parish",
+    "seed": 1044,
+    "prompt": "an old church sexton holding a huge ring of antique keys in front of a heavy wooden church door"
+  },
+  "krytykant": {
+    "side": "demons",
+    "seed": 1045,
+    "prompt": "a small snobbish demon with a monocle and a magnifying glass judging people's shoes in a church pew, smirking"
+  },
+  "ksiega": {
+    "side": "parish",
+    "seed": 1046,
+    "prompt": "a huge old leather bound parish register book open on a lectern, handwritten pages, candle and quill"
+  },
+  "laska": {
+    "side": "parish",
+    "seed": 1047,
+    "prompt": "radiant golden divine light streaming down from heaven through clouds, sparkling particles of grace, a white dove"
+  },
+  "lawina": {
+    "side": "demons",
+    "seed": 1048,
+    "prompt": "a swirling tornado of papers, whispering mouths and smartphone screens crashing down like an avalanche on a small town"
+  },
+  "legion": {
+    "side": "demons",
+    "seed": 1049,
+    "prompt": "a possessed wild man breaking chains among tombs by the sea, a herd of pigs, many shadowy faces swirling around him"
+  },
+  "lektor": {
+    "side": "parish",
+    "seed": 1050,
+    "prompt": "a young lector in white alb reading from a large book at a wooden ambo in a church, focused expression"
+  },
+  "letarg": {
+    "side": "demons",
+    "seed": 1051,
+    "prompt": "a sleepy moonlit demon with a lantern guarding sleeping apostles in the garden of olives at night"
+  },
+  "letni": {
+    "side": "demons",
+    "seed": 1052,
+    "prompt": "a pale bland ghost holding a lukewarm cup with a thermometer in the middle, half-hearted shrug, grey beige tones"
+  },
+  "lewiatan": {
+    "side": "demons",
+    "seed": 1053,
+    "prompt": "a gigantic proud sea dragon leviathan with a crown rising from dark waves, arrogant glare, scales glinting"
+  },
+  "lucyfer": {
+    "side": "demons",
+    "seed": 1054,
+    "prompt": "a fallen angel with torn black wings and a dimmed broken halo, falling from heaven into darkness, beautiful but cold face"
+  },
+  "mamona": {
+    "side": "demons",
+    "seed": 1055,
+    "prompt": "a greedy demon made of gold coins sitting on a mountain of money and treasure, grasping hands, gold glow"
+  },
+  "maraton": {
+    "side": "demons",
+    "seed": 1056,
+    "prompt": "a person slumped on a couch under a blanket in a dark room lit only by a huge tv screen, empty snack bowls, endless episodes"
+  },
+  "marazm": {
+    "side": "demons",
+    "seed": 1057,
+    "prompt": "a grumpy little ghost hiding under a thick blanket on a messy bed in a dark room, drawn curtains"
+  },
+  "marnotrawny": {
+    "side": "parish",
+    "seed": 1058,
+    "prompt": "a father running to embrace his ragged returning son at the gate of a farmhouse at sunset, joyful reunion"
+  },
+  "medalik": {
+    "side": "parish",
+    "seed": 1059,
+    "prompt": "a small golden miraculous medal on a thin chain held in a child's hand, soft light, baptism candle in background"
+  },
+  "ministrant": {
+    "side": "parish",
+    "seed": 1060,
+    "prompt": "a young altar boy in a white surplice ringing golden altar bells in a church, eager smile"
+  },
+  "nawrot": {
+    "side": "demons",
+    "seed": 1061,
+    "prompt": "a dark swirling vortex dragging a person back into an old cage, broken chains reforming"
+  },
+  "nawyki": {
+    "side": "demons",
+    "seed": 1062,
+    "prompt": "old bad habits as shadowy magnetic creatures climbing back in through an open window at night"
+  },
+  "niezgoda": {
+    "side": "demons",
+    "seed": 1063,
+    "prompt": "a tiny burning spark falling on a dry forest that starts a huge wildfire, a small grinning fire imp"
+  },
+  "oazowicz": {
+    "side": "parish",
+    "seed": 1064,
+    "prompt": "a cheerful teenage boy at a christian summer retreat with many lanyard badges around his neck, tents and a cross in a meadow"
+  },
+  "obietnica": {
+    "side": "demons",
+    "seed": 1065,
+    "prompt": "a beautiful gift box opening to reveal an endless chain of smaller empty boxes, shadowy hands, sinister glow"
+  },
+  "obmowa": {
+    "side": "demons",
+    "seed": 1066,
+    "prompt": "a whispering serpent demon coiled around a group of gossiping people, forked tongue at their ears"
+  },
+  "obojetnosc": {
+    "side": "demons",
+    "seed": 1067,
+    "prompt": "a faceless blank grey figure turning away from a person in need on a rainy street"
+  },
+  "odgrzewany": {
+    "side": "demons",
+    "seed": 1068,
+    "prompt": "a steaming pot of suspicious dark stew being reheated on a stove, sinister green steam rising in shapes of faces"
+  },
+  "odkladanie": {
+    "side": "demons",
+    "seed": 1069,
+    "prompt": "a smug demon flipping wall calendar pages endlessly, papers flying, clock hands spinning"
+  },
+  "ogloszenia": {
+    "side": "parish",
+    "seed": 1070,
+    "prompt": "a priest reading announcements from a high pulpit, sound waves reaching the last pews under the organ loft"
+  },
+  "ojciec-klamstwa": {
+    "side": "demons",
+    "seed": 1071,
+    "prompt": "a giant ancient serpent with a forked tongue coiled around a tree in shadow, hypnotic glowing eyes"
+  },
+  "opat": {
+    "side": "parish",
+    "seed": 1072,
+    "prompt": "a cistercian abbot with a crosier standing before a magnificent baroque church organ with thousands of pipes, oliwa cathedral"
+  },
+  "organista": {
+    "side": "parish",
+    "seed": 1073,
+    "prompt": "an old church organist playing a grand pipe organ in a choir loft, hands on the keys, music flowing"
+  },
+  "owczy-ped": {
+    "side": "demons",
+    "seed": 1074,
+    "prompt": "a herd of sheep stampeding blindly toward a cliff edge in a dust cloud, dark stormy sky"
+  },
+  "paschal": {
+    "side": "parish",
+    "seed": 1075,
+    "prompt": "a tall paschal candle with a red cross and alpha omega burning in a dark church during the easter vigil"
+  },
+  "pielgrzym": {
+    "side": "parish",
+    "seed": 1076,
+    "prompt": "a tired but joyful pilgrim with a backpack and walking stick on a country road, the tower of a monastery on a hill in the distance"
+  },
+  "pielgrzymka": {
+    "side": "parish",
+    "seed": 1077,
+    "prompt": "a long colorful procession of pilgrims with banners walking along a country road toward a monastery tower, summer"
+  },
+  "pismo": {
+    "side": "parish",
+    "seed": 1078,
+    "prompt": "an open ancient holy bible glowing with light on a wooden stand, pages turning, rays of light"
+  },
+  "plotka": {
+    "side": "demons",
+    "seed": 1079,
+    "prompt": "a small imp whispering into a person's ear with a hand over his mouth, other people leaning in to listen"
+  },
+  "pokusa": {
+    "side": "demons",
+    "seed": 1080,
+    "prompt": "a glowing seductive red flame floating in the darkness, shining apple inside it, beckoning"
+  },
+  "porownania": {
+    "side": "demons",
+    "seed": 1081,
+    "prompt": "a tempter demon holding up a glowing smartphone showing tropical vacations to a sad person in a grey room"
+  },
+  "postulant": {
+    "side": "parish",
+    "seed": 1082,
+    "prompt": "a young man with a backpack standing at a monastery gate, an old doorkeeper monk holding a folded habit, smiling"
+  },
+  "powiadomienie": {
+    "side": "demons",
+    "seed": 1083,
+    "prompt": "a giant red notification bell ringing in the dark surrounded by glowing badges, a hypnotized person staring at a phone"
+  },
+  "proboszcz": {
+    "side": "parish",
+    "seed": 1084,
+    "prompt": "a kindly middle aged parish priest in a black cassock standing in front of his red brick church, waving"
+  },
+  "profesor": {
+    "side": "parish",
+    "seed": 1085,
+    "prompt": "an elderly priest professor with glasses lecturing at a university podium surrounded by stacks of old books"
+  },
+  "prorok": {
+    "side": "demons",
+    "seed": 1086,
+    "prompt": "a false prophet beast with two lamb horns and a dragon mouth speaking to a crowd, fire falling from the sky"
+  },
+  "pyszalek": {
+    "side": "demons",
+    "seed": 1087,
+    "prompt": "a vain little demon with a magnificent peacock tail admiring himself in a mirror, nose high in the air"
+  },
+  "rada": {
+    "side": "parish",
+    "seed": 1088,
+    "prompt": "a parish council meeting around a long table with chairs, people arguing over color samples of church pews, late evening"
+  },
+  "raz": {
+    "side": "demons",
+    "seed": 1089,
+    "prompt": "a sly demon holding up one finger with a wink, a trail of many identical footprints behind him"
+  },
+  "reklama": {
+    "side": "demons",
+    "seed": 1090,
+    "prompt": "a garish giant advertising billboard with flashing lights and a grinning demon salesman pointing at it"
+  },
+  "rekolekcje": {
+    "side": "parish",
+    "seed": 1091,
+    "prompt": "a warm invitation to a parish retreat, open church doors with light pouring out, people walking inside at evening"
+  },
+  "remont": {
+    "side": "demons",
+    "seed": 1092,
+    "prompt": "a noisy neighbor with an electric drill making holes in a wall at dawn, dust flying, a person praying covering ears"
+  },
+  "reset": {
+    "side": "demons",
+    "seed": 1093,
+    "prompt": "a demon pressing a giant red reset button, a calendar with crossed out days spinning, clocks swirling"
+  },
+  "rog": {
+    "side": "demons",
+    "seed": 1094,
+    "prompt": "a small horn with a loud screaming mouth growing among larger horns on a dark beast's head, boastful"
+  },
+  "rozaniec": {
+    "side": "parish",
+    "seed": 1095,
+    "prompt": "a wooden rosary with a small cross resting on an open hand, soft light, pocket of a coat"
+  },
+  "rozpamietywanie": {
+    "side": "demons",
+    "seed": 1096,
+    "prompt": "a person trapped inside a spinning loop of floating memory bubbles showing an old argument, dark spiral"
+  },
+  "rzecznik": {
+    "side": "parish",
+    "seed": 1097,
+    "prompt": "a priest spokesman in a cassock talking at length into a bunch of microphones at a press conference"
+  },
+  "scholanka": {
+    "side": "parish",
+    "seed": 1098,
+    "prompt": "a smiling teenage girl with a guitar and capo singing in a youth church choir, music stand with a phone"
+  },
+  "scroll": {
+    "side": "demons",
+    "seed": 1099,
+    "prompt": "a little devil with a smartphone hypnotizing a person with an endless glowing scroll of videos, dark room"
+  },
+  "siostra": {
+    "side": "parish",
+    "seed": 1100,
+    "prompt": "a stern but kind catholic nun in a black habit with a candle watching vigilantly in a church aisle"
+  },
+  "smok": {
+    "side": "demons",
+    "seed": 1101,
+    "prompt": "a great red seven headed apocalyptic dragon with ten horns and crowns, stars falling from the sky around it"
+  },
+  "sobor": {
+    "side": "parish",
+    "seed": 1102,
+    "prompt": "a grand assembly of bishops in white mitres in st peter's basilica, papal altar, golden light"
+  },
+  "spowiedz": {
+    "side": "parish",
+    "seed": 1103,
+    "prompt": "a wooden confessional booth in a quiet church with a beam of white light, a clean white sheet of paper glowing"
+  },
+  "szef": {
+    "side": "demons",
+    "seed": 1104,
+    "prompt": "a toxic boss demon in a business suit with an overflowing inbox, glowing laptop at midnight, stacks of paperwork"
+  },
+  "szyderca": {
+    "side": "demons",
+    "seed": 1105,
+    "prompt": "a grinning mocking clown imp laughing and pointing, jester hat, mischievous shadows"
+  },
+  "wieczne-jutro": {
+    "side": "demons",
+    "seed": 1106,
+    "prompt": "a demon holding a huge hourglass where the sand never falls, a road leading to an always distant horizon"
+  },
+  "wikariusz": {
+    "side": "parish",
+    "seed": 1107,
+    "prompt": "a young energetic priest in a cassock riding a scooter between schools, books strapped on the back, sunny town"
+  },
+  "wilk": {
+    "side": "demons",
+    "seed": 1108,
+    "prompt": "a wolf wearing a sheepskin among a flock of sheep, sharp teeth showing under the fleece, moonlight"
+  },
+  "woda": {
+    "side": "parish",
+    "seed": 1109,
+    "prompt": "a stone holy water font at a church entrance with clear glowing water, a hand dipping fingers, sparkles"
+  },
+  "wolontariuszka": {
+    "side": "parish",
+    "seed": 1110,
+    "prompt": "a cheerful caritas volunteer woman carrying christmas food parcels, soup kitchen behind her, snowy evening"
+  },
+  "wybredny": {
+    "side": "demons",
+    "seed": 1111,
+    "prompt": "a picky gluttonous little demon throwing a tantrum over a coffee cup and a fancy plate of food"
+  },
+  "wygoda": {
+    "side": "demons",
+    "seed": 1112,
+    "prompt": "a lazy demon sunk in a huge armchair holding many remote controls, surrounded by gadgets and cushions"
+  },
+  "wymowka": {
+    "side": "demons",
+    "seed": 1113,
+    "prompt": "a little demon holding a stack of bandage plasters and excuse signs, shrugging innocently"
+  },
+  "zapisy": {
+    "side": "parish",
+    "seed": 1114,
+    "prompt": "a sign up sheet pinned on a wooden board in a church sacristy with a pen tied on a string, summer retreat poster"
+  },
+  "zbiorka": {
+    "side": "parish",
+    "seed": 1115,
+    "prompt": "a group of eager altar boys in white surplices lining up in a sacristy, a priest handing out bells and a thurible"
+  },
+  "zlosnik": {
+    "side": "demons",
+    "seed": 1116,
+    "prompt": "an angry little red demon stomping and steaming in a family living room, siblings arguing"
+  },
+  "znamie": {
+    "side": "demons",
+    "seed": 1117,
+    "prompt": "a glowing sinister trident mark burning on a hand, a crowd lining up at a dark market stall"
+  },
+  "zniechecenie": {
+    "side": "demons",
+    "seed": 1118,
+    "prompt": "a grey fog spirit wrapping around a tired person kneeling in a dry desert, wilted flowers"
+  },
+  "zuch": {
+    "side": "parish",
+    "seed": 1119,
+    "prompt": "a cheerful nine year old cub scout boy in a cap with many merit badges on his sleeve, forest camp"
+  }
+}

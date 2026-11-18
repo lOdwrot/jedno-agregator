@@ -6,7 +6,7 @@
  *   SHEET=1 npx tsx scripts/soul-art/render.ts    # also writes a contact sheet to soul-art-sheet.png
  * Uses the Playwright Chromium (PW_CHROMIUM_PATH overrides the binary).
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
 import { H, W } from "./kit";
@@ -14,7 +14,8 @@ import { SCENES } from "./scenes";
 
 const OUT = resolve(import.meta.dirname, "../../public/soul/art");
 const only = process.argv.slice(2);
-const ids = Object.keys(SCENES).filter((id) => !only.length || only.includes(id));
+const painted = new Set(Object.keys(JSON.parse(readFileSync(resolve(import.meta.dirname, "ai-prompts.json"), "utf8"))));
+const ids = Object.keys(SCENES).filter((id) => (only.length ? only.includes(id) : !painted.has(id)));
 
 const browser = await chromium.launch(
   process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {},

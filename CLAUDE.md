@@ -228,7 +228,10 @@ Commons (PD/CC — a credit entry in `soul/data/art.ts`, shown under "Źródła 
 scenes in `scripts/soul-art/` (`kit.ts` backgrounds/`person`/`demon`, `props.ts`, `creatures.ts`, one scene per card id
 in `parish*.ts`/`demon*.ts`), rendered by `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run soul-art [ids…]` (600×450 webp,
 subject inside the central band so both the wide card-face crop and the portrait mini crop work; a full run rewrites
-`soul/data/drawnArt.ts`; `SHEET=path.png` adds a contact sheet). A new card needs a scene (or a credited picture). The hub's "Ustawienia" has an "Ilustracje kart" switch
+`soul/data/drawnArt.ts`; `SHEET=path.png` adds a contact sheet). A new card needs a scene (or a credited picture). Every drawn card
+listed in `scripts/soul-art/ai-prompts.json` (all 120 today) is then repainted locally with SDXL (ComfyUI + `cardgen.py`, owner's PC only — not
+available in the cloud): `<ComfyUI>/python_embeded/python.exe scripts/soul-art/ai_render.py [ids…]` (fixed seeds, centre-cropped to 600×450
+webp); `npm run soul-art` skips those ids unless named, so a full SVG run never overwrites a painting. The hub's "Ustawienia" has an "Ilustracje kart" switch
 (`data/artPref.ts`, `useCardArt`, ON by default): off → drawn cards show their emoji again (`artSrc` returns null), Commons
 pictures stay. Booster editions + odds live in
 `soul/collection/packs.ts`; harder opponents carry `Opponent.fee` (paid with the `FeePayment` animation before the duel) and
