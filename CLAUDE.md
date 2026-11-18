@@ -162,7 +162,7 @@ Energy recovery items (`soul/data/relapse.ts`, `relapse.test.ts`), only in the d
 demons don't run dry: Odgrzewany grzech (`kindle`: attach 1 Pokusa from the discard pile to a chosen demon, the manual attach stays free)
 and Nawrót starego nałogu (`energyFromDiscard`: 2 Pokusy from the discard pile to the hand).
 **Antypapież** (`soul/data/schism.ts`, `schism.test.ts`): legendary basic demon, exactly ONE copy (`CharacterDef.unique`) in the decks of
-`otchlan` and `niepokonany` only, never in the Idealny Oponent pool. Its attack "Fałszywa tiara" (50, `popeBane` effect) knocks out
+`otchlan` and `niepokonany` (fixed ladder); Idealny Oponent may take it too, also max 1 (`maxCopies` in `data/cards.ts`, used by `ideal/pool.ts` + `forge.ts`). Its attack "Fałszywa tiara" (50, `popeBane` effect) knocks out
 any pope (`isPopeCard`) at once; `popeBane()` in `combat.ts` is used by the attack, `previewDamage` and the AI's `canKO`.
 `zastepy` (Smocze Zastępy, "bardzo trudny") sits between `pycha` and `otchlan`, the extreme level with the arch-demons (Lucyfer, Abaddon, Acedia).
 The top level is `niepokonany` (Tron Bestii, "niepokonany"): it plays the

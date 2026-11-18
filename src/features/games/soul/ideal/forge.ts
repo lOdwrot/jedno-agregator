@@ -11,7 +11,7 @@
  * A generator: the caller runs it in small slices (Web Worker or main thread) and shows the
  * progress. Deterministic for a given seed and budget — no clock inside.
  */
-import { getCard, isCharacter, MAX_COPIES, SOULS_TO_WIN } from "../data/cards";
+import { getCard, isCharacter, maxCopies, SOULS_TO_WIN } from "../data/cards";
 import { dispatch } from "../engine/actions";
 import { aiAction } from "../engine/ai";
 import { createGame, type DeckList, type Game } from "../engine/state";
@@ -111,7 +111,7 @@ export function mutate(g: Genome, rnd: () => number): { next: Genome; brought: s
       if (--next[id]! <= 0) delete next[id];
     } else if (r < 0.75) {
       const c = weightedCard(rnd);
-      if ((next[c.id] ?? 0) < MAX_COPIES) {
+      if ((next[c.id] ?? 0) < maxCopies(c.id)) {
         next[c.id] = (next[c.id] ?? 0) + 1;
         brought.push(c.id);
       }
@@ -119,7 +119,7 @@ export function mutate(g: Genome, rnd: () => number): { next: Genome; brought: s
       const c = weightedCard(rnd);
       if (isCharacter(c) && c.evolvesFrom) {
         for (const id of [c.id, ...lineOf(c.id)])
-          next[id] = Math.min(MAX_COPIES, (next[id] ?? 0) + 1);
+          next[id] = Math.min(maxCopies(id), (next[id] ?? 0) + 1);
         brought.push(c.id);
       }
     } else {
@@ -127,7 +127,7 @@ export function mutate(g: Genome, rnd: () => number): { next: Genome; brought: s
       if (ids.length) {
         const out = ids[Math.floor(rnd() * ids.length)]!;
         const c = weightedCard(rnd);
-        if (c.id !== out && (next[c.id] ?? 0) < MAX_COPIES) {
+        if (c.id !== out && (next[c.id] ?? 0) < maxCopies(c.id)) {
           if (--next[out]! <= 0) delete next[out];
           next[c.id] = (next[c.id] ?? 0) + 1;
           brought.push(c.id);

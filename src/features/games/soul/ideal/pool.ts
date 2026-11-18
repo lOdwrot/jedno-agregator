@@ -1,6 +1,6 @@
 /**
  * The card pool of "Idealny oponent" and the rules its decks keep — the same as the player's:
- * 50 cards, at most 3 copies of a card (energy aside), at least 5 basic characters and every
+ * 50 cards, at most 3 copies of a card (1 of a `unique` one, energy aside), at least 5 basic characters and every
  * evolution together with its previous stage. Plain prints only: no stained bonus, no extra draw.
  */
 import {
@@ -9,7 +9,7 @@ import {
   getCard,
   isBasic,
   isCharacter,
-  MAX_COPIES,
+  maxCopies,
   MIN_BASICS,
 } from "../data/cards";
 import { DEMON_CARDS } from "../data/demons";
@@ -25,10 +25,8 @@ export const MAX_ENERGY = 22;
 
 const ENERGY = ENERGY_ID.demons;
 
-/** Every demon card except the energy and the unique cards of the fixed ladder (Antypapież). */
-export const POOL: readonly CardDef[] = DEMON_CARDS.filter(
-  (c) => c.kind !== "energy" && !("unique" in c && c.unique),
-);
+/** Every demon card except the energy (`unique` ones like Antypapież at most once, see `maxCopies`). */
+export const POOL: readonly CardDef[] = DEMON_CARDS.filter((c) => c.kind !== "energy");
 
 /** How strongly a mutation prefers a card: the strong (rare, legendary) cards first. */
 const WEIGHT: Record<Rarity, number> = { common: 1, uncommon: 2, rare: 4, legendary: 6 };
@@ -66,7 +64,7 @@ const pick = <T>(xs: readonly T[], rnd: () => number): T => xs[Math.floor(rnd() 
 export function repair(input: Genome, rnd: () => number): Genome {
   const g: Genome = {};
   for (const [id, n] of Object.entries(input)) {
-    const k = Math.min(MAX_COPIES, Math.floor(n));
+    const k = Math.min(maxCopies(id), Math.floor(n));
     if (k > 0 && id !== ENERGY) g[id] = k;
   }
   const withStages = () => {
@@ -83,7 +81,7 @@ export function repair(input: Genome, rnd: () => number): Genome {
     if (--g[id]! === 0) delete g[id];
   }
   for (let guard = 0; basics(g) < MIN_BASICS && guard < 100; guard++) {
-    const free = POOL.filter((c) => isBasic(c) && (g[c.id] ?? 0) < MAX_COPIES);
+    const free = POOL.filter((c) => isBasic(c) && (g[c.id] ?? 0) < maxCopies(c.id));
     const c = pick(free, rnd);
     g[c.id] = (g[c.id] ?? 0) + 1;
     if (energyOf(g) < MIN_ENERGY) {
@@ -97,7 +95,7 @@ export function repair(input: Genome, rnd: () => number): Genome {
   // too few cards (too much energy): add strong cards
   for (let guard = 0; energyOf(g) > MAX_ENERGY && guard < 500; guard++) {
     const c = weightedCard(rnd);
-    if ((g[c.id] ?? 0) >= MAX_COPIES) continue;
+    if ((g[c.id] ?? 0) >= maxCopies(c.id)) continue;
     g[c.id] = (g[c.id] ?? 0) + 1;
     withStages();
   }
@@ -111,7 +109,7 @@ export function legal(g: Genome): boolean {
   if (basics(g) < MIN_BASICS) return false;
   for (const [id, n] of Object.entries(g)) {
     const c = getCard(id);
-    if (c.side !== "demons" || c.kind === "energy" || n < 1 || n > MAX_COPIES) return false;
+    if (c.side !== "demons" || c.kind === "energy" || n < 1 || n > maxCopies(id)) return false;
     if (lineOf(id).some((x) => !g[x])) return false;
   }
   return true;

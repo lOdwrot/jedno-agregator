@@ -5,8 +5,9 @@ import { aiAction } from "../engine/ai";
 import { previewDamage } from "../engine/combat";
 import { hpLeft, toInPlay, type DeckList, type Game } from "../engine/state";
 import { startedGame } from "../engine/testGame";
-import { POOL } from "../ideal/pool";
-import { getCard, isCharacter, isPopeCard } from "./cards";
+import { mutate } from "../ideal/forge";
+import { legal, POOL, repair } from "../ideal/pool";
+import { getCard, isCharacter, isPopeCard, maxCopies } from "./cards";
 import { DEMON_CARDS } from "./demons";
 import { OPPONENTS } from "./opponents";
 import { SCHISM_CARDS } from "./schism";
@@ -38,11 +39,12 @@ function duel(defender: string): Game {
 }
 
 describe("Antypapież — the pope slayer", () => {
-  it("is a demon with a lesson, once in each of the two hardest decks only, never in the forge", () => {
+  it("is a demon with a lesson, once in each of the two hardest decks only (and in the forge pool)", () => {
     for (const c of SCHISM_CARDS) {
       expect(DEMON_CARDS).toContain(c);
       expect("lesson" in c && c.lesson?.tempts && c.lesson.defend, c.id).toBeTruthy();
-      expect(POOL).not.toContain(c);
+      expect(POOL).toContain(c);
+      expect(maxCopies(c.id)).toBe(1);
       for (const x of OPPONENTS)
         expect(x.deck[c.id] ?? 0, `${x.id}: ${c.id}`).toBe(TOP.includes(x.id) ? 1 : 0);
     }
@@ -85,5 +87,22 @@ describe("Antypapież — the pope slayer", () => {
   it("the AI picks the pope-slaying attack", () => {
     const g = duel("jp2");
     expect(aiAction(g, "ai")).toMatchObject({ type: "attack", index: 1 });
+  });
+});
+
+describe("Antypapież in the Idealny Oponent forge", () => {
+  it("repair and the rules keep at most one copy", () => {
+    const rnd = (() => {
+      let x = 7;
+      return () => (x = (x * 16807) % 2147483647) / 2147483647;
+    })();
+    const g = repair({ antypapiez: 3, bestia: 2, rog: 2, fala: 2, wilk: 3 }, rnd);
+    expect(g.antypapiez).toBe(1);
+    expect(legal(g)).toBe(true);
+    expect(legal({ ...g, antypapiez: 2 })).toBe(false);
+    for (let i = 0; i < 200; i++) {
+      const next = repair(mutate(g, rnd).next, rnd);
+      expect(next.antypapiez ?? 0).toBeLessThanOrEqual(1);
+    }
   });
 });

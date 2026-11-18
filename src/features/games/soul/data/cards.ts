@@ -33,6 +33,11 @@ export const DECK_SIZE = 50;
 /** A deck needs at least this many basic characters (so an opening hand is never stuck). */
 export const MIN_BASICS = 5;
 export const MAX_COPIES = 3;
+/** Copies of a card allowed in one deck — `unique` cards (Antypapież) only once. */
+export const maxCopies = (id: string): number => {
+  const c = getCard(id);
+  return isCharacter(c) && c.unique ? 1 : MAX_COPIES;
+};
 export const SOULS_TO_WIN = 4;
 export const BENCH_SIZE = 3;
 export const HAND_START = 7;
