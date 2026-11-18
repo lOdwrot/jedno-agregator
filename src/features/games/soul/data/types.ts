@@ -46,6 +46,8 @@ export type AbilityEffect =
   | { k: "attackBonus"; n: number }
   /** Works from the bench too: the owner's attacks cost `n` energy less (does not stack). */
   | { k: "costMinus"; n: number }
+  /** Only this character's own attacks cost `n` energy less while any pope is on the table (either side). */
+  | { k: "popeDiscount"; n: number }
   /** Works from the bench too: the owner's characters retreat for `n` energy less (does not stack). */
   | { k: "retreatMinus"; n: number }
   /** Works from the bench too: none of the owner's characters has a weakness. */

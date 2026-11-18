@@ -20,6 +20,11 @@ export const SCHISM_CARDS: CardDef[] = [
     retreat: 2,
     souls: 1,
     unique: true,
+    ability: {
+      name: "Sprzeciw wobec Piotra",
+      text: "Jeśli na stole leży choć jeden papież, ataki tej postaci kosztują o 1 energię mniej.",
+      effect: { k: "popeDiscount", n: 1 },
+    },
     attacks: [
       { name: "Podważanie", cost: 1, damage: 20 },
       {

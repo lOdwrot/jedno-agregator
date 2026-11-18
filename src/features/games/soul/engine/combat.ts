@@ -61,11 +61,19 @@ export function retreatCost(g: Game, pid: PlayerId, c: InPlay): number {
   return Math.max(0, charDef(c).retreat - (placeAura(g, pid)?.retreatMinus ?? 0) - minus);
 }
 
-/** Energy an attack of `pid` needs right now (`costMinus` abilities — strongest one, no stacking). */
+/** Energy an attack of `pid` needs right now (`costMinus` abilities — strongest one, no stacking —
+ *  plus the attacker's own `popeDiscount` while a pope is on the table). */
 export function attackCost(g: Game, pid: PlayerId, atk: AttackDef): number {
   const minus = Math.max(0, ...abilities(g, pid).map((a) => (a.k === "costMinus" ? a.n : 0)));
-  return Math.max(0, atk.cost - minus);
+  const owner = inPlay(g.players[pid]).find((c) => charDef(c).attacks.includes(atk));
+  const self = owner && own(g, owner);
+  const discount = self?.k === "popeDiscount" && popeOnTable(g) ? self.n : 0;
+  return Math.max(0, atk.cost - minus - discount);
 }
+
+/** Whether at least one pope is in play on either side of the table. */
+export const popeOnTable = (g: Game): boolean =>
+  (["me", "ai"] as const).some((p) => inPlay(g.players[p]).some((c) => isPopeCard(charDef(c))));
 
 /** How many more energy a character of `pid` needs for its strongest attack. */
 export const energyNeed = (g: Game, pid: PlayerId, c: InPlay) =>

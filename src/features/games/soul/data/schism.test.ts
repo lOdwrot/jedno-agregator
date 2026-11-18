@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deckList, newProfile } from "../collection/profile";
 import { dispatch } from "../engine/actions";
 import { aiAction } from "../engine/ai";
-import { previewDamage } from "../engine/combat";
+import { attackCost, previewDamage } from "../engine/combat";
 import { hpLeft, toInPlay, type DeckList, type Game } from "../engine/state";
 import { startedGame } from "../engine/testGame";
 import { mutate } from "../ideal/forge";
@@ -71,6 +71,29 @@ describe("Antypapież — the pope slayer", () => {
       ).toBe(true);
       expect(next.players.ai.souls, pope).toBe(2);
     }
+  });
+
+  it("its attacks cost 1 energy less while a pope is on the table", () => {
+    const slayer = getCard("antypapiez");
+    if (!isCharacter(slayer)) throw new Error("Antypapież must be a character");
+    const weak = slayer.attacks[0]!;
+    const tiara = slayer.attacks[1]!;
+    const plain = duel("proboszcz");
+    expect(attackCost(plain, "ai", tiara)).toBe(3);
+    expect(attackCost(plain, "ai", weak)).toBe(1);
+    const vsPope = duel("jp2");
+    expect(attackCost(vsPope, "ai", tiara)).toBe(2);
+    expect(attackCost(vsPope, "ai", weak)).toBe(0);
+    // a pope on the bench counts too
+    const benched = duel("proboszcz");
+    benched.players.me.bench.push(
+      toInPlay({ uid: benched.nextUid++, cardId: "franciszek", finish: "plain" }, 0),
+    );
+    expect(attackCost(benched, "ai", tiara)).toBe(2);
+    // two energy are enough to slay the pope
+    vsPope.players.ai.active!.energy = 2;
+    const next = dispatch(vsPope, { type: "attack", index: 1 });
+    expect(next.players.ai.souls).toBe(2);
   });
 
   it("deals only the base damage to anyone else", () => {
