@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { artFocus, artSrc } from "../data/art";
+import { useCardArt } from "../data/artPref";
 import { getCard } from "../data/cards";
 
 /** Card illustration: a picture when we have one, otherwise the card's emoji. */
@@ -12,6 +13,7 @@ export function CardArt({
   className?: string;
   emojiClass?: string;
 }) {
+  useCardArt(); // re-render when the "Ilustracje kart" setting changes
   const src = artSrc(cardId);
   const focus = artFocus(cardId);
   if (src)

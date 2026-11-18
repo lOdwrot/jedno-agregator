@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Switch } from "@/ui";
 import { loadPrefs, savePrefs, type AudioPrefs } from "../audio/context";
 import { canVibrate, useHaptics } from "../audio/haptics";
+import { useCardArt } from "../data/artPref";
 import { useMuted } from "../../audio/mute";
 
-/** "Ustawienia" tab of the hub: sound effects, music and vibrations (all remembered on this device). */
+/** "Ustawienia" tab of the hub: sound effects, music, vibrations and card pictures (all remembered on this device). */
 export function Settings() {
   const [prefs, setPrefs] = useState<AudioPrefs>(loadPrefs);
   const [haptics, setHaptics] = useHaptics();
+  const [cardArt, setCardArt] = useCardArt();
   // the page's "Dźwięk" button switches the same sound effects — follow it
   const [muted] = useMuted();
   const set = (k: keyof AudioPrefs) => (v: boolean) => {
@@ -36,6 +38,12 @@ export function Settings() {
         onChange={set("music")}
         label="🎵 Muzyka w tle"
         description="Gra podczas pojedynku."
+      />
+      <Switch
+        checked={cardArt}
+        onChange={setCardArt}
+        label="🖼️ Ilustracje kart"
+        description="Rysunki na kartach. Wyłączone — karty pokazują emoji jak dawniej."
       />
       <Switch
         checked={haptics}

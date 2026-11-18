@@ -228,7 +228,9 @@ Commons (PD/CC — a credit entry in `soul/data/art.ts`, shown under "Źródła 
 scenes in `scripts/soul-art/` (`kit.ts` backgrounds/`person`/`demon`, `props.ts`, `creatures.ts`, one scene per card id
 in `parish*.ts`/`demon*.ts`), rendered by `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run soul-art [ids…]` (600×450 webp,
 subject inside the central band so both the wide card-face crop and the portrait mini crop work; a full run rewrites
-`soul/data/drawnArt.ts`; `SHEET=path.png` adds a contact sheet). A new card needs a scene (or a credited picture). Booster editions + odds live in
+`soul/data/drawnArt.ts`; `SHEET=path.png` adds a contact sheet). A new card needs a scene (or a credited picture). The hub's "Ustawienia" has an "Ilustracje kart" switch
+(`data/artPref.ts`, `useCardArt`, ON by default): off → drawn cards show their emoji again (`artSrc` returns null), Commons
+pictures stay. Booster editions + odds live in
 `soul/collection/packs.ts`; harder opponents carry `Opponent.fee` (paid with the `FeePayment` animation before the duel) and
 `Opponent.prize` (edition odds of a free booster opened right after a win, listed in `PrizeTable`); every fee opponent can also be
 fought as a free practice duel ("Trenuj", `SoloDuel training`): no fee, no talents/booster/record; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.

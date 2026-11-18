@@ -1,3 +1,4 @@
+import { cardArtOn } from "./artPref";
 import { DRAWN_ART } from "./drawnArt";
 
 /**
@@ -235,8 +236,10 @@ export const ART: Record<string, ArtCredit> = {
   },
 };
 
+/** Picture of a card, or null when it shows its emoji (no picture, or drawn ones switched off in the settings). */
 export function artSrc(key: string): string | null {
-  return ART[key] || DRAWN_ART.has(key) ? `${import.meta.env.BASE_URL}soul/art/${key}.webp` : null;
+  const drawn = DRAWN_ART.has(key) && cardArtOn();
+  return ART[key] || drawn ? `${import.meta.env.BASE_URL}soul/art/${key}.webp` : null;
 }
 
 /** Vertical focus of the crop (drawn pictures keep their subject in the middle). */
