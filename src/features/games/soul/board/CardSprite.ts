@@ -9,7 +9,7 @@ import {
   type Texture,
   type TextStyleOptions,
 } from "pixi.js";
-import { ART as ARTWORK, artSrc } from "../data/art";
+import { artFocus, artSrc } from "../data/art";
 import { getCard } from "../data/cards";
 import {
   ELEMENT_INFO,
@@ -302,7 +302,7 @@ export class CardSprite extends Container {
         const k = Math.max(168 / tex.width, 108 / tex.height);
         sp.scale.set(k);
         sp.anchor.set(0.5, 0);
-        sp.y = -78 - (tex.height * k - 108) * (ARTWORK[id]?.focus ?? 0.3);
+        sp.y = -78 - (tex.height * k - 108) * artFocus(id);
         const mask = new Graphics().roundRect(-84, -78, 168, 108, 10).fill(palette().surface);
         const holder = new Container();
         holder.addChild(mask, sp);

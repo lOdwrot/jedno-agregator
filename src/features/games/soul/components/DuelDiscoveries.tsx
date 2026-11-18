@@ -4,6 +4,7 @@ import { Icon, usePrefersReducedMotion } from "@/ui";
 import type { Discoveries } from "../collection/bestiary";
 import { getCard } from "../data/cards";
 import { BestiaryTeaser } from "./BestiaryTeaser";
+import { CardThumb } from "./CardArt";
 import { CardFace } from "./CardFace";
 
 const detailsId = (id: string) => `duel-discovery-${id}`;
@@ -68,7 +69,7 @@ function Badges({
                     NOWE
                   </span>
                 )}
-                <span aria-hidden="true">{c.emoji}</span>
+                <CardThumb cardId={id} />
                 {c.name}
                 <span className="flex items-center gap-0.5 text-xs font-extrabold uppercase opacity-90">
                   {recognized ? "Czytaj" : "Podejrzyj"}

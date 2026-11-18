@@ -83,7 +83,8 @@ export function Rules() {
           </h3>
           <p className="mt-1 text-sm text-ink-muted">
             Obrazy i zdjęcia pochodzą z Wikimedia Commons (domena publiczna lub wolne licencje).
-            Zostały przycięte i zmniejszone.
+            Zostały przycięte i zmniejszone. Pozostałe ilustracje kart zostały narysowane specjalnie
+            dla tej gry.
           </p>
           <ul className="mt-2 flex flex-col gap-1 text-sm">
             {credits.map(([key, c]) => (

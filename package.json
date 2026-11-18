@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "e2e": "playwright test --trace off",
     "fetch-data": "tsx scripts/fetch-data.ts",
+    "soul-art": "tsx scripts/soul-art/render.ts",
     "check": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {

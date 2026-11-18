@@ -10,6 +10,7 @@ import type { Link } from "../pvp/link";
 import type { Role } from "../pvp/sync";
 import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
+import { CardThumb } from "./CardArt";
 import { CardFace } from "./CardFace";
 import { HandDialog } from "./CardPreview";
 import { DiscardDialog } from "./DiscardDialog";
@@ -221,7 +222,8 @@ export function DuelView({
         {lessonCard && "lesson" in lessonCard && lessonCard.lesson && (
           <div className="absolute top-1 left-1 z-10 max-w-[15rem] rounded-card bg-surface/95 px-3 py-2 text-ink shadow-lift sm:max-w-xs">
             <p className="text-sm font-extrabold text-navy">
-              <span aria-hidden="true">{lessonCard.emoji} </span>Rozpoznaj pokusę: {lessonCard.name}
+              <CardThumb cardId={lessonCard.id} className="mr-1 size-6 align-middle" />
+              Rozpoznaj pokusę: {lessonCard.name}
             </p>
             <p className="mt-0.5 line-clamp-2 text-xs">{lessonCard.lesson.tempts}</p>
             <div className="flex gap-3">

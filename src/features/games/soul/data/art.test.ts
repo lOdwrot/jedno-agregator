@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ART } from "./art";
-import { getCard } from "./cards";
+import { ALL_CARDS, getCard } from "./cards";
+import { DRAWN_ART } from "./drawnArt";
 import { PACKS } from "../collection/packs";
 
 const files = new Set(
@@ -19,5 +20,13 @@ describe("card art", () => {
       expect(c.license.length).toBeGreaterThan(2);
       if (!packArt.has(key)) expect(() => getCard(key)).not.toThrow();
     }
+  });
+
+  it("every card has a picture: credited or drawn for the game, never both", () => {
+    for (const c of ALL_CARDS) {
+      expect(Boolean(ART[c.id]) !== DRAWN_ART.has(c.id), c.id).toBe(true);
+      expect(files.has(c.id), c.id).toBe(true);
+    }
+    for (const id of DRAWN_ART) expect(() => getCard(id)).not.toThrow();
   });
 });

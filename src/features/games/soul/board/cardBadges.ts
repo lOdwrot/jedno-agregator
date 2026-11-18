@@ -8,7 +8,7 @@ import {
   type Texture,
   type TextStyleOptions,
 } from "pixi.js";
-import { ART, artSrc } from "../data/art";
+import { artFocus, artSrc } from "../data/art";
 import { getCard } from "../data/cards";
 import { cardTypeBadge } from "../data/cardType";
 import { ELEMENT_INFO, type Element } from "../data/types";
@@ -71,7 +71,7 @@ export function drawEvolvesFrom(
       const k = (2 * r) / Math.min(tex.width, tex.height);
       sp.scale.set(k);
       sp.anchor.set(0.5, 0);
-      sp.position.set(x, y - r - (tex.height * k - 2 * r) * (ART[fromId]?.focus ?? 0.3));
+      sp.position.set(x, y - r - (tex.height * k - 2 * r) * artFocus(fromId));
       const mask = new Graphics().circle(x, y, r).fill(p.surface);
       const holder = new Container();
       holder.addChild(mask, sp);
