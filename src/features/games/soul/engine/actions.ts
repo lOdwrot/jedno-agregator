@@ -15,6 +15,7 @@ import {
   healAll,
   hurt,
   isWeak,
+  popeBane,
   promoteUid,
   resolveKOs,
   retreatCost,
@@ -31,6 +32,7 @@ import {
   coin,
   draw,
   findInPlay,
+  hpLeft,
   inPlay,
   log,
   nameOf,
@@ -237,6 +239,19 @@ function attack(g: Game, pid: PlayerId, index: number, fuel = 0, target?: number
         if (a.energy) log(g, `${nameOf(a)} traci ${Math.min(e.n, a.energy)} kart energii.`);
         discardEnergy(g, pid, a, e.n);
         break;
+      case "popeBane": {
+        const left = hpLeft(g, d);
+        if (!popeBane(atk, d) || left <= 0) break;
+        say(
+          g,
+          pid,
+          `„${atk.name}”: papież ${nameOf(d)} od razu schodzi z pola!`,
+          `„${atk.name}”: Twój papież ${nameOf(d)} od razu schodzi z pola!`,
+          () => `„${atk.name}”: Twój papież ${nameOf(d)} od razu schodzi z pola!`,
+        );
+        hurt(g, d, left);
+        break;
+      }
     }
   }
   const needs = resolveKOs(g);

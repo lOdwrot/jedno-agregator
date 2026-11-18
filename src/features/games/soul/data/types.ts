@@ -25,7 +25,9 @@ export type AttackEffect =
   /** After the attack discard n energy from the attacker itself (99 = all). */
   | { k: "selfDiscard"; n: number }
   /** +n for every 10 damage already on the attacker ("zło dobrem zwyciężaj"). */
-  | { k: "revenge"; n: number };
+  | { k: "revenge"; n: number }
+  /** A pope defender (stage 1 of Kandydat na papieża) is knocked out at once, whatever its HP. */
+  | { k: "popeBane" };
 
 export interface AttackDef {
   name: string;
@@ -114,6 +116,8 @@ export interface CharacterDef extends BaseDef {
   souls: 1 | 2;
   /** Demons only — how this temptation works and how to resist it (educational part). */
   lesson?: { tempts: string; defend: string };
+  /** At most one copy of this card in a deck. */
+  unique?: true;
 }
 
 /** Global place rules: no abilities, no items, no weakness. */

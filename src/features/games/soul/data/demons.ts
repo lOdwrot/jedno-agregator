@@ -1,5 +1,6 @@
 import { ABYSS_CARDS } from "./abyss";
 import { RELAPSE_CARDS } from "./relapse";
+import { SCHISM_CARDS } from "./schism";
 import { SLOTH_CARDS } from "./sloth";
 import type { CardDef } from "./types";
 
@@ -1014,4 +1015,5 @@ export const DEMON_CARDS: CardDef[] = [
   ...SLOTH_CARDS,
   ...ABYSS_CARDS,
   ...RELAPSE_CARDS,
+  ...SCHISM_CARDS,
 ];

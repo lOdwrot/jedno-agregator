@@ -18,6 +18,7 @@ import {
   energyNeed,
   fuelMax,
   handEnergy,
+  popeBane,
   previewDamage,
   retreatCost,
 } from "./combat";
@@ -68,6 +69,7 @@ function canKO(g: Game, pid: PlayerId, target: InPlay): boolean {
   if (!a || g.turnNo === 1) return false;
   return charDef(a).attacks.some((atk) => {
     if (a.energy < attackCost(g, pid, atk) || atk.damage <= 0) return false;
+    if (popeBane(atk, target)) return true;
     const dmg = applyDefense(g, other(pid), a, target, atk.damage + bonusDamage(g, pid, a));
     return dmg >= hpLeft(g, target);
   });

@@ -9,7 +9,7 @@ export function fuelMax(g: Game, pid: PlayerId, atk: AttackDef): number {
 }
 
 /** Damage, knock-outs (souls), checkup between turns and turn order. */
-import { ENERGY_ID, getCard, isSaint, SOULS_TO_WIN } from "../data/cards";
+import { ENERGY_ID, getCard, isPopeCard, isSaint, SOULS_TO_WIN } from "../data/cards";
 import type { AbilityEffect, AttackDef, SupportDef } from "../data/types";
 import { FINISH_BONUS, STATUS_INFO } from "../data/types";
 import { emit } from "./events";
@@ -158,7 +158,13 @@ export function previewDamage(g: Game, pid: PlayerId, atk: AttackDef, fuel = 0):
     if (e.k === "revenge") raw += Math.floor(me.damage / 10) * e.n;
     if (e.k === "fuel") raw += Math.min(fuel, e.max) * e.n;
   }
-  return applyDefense(g, other(pid), me, foe, raw);
+  const dmg = applyDefense(g, other(pid), me, foe, raw);
+  return popeBane(atk, foe) ? Math.max(dmg, hpLeft(g, foe)) : dmg;
+}
+
+/** Whether this attack knocks the defender out at once because it is a pope (`popeBane`). */
+export function popeBane(atk: AttackDef, defender: InPlay): boolean {
+  return !!atk.effects?.some((e) => e.k === "popeBane") && isPopeCard(charDef(defender));
 }
 
 export function hurt(g: Game, target: InPlay, amount: number, weak = false) {

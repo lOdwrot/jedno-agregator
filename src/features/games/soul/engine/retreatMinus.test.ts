@@ -28,7 +28,10 @@ const bench = (g: Game, cardId: string) =>
 describe("Fala z otchłani — retreatMinus", () => {
   it("is a basic in the deck of Tron Bestii", () => {
     const d = getCard("fala");
-    expect(isCharacter(d) && !d.evolvesFrom && d.ability?.effect).toEqual({ k: "retreatMinus", n: 2 });
+    expect(isCharacter(d) && !d.evolvesFrom && d.ability?.effect).toEqual({
+      k: "retreatMinus",
+      n: 2,
+    });
     expect(OPPONENTS.find((o) => o.id === "niepokonany")!.deck.fala).toBeGreaterThan(0);
   });
 

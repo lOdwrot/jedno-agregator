@@ -25,8 +25,10 @@ export const MAX_ENERGY = 22;
 
 const ENERGY = ENERGY_ID.demons;
 
-/** Every demon card except the energy. */
-export const POOL: readonly CardDef[] = DEMON_CARDS.filter((c) => c.kind !== "energy");
+/** Every demon card except the energy and the unique cards of the fixed ladder (Antypapież). */
+export const POOL: readonly CardDef[] = DEMON_CARDS.filter(
+  (c) => c.kind !== "energy" && !("unique" in c && c.unique),
+);
 
 /** How strongly a mutation prefers a card: the strong (rare, legendary) cards first. */
 const WEIGHT: Record<Rarity, number> = { common: 1, uncommon: 2, rare: 4, legendary: 6 };
