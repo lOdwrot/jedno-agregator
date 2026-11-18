@@ -172,6 +172,12 @@ three-stage: Fala z otchłani (`retreatMinus` 2: works from the bench, the owner
 deck vs each opponent) so the win rate keeps falling monotonically from `kanapa` to `niepokonany` — `data/balance.test.ts`
 enforces it on fixed seeds (last tuning, 2000 duels each: ~46 / 33 / 12 / 7 / 3 / 1 %). Tron Bestii's whole deck is printed `stained` (`Opponent.finish`).
 Gromnica (`discardOppEnergy` + `coin` + `tailsHeal: 20`): heads discards a Pokusa from the rival's active, tails heals 20 from the owner's most damaged character (also playable just to heal).
+**Idealny Oponent** (`IDEAL_OPPONENT`, experimental, last in `ALL_OPPONENTS` — the fixed ladder `OPPONENTS` and its tests stay
+as they are): `Opponent.adaptive`, no fixed deck. Before each duel `soul/ideal/forge.ts` builds the demons' deck against the
+player's CURRENT deck in a Web Worker (`forge.worker.ts`; main-thread fallback in `runForge.ts`): scout (hardest opponents'
+decks + random strong archetypes from `pool.ts`) → hill-climb mutations on common random seeds (score = win + soul margin)
+→ verify on fresh seeds. Same rules as the player (50 cards, max 3 copies, ≥5 basics, stages present), plain prints, no extra
+draw. Loading screen `ideal/DeckForge.tsx` (flask, flying cards, `quips.ts`). Reward 500, no fee, a booster of any edition.
 The court of sloth (`soul/data/sloth.ts`: Duszek Marazmu → Bies Obojętności → Letarg, Duch Letniości, Belfegor) is
 played only by the harder opponents (`zastepy`, `otchlan`, `niepokonany`; `sloth.test.ts` enforces it). The AI benches team helpers first (`bestBenchBasic` / `benchValue` in `engine/state.ts`). `Opponent.theme: "infernal"` switches
 the duel to the hellish look and sound: `board/inferno.ts` (lava cracks, red glow, rising embers — static under reduced

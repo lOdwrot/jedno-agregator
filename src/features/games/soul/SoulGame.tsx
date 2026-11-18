@@ -40,6 +40,9 @@ import type { Session } from "./pvp/session";
 import { deckStats } from "./stats/deckStats";
 import { TutorialCard } from "./tutorial/TutorialCard";
 import { TutorialDuel } from "./tutorial/TutorialDuel";
+import { DeckForge } from "./ideal/DeckForge";
+import { toDeckList } from "./ideal/pool";
+import type { DeckList } from "./engine/state";
 
 /** Statistics props shared by every solo-duel event (see `@/lib/analytics`). */
 const duelStats = (opponent: Opponent, training: boolean, xp: number) => ({
@@ -70,7 +73,10 @@ export function SoulGame() {
     training: boolean;
     key: number;
     bestiary: Profile["bestiary"];
+    aiDeck?: DeckList;
   } | null>(null);
+  /** "Idealny oponent": its deck is being computed (loading screen). */
+  const [forging, setForging] = useState<Opponent | null>(null);
   const [pvp, setPvp] = useState<Session | null>(null);
   /** Key of the running tutorial duel (a new key = a fresh start). */
   const [tutorial, setTutorial] = useState<number | null>(null);
@@ -97,11 +103,11 @@ export function SoulGame() {
     el?.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
   }, [duel, pvp, reduced, tutorial]);
 
-  const startDuel = (opponent: Opponent, training = false) => {
+  const startDuel = (opponent: Opponent, training = false, aiDeck?: DeckList) => {
     // a rewarded duel puts the win streak at stake: only a win gives it back (+1)
     if (!training) update(stakeStreak);
     track("duel_start", duelStats(opponent, training, xp));
-    setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary });
+    setDuel({ opponent, training, key: Date.now(), bestiary: profile.bestiary, aiDeck });
   };
 
   const onFinish = useCallback(
@@ -196,6 +202,7 @@ export function SoulGame() {
         opponent={duel.opponent}
         training={duel.training}
         deck={deckList(profile)}
+        aiDeck={duel.aiDeck}
         onFinish={onFinish}
         onSighting={(id) => update((p) => recordSighting(p, id))}
         bestiary={duel.bestiary}
@@ -248,7 +255,8 @@ export function SoulGame() {
                     problems={deckProblems(profile)}
                     onFight={(opponent) => {
                       if (profile.talents < (opponent.fee ?? 0)) return;
-                      if (opponent.fee) setPaying(opponent);
+                      if (opponent.adaptive) setForging(opponent);
+                      else if (opponent.fee) setPaying(opponent);
                       else startDuel(opponent);
                     }}
                     onTrain={(opponent) => startDuel(opponent, true)}
@@ -315,6 +323,16 @@ export function SoulGame() {
           replay={reading.replay}
           onWin={() => update((p) => completeTale(p, reading.cardId))}
           onClose={() => setReading(null)}
+        />
+      )}
+      {forging && (
+        <DeckForge
+          deck={deckList(profile)}
+          onCancel={() => setForging(null)}
+          onReady={(result) => {
+            setForging(null);
+            startDuel(forging, false, toDeckList(result.deck));
+          }}
         />
       )}
       {paying && (

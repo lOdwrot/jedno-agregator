@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Button, Icon, useMediaQuery, usePrefersReducedMotion } from "@/ui";
-import { OPPONENTS, type Opponent } from "../data/opponents";
+import { ALL_OPPONENTS, OPPONENTS, type Opponent } from "../data/opponents";
+import { IdealInfo } from "../ideal/IdealInfo";
 
 interface Props {
   beaten: string[];
@@ -40,7 +41,7 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, on
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,20rem)_1fr]">
       <ul className="flex flex-col gap-3" aria-label="Przeciwnicy">
-        {OPPONENTS.map((o) => (
+        {ALL_OPPONENTS.map((o) => (
           <li key={o.id}>
             <button
               type="button"
@@ -55,7 +56,11 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, on
                 aria-hidden="true"
                 className={cn(
                   "grid size-12 shrink-0 place-items-center rounded-full text-2xl",
-                  o.theme === "infernal" ? "bg-hell-950 ring-2 ring-ember" : "bg-navy",
+                  o.theme === "infernal"
+                    ? "bg-hell-950 ring-2 ring-ember"
+                    : o.adaptive
+                      ? "bg-navy ring-2 ring-logo-yellow"
+                      : "bg-navy",
                 )}
               >
                 {o.emoji}
@@ -71,14 +76,21 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, on
                           ? "accent"
                           : o.difficulty === "trudny"
                             ? "danger"
-                            : "dangerSolid"
+                            : o.adaptive
+                              ? "navy"
+                              : "dangerSolid"
                     }
                   >
-                    {o.difficulty}
+                    {o.adaptive ? `🧪 ${o.difficulty}` : o.difficulty}
                   </Badge>
                   <Badge>wygrana: {o.reward.win} talentów</Badge>
                   {o.fee ? <Badge tone="accentSolid">🪙 wpisowe {o.fee}</Badge> : null}
-                  {o.prize && <Badge tone="accent">🎁 + booster</Badge>}
+                  {o.prize && (
+                    <Badge tone="accent">
+                      {o.adaptive ? "🎁 + losowy booster" : "🎁 + booster"}
+                    </Badge>
+                  )}
+                  {o.adaptive && <Badge>bez wpisowego</Badge>}
                   {o.extraDraw ? (
                     <Badge tone="danger">🃏 dobiera {1 + o.extraDraw} karty na turę</Badge>
                   ) : null}
@@ -108,6 +120,7 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, on
         <p className="mt-3 text-right font-serif text-lg text-ink italic">
           {pick.letter.signature}
         </p>
+        {pick.adaptive && <IdealInfo />}
         <p className="mt-4 text-sm text-ink-muted">
           Przegrana też coś daje: {pick.reward.loss} talentów + 10 za każdą ocaloną duszę. Po każdym
           pojedynku możesz otworzyć jeden booster.
@@ -152,7 +165,11 @@ export function OpponentPicker({ beaten, talents, problems, onFight, onTrain, on
                     onClick={() => onFight(pick)}
                     leftIcon={<Icon name="play" size={18} />}
                   >
-                    {pick.fee ? `Stań do walki (−${pick.fee} talentów)` : "Stań do walki"}
+                    {pick.fee
+                      ? `Stań do walki (−${pick.fee} talentów)`
+                      : pick.adaptive
+                        ? "Złóż talię i walcz"
+                        : "Stań do walki"}
                   </Button>
                 )}
                 {pick.fee ? (

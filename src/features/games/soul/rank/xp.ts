@@ -37,6 +37,7 @@ export const WIN_XP: Record<Opponent["difficulty"], number> = {
   "bardzo trudny": 60,
   ekstremalny: 80,
   niepokonany: 120,
+  eksperymentalny: 100,
 };
 
 /** A defeat costs the same against every opponent — only the player's rank matters. */

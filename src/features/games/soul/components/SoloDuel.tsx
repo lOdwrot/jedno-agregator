@@ -25,6 +25,8 @@ interface Props {
   /** Practice duel: no fee, no rewards. */
   training?: boolean;
   deck: DeckList;
+  /** The computer's deck when the opponent has none of its own (`Opponent.adaptive`). */
+  aiDeck?: DeckList;
   onFinish: (won: boolean, souls: number) => DuelOutcome;
   /** A demon card showed up on the table (bestiary progress, practice duels count too). */
   onSighting?: (cardId: string) => void;
@@ -51,6 +53,7 @@ export function SoloDuel({
   opponent,
   training = false,
   deck,
+  aiDeck,
   onFinish,
   onSighting,
   bestiary,
@@ -59,7 +62,7 @@ export function SoloDuel({
   onForfeit,
 }: Props) {
   const [initial] = useState<Game>(() =>
-    createGame(deck, opponentDeck(opponent), Date.now() % 1e9, opponent.extraDraw ?? 0),
+    createGame(deck, aiDeck ?? opponentDeck(opponent), Date.now() % 1e9, opponent.extraDraw ?? 0),
   );
   const [over, setOver] = useState<({ g: Game; found: Discoveries } & DuelOutcome) | null>(null);
   const [prizeOpen, setPrizeOpen] = useState(true);

@@ -9,17 +9,29 @@ export interface PrizeChance {
 
 /** Computer opponents — each comes with a letter from an old demon to his young nephew. */
 export interface Opponent {
-  id: "kanapa" | "plotkary" | "pycha" | "zastepy" | "otchlan" | "niepokonany";
+  id: "kanapa" | "plotkary" | "pycha" | "zastepy" | "otchlan" | "niepokonany" | "idealny";
   name: string;
   emoji: string;
-  difficulty: "łatwy" | "średni" | "trudny" | "bardzo trudny" | "ekstremalny" | "niepokonany";
+  difficulty:
+    | "łatwy"
+    | "średni"
+    | "trudny"
+    | "bardzo trudny"
+    | "ekstremalny"
+    | "niepokonany"
+    | "eksperymentalny";
   reward: { win: number; loss: number };
   /** Talents paid to challenge this opponent (harder levels). */
   fee?: number;
   /** A victory also brings one free booster, drawn from this table and opened right away. */
   prize?: readonly PrizeChance[];
-  /** Card ids (energy included) — 50 cards. */
+  /** Card ids (energy included) — 50 cards. Empty for an `adaptive` opponent. */
   deck: Record<string, number>;
+  /**
+   * No fixed deck: before every duel one is put together in the browser against the player's
+   * current deck (`soul/ideal/forge.ts`, AI-vs-AI simulations). Experimental.
+   */
+  adaptive?: true;
   /**
    * Extra cards drawn each turn — an openly stated rule shown on the opponent's card (only Tron Bestii).
    * No other handicap: difficulty comes from the deck and the AI's play.
@@ -309,4 +321,36 @@ export const OPPONENTS: readonly Opponent[] = [
   },
 ];
 
-export const findOpponent = (id: string) => OPPONENTS.find((o) => o.id === id);
+const IDEAL_PRIZE: readonly PrizeChance[] = (
+  ["wspolnota", "swieci", "papieze", "zakrystia", "witraze", "skarbiec", "rozeta"] as const
+).map((pack) => ({ pack, chance: 1 / 7 }));
+
+/**
+ * "Idealny oponent" (experimental): no fixed deck — the strongest demon deck against the player's
+ * current one is computed before the duel. Plain prints, one card a turn: no handicap at all.
+ */
+export const IDEAL_OPPONENT: Opponent = {
+  id: "idealny",
+  name: "Idealny Oponent",
+  emoji: "🧪",
+  difficulty: "eksperymentalny",
+  reward: { win: 500, loss: 50 },
+  prize: IDEAL_PRIZE,
+  adaptive: true,
+  deck: {},
+  letter: {
+    greeting: "Szanowny Kliencie (dawniej: Smołku),",
+    body: [
+      "Laboratorium Otchłani z dumą przedstawia prototyp: przeciwnika bez stałej talii. Zanim usiądziesz do stołu, przejrzymy Twoje karty, a potem rozegramy w tajemnicy setki próbnych pojedynków — i zostawimy tylko te demony, które najlepiej wiedzą, gdzie Cię boli.",
+      "Bez sztuczek: zwykłe karty, jedna dobierana na turę, te same zasady co u Ciebie. Po prostu talia skrojona na miarę. Uprzedzam, że to wersja eksperymentalna — jeśli coś wybuchnie, to był test.",
+    ],
+    signature: "Laboratorium Otchłani, dział badań i rozwoju",
+  },
+  moral:
+    "Pokusa zna nasze słabe strony i chętnie w nie celuje. Ale Bóg zna nas jeszcze lepiej — i nie pozwala kusić ponad nasze siły (1 Kor 10,13). Zmień talię, zmień nawyki: nawet idealnie dobrany przeciwnik nie jest wszechmocny.",
+};
+
+/** Everyone the player can challenge: the ladder, then the experimental opponent at the very end. */
+export const ALL_OPPONENTS: readonly Opponent[] = [...OPPONENTS, IDEAL_OPPONENT];
+
+export const findOpponent = (id: string) => ALL_OPPONENTS.find((o) => o.id === id);
