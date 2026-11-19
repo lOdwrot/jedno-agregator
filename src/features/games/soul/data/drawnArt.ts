@@ -47,7 +47,6 @@ export const DRAWN_ART: ReadonlySet<string> = new Set([
   "koscielny",
   "krytykant",
   "ksiega",
-  "laska",
   "lawina",
   "legion",
   "lektor",

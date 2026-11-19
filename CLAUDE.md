@@ -223,7 +223,7 @@ bar; tapping the patron opens `PatronDialog` with the story + the ladder). 11 ra
 whose picture is a card art key. `xp.ts`: every step costs more (`stepCost`), a win gives `WIN_XP[difficulty]`, a defeat or
 forfeit costs `lossXp` (depends only on the rank, never below 0 — ranks can drop). `DuelResult` animates `from → to`
 through every crossed boundary (`rankStops`) with a flip/burst on promotion and a sinking swap on demotion. PvP doesn't count.
-Card pictures: `public/soul/art/<key>.webp` — EVERY card has one (`art.test.ts`), never an emoji. Either Wikimedia
+Card pictures: `public/soul/art/<key>.webp` — EVERY card has one (`art.test.ts`) except Łaska (grace energy), which keeps its ✨ emoji. Either Wikimedia
 Commons (PD/CC — a credit entry in `soul/data/art.ts`, shown under "Źródła ilustracji") or drawn for the game: SVG
 scenes in `scripts/soul-art/` (`kit.ts` backgrounds/`person`/`demon`, `props.ts`, `creatures.ts`, one scene per card id
 in `parish*.ts`/`demon*.ts`), rendered by `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run soul-art [ids…]` (600×450 webp,

@@ -24,6 +24,7 @@ describe("card art", () => {
 
   it("every card has a picture: credited or drawn for the game, never both", () => {
     for (const c of ALL_CARDS) {
+      if (c.id === "laska") continue; // Łaska keeps its ✨ emoji on purpose
       expect(Boolean(ART[c.id]) !== DRAWN_ART.has(c.id), c.id).toBe(true);
       expect(files.has(c.id), c.id).toBe(true);
     }

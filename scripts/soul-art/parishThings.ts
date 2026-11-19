@@ -724,14 +724,4 @@ export const PARISH_THINGS: Record<string, Scene> = {
       saul
     );
   }),
-  laska: light("modlitwa", function laska() {
-    return (
-      rays(300, 220, "#fffbe0", 24, 520, 0.35, "las") +
-      glow(300, 220, 200, "#ffffff", 1) +
-      at(300, 220, 4, sparkle(0, 0, 24, "#fff3b0")) +
-      at(300, 220, 2, sparkle(0, 0, 24, "#ffffff")) +
-      sparkles("las", 24, "#fff8d8", [40, 40, 560, 400]) +
-      heart(300, 236, 0.9, "#e8672a")
-    );
-  }),
 };
