@@ -1,6 +1,7 @@
 import { Outlet, ScrollRestoration, useLocation } from "react-router";
 import { motion } from "motion/react";
 import { BottomNav } from "./shell/BottomNav";
+import { ConsentBanner } from "./shell/ConsentBanner";
 import { Footer } from "./shell/Footer";
 import { Header } from "./shell/Header";
 import { RouteEffects } from "./shell/RouteEffects";
@@ -36,6 +37,7 @@ export function Layout() {
       </main>
       <Footer />
       <BottomNav />
+      <ConsentBanner />
       <RouteEffects />
       <ScrollRestoration />
     </div>

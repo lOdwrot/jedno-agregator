@@ -2,8 +2,10 @@ import { Link } from "react-router";
 import { paths } from "@/app/routes";
 import { useInfos } from "@/features/infos/api";
 import { useMediaMeta } from "@/features/media/api";
+import { analyticsEnabled } from "@/lib/analytics";
 import { formatRelativeAgo } from "@/lib/dates";
 import { AnimatedBlobs, Container, Grain, Icon, Reveal } from "@/ui";
+import { reopenConsent } from "./ConsentBanner";
 import { NAV_ITEMS } from "./nav";
 
 const YOUTUBE_URL = "https://www.youtube.com/@ArchiGdansk";
@@ -104,6 +106,15 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/15 pt-6 text-sm text-white/75 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Jedno · Archidiecezja Gdańska</p>
+          {analyticsEnabled() && (
+            <button
+              type="button"
+              onClick={reopenConsent}
+              className="inline-flex min-h-11 items-center self-start text-white/85 underline-offset-4 hover:text-white hover:underline sm:self-auto"
+            >
+              Ustawienia statystyk
+            </button>
+          )}
           {meta.data && (
             <p>
               Dane zaktualizowane:{" "}
