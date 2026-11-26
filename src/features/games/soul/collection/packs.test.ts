@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createRng } from "../../useGameLoop";
-import { getCard } from "../data/cards";
+import { getCard, isPopeCard } from "../data/cards";
 import { parseKey } from "./profile";
 import { PACKS, rollPack } from "./packs";
 
@@ -29,6 +29,27 @@ describe("booster editions", () => {
       return n;
     };
     expect(count("papieze")).toBeGreaterThan(count("wspolnota") * 1.5);
+  });
+
+  it("Papieże wieków keeps its promise: 40% for a pope, whatever other legendaries exist", () => {
+    const rnd = createRng(41);
+    const pack = PACKS.find((p) => p.id === "papieze")!;
+    expect(pack.sticker).toContain("40%");
+    const n = 5000;
+    const seen = new Set<string>();
+    let popes = 0;
+    for (let i = 0; i < n; i++) {
+      const cards = rollPack(pack, rnd).map((k) => getCard(parseKey(k).cardId));
+      const pope = cards.find((c) => isPopeCard(c));
+      if (pope) {
+        popes++;
+        seen.add(pope.id);
+      }
+      for (const c of cards) if (c.rarity === "legendary") expect(isPopeCard(c), c.id).toBe(true);
+    }
+    expect(popes / n).toBeGreaterThan(0.37);
+    expect(popes / n).toBeLessThan(0.43);
+    for (const id of ["pius5", "leon13", "leon14"]) expect(seen.has(id), id).toBe(true);
   });
 
   it("Papieże wieków always brings Kandydat na papieża, often gilded or stained", () => {

@@ -178,6 +178,43 @@ export const POPE_STORIES: PopeStory[] = [
       "Pokora to nie słabość. Znać swoje granice i szczerze o nich powiedzieć — to też jest odwaga.",
   },
   {
+    id: "pius5",
+    year: 1566,
+    reign: "1566–1572",
+    number: 225,
+    born: "Bosco koło Alessandrii, Włochy",
+    hook: "Pasterz owiec, który został papieżem — i poprosił całą Europę o różaniec.",
+    facts: [
+      {
+        emoji: "🐑",
+        title: "Najpierw owce",
+        text: "Antonio Ghislieri pochodził z ubogiej rodziny i jako chłopiec pasł owce. W wieku 14 lat wstąpił do dominikanów.",
+      },
+      {
+        emoji: "🤍",
+        title: "Skąd biała sutanna?",
+        text: "Jako papież nie zrezygnował z białego habitu dominikanina. Według tradycji właśnie od niego papieże ubierają się na biało.",
+      },
+      {
+        emoji: "📖",
+        title: "Porządek po Soborze",
+        text: "Wprowadzał w życie postanowienia Soboru Trydenckiego: wydał Katechizm Rzymski, nowy brewiarz i Mszał, z którego Kościół korzystał przez 400 lat.",
+      },
+      {
+        emoji: "⚓",
+        title: "Lepanto",
+        text: "W 1571 r. pod Lepanto flota chrześcijan stanęła do bitwy z potężną flotą turecką. Pius V prosił wszystkich o modlitwę różańcową — bitwa zakończyła się zwycięstwem.",
+      },
+      {
+        emoji: "📿",
+        title: "Święto Różańca",
+        text: "Na pamiątkę zwycięstwa ustanowił święto Matki Bożej Zwycięskiej — dziś obchodzimy je 7 października jako wspomnienie Matki Bożej Różańcowej.",
+      },
+    ],
+    today:
+      "Pius V wiedział, że modlitwa to nie dodatek, tylko najmocniejsza broń. Masz w kieszeni różaniec albo aplikację — sięgnij po nią, zanim zaczniesz się martwić.",
+  },
+  {
     id: "innocenty11",
     year: 1676,
     reign: "1676–1689",
@@ -249,6 +286,47 @@ export const POPE_STORIES: PopeStory[] = [
     ],
     today:
       "Gdy coś tracisz, nie tracisz siebie. To, kim jesteś w Bożych oczach, zostaje nawet wtedy, gdy wszystko wokół się sypie.",
+  },
+  {
+    id: "leon13",
+    year: 1878,
+    reign: "1878–1903",
+    number: 256,
+    born: "Carpineto Romano, Włochy",
+    hook: "Papież, który stanął po stronie robotników, kochał różaniec i jako pierwszy dał się nagrać kamerze.",
+    facts: [
+      {
+        emoji: "⚒️",
+        title: "Rerum novarum",
+        text: "W 1891 r. napisał encyklikę o sprawach robotników: o godnej zapłacie, odpoczynku w niedzielę i prawie do zrzeszania się. To początek nauki społecznej Kościoła.",
+      },
+      {
+        emoji: "📿",
+        title: "Papież różańca",
+        text: "Napisał aż jedenaście encyklik o różańcu. To dzięki niemu październik stał się miesiącem różańcowym.",
+      },
+      {
+        emoji: "🎥",
+        title: "Pierwszy na filmie",
+        text: "W 1896 r. jako pierwszy papież został sfilmowany — pobłogosławił kamerę. Zachowało się też nagranie jego głosu.",
+      },
+      {
+        emoji: "🗡️",
+        title: "Modlitwa do św. Michała",
+        text: "Ułożył modlitwę do św. Michała Archanioła, którą do dziś wiele osób odmawia po Mszy świętej.",
+      },
+      {
+        emoji: "🎂",
+        title: "93 lata",
+        text: "Gdy go wybrano, miał 67 lat i słabe zdrowie — myślano, że będzie papieżem krótko. Rządził 25 lat i zmarł w wieku 93 lat.",
+      },
+    ],
+    quote: {
+      text: "Święty Michale Archaniele, wspomagaj nas w walce.",
+      source: "Modlitwa do św. Michała Archanioła",
+    },
+    today:
+      "Leon XIII pokazał, że wiara dotyczy też pracy, płacy i sprawiedliwości. Gdy widzisz, że ktoś jest traktowany nieuczciwie, nie przechodź obojętnie.",
   },
   {
     id: "pius10",
@@ -454,6 +532,47 @@ export const POPE_STORIES: PopeStory[] = [
     },
     today:
       "Chochliki z kanapy chcą, żebyś tylko przewijał ekran. Franciszek mówi: wstań, idź do ludzi i zrób coś dobrego — Twoje życie ma zostawić ślad.",
+  },
+  {
+    id: "leon14",
+    year: 2025,
+    reign: "od 2025",
+    number: 267,
+    born: "Chicago, Stany Zjednoczone",
+    hook: "Matematyk z Chicago i misjonarz z Peru, który przywitał świat słowami: „Pokój wam wszystkim!”.",
+    facts: [
+      {
+        emoji: "📐",
+        title: "Matematyk",
+        text: "Robert Francis Prevost najpierw skończył studia matematyczne, a potem wstąpił do zakonu augustianów.",
+      },
+      {
+        emoji: "🇵🇪",
+        title: "Misjonarz w Peru",
+        text: "Wiele lat pracował jako misjonarz w Peru, a później był biskupem w Chiclayo. Ma także obywatelstwo peruwiańskie.",
+      },
+      {
+        emoji: "🥇",
+        title: "Same „pierwsze”",
+        text: "Wybrany 8 maja 2025 r. jako pierwszy papież ze Stanów Zjednoczonych i pierwszy augustianin na Stolicy Piotrowej.",
+      },
+      {
+        emoji: "⚒️",
+        title: "Dlaczego Leon?",
+        text: "Imię wybrał na pamiątkę Leona XIII — tamten bronił robotników w czasach maszyn parowych, a nowy papież chce pomagać ludziom w czasach sztucznej inteligencji.",
+      },
+      {
+        emoji: "🤝",
+        title: "W Tym Jedynym — jedno",
+        text: "Jego zawołanie to słowa św. Augustyna „In Illo uno unum”: choć jest nas wielu, w Chrystusie jesteśmy jedno.",
+      },
+    ],
+    quote: {
+      text: "Pokój wam wszystkim!",
+      source: "pierwsze słowa z loggii, 8 maja 2025",
+    },
+    today:
+      "Papież nazywa się pontifex — budowniczy mostów. Ty też możesz budować mosty: pogódź się z kimś, zaproś do grupy osobę, która stoi z boku.",
   },
 ];
 

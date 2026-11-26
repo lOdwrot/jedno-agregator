@@ -9,7 +9,7 @@ describe("popes", () => {
   );
 
   it("every pope evolves from the one papal candidate — none can be played straight from the hand", () => {
-    expect(popes.length).toBeGreaterThanOrEqual(11);
+    expect(popes.length).toBeGreaterThanOrEqual(14);
     for (const p of popes) expect(p.kind === "character" && p.evolvesFrom, p.id).toBe("kandydat");
   });
 

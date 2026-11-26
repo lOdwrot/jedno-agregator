@@ -121,7 +121,7 @@ and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, 
 Every pope (legendary, 2 souls) is a stage 1 evolution of the single common basic `kandydat` (Kandydat na papieża) —
 none can be played straight from the hand (`popes.test.ts`); the starter deck holds 2 candidates and profile v4
 migration gives them to older saves (in place of grace when the deck already has popes). The "Papieże wieków" booster
-always opens with a candidate (`odds.first`: 15% stained, 35% gilded); in other packs it is an ordinary common.
+always opens with a candidate (`odds.first`: 15% stained, 35% gilded); in other packs it is an ordinary common. Its last card is a pope with exactly 40% chance (`odds.legendaryPool`: the legendary roll draws only popes, so other legendaries never dilute the promise; `packs.test.ts`).
 Franciszek's `recoverOnce` ability (only while active) takes a candidate back from the discard pile. The very rare
 legendary item `sobor` (Przyspieszony Sobór Watykański, `council` effect, `PULL_WEIGHT` 0.4 in `packs.ts`) discards a grace
 from the hand and benches a pope straight from the hand — the support action's `target` is the pope's hand uid

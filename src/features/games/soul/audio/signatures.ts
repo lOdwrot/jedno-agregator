@@ -81,6 +81,14 @@ export const signatureSound: Record<string, () => void> = {
     noise(1.2, { cutoff: 900, gain: 0.08 });
     [12, 16, 19].forEach((s, i) => bell(s, 0.3 + i * 0.15, 0.04));
   },
+  bridge: () => {
+    // stones laid one by one (rising), then the arch rings out
+    [0, 2, 4, 7, 9, 12].forEach((x, i) => {
+      drum(i * 0.11, 0.12);
+      bell(x, i * 0.11, 0.035);
+    });
+    choir([0, 4, 7, 12], 0.75, 1.6);
+  },
   westerplatte: () => {
     drum(0, 0.6);
     noise(1.2, { cutoff: 300, gain: 0.45 });

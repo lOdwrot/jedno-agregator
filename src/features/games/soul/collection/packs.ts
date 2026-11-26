@@ -1,5 +1,5 @@
 /** Booster editions: each pack has its own look, price and odds. */
-import { COLLECTIBLE } from "../data/cards";
+import { COLLECTIBLE, isPopeCard } from "../data/cards";
 import type { CardDef, Finish, Rarity } from "../data/types";
 import { keyOf, type CardKey } from "./profile";
 
@@ -20,6 +20,8 @@ export interface PackType {
   foil: string;
   odds: {
     legendary: number;
+    /** The legendary roll draws only from these cards (e.g. popes), so `legendary` is their exact chance. */
+    legendaryPool?: (c: CardDef) => boolean;
     rareInUncommonSlot: number;
     pool?: (c: CardDef) => boolean;
     /** Every slot draws only from these cards (falls back to all cards of a rarity it lacks). */
@@ -68,7 +70,9 @@ export const PACKS: readonly PackType[] = [
     emoji: "👑",
     foil: "from-logo-yellow via-surface to-logo-yellow",
     odds: {
+      // exactly 40% for a pope: the legendary slot draws only popes (other legendaries would dilute it)
       legendary: 0.4,
+      legendaryPool: isPopeCard,
       rareInUncommonSlot: 0.25,
       // every pope evolves from the candidate — this pack always brings one, often gilded or stained
       first: { id: "kandydat", finish: { stained: 0.15, gilded: 0.35 } },
@@ -165,7 +169,8 @@ function pickCard(pool: readonly CardDef[], rnd: () => number): CardDef {
  * Zakrystia i sanktuaria: only items and places (`odds.only`).
  * Witraże Katedry: plain/gilded cards are turned into stained glass until `minStained` is reached.
  * Rozeta Pelplińska: every card is stained glass and the last one is always legendary.
- * Papieże wieków: the first card is always Kandydat na papieża (`odds.first`), often gilded or stained.
+ * Papieże wieków: the first card is always Kandydat na papieża (`odds.first`), often gilded or stained,
+ * and the last one is a pope with exactly `odds.legendary` (40%) chance (`odds.legendaryPool`).
  */
 export function rollPack(pack: PackType, rnd: () => number = Math.random): CardKey[] {
   const of = (r: Rarity) => {
@@ -179,7 +184,11 @@ export function rollPack(pack: PackType, rnd: () => number = Math.random): CardK
     if (slot < 3) card = pickCard(of("common"), rnd);
     else if (slot === 3)
       card = pickCard(of(rnd() < pack.odds.rareInUncommonSlot ? "rare" : "uncommon"), rnd);
-    else if (rnd() < pack.odds.legendary) card = pickCard(of("legendary"), rnd);
+    else if (rnd() < pack.odds.legendary) {
+      const legends = of("legendary");
+      const pool = pack.odds.legendaryPool ? legends.filter(pack.odds.legendaryPool) : [];
+      card = pickCard(pool.length ? pool : legends, rnd);
+    }
     else {
       const special = pack.odds.pool ? COLLECTIBLE.filter(pack.odds.pool) : [];
       card = special.length && rnd() < 0.7 ? pickCard(special, rnd) : pickCard(of("rare"), rnd);

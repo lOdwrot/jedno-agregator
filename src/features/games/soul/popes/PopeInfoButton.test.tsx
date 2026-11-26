@@ -17,9 +17,9 @@ describe("PopeInfoButton", () => {
     const dialog = await screen.findByRole("dialog", { name: "Historia: Św. Jan Paweł II" });
     expect(within(dialog).getByText("Czy wiesz, że…")).toBeInTheDocument();
     expect(within(dialog).getByText("Westerplatte i Wybrzeże")).toBeInTheDocument();
-    expect(within(dialog).getByText(/Poznane historie: 1 \/ 11/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/Poznane historie: 1 \/ 14/)).toBeInTheDocument();
     await userEvent.click(within(dialog).getByRole("button", { name: /^Św\. Piotr, od 33/ }));
     expect(within(dialog).getByText("Rybak z charakterem")).toBeInTheDocument();
-    expect(within(dialog).getByText(/Poznane historie: 2 \/ 11/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/Poznane historie: 2 \/ 14/)).toBeInTheDocument();
   });
 });
