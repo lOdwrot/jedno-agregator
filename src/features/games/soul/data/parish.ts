@@ -678,6 +678,44 @@ export const PARISH_CARDS: CardDef[] = [
       "Pustelnik wybrany na papieża. Po pięciu miesiącach oddał tiarę i wrócił do celi — bez bagażu.",
   },
   {
+    id: "pius5",
+    kind: "character",
+    side: "parish",
+    name: "Św. Pius V",
+    subtitle: "papież, XVI w.",
+    emoji: "📿",
+    rarity: "legendary",
+    hp: 130,
+    element: "modlitwa",
+    weakness: "gniew",
+    retreat: 2,
+    evolvesFrom: "kandydat",
+    souls: 2,
+    ability: {
+      name: "Biały habit",
+      text: "Ta postać jest odporna na uśpienie, zatrzymanie i zwątpienie.",
+      effect: { k: "statusImmune" },
+    },
+    attacks: [
+      {
+        name: "Katechizm Rzymski",
+        cost: 1,
+        damage: 10,
+        text: "Dobierz 1 kartę.",
+        effects: [{ k: "draw", n: 1 }],
+      },
+      {
+        name: "Różaniec pod Lepanto",
+        cost: 3,
+        damage: 70,
+        text: "Rzuć monetą. Orzeł: +30.",
+        effects: [{ k: "coin", n: 30 }],
+      },
+    ],
+    flavor:
+      "Dominikanin, który nie zdjął białego habitu — dlatego papieże noszą biel. Przed Lepanto prosił o różaniec.",
+  },
+  {
     id: "innocenty11",
     kind: "character",
     side: "parish",
@@ -735,6 +773,44 @@ export const PARISH_CARDS: CardDef[] = [
     ],
     flavor:
       "Najdłuższy pontyfikat po św. Piotrze. Po utracie Rzymu nie wychodził za mury — gości też nie przybywało.",
+  },
+  {
+    id: "leon13",
+    kind: "character",
+    side: "parish",
+    name: "Leon XIII",
+    subtitle: "papież, XIX w.",
+    emoji: "⚒️",
+    rarity: "legendary",
+    hp: 140,
+    element: "slowo",
+    weakness: "lenistwo",
+    retreat: 2,
+    evolvesFrom: "kandydat",
+    souls: 2,
+    ability: {
+      name: "Papież różańca",
+      text: "Ta postać otrzymuje o 10 mniej obrażeń.",
+      effect: { k: "armor", n: 10 },
+    },
+    attacks: [
+      {
+        name: "Modlitwa do św. Michała",
+        cost: 2,
+        damage: 40,
+        text: "Odrzuć 1 Pokusę z obrońcy.",
+        effects: [{ k: "discardEnergy" }],
+      },
+      {
+        name: "Rerum novarum",
+        cost: 3,
+        damage: 60,
+        text: "Ulecz 20 każdej swojej postaci.",
+        effects: [{ k: "heal", target: "all", n: 20 }],
+      },
+    ],
+    flavor:
+      "Upomniał się o godną płacę dla robotników. W 1896 r. jako pierwszy papież pobłogosławił… kamerę filmową.",
   },
   {
     id: "pius10",
@@ -885,6 +961,38 @@ export const PARISH_CARDS: CardDef[] = [
       },
     ],
     flavor: "Na ŚDM w Rio zachęcał młodych: „róbcie raban!”. Rozumiemy to dosłownie.",
+  },
+  {
+    id: "leon14",
+    kind: "character",
+    side: "parish",
+    name: "Leon XIV",
+    subtitle: "papież, XXI w.",
+    emoji: "🌉",
+    rarity: "legendary",
+    hp: 140,
+    element: "sluzba",
+    weakness: "pycha",
+    retreat: 1,
+    evolvesFrom: "kandydat",
+    souls: 2,
+    ability: {
+      name: "In Illo uno unum",
+      text: "Działa też z ławki: wszystkie ataki Twoich postaci kosztują 1 Łaskę mniej (nie sumuje się z innymi takimi zdolnościami).",
+      effect: { k: "costMinus", n: 1 },
+    },
+    attacks: [
+      {
+        name: "Pokój wam wszystkim!",
+        cost: 2,
+        damage: 30,
+        text: "Usuń wszystkie stany ze swoich postaci.",
+        effects: [{ k: "cleanse" }],
+      },
+      { name: "Budowniczy mostów", cost: 3, damage: 80 },
+    ],
+    flavor:
+      "Augustianin z Chicago, misjonarz w Peru. Z loggii powiedział najpierw: „Pokój wam wszystkim!”.",
   },
   // ── Zeal: burn grace from your hand, or pour out everything in one attack ──
   {

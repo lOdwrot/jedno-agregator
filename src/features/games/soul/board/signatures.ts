@@ -95,6 +95,18 @@ const SIG: Record<string, { sound: keyof typeof signatureSound; play: Play }> = 
       );
     },
   },
+  "Budowniczy mostów": {
+    sound: "bridge",
+    play: async ({ r, from, to }) => {
+      // pontifex: a bridge of stones arcs over to the rival, then peace lands on it
+      await stream(r.fx, r.tw, from, to, "🧱", 7, 30, 700);
+      await both(
+        stream(r.fx, r.tw, from, to, "🕊️", 4, 40, 500),
+        pillar(r.fx, r.tw, to, P()["logo-blue"], 180),
+        impact(r.fx, r.tw, to, P()["logo-yellow"], 1.8),
+      );
+    },
+  },
   "Swoje Westerplatte": {
     sound: "westerplatte",
     play: async ({ r, from, to }) => {

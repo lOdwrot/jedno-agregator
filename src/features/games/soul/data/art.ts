@@ -143,6 +143,20 @@ export const ART: Record<string, ArtCredit> = {
     url: "https://commons.wikimedia.org/wiki/File:Raphael_-_The_Meeting_of_Leo_the_Great_and_Attila.jpg",
     focus: 0.3,
   },
+  leon13: {
+    title: "Fülöp László - XIII. Leó pápa - 3206 - Hungarian National Gallery.jpg",
+    author: "Philip de László",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:F%C3%BCl%C3%B6p_L%C3%A1szl%C3%B3_-_XIII._Le%C3%B3_p%C3%A1pa_-_3206_-_Hungarian_National_Gallery.jpg",
+    focus: 0.2,
+  },
+  leon14: {
+    title: "Pope Leo XIV 2025 (cropped).png",
+    author: "Edgar Beltrán, The Pillar",
+    license: "CC BY-SA 4.0",
+    url: "https://commons.wikimedia.org/wiki/File:Pope_Leo_XIV_2025_(cropped).png",
+    focus: 0.3,
+  },
   mariacka: {
     title: "Bazylika Mariacka DSC01870.jpg",
     author: "Gyddanyzc",
@@ -204,6 +218,13 @@ export const ART: Record<string, ArtCredit> = {
     author: "Unknown authorUnknown author",
     license: "domena publiczna",
     url: "https://commons.wikimedia.org/wiki/File:His_Holiness_Pope_St._Pius_X_%E2%80%93_edited.jpg",
+    focus: 0.25,
+  },
+  pius5: {
+    title: "Pope Pius V.jpg",
+    author: "Artaud de Montor",
+    license: "domena publiczna",
+    url: "https://commons.wikimedia.org/wiki/File:Pope_Pius_V.jpg",
     focus: 0.25,
   },
   pius9: {
