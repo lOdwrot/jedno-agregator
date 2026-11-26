@@ -27,6 +27,7 @@ import { Bestiary } from "./components/Bestiary";
 import { recordSighting } from "./collection/bestiary";
 import { BoosterShop } from "./components/BoosterShop";
 import { DeckBuilder } from "./components/DeckBuilder";
+import { DeckSwitcher } from "./components/DeckSwitcher";
 import { SoloDuel, type DuelOutcome } from "./components/SoloDuel";
 import { FeePayment } from "./components/FeePayment";
 import { OpponentPicker } from "./components/OpponentPicker";
@@ -249,6 +250,7 @@ export function SoulGame() {
                     <TaleWaiting onOpen={() => setReading({ cardId: waiting, replay: false })} />
                   )}
                   {!profile.tutorial && tutorialCard}
+                  <DeckSwitcher profile={profile} update={update} />
                   <OpponentPicker
                     beaten={profile.beaten}
                     talents={profile.talents}
@@ -286,15 +288,18 @@ export function SoulGame() {
               value: "multiplayer",
               label: "Multiplayer",
               content: (
-                <PvpLobby
-                  deck={deckList(profile)}
-                  problems={deckProblems(profile)}
-                  onEditDeck={() => setTab("talia")}
-                  onStart={(session) => {
-                    track("pvp_start", { role: session.role });
-                    setPvp(session);
-                  }}
-                />
+                <div className="flex flex-col gap-6">
+                  <DeckSwitcher profile={profile} update={update} />
+                  <PvpLobby
+                    deck={deckList(profile)}
+                    problems={deckProblems(profile)}
+                    onEditDeck={() => setTab("talia")}
+                    onStart={(session) => {
+                      track("pvp_start", { role: session.role });
+                      setPvp(session);
+                    }}
+                  />
+                </div>
               ),
             },
             {

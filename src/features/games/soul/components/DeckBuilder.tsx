@@ -3,6 +3,7 @@ import { Button, Dialog, useToast } from "@/ui";
 import { cn } from "@/lib/cn";
 import { COLLECTIBLE, DECK_SIZE, getCard, MAX_COPIES } from "../data/cards";
 import { groupDeckKeys } from "../collection/deckGroups";
+import { activeDeckName } from "../collection/decks";
 import {
   deckProblems,
   deckSize,
@@ -16,8 +17,10 @@ import {
 } from "../collection/profile";
 import { CardFace } from "./CardFace";
 import { DeckRow } from "./DeckRow";
+import { DeckSlotTools } from "./DeckSlotTools";
+import { DeckSwitcher } from "./DeckSwitcher";
 
-/** Edit the 50-card deck from the owned collection (max 3 copies of a card). */
+/** Edit the active 50-card deck (one of several slots) from the owned collection (max 3 copies of a card). */
 export function DeckBuilder({
   profile,
   update,
@@ -35,9 +38,13 @@ export function DeckBuilder({
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 rounded-card bg-surface p-4 shadow-card">
+        <DeckSwitcher profile={profile} update={update} />
+        <DeckSlotTools profile={profile} update={update} />
+      </div>
       <div className="flex flex-wrap items-center gap-3 rounded-card bg-surface p-4 shadow-card">
         <p className="font-display text-lg font-extrabold text-navy">
-          Talia: {deckSize(profile)} / {DECK_SIZE}
+          {activeDeckName(profile)}: {deckSize(profile)} / {DECK_SIZE}
         </p>
         <p className="text-sm text-ink-muted sm:ml-auto">
           Kolekcja: {distinct} / {COLLECTIBLE.length} różnych kart

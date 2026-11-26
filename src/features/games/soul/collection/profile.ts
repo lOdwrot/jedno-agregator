@@ -27,9 +27,13 @@ export interface Profile {
   /** Booster openings earned by finished duels (one per duel). */
   packs: number;
   collection: Partial<Record<CardKey, number>>;
-  /** Non-energy cards of the deck. */
+  /** Non-energy cards of the ACTIVE deck. */
   deck: CardKey[];
   energy: number;
+  /** All deck slots (see `decks.ts`; the active slot's cards are kept in `deck`/`energy`). */
+  decks?: { name: string; deck: CardKey[]; energy: number }[];
+  /** Index of the active slot; missing in older saves = 0 ("Talia 1"). */
+  activeDeck?: number;
   wins: number;
   losses: number;
   /** Opponents beaten at least once. */

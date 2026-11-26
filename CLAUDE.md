@@ -109,6 +109,10 @@ na dziś" and a bead timeline of all popes (`PopeTimeline`, also the navigation;
 Texts in `popes/stories.ts` — a new pope card needs a story (`stories.test.ts`). The dialog stops click/Esc propagation
 because it can open inside another dialog.
 After a duel, `DuelDiscoveries` unfolds a demon card directly under its badge (a full-width row in the badge list).
+**Several decks** (`collection/decks.ts`, `DECK_SLOTS` = 3): the ACTIVE deck always lives in `Profile.deck`/`energy` (duels, PvP and
+stats read only those), the other slots in `Profile.decks`, the active index in `Profile.activeDeck` (saved with the profile, so it
+survives a reload; older saves = "Talia 1"). `DeckSwitcher` (chips) sits on the Pojedynek, Multiplayer and Talia tabs; `DeckSlotTools`
+(rename, copy to another slot, clear) in the deck builder.
 Decks have 50 cards (`DECK_SIZE`) with at least 5 basic characters (`MIN_BASICS`, deck builder + PvP `validDeck`); the discard pile is never reshuffled — a player who must draw at the start of
 their turn from an empty deck loses. `search` cards (Ogłoszenia parafialne / Algorytm, like Ultra Ball) set `g.search`
 and wait for `{ type: "search", discard, pick }` (same blocking rule as `peek`, see `choicePending`); `recoverCharacter` /
