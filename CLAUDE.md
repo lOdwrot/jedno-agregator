@@ -116,7 +116,9 @@ missing cards are numbered empty slots, owned ones show the rarest print on top 
 underneath. Tapping a card opens `AlbumCardDialog` → `TiltCard`: turn it with a finger/mouse/arrows (free spin on Y with the
 back, tilt on X, glare, spring back — `spring.ts`); gilded prints shed gold dust and stained prints fling glass shards and
 sparkles into 3D world space, more the faster it turns (`glassParticles.ts` pure math + `drawParticles.ts` canvas; none
-under reduced motion).
+under reduced motion). Depth: `npm run soul-art` also writes every drawn picture as `bg/<id>.webp` (backdrop) + `fg/<id>.webp`
+(the motif, transparent) — `CardFace depth` → `CardArt depth` stacks them as `.soul-depth-bg/-fg` (index.css), shifted in
+opposite directions by `--tilt-x/-y` that `TiltCard` sets, so the figure stands out in front while turning (`art.test.ts`).
 **Several decks** (`collection/decks.ts`, `DECK_SLOTS` = 3): the ACTIVE deck always lives in `Profile.deck`/`energy` (duels, PvP and
 stats read only those), the other slots in `Profile.decks`, the active index in `Profile.activeDeck` (saved with the profile, so it
 survives a reload; older saves = "Talia 1"). `DeckSwitcher` (chips) sits on the Pojedynek, Multiplayer and Talia tabs; `DeckSlotTools`

@@ -10,7 +10,23 @@ const files = new Set(
   ),
 );
 
+const layer = (dir: string) =>
+  new Set(
+    Object.keys(import.meta.glob("/public/soul/art/*/*.webp"))
+      .filter((f) => f.includes(`/${dir}/`))
+      .map((f) => f.replace(/^.*\//, "").replace(".webp", "")),
+  );
+
 describe("card art", () => {
+  it("every drawn picture has its parallax layers (backdrop + figure)", () => {
+    const bg = layer("bg");
+    const fg = layer("fg");
+    for (const key of DRAWN_ART) {
+      expect(bg.has(key), key).toBe(true);
+      expect(fg.has(key), key).toBe(true);
+    }
+  });
+
   it("every credited picture exists and belongs to a card or a pack", () => {
     expect(files.size).toBeGreaterThan(0);
     const packArt = new Set(PACKS.map((p) => p.art));

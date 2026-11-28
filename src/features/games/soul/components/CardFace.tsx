@@ -49,6 +49,7 @@ export function CardFace({
   className,
   showLesson = false,
   stories = true,
+  depth = false,
 }: {
   cardId: string;
   finish?: Finish;
@@ -58,6 +59,8 @@ export function CardFace({
   showLesson?: boolean;
   /** Pope cards get an "i Historia" button with the pope's story. */
   stories?: boolean;
+  /** Album viewer: the picture splits into layers that move with the tilt (see `CardArt`). */
+  depth?: boolean;
 }) {
   const c = getCard(cardId);
   const dark = c.side === "demons";
@@ -126,7 +129,7 @@ export function CardFace({
               art,
             )}
           >
-            <CardArt cardId={cardId} emojiClass="text-6xl" />
+            <CardArt cardId={cardId} emojiClass="text-6xl" depth={depth} />
             {finish !== "plain" && <span className="soul-shine absolute inset-0" />}
             {c.kind === "character" && c.evolvesFrom && (
               <EvolvesFromThumb cardId={c.evolvesFrom} dark={dark} />

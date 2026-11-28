@@ -4,6 +4,8 @@
  *   npx tsx scripts/soul-art/render.ts lektor ... # only these
  *   (a full run also rewrites src/features/games/soul/data/drawnArt.ts)
  *   SHEET=1 npx tsx scripts/soul-art/render.ts    # also writes a contact sheet to soul-art-sheet.png
+ * Every scene also gets two layers for the album's parallax: `bg/<id>.webp` (backdrop only) and
+ * `fg/<id>.webp` (the motif on a transparent background).
  * Uses the Playwright Chromium (PW_CHROMIUM_PATH overrides the binary).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -21,7 +23,8 @@ const browser = await chromium.launch(
 );
 const page = await browser.newPage();
 await page.setContent("<html><body></body></html>");
-mkdirSync(OUT, { recursive: true });
+mkdirSync(`${OUT}/bg`, { recursive: true });
+mkdirSync(`${OUT}/fg`, { recursive: true });
 
 const encode = (svg: string, type: string, q: number) =>
   page.evaluate(
@@ -41,6 +44,14 @@ const encode = (svg: string, type: string, q: number) =>
 for (const id of ids) {
   const svg = SCENES[id]!();
   writeFileSync(`${OUT}/${id}.webp`, Buffer.from(await encode(svg, "image/webp", 0.82), "base64"));
+  const layers = SCENES[id]!.layers;
+  if (layers) {
+    // the backdrop is mostly soft gradients: a lower quality is enough
+    const bg = await encode(layers.bg(), "image/webp", 0.6);
+    writeFileSync(`${OUT}/bg/${id}.webp`, Buffer.from(bg, "base64"));
+    const fg = await encode(layers.fg(), "image/webp", 0.82);
+    writeFileSync(`${OUT}/fg/${id}.webp`, Buffer.from(fg, "base64"));
+  }
 }
 console.log(`rendered ${ids.length} pictures`);
 if (!only.length) {

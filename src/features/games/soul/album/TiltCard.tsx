@@ -43,7 +43,12 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
     const paint = () => {
       const { ax, ay } = spin.current;
       const el = cardRef.current;
-      if (el) el.style.transform = `rotateX(${ax}deg) rotateY(${ay}deg)`;
+      if (el) {
+        el.style.transform = `rotateX(${ax}deg) rotateY(${ay}deg)`;
+        // parallax of the picture's layers: the figure stands in front of the backdrop
+        el.style.setProperty("--tilt-y", Math.sin((ay * Math.PI) / 180).toFixed(4));
+        el.style.setProperty("--tilt-x", Math.sin((ax * Math.PI) / 180).toFixed(4));
+      }
       const g = glareRef.current;
       if (g) {
         // the light slides across the face against the turn
@@ -189,7 +194,7 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
       >
         <div ref={cardRef} className="relative w-full max-w-xs transform-3d">
           <div className="relative overflow-hidden rounded-card backface-hidden">
-            <CardFace cardId={cardId} finish={finish} active stories={false} />
+            <CardFace cardId={cardId} finish={finish} active stories={false} depth />
             <span
               ref={glareRef}
               aria-hidden="true"

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { artFocus, artSrc } from "../data/art";
+import { artFocus, artLayers, artSrc } from "../data/art";
 import { useCardArt } from "../data/artPref";
 import { getCard } from "../data/cards";
 
@@ -8,14 +8,46 @@ export function CardArt({
   cardId,
   className,
   emojiClass = "text-5xl",
+  depth = false,
 }: {
   cardId: string;
   className?: string;
   emojiClass?: string;
+  /** Album viewer: the backdrop and the figure on separate layers that shift with the card's tilt
+   *  (`--tilt-x` / `--tilt-y` set by `TiltCard`, see `.soul-depth-*` in index.css). */
+  depth?: boolean;
 }) {
   useCardArt(); // re-render when the "Ilustracje kart" setting changes
   const src = artSrc(cardId);
   const focus = artFocus(cardId);
+  const layers = depth ? artLayers(cardId) : null;
+  const pos = { objectPosition: `50% ${focus * 100}%` };
+  if (layers)
+    return (
+      <>
+        <img
+          src={layers.bg}
+          alt=""
+          className={cn("soul-depth-bg absolute inset-0 size-full object-cover", className)}
+          style={pos}
+        />
+        <img
+          src={layers.fg}
+          alt=""
+          className={cn("soul-depth-fg absolute inset-0 size-full object-cover", className)}
+          style={pos}
+        />
+      </>
+    );
+  if (src && depth)
+    return (
+      <img
+        src={src}
+        alt=""
+        className={cn("soul-depth-bg absolute inset-0 size-full object-cover", className)}
+        style={pos}
+      />
+    );
   if (src)
     return (
       <img
