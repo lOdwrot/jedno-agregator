@@ -263,11 +263,15 @@ export function artSrc(key: string): string | null {
   return ART[key] || drawn ? `${import.meta.env.BASE_URL}soul/art/${key}.webp` : null;
 }
 
-/** Backdrop + motif of a drawn picture (the album's parallax), null for Commons pictures / art off. */
-export function artLayers(key: string): { bg: string; fg: string } | null {
+/** Backdrop, figure and front effects of a drawn picture (the album's parallax), null for Commons pictures / art off. */
+export function artLayers(key: string): { bg: string; fg: string; fx: string } | null {
   if (!DRAWN_ART.has(key) || !cardArtOn()) return null;
   const base = `${import.meta.env.BASE_URL}soul/art`;
-  return { bg: `${base}/bg/${key}.webp`, fg: `${base}/fg/${key}.webp` };
+  return {
+    bg: `${base}/bg/${key}.webp`,
+    fg: `${base}/fg/${key}.webp`,
+    fx: `${base}/fx/${key}.webp`,
+  };
 }
 
 /** Vertical focus of the crop (drawn pictures keep their subject in the middle). */

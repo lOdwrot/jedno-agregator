@@ -1,7 +1,14 @@
 import { demonBg, finishLayer, parishBg, resetIds, svgDoc } from "./kit";
 
-/** A card picture; `layers` splits it into the backdrop and the motif (for the album's parallax). */
-export type Scene = (() => string) & { layers?: { bg: () => string; fg: () => string } };
+/** A card picture; `layers` splits it into the backdrop, the figure and the effects in front (for the album's parallax). */
+export type Scene = (() => string) & {
+  layers?: { bg: () => string; fg: () => string; fx: () => string };
+};
+
+/** Figure layer: everything but the effects. */
+const FIGURE_ONLY = "<style>[data-fx]{display:none}</style>";
+/** Effects layer: only what `fx()` marked (hidden parents, visible marked children). */
+const FX_ONLY = "<style>*{visibility:hidden}[data-fx],[data-fx] *{visibility:visible}</style>";
 
 const scene = (bg: () => string, motif: () => string, dark: boolean): Scene =>
   Object.assign(
@@ -17,7 +24,11 @@ const scene = (bg: () => string, motif: () => string, dark: boolean): Scene =>
         },
         fg: () => {
           resetIds();
-          return svgDoc(motif());
+          return svgDoc(FIGURE_ONLY + motif());
+        },
+        fx: () => {
+          resetIds();
+          return svgDoc(FX_ONLY + motif());
         },
       },
     },

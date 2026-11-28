@@ -529,17 +529,28 @@
   }
 }
 /*
- * Album viewer (TiltCard): the picture of a drawn card is split into a backdrop and the figure.
- * The figure sits "in front of" the card and the backdrop "behind" it, so turning the card moves
- * them apart (parallax). --tilt-y / --tilt-x = sin of the card's angles, set every frame.
- * Both layers are a bit larger than the frame so no edge shows while they shift.
+ * Album viewer (TiltCard): the picture of a drawn card is split into three planes — the backdrop
+ * "behind" the card, the figure "in front of" it and the effects (sparkles, embers, captions) even
+ * further out. Turning the card moves them apart (parallax) and the figure grows out of the frame.
+ * --tilt-y / --tilt-x = sin of the card's angles, --tilt-m = how far it is turned (0…1).
  */
+.soul-depth-window {
+  /* the figure may leave the frame above and to the sides, never below (its feet stay put) */
+  clip-path: inset(-30% -25% 0 -25%);
+}
 .soul-depth-bg {
-  transform: translate(calc(var(--tilt-y, 0) * -5%), calc(var(--tilt-x, 0) * 5%)) scale(1.14);
+  transform: translate(calc(var(--tilt-y, 0) * -8%), calc(var(--tilt-x, 0) * 8%)) scale(1.18);
 }
 .soul-depth-fg {
-  transform: translate(calc(var(--tilt-y, 0) * 9%), calc(var(--tilt-x, 0) * -9%)) scale(1.2);
-  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 0.35));
+  transform-origin: 50% 85%;
+  transform: translate(calc(var(--tilt-y, 0) * 16%), calc(var(--tilt-x, 0) * -12%))
+    scale(calc(1.24 + var(--tilt-m, 0) * 0.14));
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.4));
+}
+.soul-depth-fx {
+  transform-origin: 50% 60%;
+  transform: translate(calc(var(--tilt-y, 0) * 30%), calc(var(--tilt-x, 0) * -24%))
+    scale(calc(1.24 + var(--tilt-m, 0) * 0.22));
 }
 @media (prefers-reduced-motion: reduce) {
   .soul-foil::before,

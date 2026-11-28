@@ -18,13 +18,9 @@ const layer = (dir: string) =>
   );
 
 describe("card art", () => {
-  it("every drawn picture has its parallax layers (backdrop + figure)", () => {
-    const bg = layer("bg");
-    const fg = layer("fg");
-    for (const key of DRAWN_ART) {
-      expect(bg.has(key), key).toBe(true);
-      expect(fg.has(key), key).toBe(true);
-    }
+  it("every drawn picture has its parallax layers (backdrop, figure, front effects)", () => {
+    const dirs = ["bg", "fg", "fx"].map(layer);
+    for (const key of DRAWN_ART) for (const d of dirs) expect(d.has(key), key).toBe(true);
   });
 
   it("every credited picture exists and belongs to a card or a pack", () => {

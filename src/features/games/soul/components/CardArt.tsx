@@ -25,18 +25,32 @@ export function CardArt({
   if (layers)
     return (
       <>
-        <img
-          src={layers.bg}
-          alt=""
-          className={cn("soul-depth-bg absolute inset-0 size-full object-cover", className)}
-          style={pos}
-        />
-        <img
-          src={layers.fg}
-          alt=""
-          className={cn("soul-depth-fg absolute inset-0 size-full object-cover", className)}
-          style={pos}
-        />
+        {/* the backdrop stays inside the frame… */}
+        <span className="absolute inset-0 overflow-hidden rounded-xl">
+          <img
+            src={layers.bg}
+            alt=""
+            className={cn("soul-depth-bg absolute inset-0 size-full object-cover", className)}
+            style={pos}
+          />
+        </span>
+        {/* …the figure and the effects may step out of it (above and to the sides, not below) */}
+        <span className="soul-depth-window absolute inset-0">
+          <img
+            src={layers.fg}
+            alt=""
+            className={cn("soul-depth-fg absolute inset-0 size-full object-cover", className)}
+            style={pos}
+          />
+        </span>
+        <span className="soul-depth-window absolute inset-0">
+          <img
+            src={layers.fx}
+            alt=""
+            className={cn("soul-depth-fx absolute inset-0 size-full object-cover", className)}
+            style={pos}
+          />
+        </span>
       </>
     );
   if (src && depth)

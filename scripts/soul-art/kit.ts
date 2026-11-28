@@ -80,8 +80,16 @@ export const line = (
   w = 3,
   extra = "",
 ) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${stroke(c, w)} ${extra}/>`;
+/**
+ * Marks decorative effects of a motif (sparkles, embers, stars, captions): the album's parallax
+ * renders them on their own front layer, in front of the figure (`scene.ts`).
+ */
+export const fx = (body: string) => `<g data-fx="1">${body}</g>`;
+
 export const text = (x: number, y: number, s: string, size: number, fill: string, extra = "") =>
-  `<text x="${x}" y="${y}" font-family="Georgia, serif" font-weight="700" font-size="${size}" text-anchor="middle" fill="${fill}" ${extra}>${s.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</text>`;
+  fx(
+    `<text x="${x}" y="${y}" font-family="Georgia, serif" font-weight="700" font-size="${size}" text-anchor="middle" fill="${fill}" ${extra}>${s.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</text>`,
+  );
 
 /** Outlined shape: fill + darker outline. */
 export const ol = (fill: string, w = 3) => `fill="${fill}" ${stroke(shade(fill, -0.55), w)}`;
@@ -143,10 +151,12 @@ export function rays(
 
 /** Four-point sparkle. */
 export const sparkle = (x: number, y: number, r: number, c = "#fff8d8", a = 1) =>
-  path(
-    `M${x} ${y - r} Q${x + r * 0.18} ${y - r * 0.18} ${x + r} ${y} Q${x + r * 0.18} ${y + r * 0.18} ${x} ${y + r} Q${x - r * 0.18} ${y + r * 0.18} ${x - r} ${y} Q${x - r * 0.18} ${y - r * 0.18} ${x} ${y - r} Z`,
-    c,
-    `opacity="${a}"`,
+  fx(
+    path(
+      `M${x} ${y - r} Q${x + r * 0.18} ${y - r * 0.18} ${x + r} ${y} Q${x + r * 0.18} ${y + r * 0.18} ${x} ${y + r} Q${x - r * 0.18} ${y + r * 0.18} ${x - r} ${y} Q${x - r * 0.18} ${y - r * 0.18} ${x} ${y - r} Z`,
+      c,
+      `opacity="${a}"`,
+    ),
   );
 
 export function sparkles(
@@ -181,7 +191,7 @@ export function embers(
       circle(x, y, r * 2.4, c, `opacity="${0.12 + rnd() * 0.12}"`) +
       circle(x, y, r, shade(c, 0.4), `opacity="${0.6 + rnd() * 0.4}"`);
   }
-  return out;
+  return fx(out);
 }
 
 /** Puffy cloud / smoke blob made of circles. */
@@ -213,7 +223,7 @@ export function stars(
       c,
       `opacity="${0.4 + rnd() * 0.6}"`,
     );
-  return out;
+  return fx(out);
 }
 
 // ---------- backgrounds ----------

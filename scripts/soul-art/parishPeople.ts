@@ -1,4 +1,5 @@
 import {
+  fx,
   at,
   book,
   candle,
@@ -139,7 +140,9 @@ export const PARISH_PEOPLE: Record<string, Scene> = {
         }),
       ) +
       cat +
-      `<text x="420" y="200" font-family="Georgia, serif" font-style="italic" font-size="22" text-anchor="middle" fill="#3a2a14">Dominus vobiscum</text>`
+      fx(
+        `<text x="420" y="200" font-family="Georgia, serif" font-style="italic" font-size="22" text-anchor="middle" fill="#3a2a14">Dominus vobiscum</text>`,
+      )
     );
   }),
   ...MORE_PEOPLE,

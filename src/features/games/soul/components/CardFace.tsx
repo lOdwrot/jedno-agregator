@@ -125,12 +125,14 @@ export function CardFace({
           <div
             aria-hidden="true"
             className={cn(
-              "relative grid h-32 place-items-center overflow-hidden rounded-xl bg-gradient-to-br",
+              "relative grid h-32 place-items-center rounded-xl bg-gradient-to-br",
+              // the album's 3D view lets the figure step out of the frame (CardArt clips the backdrop)
+              !depth && "overflow-hidden",
               art,
             )}
           >
             <CardArt cardId={cardId} emojiClass="text-6xl" depth={depth} />
-            {finish !== "plain" && <span className="soul-shine absolute inset-0" />}
+            {finish !== "plain" && !depth && <span className="soul-shine absolute inset-0" />}
             {c.kind === "character" && c.evolvesFrom && (
               <EvolvesFromThumb cardId={c.evolvesFrom} dark={dark} />
             )}

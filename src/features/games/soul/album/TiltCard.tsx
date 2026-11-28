@@ -48,6 +48,12 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
         // parallax of the picture's layers: the figure stands in front of the backdrop
         el.style.setProperty("--tilt-y", Math.sin((ay * Math.PI) / 180).toFixed(4));
         el.style.setProperty("--tilt-x", Math.sin((ax * Math.PI) / 180).toFixed(4));
+        // how far the card is turned (0…1): the figure comes further out the more it is tilted
+        const m = Math.min(
+          1,
+          Math.hypot(Math.sin((ay * Math.PI) / 180), Math.sin((ax * Math.PI) / 180)),
+        );
+        el.style.setProperty("--tilt-m", m.toFixed(4));
       }
       const g = glareRef.current;
       if (g) {

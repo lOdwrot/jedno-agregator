@@ -4,8 +4,9 @@
  *   npx tsx scripts/soul-art/render.ts lektor ... # only these
  *   (a full run also rewrites src/features/games/soul/data/drawnArt.ts)
  *   SHEET=1 npx tsx scripts/soul-art/render.ts    # also writes a contact sheet to soul-art-sheet.png
- * Every scene also gets two layers for the album's parallax: `bg/<id>.webp` (backdrop only) and
- * `fg/<id>.webp` (the motif on a transparent background).
+ * Every scene also gets three layers for the album's parallax: `bg/<id>.webp` (backdrop only) and
+ * `fg/<id>.webp` (the figure on a transparent background) and `fx/<id>.webp` (sparkles, embers,
+ * captions — whatever `fx()` marked — drawn in front of the figure).
  * Uses the Playwright Chromium (PW_CHROMIUM_PATH overrides the binary).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -25,6 +26,7 @@ const page = await browser.newPage();
 await page.setContent("<html><body></body></html>");
 mkdirSync(`${OUT}/bg`, { recursive: true });
 mkdirSync(`${OUT}/fg`, { recursive: true });
+mkdirSync(`${OUT}/fx`, { recursive: true });
 
 const encode = (svg: string, type: string, q: number) =>
   page.evaluate(
@@ -51,6 +53,8 @@ for (const id of ids) {
     writeFileSync(`${OUT}/bg/${id}.webp`, Buffer.from(bg, "base64"));
     const fg = await encode(layers.fg(), "image/webp", 0.82);
     writeFileSync(`${OUT}/fg/${id}.webp`, Buffer.from(fg, "base64"));
+    const front = await encode(layers.fx(), "image/webp", 0.82);
+    writeFileSync(`${OUT}/fx/${id}.webp`, Buffer.from(front, "base64"));
   }
 }
 console.log(`rendered ${ids.length} pictures`);

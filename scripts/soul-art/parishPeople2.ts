@@ -1,4 +1,5 @@
 import {
+  fx,
   at,
   book,
   candle,
@@ -184,7 +185,9 @@ export const MORE_PEOPLE: Record<string, Scene> = {
           held: rosary(0, -70, 24, "#4a2a6a"),
         }),
       ) +
-      `<text x="470" y="170" font-family="Georgia" font-size="40" font-weight="700" fill="#fff8d8" text-anchor="middle" opacity="0.85">1987</text>` +
+      fx(
+        `<text x="470" y="170" font-family="Georgia" font-size="40" font-weight="700" fill="#fff8d8" text-anchor="middle" opacity="0.85">1987</text>`,
+      ) +
       heart(150, 210, 1, "#e2533b") +
       sparkles("bab", 10, "#fff8d8", [100, 80, 500, 200])
     );
@@ -761,7 +764,9 @@ export const MORE_PEOPLE: Record<string, Scene> = {
       ) +
       note(300, 150, 1.2) +
       note(380, 120, 0.9) +
-      `<text x="300" y="70" font-family="Georgia" font-size="26" text-anchor="middle" fill="#fff8d8" font-style="italic">Czuwaj!</text>`
+      fx(
+        `<text x="300" y="70" font-family="Georgia" font-size="26" text-anchor="middle" fill="#fff8d8" font-style="italic">Czuwaj!</text>`,
+      )
     );
   }),
 };
