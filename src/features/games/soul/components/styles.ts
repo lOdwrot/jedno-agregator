@@ -17,8 +17,10 @@ export const ELEMENT_BAND: Record<Element, string> = {
   gniew: "bg-danger",
   lenistwo: "bg-navy-600",
 };
+/** Card frame of each print: silver for plain cards, gold for gilded, a holographic frame for
+ *  stained ones (the shimmering layer is `HoloFrame`, the gradient here is its fallback). */
 export const FINISH_FRAME = {
-  plain: "p-0",
+  plain: "bg-gradient-to-br from-silver-300 via-silver-500 to-silver-700 p-1",
   gilded: "bg-gradient-to-br from-logo-yellow via-surface to-logo-yellow p-1",
-  stained: "bg-gradient-to-br from-logo-blue via-logo-red to-logo-yellow p-1",
+  stained: "bg-gradient-to-br from-logo-blue via-logo-red to-logo-yellow p-1.5",
 } as const;

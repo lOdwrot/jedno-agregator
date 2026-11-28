@@ -169,6 +169,9 @@ Usable activated abilities get a visible "✦ Moc" button right on the card on t
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in
 `index.css`; canvas: `board/prestige.ts`), stained prints add lead-lined glass panes, a glass reflection and — while
 active (active slot, hovered, dragged; DOM: `active` prop or hover/focus) — a rainbow aura with rising sparkles.
+Card frames (`FINISH_FRAME` in `components/styles.ts`): silver for plain prints, gold for gilded, holographic for stained —
+`HoloFrame` (`.soul-holo-frame*` in index.css: rainbow bands + a glint drifting idle and following `--tilt-x/-y` in the album's
+3D view, so the frame shimmers while the card turns); `CardMini` mirrors the frames.
 Every card shows a type icon in its top-left corner (`data/cardType.ts`: 🌱 basic, 🌿 stage 1, 🌳 stage 2, 🎒 item, 🤝 supporter,
 🏛️ place, ✨/🔥 energy) — DOM `CardTypeIcon` (CardFace, CardMini, DeckRow) and canvas `drawTypeIcon` in `board/cardBadges.ts`.
 Evolutions show a round picture of their base card on the art (`EvolvesFromThumb` / `drawEvolvesFrom`); attached energy is a big

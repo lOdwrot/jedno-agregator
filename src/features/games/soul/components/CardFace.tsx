@@ -15,6 +15,7 @@ import { CardTypeIcon } from "./CardTypeIcon";
 import { cardTypeBadge } from "../data/cardType";
 import { ELEMENT_ART, FINISH_FRAME } from "./styles";
 import { PrestigeLayers } from "./PrestigeLayers";
+import { HoloFrame } from "./HoloFrame";
 import { PopeInfoButton } from "../popes/PopeInfoButton";
 import { cardNumberLabel } from "../data/numbers";
 import { artLayers } from "../data/art";
@@ -85,6 +86,7 @@ export function CardFace({
       )}
       data-active={active || undefined}
     >
+      {finish === "stained" && <HoloFrame />}
       <article
         className={cn(
           "relative isolate flex h-full flex-col gap-2 rounded-[0.8rem] p-3",

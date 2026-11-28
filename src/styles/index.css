@@ -491,6 +491,51 @@
 .soul-spark--4 {
   background: var(--color-surface);
 }
+/* Holographic frame of stained prints (HoloFrame): rainbow bands + a glint, under the article. */
+.soul-holo-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.soul-holo-frame__drift {
+  position: absolute;
+  inset: 0;
+  animation: soul-foil-drift 6s ease-in-out infinite alternate;
+}
+.soul-holo-frame__drift::before,
+.soul-holo-frame__drift::after {
+  content: "";
+  position: absolute;
+  inset: -150%;
+}
+/* rainbow bands, sliding with the tilt */
+.soul-holo-frame__drift::before {
+  background: repeating-linear-gradient(
+    115deg,
+    var(--color-logo-red) 0%,
+    var(--color-logo-yellow) 4%,
+    var(--color-success) 8%,
+    var(--color-logo-blue) 12%,
+    var(--color-navy-600) 16%,
+    var(--color-logo-red) 20%
+  );
+  transform: translate(calc(var(--tilt-y, 0) * 22%), calc(var(--tilt-x, 0) * -22%));
+}
+/* a bright glint crossing the frame faster than the bands */
+.soul-holo-frame__drift::after {
+  background: linear-gradient(
+    115deg,
+    transparent 44%,
+    rgb(255 255 255 / 0.85) 49%,
+    rgb(255 255 255 / 0.95) 50%,
+    rgb(255 255 255 / 0.85) 51%,
+    transparent 56%
+  );
+  mix-blend-mode: overlay;
+  transform: translate(calc(var(--tilt-y, 0) * 40% - 8%), calc(var(--tilt-x, 0) * -40%));
+}
 @keyframes soul-foil-drift {
   from {
     transform: translateX(-28%);
@@ -559,6 +604,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .soul-foil::before,
+  .soul-holo-frame__drift,
   .soul-foil--gilded::after,
   .soul-glass::before {
     animation: none;

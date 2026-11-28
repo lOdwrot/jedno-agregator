@@ -20,20 +20,21 @@ export function CardMini({
   const no = cardNumber(cardId);
   return (
     <span className="soul-card relative block size-full overflow-hidden rounded-card p-1">
-      {finish !== "plain" && (
-        <span
-          aria-hidden="true"
-          className={cn(
-            "absolute -inset-1/2",
-            finish === "stained" ? "soul-holo" : "bg-logo-yellow",
-          )}
-        />
-      )}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute -inset-1/2",
+          finish === "stained"
+            ? "soul-holo"
+            : finish === "gilded"
+              ? "bg-logo-yellow"
+              : "bg-gradient-to-br from-silver-300 via-silver-500 to-silver-700",
+        )}
+      />
       <span
         className={cn(
           "relative isolate flex size-full flex-col gap-1 rounded-[0.8rem] p-1.5 text-center",
           c.rarity === "legendary" ? "bg-accent-soft" : "bg-surface",
-          finish === "plain" && "ring-1 ring-line",
         )}
       >
         <PrestigeLayers finish={finish} />
