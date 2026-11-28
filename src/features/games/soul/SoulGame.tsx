@@ -23,6 +23,7 @@ import type { Opponent } from "./data/opponents";
 import { PatronDialog } from "./rank/PatronDialog";
 import { RankMeter } from "./rank/RankMeter";
 import { afterDuel, rankIndex } from "./rank/xp";
+import { Album } from "./album/Album";
 import { Bestiary } from "./components/Bestiary";
 import { recordSighting } from "./collection/bestiary";
 import { BoosterShop } from "./components/BoosterShop";
@@ -58,6 +59,7 @@ type Tab =
   | "opowiesci"
   | "multiplayer"
   | "talia"
+  | "album"
   | "boostery"
   | "bestiariusz"
   | "zasady"
@@ -307,6 +309,7 @@ export function SoulGame() {
               label: "Talia",
               content: <DeckBuilder profile={profile} update={update} />,
             },
+            { value: "album", label: "Album", content: <Album profile={profile} /> },
             {
               value: "boostery",
               label: `Boostery${profile.packs ? ` (${profile.packs})` : ""}`,

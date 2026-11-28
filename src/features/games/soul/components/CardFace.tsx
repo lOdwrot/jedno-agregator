@@ -16,6 +16,7 @@ import { cardTypeBadge } from "../data/cardType";
 import { ELEMENT_ART, FINISH_FRAME } from "./styles";
 import { PrestigeLayers } from "./PrestigeLayers";
 import { PopeInfoButton } from "../popes/PopeInfoButton";
+import { cardNumberLabel } from "../data/numbers";
 
 /** Header line: the type badge label, plus the supporter rule. */
 const kindLine = (c: CardDef) =>
@@ -65,6 +66,7 @@ export function CardFace({
   const art =
     c.kind === "character" ? ELEMENT_ART[c.element] : dark ? ELEMENT_ART.pycha : ELEMENT_ART.slowo;
   const muted = dark ? "text-white/80" : "text-ink-muted";
+  const no = cardNumberLabel(cardId);
 
   return (
     <div
@@ -190,9 +192,18 @@ export function CardFace({
           </div>
         )}
         <footer
-          className={cn("mt-auto flex items-center justify-between text-xs font-bold", muted)}
+          className={cn(
+            "mt-auto flex flex-wrap items-center justify-between gap-x-2 text-xs font-bold",
+            muted,
+          )}
         >
           <span>
+            {no && (
+              <span className="tabular-nums">
+                <span className="sr-only">Numer </span>
+                {no} ·{" "}
+              </span>
+            )}
             <span aria-hidden="true">{RARITY_SYMBOL[c.rarity]} </span>
             {RARITY_LABEL[c.rarity]}
           </span>

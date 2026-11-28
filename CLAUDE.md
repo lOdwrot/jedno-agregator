@@ -109,6 +109,14 @@ na dziś" and a bead timeline of all popes (`PopeTimeline`, also the navigation;
 Texts in `popes/stories.ts` — a new pope card needs a story (`stories.test.ts`). The dialog stops click/Esc propagation
 because it can open inside another dialog.
 After a duel, `DuelDiscoveries` unfolds a demon card directly under its badge (a full-width row in the badge list).
+**Card numbers + album** (`data/numbers.ts`, `ALBUM_ORDER`): every collectible parish card and tale saint has a fixed
+number (shown as `007/85` on `CardFace`, `007` on `CardMini`; demons/energy have none) — NEVER reorder, append new cards at
+the end (`numbers.test.ts`). The hub's "Album" tab (`soul/album/Album.tsx`, data in `collection/album.ts`) is a binder grid:
+missing cards are numbered empty slots, owned ones show the rarest print on top with the other prints peeking out
+underneath. Tapping a card opens `AlbumCardDialog` → `TiltCard`: turn it with a finger/mouse/arrows (free spin on Y with the
+back, tilt on X, glare, spring back — `spring.ts`); gilded prints shed gold dust and stained prints fling glass shards and
+sparkles into 3D world space, more the faster it turns (`glassParticles.ts` pure math + `drawParticles.ts` canvas; none
+under reduced motion).
 **Several decks** (`collection/decks.ts`, `DECK_SLOTS` = 3): the ACTIVE deck always lives in `Profile.deck`/`energy` (duels, PvP and
 stats read only those), the other slots in `Profile.decks`, the active index in `Profile.activeDeck` (saved with the profile, so it
 survives a reload; older saves = "Talia 1"). `DeckSwitcher` (chips) sits on the Pojedynek, Multiplayer and Talia tabs; `DeckSlotTools`

@@ -3,6 +3,7 @@ import { getCard } from "../data/cards";
 import { CardArt } from "./CardArt";
 import { PrestigeLayers } from "./PrestigeLayers";
 import { CardTypeIcon } from "./CardTypeIcon";
+import { cardNumber, formatNumber } from "../data/numbers";
 import { FINISH_LABEL, RARITY_LABEL, RARITY_SYMBOL, type Finish } from "../data/types";
 
 /** Compact card front (booster reveal, small grids): art, name, rarity and print. */
@@ -16,6 +17,7 @@ export function CardMini({
   fresh?: boolean;
 }) {
   const c = getCard(cardId);
+  const no = cardNumber(cardId);
   return (
     <span className="soul-card relative block size-full overflow-hidden rounded-card p-1">
       {finish !== "plain" && (
@@ -43,6 +45,7 @@ export function CardMini({
           {c.name}
         </span>
         <span className="text-[0.7rem] font-bold text-ink-muted">
+          {no !== null && <span className="tabular-nums">{formatNumber(no)} · </span>}
           <span aria-hidden="true">{RARITY_SYMBOL[c.rarity]} </span>
           {RARITY_LABEL[c.rarity]}
           {finish !== "plain" && ` · ${FINISH_LABEL[finish]}`}
