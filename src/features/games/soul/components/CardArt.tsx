@@ -13,7 +13,7 @@ export function CardArt({
   cardId: string;
   className?: string;
   emojiClass?: string;
-  /** Album viewer: the backdrop and the figure on separate layers that shift with the card's tilt
+  /** Album viewer, drawn pictures only (real photos stay flat): the backdrop and the figure on separate layers that shift with the card's tilt
    *  (`--tilt-x` / `--tilt-y` set by `TiltCard`, see `.soul-depth-*` in index.css). */
   depth?: boolean;
 }) {
@@ -34,33 +34,30 @@ export function CardArt({
             style={pos}
           />
         </span>
-        {/* …the figure and the effects may step out of it (above and to the sides, not below) */}
-        <span className="soul-depth-window absolute inset-0">
+        {/* …the figure and the effects step out of it freely (nothing clips them, see CardFace / TiltCard) */}
+        <span className="absolute inset-0">
           <img
             src={layers.fg}
             alt=""
-            className={cn("soul-depth-fg absolute inset-0 size-full object-cover", className)}
-            style={pos}
+            className={cn(
+              // the WHOLE picture (4:3, not cropped to the frame), centred on the frame
+              "soul-depth-fg absolute top-1/2 left-0 -mt-[37.5%] aspect-[4/3] w-full",
+              className,
+            )}
           />
         </span>
-        <span className="soul-depth-window absolute inset-0">
+        <span className="absolute inset-0">
           <img
             src={layers.fx}
             alt=""
-            className={cn("soul-depth-fx absolute inset-0 size-full object-cover", className)}
-            style={pos}
+            className={cn(
+              // the WHOLE picture (4:3, not cropped to the frame), centred on the frame
+              "soul-depth-fx absolute top-1/2 left-0 -mt-[37.5%] aspect-[4/3] w-full",
+              className,
+            )}
           />
         </span>
       </>
-    );
-  if (src && depth)
-    return (
-      <img
-        src={src}
-        alt=""
-        className={cn("soul-depth-bg absolute inset-0 size-full object-cover", className)}
-        style={pos}
-      />
     );
   if (src)
     return (

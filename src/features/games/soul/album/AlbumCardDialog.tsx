@@ -44,7 +44,7 @@ function Body({ entry, onClose }: { entry: AlbumEntry; onClose: () => void }) {
           }))}
         />
       )}
-      <div className="-mx-2 overflow-hidden">
+      <div className="-mx-2">
         <TiltCard key={finish} cardId={entry.cardId} finish={finish} />
       </div>
       <p className="text-center text-sm text-ink-muted">

@@ -119,8 +119,9 @@ sparkles into 3D world space, more the faster it turns (`glassParticles.ts` pure
 under reduced motion). Depth: `npm run soul-art` also writes every drawn picture as three planes — `bg/<id>.webp` (backdrop), `fg/<id>.webp`
 (the figure, transparent) and `fx/<id>.webp` (sparkles, embers, stars, captions: whatever the scene wraps in `fx()` from
 `kit.ts`; free-floating captions in a scene need `fx()` too). `CardFace depth` → `CardArt depth` stacks them as
-`.soul-depth-bg/-fg/-fx` (index.css), moved apart by `--tilt-x/-y/-m` that `TiltCard` sets; the figure and effects may leave
-the frame above and to the sides (`.soul-depth-window`), never below (`art.test.ts` checks the files).
+`.soul-depth-bg/-fg/-fx` (index.css), moved apart by `--tilt-x/-y/-m` that `TiltCard` sets; the figure/effects layers hold the whole uncropped 4:3 picture,
+cut to the frame while flat and revealed with the turn (`--tilt-m`), stepping out above/below the frame and past the card
+edges (`CardFace depth` drops its `overflow-hidden` for layered pictures only; `art.test.ts` checks the files). Real pictures (Commons photos: popes, saints, real places) get NO depth effect.
 **Several decks** (`collection/decks.ts`, `DECK_SLOTS` = 3): the ACTIVE deck always lives in `Profile.deck`/`energy` (duels, PvP and
 stats read only those), the other slots in `Profile.decks`, the active index in `Profile.activeDeck` (saved with the profile, so it
 survives a reload; older saves = "Talia 1"). `DeckSwitcher` (chips) sits on the Pojedynek, Multiplayer and Talia tabs; `DeckSlotTools`

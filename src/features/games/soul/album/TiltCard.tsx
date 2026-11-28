@@ -49,9 +49,10 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
         el.style.setProperty("--tilt-y", Math.sin((ay * Math.PI) / 180).toFixed(4));
         el.style.setProperty("--tilt-x", Math.sin((ax * Math.PI) / 180).toFixed(4));
         // how far the card is turned (0…1): the figure comes further out the more it is tilted
+        // a moderate turn (~35°) is enough to show the whole figure
         const m = Math.min(
           1,
-          Math.hypot(Math.sin((ay * Math.PI) / 180), Math.sin((ax * Math.PI) / 180)),
+          1.8 * Math.hypot(Math.sin((ay * Math.PI) / 180), Math.sin((ax * Math.PI) / 180)),
         );
         el.style.setProperty("--tilt-m", m.toFixed(4));
       }
@@ -199,16 +200,21 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
         style={{ perspective: `${PERSPECTIVE}px` }}
       >
         <div ref={cardRef} className="relative w-full max-w-xs transform-3d">
-          <div className="relative overflow-hidden rounded-card backface-hidden">
+          <div className="relative rounded-card backface-hidden">
             <CardFace cardId={cardId} finish={finish} active stories={false} depth />
+            {/* the glare stays on the card; figures stepping out of it are not clipped */}
             <span
-              ref={glareRef}
               aria-hidden="true"
-              className={cn(
-                "pointer-events-none absolute -inset-1/2 bg-radial from-white/70 via-white/10 to-transparent to-60% opacity-25 mix-blend-soft-light",
-                finish !== "plain" && "mix-blend-overlay",
-              )}
-            />
+              className="pointer-events-none absolute inset-0 overflow-hidden rounded-card"
+            >
+              <span
+                ref={glareRef}
+                className={cn(
+                  "absolute -inset-1/2 bg-radial from-white/70 via-white/10 to-transparent to-60% opacity-25 mix-blend-soft-light",
+                  finish !== "plain" && "mix-blend-overlay",
+                )}
+              />
+            </span>
           </div>
           <CardBack
             foil="from-logo-blue via-navy-600 to-logo-blue"
@@ -219,7 +225,7 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
           <canvas
             ref={canvasRef}
             aria-hidden="true"
-            className="pointer-events-none absolute -top-10 -left-6 h-[calc(100%+5rem)] w-[calc(100%+3rem)]"
+            className="pointer-events-none absolute -top-10 left-0 h-[calc(100%+5rem)] w-full"
           />
         )}
       </div>

@@ -17,6 +17,7 @@ import { ELEMENT_ART, FINISH_FRAME } from "./styles";
 import { PrestigeLayers } from "./PrestigeLayers";
 import { PopeInfoButton } from "../popes/PopeInfoButton";
 import { cardNumberLabel } from "../data/numbers";
+import { artLayers } from "../data/art";
 
 /** Header line: the type badge label, plus the supporter rule. */
 const kindLine = (c: CardDef) =>
@@ -70,11 +71,15 @@ export function CardFace({
     c.kind === "character" ? ELEMENT_ART[c.element] : dark ? ELEMENT_ART.pycha : ELEMENT_ART.slowo;
   const muted = dark ? "text-white/80" : "text-ink-muted";
   const no = cardNumberLabel(cardId);
+  // only drawn pictures get the 3D layers; real photos (popes, saints, places) stay flat
+  const layered = depth && artLayers(cardId) !== null;
 
   return (
     <div
       className={cn(
-        "soul-card relative overflow-hidden rounded-card shadow-lift",
+        "soul-card relative rounded-card shadow-lift",
+        // the album's 3D view: figures may step out of the card (the foil layers clip themselves)
+        !layered && "overflow-hidden",
         FINISH_FRAME[finish],
         className,
       )}
@@ -121,18 +126,18 @@ export function CardFace({
           )}
         </header>
 
-        <div className="relative">
+        <div className={cn("relative", layered && "z-10")}>
           <div
             aria-hidden="true"
             className={cn(
               "relative grid h-32 place-items-center rounded-xl bg-gradient-to-br",
               // the album's 3D view lets the figure step out of the frame (CardArt clips the backdrop)
-              !depth && "overflow-hidden",
+              !layered && "overflow-hidden",
               art,
             )}
           >
             <CardArt cardId={cardId} emojiClass="text-6xl" depth={depth} />
-            {finish !== "plain" && !depth && <span className="soul-shine absolute inset-0" />}
+            {finish !== "plain" && !layered && <span className="soul-shine absolute inset-0" />}
             {c.kind === "character" && c.evolvesFrom && (
               <EvolvesFromThumb cardId={c.evolvesFrom} dark={dark} />
             )}
