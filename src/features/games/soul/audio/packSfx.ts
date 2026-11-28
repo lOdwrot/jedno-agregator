@@ -30,6 +30,10 @@ export const packSfx = {
       });
     }
   },
+  /** One scratch of the foil giving way under the finger — brighter as the cut grows (p 0..1). */
+  scratch: (p = 0) => {
+    noise(0.035, { cutoff: 2600 + p * 3600, gain: 0.08 + p * 0.08, highpass: true });
+  },
   /** The strip coming loose. */
   snap: () => {
     noise(0.09, { cutoff: 2500, gain: 0.3, highpass: true });

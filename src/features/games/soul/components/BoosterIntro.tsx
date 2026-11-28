@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { useEffect, useState, type RefObject } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/cn";
-import { tone } from "../audio/context";
 import { packSfx } from "../audio/packSfx";
 import type { PackType } from "../collection/packs";
 import { BoosterPack } from "./BoosterPack";
 import type { IntroPhase } from "./boosterTimeline";
 import { CardBack } from "./CardBack";
+import { TearHint } from "./TearHint";
+import { cutDir, cutProgress, type Cut } from "./tearGesture";
 
 /** Jagged tear line (x%, y%) shared by the strip and the body so they fit together. */
 const TEAR_Y = 13;
@@ -29,13 +30,29 @@ interface Props {
   phase: IntroPhase;
   /** Prefix of the layoutIds shared with the cards in the reveal grid. */
   layoutPrefix: string;
+  /** The finger's cut in progress while the pack is still sealed. */
+  cut: Cut | null;
+  /** Direction the pack was torn: 1 = left → right, -1 = right → left. */
+  dir: 1 | -1;
+  packRef: RefObject<HTMLDivElement | null>;
+  reduce: boolean;
 }
 
 /**
- * The sealed pack is squeezed (charge), its top strip tears off right-to-left and flies away (tear),
+ * The sealed pack waits for the player to cut its top with a swipe (charge, `TearHint` shows how;
+ * the strip lifts and the seam follows the finger), the strip then tears off and flies away (tear),
  * then the cards pop out one by one into a fan while the empty pack falls away (burst).
  */
-export function BoosterIntro({ pack, count, phase, layoutPrefix }: Props) {
+export function BoosterIntro({
+  pack,
+  count,
+  phase,
+  layoutPrefix,
+  cut,
+  dir,
+  packRef,
+  reduce,
+}: Props) {
   const opened = phase !== "charge";
   // cards that already left the pack are drawn in front of it
   const [out, setOut] = useState(0);
@@ -43,16 +60,6 @@ export function BoosterIntro({ pack, count, phase, layoutPrefix }: Props) {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
-    if (phase === "charge") {
-      packSfx.crinkle(1);
-      for (let i = 0; i < 8; i++)
-        tone(80 + i * 25, 0.25, {
-          type: "sawtooth",
-          gain: 0.015 + i * 0.005,
-          delay: 0.2 + i * 0.1,
-          cutoff: 500 + i * 120,
-        });
-    }
     if (phase === "tear") {
       packSfx.rip(0.48);
       at(470, packSfx.snap);
@@ -69,8 +76,14 @@ export function BoosterIntro({ pack, count, phase, layoutPrefix }: Props) {
   }, [phase, count]);
 
   const mid = (count - 1) / 2;
+  const p = cutProgress(cut);
+  const d = cut && !opened ? cutDir(cut) : dir;
+  const pivot = d === 1 ? 2 : 98;
   return (
-    <div className="relative mt-[12vh] aspect-[5/8] w-48 sm:w-60">
+    <div ref={packRef} className="relative mt-[16vh] aspect-[5/8] w-48 sm:w-60">
+      <AnimatePresence>
+        {phase === "charge" && !cut && <TearHint tearY={TEAR_Y} reduce={reduce} />}
+      </AnimatePresence>
       {/* light escaping from the opening */}
       {opened && (
         <motion.span
@@ -117,7 +130,7 @@ export function BoosterIntro({ pack, count, phase, layoutPrefix }: Props) {
 
       {/* the pack itself: body + top strip cut along the same jagged line */}
       <motion.div
-        className={cn("absolute inset-0 z-10", phase === "charge" && "soul-pack-shake")}
+        className={cn("absolute inset-0 z-10", phase === "charge" && cut && "soul-pack-shake")}
         initial={{ scale: 0.6, y: 60, opacity: 0 }}
         animate={
           phase === "burst"
@@ -135,29 +148,43 @@ export function BoosterIntro({ pack, count, phase, layoutPrefix }: Props) {
         </div>
         <motion.div
           className="absolute inset-0"
-          style={{ clipPath: STRIP_CLIP, transformOrigin: `2% ${TEAR_Y}%` }}
+          style={{ clipPath: STRIP_CLIP, transformOrigin: `${pivot}% ${TEAR_Y}%` }}
           animate={
             opened
               ? {
-                  rotate: [0, -4, -12, -55],
-                  x: [0, 2, 8, 260],
-                  y: [0, -4, -18, -320],
+                  rotate: [-3 * d, -6 * d, -12 * d, -55 * d],
+                  x: [0, 2 * d, 8 * d, 260 * d],
+                  y: [-3, -6, -18, -320],
                   opacity: [1, 1, 1, 0],
                 }
-              : {}
+              : { rotate: -3 * p * d, y: -3 * p, x: 0, opacity: 1 }
           }
-          transition={{ duration: 1, times: [0, 0.3, 0.5, 1], ease: "easeIn" }}
+          transition={
+            opened
+              ? { duration: 1, times: [0, 0.3, 0.5, 1], ease: "easeIn" }
+              : { type: "spring", stiffness: 400, damping: 22 }
+          }
         >
           <BoosterPack pack={pack} className="w-full sm:w-full" />
         </motion.div>
-        {/* bright seam running along the tear from right to left */}
+        {/* bright seam following the finger, then flashing along the whole tear */}
+        {phase === "charge" && cut && (
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 h-1 origin-left rounded-full bg-surface ring-2 ring-logo-yellow/70"
+            style={{
+              top: `${TEAR_Y - 0.5}%`,
+              transform: `translateX(${cut.from * 100}%) scaleX(${p})`,
+            }}
+          />
+        )}
         {phase === "tear" && (
           <motion.span
             aria-hidden="true"
-            className="absolute inset-x-0 h-1 origin-right rounded-full bg-surface ring-2 ring-logo-yellow/60"
+            className="absolute inset-x-0 h-1 rounded-full bg-surface ring-2 ring-logo-yellow/60"
             style={{ top: `${TEAR_Y - 0.5}%` }}
-            initial={{ scaleX: 0, opacity: 1 }}
-            animate={{ scaleX: 1, opacity: [1, 1, 0] }}
+            initial={{ scaleX: 1, opacity: 1 }}
+            animate={{ opacity: [1, 1, 0] }}
             transition={{ duration: 0.5, ease: "easeIn" }}
           />
         )}

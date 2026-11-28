@@ -87,6 +87,12 @@ describe("SoulGame", () => {
     const saved = JSON.parse(localStorage.getItem("jedno-walka-o-dusze:v1")!);
     expect(saved.packs).toBe(0);
     expect(saved.talents).toBe(0);
+    // the pack waits for the swipe; a plain tap does not open it, the keyboard does
+    await userEvent.click(screen.getByRole("button", { name: "Rozerwij booster" }));
+    expect(screen.getByRole("button", { name: "Rozerwij booster" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Rozerwij booster" })).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    expect(screen.queryByRole("button", { name: "Rozerwij booster" })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Pomiń" }));
     await userEvent.click(screen.getByRole("button", { name: "Odkryj wszystkie" }));
     await waitFor(

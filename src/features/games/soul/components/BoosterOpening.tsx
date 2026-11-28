@@ -15,6 +15,8 @@ import { INTRO_MS } from "./boosterTimeline";
 import { CardBack } from "./CardBack";
 import { TiltCard } from "../album/TiltCard";
 import { CardMini } from "./CardMini";
+import { TearZone } from "./TearZone";
+import type { Cut } from "./tearGesture";
 
 type Phase = "charge" | "tear" | "burst" | "reveal";
 
@@ -32,7 +34,7 @@ const rank = (k: CardKey) =>
   ({ common: 0, uncommon: 1, rare: 2, legendary: 3 })[getCard(parseKey(k).cardId).rarity];
 
 /**
- * Full-screen booster opening: the pack is squeezed, its top tears off, the cards pop out into a fan
+ * Full-screen booster opening: the player cuts the top of the pack with a swipe, it tears off, the cards pop out into a fan
  * and glide into the grid, where they flip one by one with rarity effects.
  */
 export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }: Props) {
@@ -41,6 +43,9 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }:
   const [shown, setShown] = useState(0);
   const [zoom, setZoom] = useState<number | null>(null);
   const [party, setParty] = useState(false);
+  const [cut, setCut] = useState<Cut | null>(null);
+  const [dir, setDir] = useState<1 | -1>(1);
+  const packEl = useRef<HTMLDivElement>(null);
   const root = useRef<HTMLDivElement>(null);
   const board = useRef<HTMLUListElement>(null);
   const zoomClose = useRef<HTMLElement>(null);
@@ -50,16 +55,15 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }:
   }, [zoom]);
 
   usePageScrollLock();
-  useEffect(() => root.current?.focus(), []);
+  useEffect(
+    () => (root.current?.querySelector<HTMLElement>("[data-tear]") ?? root.current)?.focus(),
+    [],
+  );
 
-  // charge → tear → burst → reveal (sounds of each step live in BoosterIntro)
+  // charge (waits for the swipe) → tear → burst → reveal (sounds of each step live in BoosterIntro)
   useEffect(() => {
-    if (phase === "reveal") return;
-    const next: Record<Exclude<Phase, "reveal">, Phase> = {
-      charge: "tear",
-      tear: "burst",
-      burst: "reveal",
-    };
+    if (phase === "reveal" || phase === "charge") return;
+    const next: Record<"tear" | "burst", Phase> = { tear: "burst", burst: "reveal" };
     if (reduce) packSfx.rip(0.3);
     const t = setTimeout(() => setPhase(next[phase]), reduce ? 150 : INTRO_MS[phase]);
     return () => clearTimeout(t);
@@ -130,10 +134,24 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }:
             count={cards.length}
             phase={phase}
             layoutPrefix={layoutPrefix}
+            cut={cut}
+            dir={dir}
+            packRef={packEl}
+            reduce={reduce}
           />
+          {phase === "charge" && (
+            <TearZone
+              packRef={packEl}
+              onCut={setCut}
+              onTear={(d) => {
+                setDir(d);
+                setPhase("tear");
+              }}
+            />
+          )}
           <Button
             variant="ghost"
-            className="absolute right-4 bottom-4 text-white/80"
+            className="absolute right-4 bottom-4 z-30 text-white/80"
             onClick={() => setPhase("reveal")}
           >
             Pomiń

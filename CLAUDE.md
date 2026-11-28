@@ -254,7 +254,10 @@ in `parish*.ts`/`demon*.ts`), rendered by `PW_CHROMIUM_PATH=/opt/pw-browsers/chr
 subject inside the central band so both the wide card-face crop and the portrait mini crop work; a full run rewrites
 `soul/data/drawnArt.ts`; `SHEET=path.png` adds a contact sheet). A new card needs a scene (or a credited picture). The hub's "Ustawienia" has an "Ilustracje kart" switch
 (`data/artPref.ts`, `useCardArt`, ON by default): off → drawn cards show their emoji again (`artSrc` returns null), Commons
-pictures stay. Booster editions + odds live in
+pictures stay. Opening a booster (`BoosterOpening`) waits for the player to cut the pack's top with a sideways swipe
+(`TearZone` full-screen pointer surface, pure math in `tearGesture.ts`, ≥70% of the pack width in the band around the tear line;
+the strip lifts and the seam follows the finger, `TearHint` shows a finger sliding along a dashed cut line; Enter/Space on the
+zone tears it for keyboard users, a plain tap does not; "Pomiń" skips). Booster editions + odds live in
 `soul/collection/packs.ts`; harder opponents carry `Opponent.fee` (paid with the `FeePayment` animation before the duel) and
 `Opponent.prize` (edition odds of a free booster opened right after a win, listed in `PrizeTable`); every fee opponent can also be
 fought as a free practice duel ("Trenuj", `SoloDuel training`): no fee, no talents/booster/record; signature attacks (unique fx + sound) in `soul/board/signatures.ts` + `soul/audio/signatures.ts`.
