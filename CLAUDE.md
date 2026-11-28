@@ -113,8 +113,8 @@ After a duel, `DuelDiscoveries` unfolds a demon card directly under its badge (a
 number (shown as `007/85` on `CardFace`, `007` on `CardMini`; demons/energy have none) — NEVER reorder, append new cards at
 the end (`numbers.test.ts`). The hub's "Album" tab (`soul/album/Album.tsx`, data in `collection/album.ts`) is a binder grid:
 missing cards are numbered empty slots, owned ones show the rarest print on top with the other prints peeking out
-underneath. Tapping a card opens `AlbumCardDialog` → `TiltCard` (also every card-detail view: booster zoom, deck builder preview,
-duel card dialog, `CardPreview`, `DiscardDialog`; pope cards get their "Historia" button under the card there): turn it with a finger/mouse/arrows (free spin on Y with the
+underneath. Tapping a card opens `AlbumCardDialog` → `TiltCard` (also the booster zoom and the deck builder preview; pope cards get their
+"Historia" button under the card there): turn it with a finger/mouse/arrows (free spin on Y with the
 back, tilt on X, glare, spring back — `spring.ts`); gilded prints shed gold dust and stained prints fling glass shards and
 sparkles into 3D world space, more the faster it turns (`glassParticles.ts` pure math + `drawParticles.ts` canvas; none
 under reduced motion). Depth: `npm run soul-art` also writes every drawn picture as three planes — `bg/<id>.webp` (backdrop), `fg/<id>.webp`
@@ -165,6 +165,9 @@ The "Rozpoznaj pokusę" corner hint is not shown for demon cards already recogni
 (`DuelView` prop `recognized`, filled by `SoloDuel`).
 A card that needs a target (evolution, energy, Sobór, Droga do Damaszku, Zaproszenie na rekolekcje, …) dropped on the
 table instead of on a card opens `TargetDialog` with the possible targets as card tiles (`board/dropChoices.ts`).
+In the duel every card-detail view (card dialog, `CardPreview`, `HandDialog`, `DiscardDialog`) is flat, never turned:
+`DuelCardDetail` (panel `DUEL_CARD_PANEL`) shows `FitCard` — the face scaled (`fitScale`, 0.45–1.5×) to the space left — next to
+(wide) or above (phone) the compact `InPlayStatus` and the actions, so nothing needs scrolling.
 Usable activated abilities get a visible "✦ Moc" button right on the card on the table (`board/AbilityButtons.tsx`,
 `readyAbilities` in `engine/abilities.ts`) — no need to open the card details.
 Gilded / stained prints look prestigious: a drifting foil background (DOM: `PrestigeLayers` + `.soul-foil*` in

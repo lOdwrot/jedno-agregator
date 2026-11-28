@@ -8,7 +8,7 @@ const plural = (n: number, one: string, few: string, many: string) =>
   n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many;
 
 /** State of a character on the table: attached energy, HP left, statuses, shield, evolution stack. */
-export function InPlayStatus({ g, c }: { g: Game; c: InPlay }) {
+export function InPlayStatus({ g, c, compact = false }: { g: Game; c: InPlay; compact?: boolean }) {
   const def = getCard(c.cardId);
   const energy = ENERGY_LABEL[def.side];
   const max = maxHp(g, c);
@@ -21,17 +21,20 @@ export function InPlayStatus({ g, c }: { g: Game; c: InPlay }) {
   return (
     <section
       aria-label="Stan postaci na stole"
-      className="flex flex-col gap-3 rounded-card bg-navy p-3 text-white"
+      className={cn("flex flex-col rounded-card bg-navy text-white", compact ? "gap-2 p-2" : "gap-3 p-3")}
     >
       <div className="flex items-center gap-3">
         <p
-          className="grid min-w-16 place-items-center rounded-xl bg-white/10 px-2 py-1 font-display text-3xl font-extrabold text-logo-yellow"
+          className={cn(
+            "grid min-w-16 place-items-center rounded-xl bg-white/10 px-2 py-1 font-display font-extrabold text-logo-yellow",
+            compact ? "text-xl" : "text-3xl",
+          )}
           aria-hidden="true"
         >
           {energy.emoji}×{c.energy}
         </p>
         <p className="text-sm">
-          <strong className="block font-display text-lg">
+          <strong className={cn("block font-display", compact ? "text-base" : "text-lg")}>
             {c.energy ? `${c.energy} ${energyWord}` : `Brak dołączonej energii`}
           </strong>
           {c.energy

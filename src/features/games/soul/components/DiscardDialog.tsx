@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Dialog } from "@/ui";
 import { getCard } from "../data/cards";
 import type { CardInst } from "../engine/state";
-import { TiltCard } from "../album/TiltCard";
+import { DUEL_CARD_PANEL, DuelCardDetail } from "./DuelCardDetail";
 import { CardMini } from "./CardMini";
 import { groupDiscard } from "./discardGroups";
 
@@ -43,14 +43,15 @@ export function DiscardDialog({
             ? `${pile.length} ${cardsWord(pile.length)}, od ostatnio odrzuconej. Dotknij karty, aby zobaczyć szczegóły.`
             : undefined
       }
+      size={detail ? "lg" : "md"}
+      panelClassName={detail ? DUEL_CARD_PANEL : undefined}
     >
       {detail ? (
-        <div className="flex flex-col gap-3 pt-10">
-          <TiltCard cardId={detail.cardId} finish={detail.finish} showLesson={lessons} />
+        <DuelCardDetail cardId={detail.cardId} finish={detail.finish} showLesson={lessons}>
           <Button variant="navy" fullWidth onClick={() => setDetail(null)}>
             Wróć do stosu
           </Button>
-        </div>
+        </DuelCardDetail>
       ) : (
         <div className="flex flex-col gap-4">
           {groups.length ? (

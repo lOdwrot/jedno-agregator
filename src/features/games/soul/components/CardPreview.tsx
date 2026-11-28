@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Dialog, Icon, IconButton } from "@/ui";
 import { getCard } from "../data/cards";
 import type { CardInst } from "../engine/state";
-import { TiltCard } from "../album/TiltCard";
+import { DUEL_CARD_PANEL, DuelCardDetail } from "./DuelCardDetail";
 import { CardMini } from "./CardMini";
 
 /** Small "i" badge on a card tile: opens the card details without choosing the card. */
@@ -33,15 +33,15 @@ export function CardDetailDialog({
       onClose={onClose}
       title={card ? getCard(card.cardId).name : "Karta"}
       hideTitle
-      size="sm"
+      size="lg"
+      panelClassName={DUEL_CARD_PANEL}
     >
       {card && (
-        <div className="flex flex-col gap-3 pt-10">
-          <TiltCard cardId={card.cardId} finish={card.finish} />
+        <DuelCardDetail cardId={card.cardId} finish={card.finish}>
           <Button variant="navy" fullWidth onClick={onClose}>
             Wróć do wyboru
           </Button>
-        </div>
+        </DuelCardDetail>
       )}
     </Dialog>
   );
@@ -69,14 +69,15 @@ export function HandDialog({
       title={detail ? getCard(detail.cardId).name : "Twoja ręka"}
       hideTitle={!!detail}
       description={detail ? undefined : "Dotknij karty, aby zobaczyć jej szczegóły."}
+      size={detail ? "lg" : "md"}
+      panelClassName={detail ? DUEL_CARD_PANEL : undefined}
     >
       {detail ? (
-        <div className="flex flex-col gap-3 pt-10">
-          <TiltCard cardId={detail.cardId} finish={detail.finish} />
+        <DuelCardDetail cardId={detail.cardId} finish={detail.finish}>
           <Button variant="navy" fullWidth onClick={() => setDetail(null)}>
             Wróć do ręki
           </Button>
-        </div>
+        </DuelCardDetail>
       ) : (
         <div className="flex flex-col gap-4">
           {hand.length ? (

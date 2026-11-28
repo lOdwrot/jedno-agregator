@@ -12,7 +12,7 @@ import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
 import { CardThumb } from "./CardArt";
 import { CardFace } from "./CardFace";
-import { TiltCard } from "../album/TiltCard";
+import { DUEL_CARD_PANEL, DuelCardDetail } from "./DuelCardDetail";
 import { HandDialog } from "./CardPreview";
 import { DiscardDialog } from "./DiscardDialog";
 import { InPlayStatus } from "./InPlayStatus";
@@ -247,16 +247,16 @@ export function DuelView({
         onClose={() => setSel(null)}
         title={selCard ? getCard(selCard.cardId).name : "Karta"}
         hideTitle
-        size="sm"
+        size="lg"
+        panelClassName={DUEL_CARD_PANEL}
       >
         {selCard && sel && (
-          <div className="flex flex-col gap-4 pt-10">
-            {selPlay && <InPlayStatus g={live} c={selPlay} />}
-            <TiltCard
-              cardId={selCard.cardId}
-              finish={selCard.finish}
-              showLesson={sel.zone === "opp"}
-            />
+          <DuelCardDetail
+            cardId={selCard.cardId}
+            finish={selCard.finish}
+            showLesson={sel.zone === "opp"}
+            status={selPlay && <InPlayStatus g={live} c={selPlay} compact />}
+          >
             {sel.zone !== "place" && !busy && (
               <CardActions
                 g={live}
@@ -265,7 +265,7 @@ export function DuelView({
                 onAction={(a) => (setSel(null), act(a))}
               />
             )}
-          </div>
+          </DuelCardDetail>
         )}
       </Dialog>
       <Dialog
