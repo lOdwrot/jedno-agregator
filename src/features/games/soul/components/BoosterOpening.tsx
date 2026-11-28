@@ -13,7 +13,7 @@ import { FINISH_LABEL, RARITY_LABEL } from "../data/types";
 import { BoosterIntro } from "./BoosterIntro";
 import { INTRO_MS } from "./boosterTimeline";
 import { CardBack } from "./CardBack";
-import { CardFace } from "./CardFace";
+import { TiltCard } from "../album/TiltCard";
 import { CardMini } from "./CardMini";
 
 type Phase = "charge" | "tear" | "burst" | "reveal";
@@ -256,10 +256,9 @@ export function BoosterOpening({ pack, cards, fresh, onClose, onAgain, onMenu }:
               animate={{ scale: 1, rotateY: 0 }}
               className="w-full max-w-xs"
             >
-              <CardFace
+              <TiltCard
                 cardId={parseKey(cards[zoom]).cardId}
                 finish={parseKey(cards[zoom]).finish}
-                active
               />
               <Button
                 ref={zoomClose}

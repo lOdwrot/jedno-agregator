@@ -12,6 +12,7 @@ import { usePvpSync } from "../pvp/usePvpSync";
 import { CardActions, type Selection } from "./CardActions";
 import { CardThumb } from "./CardArt";
 import { CardFace } from "./CardFace";
+import { TiltCard } from "../album/TiltCard";
 import { HandDialog } from "./CardPreview";
 import { DiscardDialog } from "./DiscardDialog";
 import { InPlayStatus } from "./InPlayStatus";
@@ -165,10 +166,6 @@ export function DuelView({
           (c) => c?.uid === sel.uid,
         ) ?? null)
       : null;
-  const selActive =
-    !!sel &&
-    "uid" in sel &&
-    [live.players.me.active, live.players.ai.active].some((c) => c?.uid === sel.uid);
 
   const onSelect = (s: Selection | { zone: "place" }) => {
     if (
@@ -255,10 +252,9 @@ export function DuelView({
         {selCard && sel && (
           <div className="flex flex-col gap-4 pt-10">
             {selPlay && <InPlayStatus g={live} c={selPlay} />}
-            <CardFace
+            <TiltCard
               cardId={selCard.cardId}
               finish={selCard.finish}
-              active={selActive}
               showLesson={sel.zone === "opp"}
             />
             {sel.zone !== "place" && !busy && (

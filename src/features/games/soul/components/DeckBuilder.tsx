@@ -15,7 +15,7 @@ import {
   type CardKey,
   type Profile,
 } from "../collection/profile";
-import { CardFace } from "./CardFace";
+import { TiltCard } from "../album/TiltCard";
 import { DeckRow } from "./DeckRow";
 import { DeckSlotTools } from "./DeckSlotTools";
 import { DeckSwitcher } from "./DeckSwitcher";
@@ -173,7 +173,7 @@ export function DeckBuilder({
         size="sm"
       >
         {preview && (
-          <CardFace
+          <TiltCard
             className="mt-10"
             cardId={parseKey(preview).cardId}
             finish={parseKey(preview).finish}

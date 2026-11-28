@@ -5,6 +5,7 @@ import { getCard } from "../data/cards";
 import type { Finish } from "../data/types";
 import { CardBack } from "../components/CardBack";
 import { CardFace } from "../components/CardFace";
+import { PopeInfoButton } from "../popes/PopeInfoButton";
 import { drawParticles } from "./drawParticles";
 import { EMISSION, emit, stepParticles, type Particle } from "./glassParticles";
 import { atRest, clampTilt, restingY, settle, type Spin } from "./spring";
@@ -22,7 +23,18 @@ const face = (ay: number) => (((Math.round(ay / 180) % 2) + 2) % 2 === 0 ? "fron
  * that follows the angle, and a spring back to rest. Gilded prints shed gold dust and stained
  * prints fling glass shards and sparkles into 3D space — the faster the turn, the more.
  */
-export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish }) {
+export function TiltCard({
+  cardId,
+  finish,
+  showLesson = false,
+  className,
+}: {
+  cardId: string;
+  finish: Finish;
+  /** Demon cards: the "how it tempts / how to resist" lesson on the face. */
+  showLesson?: boolean;
+  className?: string;
+}) {
   const reduced = usePrefersReducedMotion();
   const cardRef = useRef<HTMLDivElement>(null);
   const glareRef = useRef<HTMLSpanElement>(null);
@@ -181,7 +193,7 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
 
   const name = getCard(cardId).name;
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className={cn("flex flex-col items-center gap-3", className)}>
       <div
         role="slider"
         tabIndex={0}
@@ -201,7 +213,14 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
       >
         <div ref={cardRef} className="relative w-full max-w-xs transform-3d">
           <div className="relative rounded-card backface-hidden">
-            <CardFace cardId={cardId} finish={finish} active stories={false} depth />
+            <CardFace
+              cardId={cardId}
+              finish={finish}
+              active
+              stories={false}
+              showLesson={showLesson}
+              depth
+            />
             {/* the glare stays on the card; figures stepping out of it are not clipped */}
             <span
               aria-hidden="true"
@@ -229,6 +248,7 @@ export function TiltCard({ cardId, finish }: { cardId: string; finish: Finish })
           />
         )}
       </div>
+      <PopeInfoButton cardId={cardId} />
     </div>
   );
 }

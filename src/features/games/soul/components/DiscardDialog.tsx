@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Dialog } from "@/ui";
 import { getCard } from "../data/cards";
 import type { CardInst } from "../engine/state";
-import { CardFace } from "./CardFace";
+import { TiltCard } from "../album/TiltCard";
 import { CardMini } from "./CardMini";
 import { groupDiscard } from "./discardGroups";
 
@@ -46,7 +46,7 @@ export function DiscardDialog({
     >
       {detail ? (
         <div className="flex flex-col gap-3 pt-10">
-          <CardFace cardId={detail.cardId} finish={detail.finish} showLesson={lessons} />
+          <TiltCard cardId={detail.cardId} finish={detail.finish} showLesson={lessons} />
           <Button variant="navy" fullWidth onClick={() => setDetail(null)}>
             Wróć do stosu
           </Button>

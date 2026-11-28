@@ -113,7 +113,8 @@ After a duel, `DuelDiscoveries` unfolds a demon card directly under its badge (a
 number (shown as `007/85` on `CardFace`, `007` on `CardMini`; demons/energy have none) — NEVER reorder, append new cards at
 the end (`numbers.test.ts`). The hub's "Album" tab (`soul/album/Album.tsx`, data in `collection/album.ts`) is a binder grid:
 missing cards are numbered empty slots, owned ones show the rarest print on top with the other prints peeking out
-underneath. Tapping a card opens `AlbumCardDialog` → `TiltCard`: turn it with a finger/mouse/arrows (free spin on Y with the
+underneath. Tapping a card opens `AlbumCardDialog` → `TiltCard` (also every card-detail view: booster zoom, deck builder preview,
+duel card dialog, `CardPreview`, `DiscardDialog`; pope cards get their "Historia" button under the card there): turn it with a finger/mouse/arrows (free spin on Y with the
 back, tilt on X, glare, spring back — `spring.ts`); gilded prints shed gold dust and stained prints fling glass shards and
 sparkles into 3D world space, more the faster it turns (`glassParticles.ts` pure math + `drawParticles.ts` canvas; none
 under reduced motion). Depth: `npm run soul-art` also writes every drawn picture as three planes — `bg/<id>.webp` (backdrop), `fg/<id>.webp`
